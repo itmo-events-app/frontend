@@ -1,0 +1,10 @@
+services:
+  frontend:
+    image: events-app-frontend:latest
+    build: .
+    ports:
+      - "5573:80"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
