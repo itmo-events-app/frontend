@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json /app
 
-RUN npm install --omit=dev
+RUN npm install
 
 COPY . /app
 
