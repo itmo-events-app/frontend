@@ -1,5 +1,5 @@
 import Root from "@pages/Root";
-import { AppRoutes, RoutePaths } from "@shared/config";
+import { AppRoutes, RoutePaths } from "./config";
 import { Route, Routes, RouteProps } from "react-router-dom";
 
 const routes: Record<AppRoutes, RouteProps> = {
