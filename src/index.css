@@ -1,3 +1,5 @@
+@import url("@shared/ui/fonts/fontFaces.css") layer(base);
+
 :root {
   font-family: Open Sans;
   line-height: 1.5;

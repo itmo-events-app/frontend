@@ -1,41 +1,41 @@
 @font-face {
   font-family: 'Open Sans';
-  src: url("shared/ui/fonts/assets/OpenSans-Regular.ttf");
+  src: url("@shared/ui/fonts/assets/OpenSans-Regular.ttf");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Open Sans';
-  src: url("shared/ui/fonts/assets/OpenSans-Regular.ttf");
+  src: url("@shared/ui/fonts/assets/OpenSans-Regular.ttf");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Open Sans';
-  src: url("shared/ui/fonts/assets/OpenSans-Light.ttf");
+  src: url("@shared/ui/fonts/assets/OpenSans-Light.ttf");
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Open Sans';
-  src: url("shared/ui/fonts/assets/OpenSans-Medium.ttf");
+  src: url("@shared/ui/fonts/assets/OpenSans-Medium.ttf");
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Open Sans';
-  src: url("shared/ui/fonts/assets/OpenSans-SemiBold.ttf");
+  src: url("@shared/ui/fonts/assets/OpenSans-SemiBold.ttf");
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Open Sans';
-  src: url("shared/ui/fonts/assets/OpenSans-Bold.ttf");
+  src: url("@shared/ui/fonts/assets/OpenSans-Bold.ttf");
   font-weight: 700;
   font-style: normal;
 }
