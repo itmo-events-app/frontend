@@ -1,11 +1,11 @@
-import Root from '@pages/Root';
-import { AppRoutes, RoutePaths } from '@shared/config';
-import { Route, Routes, RouteProps } from 'react-router-dom';
+import Root from "@pages/Root";
+import { AppRoutes, RoutePaths } from "@shared/config";
+import { Route, Routes, RouteProps } from "react-router-dom";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
     path: RoutePaths.root,
-    element: <Root/>
+    element: <Root />,
   },
   [AppRoutes.REGISTER]: {
     path: RoutePaths.register,
@@ -19,7 +19,7 @@ const routes: Record<AppRoutes, RouteProps> = {
     path: RoutePaths.notFound,
     element: <>404 not found</>,
   },
-}
+};
 
 export default function AppRouter() {
   return (

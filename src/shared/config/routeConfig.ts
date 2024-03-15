@@ -1,6 +1,6 @@
 // Перечисление роутов
 export enum AppRoutes {
-  ROOT =  "root",
+  ROOT = "root",
   REGISTER = "register",
   LOGIN = "login",
   NOT_FOUND = "notFound",
