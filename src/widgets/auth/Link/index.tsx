@@ -7,7 +7,7 @@ type Props = {
 }
 
 function Link(props: Props) {
-  return <a className={styles.link + ' ' + props.className ?? ''} onClick={props.onClick}>{props.value}</a>
+  return <a className={styles.link + ' ' + (props.className ?? '')} onClick={props.onClick}>{props.value}</a>
 }
 
 export default Link;

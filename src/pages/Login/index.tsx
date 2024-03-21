@@ -11,7 +11,7 @@ import { ITMO } from "@widgets/auth/ITMO";
 
 
 function Root() {
-  const [isError, setIsError] = useState(true);
+  const [isError, _] = useState(true);
 
   const _forgotPassword = () => {
     console.log('forgot password!');
