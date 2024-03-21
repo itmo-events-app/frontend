@@ -6,9 +6,31 @@ body {
 }
 
 .block {
-  max-width: 550px;
-  max-width: 550px;
+  width: 300px;
   display: flex;
   flex-direction: column;
-  padding: 40px;
+  padding: 30px 50px 50px 50px;
+  gap: 20px;
+}
+
+.header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+}
+
+.form_item {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.register {
+  text-align: center;
 }
