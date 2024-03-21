@@ -1,11 +1,11 @@
-import Root from "@pages/Root";
+import Login from "@pages/Login";
 import { AppRoutes, RoutePaths } from "./config";
 import { Route, Routes, RouteProps } from "react-router-dom";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
     path: RoutePaths.root,
-    element: <Root />,
+    element: <div>Root</div>,
   },
   [AppRoutes.REGISTER]: {
     path: RoutePaths.register,
@@ -13,7 +13,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.LOGIN]: {
     path: RoutePaths.login,
-    element: <div>Login</div>,
+    element: <Login/>,
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,

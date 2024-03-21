@@ -1,0 +1,14 @@
+body {
+  background-color: var(--itmo-colors-page-auth);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.block {
+  max-width: 550px;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+}
