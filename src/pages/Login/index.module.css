@@ -1,4 +1,5 @@
-body {
+.root {
+  min-height: 100%;
   background-color: var(--itmo-colors-page-auth);
   display: flex;
   justify-content: center;
