@@ -2,6 +2,7 @@ import LoginPage from "@pages/Login";
 import { AppRoutes, RoutePaths } from "./config";
 import { Route, Routes, RouteProps, Navigate } from "react-router-dom";
 import RegisterPage from "@pages/Register";
+import RestorePage from "@pages/Restore";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -15,6 +16,10 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.LOGIN]: {
     path: RoutePaths.login,
     element: <LoginPage />,
+  },
+  [AppRoutes.RESTORE]: {
+    path: RoutePaths.restore,
+    element: <RestorePage />,
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,

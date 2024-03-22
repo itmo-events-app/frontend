@@ -35,6 +35,10 @@ function RegisterPage() {
             <Input />
           </div>
           <div className={styles.form_item}>
+            <Label value="Email" />
+            <Input />
+          </div>
+          <div className={styles.form_item}>
             <Label value="Пароль" />
             <Input />
           </div>
