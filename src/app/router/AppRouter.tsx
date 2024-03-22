@@ -1,19 +1,20 @@
-import Login from "@pages/Login";
+import LoginPage from "@pages/Login";
 import { AppRoutes, RoutePaths } from "./config";
-import { Route, Routes, RouteProps } from "react-router-dom";
+import { Route, Routes, RouteProps, Navigate } from "react-router-dom";
+import RegisterPage from "@pages/Register";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
     path: RoutePaths.root,
-    element: <div>Root</div>,
+    element: <Navigate to={RoutePaths.login} />,
   },
   [AppRoutes.REGISTER]: {
     path: RoutePaths.register,
-    element: <div>Register</div>,
+    element: <RegisterPage />,
   },
   [AppRoutes.LOGIN]: {
     path: RoutePaths.login,
-    element: <Login/>,
+    element: <LoginPage />,
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,

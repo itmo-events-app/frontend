@@ -10,7 +10,7 @@ import { useState } from "react";
 import { ITMO } from "@widgets/auth/ITMO";
 
 
-function Root() {
+function LoginPage() {
   const [isError, _] = useState(true);
 
   const _forgotPassword = () => {
@@ -19,6 +19,10 @@ function Root() {
 
   const _register = () => {
     console.log('register!');
+  }
+
+  const _enter = () => {
+    console.log('enter!');
   }
 
   return (
@@ -38,11 +42,11 @@ function Root() {
             <Link onClick={_forgotPassword} value="Забыли пароль?" />
           </div>
         </div>
-        <Button>Войти</Button>
+        <Button onClick={_enter}>Войти</Button>
         <Link className={styles.register} onClick={_register} value="Нет учетной записи? Зарегистрироваться" />
       </Block>
     </div>
   );
 }
 
-export default Root;
+export default LoginPage;
