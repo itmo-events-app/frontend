@@ -1,9 +1,10 @@
 import LoginPage from "@pages/Login";
-import { AppRoutes, RoutePaths } from "./config";
+import { AppRoutes, RoutePaths } from "@shared/config/routes";
 import { Route, Routes, RouteProps, Navigate } from "react-router-dom";
 import RegisterPage from "@pages/Register";
 import RestorePage from "@pages/Restore";
 import PasswordPage from "@pages/Password";
+import NotifyPage from "@pages/Notification";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -25,6 +26,10 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.PASSWORD]: {
     path: RoutePaths.password,
     element: <PasswordPage />,
+  },
+  [AppRoutes.NOTIFY]: {
+    path: RoutePaths.notify,
+    element: <NotifyPage />,
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,
