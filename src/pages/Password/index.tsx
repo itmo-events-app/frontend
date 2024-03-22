@@ -19,7 +19,7 @@ function PasswordPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Смена пароля</span>
-        <Error value="Пароль должен содержать содержать специальные символы" isError={isError} />
+        <Error value="Пароль должен содержать специальные символы" isError={isError} />
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Пароль" />

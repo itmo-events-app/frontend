@@ -30,10 +30,10 @@ function LoginPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Войти</span>
-        <Error value="Неправильный логин или пароль" isError={isError} />
+        <Error value="Неправильный email или пароль" isError={isError} />
         <div className={styles.form}>
           <div className={styles.form_item}>
-            <Label value="Логин или номер ИСУ" />
+            <Label value="Email" />
             <Input />
           </div>
           <div className={styles.form_item}>

@@ -20,7 +20,7 @@ function RegisterPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Регистрация</span>
-        <Error value="Пароль должен содержать содержать специальные символы" isError={isError} />
+        <Error value="Пароль должен содержать специальные символы" isError={isError} />
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Имя" />
@@ -28,10 +28,6 @@ function RegisterPage() {
           </div>
           <div className={styles.form_item}>
             <Label value="Фамилия" />
-            <Input />
-          </div>
-          <div className={styles.form_item}>
-            <Label value="Логин или номер ИСУ" />
             <Input />
           </div>
           <div className={styles.form_item}>
