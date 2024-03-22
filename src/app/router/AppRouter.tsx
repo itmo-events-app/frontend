@@ -3,6 +3,7 @@ import { AppRoutes, RoutePaths } from "./config";
 import { Route, Routes, RouteProps, Navigate } from "react-router-dom";
 import RegisterPage from "@pages/Register";
 import RestorePage from "@pages/Restore";
+import PasswordPage from "@pages/Password";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -20,6 +21,10 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.RESTORE]: {
     path: RoutePaths.restore,
     element: <RestorePage />,
+  },
+  [AppRoutes.PASSWORD]: {
+    path: RoutePaths.password,
+    element: <PasswordPage />,
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,

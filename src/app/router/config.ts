@@ -4,6 +4,7 @@ export enum AppRoutes {
   REGISTER = "register",
   LOGIN = "login",
   RESTORE = "restore",
+  PASSWORD = "password",
   NOT_FOUND = "notFound",
 }
 
@@ -19,5 +20,6 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.REGISTER]: "/register",
   [AppRoutes.LOGIN]: "/login",
   [AppRoutes.RESTORE]: "/restore",
+  [AppRoutes.PASSWORD]: "/password",
   [AppRoutes.NOT_FOUND]: "*",
 };
