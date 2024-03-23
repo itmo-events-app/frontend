@@ -1,0 +1,27 @@
+.root {
+  min-height: 100%;
+  background-color: var(--itmo-colors-page-auth);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.block {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 50px 50px 50px;
+  gap: 20px;
+}
+
+.header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.form_item {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}

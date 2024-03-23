@@ -1,0 +1,5 @@
+.error {
+  font-size: 14px;
+  color: var(--itmo-colors-red);
+  text-align: center;
+}
