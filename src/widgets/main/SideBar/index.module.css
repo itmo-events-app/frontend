@@ -24,7 +24,7 @@
 }
 
 .selected {
-  color: #0069FF;
+  color: var(--itmo-colors-blue-selected);
 }
 
 .icon_cnt {
