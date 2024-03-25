@@ -5,6 +5,7 @@ import RegisterPage from "@pages/Register";
 import RestorePage from "@pages/Restore";
 import PasswordPage from "@pages/Password";
 import NotifyPage from "@pages/Notification";
+import RolesPage from "@pages/Roles";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -30,6 +31,10 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.NOTIFY]: {
     path: RoutePaths.notify,
     element: <NotifyPage />,
+  },
+  [AppRoutes.ROLES]: {
+    path: RoutePaths.roles,
+    element: <RolesPage />,
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,
