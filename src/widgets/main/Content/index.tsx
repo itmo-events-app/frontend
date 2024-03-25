@@ -1,7 +1,7 @@
 import styles from './index.module.css'
 
 type Props = {
-  children: any[],
+  children: any,
 }
 
 function Content(props: Props) {

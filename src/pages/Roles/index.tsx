@@ -5,7 +5,7 @@ import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
 import SideBar, { SideBarTab } from '@widgets/main/SideBar';
 
-const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
+// const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
 const _tabs: SideBarTab[] = [
   new SideBarTab('Мероприятия', <Menu />, [
