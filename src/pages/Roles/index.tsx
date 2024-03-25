@@ -2,6 +2,7 @@ import { Home, Menu, Noted, Users } from '@shared/ui/icons';
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
+import Content from '@widgets/main/Content';
 import SideBar, { SideBarTab } from '@widgets/main/SideBar';
 
 const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
@@ -31,7 +32,7 @@ function RolesPage() {
       topLeft={<BrandLogo onClick={_brandLogoClick} />}
       topRight={<PageName text="Список ролей" />}
       bottomLeft={<SideBar tabs={_tabs} />}
-      bottomRight={<span>Content</span>}
+      bottomRight={<Content><div style={{ backgroundColor: 'gray' }}>Содержимое страницы</div></Content>}
     />
   );
 }
