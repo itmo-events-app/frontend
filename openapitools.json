@@ -11,8 +11,8 @@
         "additionalProperties": {
           "supportsES6": true,
           "withSeparateModelsAndApi": true,
-          "apiPackage": "api",
           "enablePostProcessFile": true,
+          "apiPackage": "api",
           "modelPackage": "model"
         }
       }
