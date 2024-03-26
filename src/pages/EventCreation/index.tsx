@@ -7,7 +7,7 @@ import SideBar, { SideBarTab } from '@widgets/main/SideBar';
 import styles from './index.module.css';
 import Input from "@widgets/auth/Input";
 import Button from "@widgets/auth/Button";
-import Dropdown from "@widgets/auth/Dropdown";
+import Dropdown, {DropdownOption} from "@widgets/auth/Dropdown";
 import Block from "@widgets/Block";
 
 const _tabs: SideBarTab[] = [
@@ -24,6 +24,13 @@ const _tabs: SideBarTab[] = [
     new SideBarTab('Уведомления', <Noted />),
     new SideBarTab('Профиль', <Users />),
 
+]
+
+const _test_orgs: DropdownOption[] = [
+    new DropdownOption("[408975] Григорьев Георгий Александрович"),
+    new DropdownOption("[621304] Ефимов Евгений Николаевич"),
+    new DropdownOption("[308820] Васильева Валентина Сергеевна"),
+    new DropdownOption("[107589] Лебедев Леонид Петрович")
 ]
 
 function EventCreationPage() {
@@ -49,7 +56,7 @@ function EventCreationPage() {
                                 <Input type="text" placeholder="Введите название мероприятия"/>
                             </div>
                             <div className={styles.event_form_item}>
-                                <Dropdown placeholder="Выберите главного организатора"/>
+                                <Dropdown placeholder="Выберите главного организатора" items={_test_orgs}/>
                             </div>
                             <div className={styles.event_form_button}>
                                 <Button onClick={_createEvent()}>Создать</Button>

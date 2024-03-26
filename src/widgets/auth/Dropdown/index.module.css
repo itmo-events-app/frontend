@@ -2,6 +2,32 @@
     background-color: var(--itmo-colors-white);
     border: 1px solid var(--itmo-colors-black);
     border-radius: 10px;
-    padding: 10px 10px;
+    font-size: 16px;
+}
+
+.dropdown_item_container {
+    background-color: var(--itmo-colors-white);
+    border-radius: 10px;
+    padding: 11px 11px;
+    color: var(--itmo-colors-black);
+}
+
+.dropdown_item_container:not(.dropdown_item_container_selected):not(.dropdown_item_container_disabled):hover {
+    background-color: lightgray;
+    border-radius: 10px;
+    padding: 11px 11px;
+}
+
+.dropdown_item_container_selected {
+    background-color: var(--itmo-colors-blue-selected);
+    color: var(--itmo-colors-white);
+}
+
+.dropdown_item_container_disabled {
+    background-color: var(--itmo-colors-white);
+    color: gray;
+}
+
+.dropdown_item {
     font-size: 16px;
 }
