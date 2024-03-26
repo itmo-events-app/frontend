@@ -3,6 +3,7 @@ import styles from './index.module.css'
 import { Search as SearchLogo } from '@shared/ui/icons';
 
 type Props = {
+  placeholder?: string,
   onSearch: (arg0: string) => void,
 }
 
@@ -21,7 +22,7 @@ function Search(props: Props) {
 
   return (
     <div className={styles.search}>
-      <input className={styles.input} type="text" onKeyDown={_handleKeyDown}></input>
+      <input className={styles.input} type="text" onKeyDown={_handleKeyDown} placeholder={props.placeholder}></input>
       <div className={styles.icon_cnt} onClick={() => props.onSearch(value)}>
         <SearchLogo />
       </div>

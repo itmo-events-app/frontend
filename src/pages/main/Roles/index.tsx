@@ -6,6 +6,9 @@ import Content from '@widgets/main/Content';
 import SideBar, { SideBarTab } from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
 
+import styles from './index.module.css'
+import Button from '@widgets/main/Button';
+
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
 const _tabs: SideBarTab[] = [
@@ -29,10 +32,22 @@ function RolesPage() {
     console.log('brand logo!')
   }
 
+  const _onSearch = (v: string) => {
+    console.log(v);
+  }
+
+  const _createRole = (v: string) => {
+    console.log(v);
+  }
+
+
   const _RolesContent = () => {
     return (
       <Content>
-        <Search onSearch={(v) => { console.log(v) }} />
+        <div className={styles.top}>
+          <Search onSearch={_onSearch} placeholder="Поиск роли"/>
+          <Button onClick={_createRole} >Создать роль</Button>
+        </div>
       </Content>
     )
   }

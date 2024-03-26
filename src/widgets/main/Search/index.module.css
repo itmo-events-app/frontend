@@ -1,17 +1,16 @@
 .search {
-  padding: 4px 0px;
+  padding: 5px 0px;
   display: flex;
-  border: 1px solid var(--itmo-colors-search-border);
+  border: 1px solid var(--itmo-colors-border);
   border-radius: 4px;
-  background-color: var(--itmo-colors-search-background);
+  width: 100%;
 }
 
 .input {
   width: 100%;
   border: none;
   font-size: 15px;
-  padding: 0px 5px;
-  background-color: var(--itmo-colors-search-background);
+  padding: 0px 10px;
 }
 
 .input:focus {
@@ -20,10 +19,10 @@
 
 .icon_cnt {
   height: 24px;
-  border-left: 1px solid var(--itmo-colors-search-border);
+  border-left: 1px solid var(--itmo-colors-border);
   display: flex;
   justify-content: right;
-  padding: 0px 5px;
+  padding: 0px 10px;
 }
 
 .icon_cnt:hover {
