@@ -7,7 +7,6 @@
 
 .tab {
   cursor: pointer;
-  user-select: none;
 }
 
 .tab_children {
@@ -40,6 +39,7 @@
 .arrow {
   height: 24px;
   width: 24px;
+  user-select: none;
 }
 
 .arrow_up {
