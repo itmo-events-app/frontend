@@ -1,0 +1,7 @@
+.dropdown {
+    background-color: var(--itmo-colors-white);
+    border: 1px solid var(--itmo-colors-black);
+    border-radius: 10px;
+    padding: 10px 10px;
+    font-size: 16px;
+}
