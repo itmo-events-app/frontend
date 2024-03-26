@@ -20,10 +20,11 @@
 .tab_entry {
   display: flex;
   gap: 10px;
+  user-select: none;
 }
 
 .selected {
-  color: var(--itmo-colors-blue-selected);
+  filter: var(--itmo-filter-blue-selected);
 }
 
 .icon_cnt {
@@ -39,7 +40,6 @@
 .arrow {
   height: 24px;
   width: 24px;
-  user-select: none;
 }
 
 .arrow_up {
