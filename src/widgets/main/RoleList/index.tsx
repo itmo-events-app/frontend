@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 type Props = {
   roles: RoleModel[],
+  onMenuClick?: (role: RoleModel, e: React.MouseEvent) => void,
 }
 
 class Role {
@@ -54,9 +55,13 @@ function RoleList(props: Props) {
     const hasPrivileges = role.entry.privileges.length > 0;
     const Arrow = hasPrivileges
       ? <ArrowDown
-        className={styles.icon_expand + ' ' + (role.expanded ? styles.expanded : '')} 
-        onClick={_expand(role)}/>
+        className={styles.icon_expand + ' ' + (role.expanded ? styles.expanded : '')}
+        onClick={_expand(role)} />
       : <></>;
+
+    const onMenuClick = props.onMenuClick ?? ((_) => { });
+    const Menu = <MenuVertical onClick={(e) => onMenuClick(role.entry, e)} className={styles.icon_dots} />;
+
     return (
       <div key={uid()} className={styles.role}>
         <div className={styles.role_entry}>
@@ -69,7 +74,7 @@ function RoleList(props: Props) {
             </div>
           </div>
           <div className={styles.role_right}>
-            <MenuVertical className={styles.icon_dots} />
+            {Menu}
             {Arrow}
           </div>
         </div>

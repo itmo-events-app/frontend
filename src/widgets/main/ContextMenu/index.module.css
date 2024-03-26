@@ -1,5 +1,4 @@
 .menu {
-  position: absolute;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -8,6 +7,7 @@
   background-color: var(--itmo-colors-white);
   box-shadow: var(--itmo-box-shadow);
   border-radius: 10px;
+  font-size: 14px;
 }
 
 .item {

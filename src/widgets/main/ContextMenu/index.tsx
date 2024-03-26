@@ -1,5 +1,6 @@
 import { uid } from 'uid';
 import styles from './index.module.css';
+import { forwardRef, } from 'react';
 
 class ContextMenuItem {
   private _text: string;
@@ -15,6 +16,7 @@ class ContextMenuItem {
 type Props = {
   className?: string,
   items: ContextMenuItem[],
+  style?: React.CSSProperties
 }
 
 function _createItem(item: ContextMenuItem) {
@@ -33,13 +35,13 @@ function _createItemList(items: ContextMenuItem[]) {
   return res;
 }
 
-function ContextMenu(props: Props) {
+const ContextMenu = forwardRef((props: Props, ref) => {
   return (
-    <div className={styles.menu}>
+    <div className={styles.menu} style={props.style} ref={ref as any}>
       {_createItemList(props.items)}
     </div>
   )
-}
+})
 
 export { ContextMenuItem }
 export default ContextMenu
