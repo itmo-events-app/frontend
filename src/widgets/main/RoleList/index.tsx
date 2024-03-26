@@ -55,8 +55,7 @@ function RoleList(props: Props) {
     const hasPrivileges = role.entry.privileges.length > 0;
     const Arrow = hasPrivileges
       ? <ArrowDown
-        className={styles.icon_expand + ' ' + (role.expanded ? styles.expanded : '')}
-        onClick={_expand(role)} />
+        className={styles.icon_expand + ' ' + (role.expanded ? styles.expanded : '')} />
       : <></>;
 
     const onMenuClick = props.onMenuClick ?? ((_) => { });
@@ -64,7 +63,7 @@ function RoleList(props: Props) {
 
     return (
       <div key={uid()} className={styles.role}>
-        <div className={styles.role_entry}>
+        <div className={styles.role_entry} onClick={_expand(role)}>
           <div className={styles.role_left}>
             <div className={styles.role_name}>
               {role.entry.name}
