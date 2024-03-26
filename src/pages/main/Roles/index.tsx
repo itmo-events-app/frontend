@@ -10,6 +10,7 @@ import styles from './index.module.css'
 import Button from '@widgets/main/Button';
 import RoleList from '@widgets/main/RoleList';
 import { PrivilegeModel, RoleModel } from '@entities/Role';
+import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -43,7 +44,13 @@ const _roles: RoleModel[] = [
     new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
     new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
   ], 'Администратор'),
-  new RoleModel(1, 'PLAIN', [], 'Пользователь без ролей')
+  new RoleModel(1, 'PLAIN', [], 'Пользователь без привилегий')
+]
+
+const _contextItems: ContextMenuItem[] = [
+  new ContextMenuItem('Удалить', () => {console.log('delete!')}),
+  new ContextMenuItem('Редактировать', () => {console.log('edit!')}),
+  new ContextMenuItem('Дублировать', () => {console.log('duplicate!')}),
 ]
 
 function RolesPage() {
@@ -55,7 +62,7 @@ function RolesPage() {
     console.log(v);
   }
 
-  const _createRole = (v: string) => {
+  const _createRole = (v: any) => {
     console.log(v);
   }
 
@@ -68,6 +75,7 @@ function RolesPage() {
           <Button onClick={_createRole} >Создать роль</Button>
         </div>
         <RoleList roles={_roles} />
+        <ContextMenu items={_contextItems}/>
       </Content>
     )
   }

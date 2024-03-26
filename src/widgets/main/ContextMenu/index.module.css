@@ -1,0 +1,20 @@
+.menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 0px;
+  border: 1px solid var(--itmo-colors-border);
+  background-color: var(--itmo-colors-white);
+  box-shadow: var(--itmo-box-shadow);
+  border-radius: 10px;
+}
+
+.item {
+  padding: 7px 10px;
+}
+
+.item:hover {
+  cursor: pointer;
+  background-color: #F0F0F0;
+}
