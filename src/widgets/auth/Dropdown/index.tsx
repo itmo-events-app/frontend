@@ -18,6 +18,7 @@ type Props = {
     value?: string,
     placeholder?: string,
     className?: string,
+    clearable?: boolean,
     items: DropdownOption[]
 }
 
@@ -32,6 +33,21 @@ function Dropdown(props: Props) {
             setSelected(item.text);
             setOpen(false);
         }
+    }
+
+    function _resetSelection() {
+        return () => {
+            setSelected("");
+            setOpen(false);
+        }
+    }
+
+    function _clearOption() {
+        return (
+            <div className={styles.dropdown_item_container + ' ' + (props.className ?? '')} onClick={_resetSelection()}>
+                <a href="#" className={styles.dropdown_placeholder} onClick={_resetSelection()}>Сброс выбора</a>
+            </div>
+        );
     }
 
     function _createOption(option: DropdownOption) {
@@ -58,6 +74,7 @@ function Dropdown(props: Props) {
                 </a>
             </div>
 
+            {open && props.clearable && _clearOption()}
             {open && _createOptionList(props.items)}
         </div>
     );
