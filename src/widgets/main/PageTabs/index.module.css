@@ -1,0 +1,33 @@
+.page_tabs {
+    border: none;
+    background-color: var(--itmo-colors-white);
+    display: flex;
+    flex-direction: row;
+}
+
+.page_tab_container {
+    border: none;
+    background-color: var(--itmo-colors-white);
+    padding: 5px 5px;
+}
+
+.page_tab_container_selected {
+    border-bottom: 2px solid var(--itmo-colors-blue-selected);
+    padding: 5px 5px;
+}
+
+.page_tab_container:not(.page_tab_container_selected):hover {
+    background-color: var(--itmo-colors-gray);
+}
+
+.page_tab {
+    text-decoration: none;
+    font-size: 16px;
+    color: var(--itmo-colors-black);
+}
+
+.page_tab_selected {
+    text-decoration: none;
+    font-size: 16px;
+    color: var(--itmo-colors-blue-selected);
+}
