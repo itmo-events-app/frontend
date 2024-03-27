@@ -44,7 +44,7 @@ function EventActivitiesPage() {
             bottomRight=
                 {
                     <Content>
-                        <PageTabs items={_pageTabs}/>
+                        <PageTabs value="Активности" items={_pageTabs}/>
                     </Content>
                 }
         />

@@ -7,7 +7,7 @@ class PageTab {
   text: string
 
   constructor(
-      text: string,
+      text: string
   ) {
     this.id = uid();
     this.text = text;
@@ -22,7 +22,7 @@ type Props = {
 
 function PageTabs(props: Props) {
 
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(props.value);
 
   function _select(tab: PageTab) {
     return () => {
