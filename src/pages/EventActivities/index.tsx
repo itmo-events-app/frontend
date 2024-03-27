@@ -1,3 +1,4 @@
+import { uid } from 'uid'
 import { Home, Menu, Noted, Users } from '@shared/ui/icons';
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
@@ -6,7 +7,7 @@ import PageName from '@widgets/main/PageName';
 import SideBar, { SideBarTab } from '@widgets/main/SideBar';
 import Content from "@widgets/main/Content";
 import PageTabs, {PageTab} from "@widgets/main/PageTabs";
-import Block from "@widgets/Block";
+import EventHeader from "@widgets/EventHeader";
 
 const _tabs: SideBarTab[] = [
     new SideBarTab('Мероприятия', <Menu />, [
@@ -45,9 +46,147 @@ const _pageTabs: PageTab[] = [
     new PageTab("Задачи")
 ]
 
+class Activity {
+    id: string
+    name: string
+    place: string
+    room: string
+    description: string
+    date: string
+    time: string
+
+    constructor(
+        activityName: string,
+        place: string,
+        room: string,
+        description: string,
+        date: string,
+        time: string
+    ) {
+        this.id = uid();
+        this.name = activityName;
+        this.place = place;
+        this.room = room;
+        this.description = description;
+        this.date = date;
+        this.time = time;
+    }
+}
+
+const _activities: Activity[] = [
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00"),
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00"),
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00"),
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00"),
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00"),
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00"),
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00"),
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00"),
+    new Activity("Самый красивый колос",
+        "Кронверкский пр. 49",
+        "Ауд. 1265",
+        "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
+        "11.06.2024",
+        "15:30 - 17:00")
+]
+
 function EventActivitiesPage() {
+
     const _brandLogoClick = () => {
         console.log('brand logo!')
+    }
+
+    function _createActivity(activity: Activity) {
+        return (
+            <div className={styles.activity_container}>
+                <div className={styles.activity_info_column}>
+                    <div className={styles.activity_name}>{activity.name}</div>
+                    <div className={styles.activity_place_container}>
+                        <div className={styles.activity_place}>{activity.place}</div>
+                        <div className={styles.activity_place}>{activity.room}</div>
+                    </div>
+                    <div className={styles.activity_info}>{activity.description}</div>
+                </div>
+                <div className={styles.activity_time_column}>
+                    <div className={styles.activity_time}>{activity.date}</div>
+                    <div className={styles.activity_time}>{activity.time}</div>
+                </div>
+            </div>
+        )
+    }
+
+    function _createActivityRow(activities: Activity[]) {
+        const items = []
+        for (const activity of activities) {
+            items.push(_createActivity(activity));
+        }
+        return (
+            <div className={styles.activity_row}>
+                {items}
+            </div>
+        )
+    }
+
+    function _createActivityTable(maxRowLen: any, activities: Activity[]) {
+        const rows = []
+        let row = []
+        for (const activity of activities) {
+            row.push(activity);
+            if (row.length == maxRowLen) {
+                rows.push(_createActivityRow(row));
+                row = []
+            }
+        }
+
+        if (row.length > 0) {
+            rows.push(_createActivityRow(row));
+        }
+
+        return (
+            <div className={styles.activity_table}>
+                {rows}
+            </div>
+        )
     }
 
     return (
@@ -61,30 +200,16 @@ function EventActivitiesPage() {
             bottomRight=
                 {
                     <Content>
-                        <div className={styles.info_entry}>
-                            <p>{_eventInfo}</p>
-                        </div>
-                        <div className={styles.info_entry}>
-                            <p>Сроки регистрации:</p>
-                            <p>{_regDates}</p>
-                        </div>
-                        <div className={styles.info_entry}>
-                            <p>Сроки проведения:</p>
-                            <p>{_dates}</p>
-                        </div>
-                        <div className={styles.info_entry}>
-                            <p>Количество свободных мест:</p>
-                            <p>{_vacantSlots}</p>
-                        </div>
-                        <div className={styles.info_entry}>
-                            <p>Место проведения:</p>
-                            <p>{_place}</p>
-                        </div>
-                        <div className={styles.info_entry}>
-                            <p>Статус:</p>
-                            <p>{_status}</p>
-                        </div>
+                        <EventHeader
+                            eventInfo={_eventInfo}
+                            regDates={_regDates}
+                            dates={_dates}
+                            vacantSlots={_vacantSlots}
+                            place={_place}
+                            eventStatus={_status}
+                        />
                         <PageTabs value="Активности" items={_pageTabs}/>
+                        {_createActivityTable(3, _activities)}
                     </Content>
                 }
         />

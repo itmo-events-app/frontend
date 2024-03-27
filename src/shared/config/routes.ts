@@ -8,7 +8,7 @@ export enum AppRoutes {
   NOTIFY = "notify",
   ROLES = "roles",
   EVENT_CREATION = "createEvent",
-  EVENT_ACTIVITIES = "eventActivities",
+  EVENT_DATA = "eventData",
   NOT_FOUND = "notFound",
 }
 
@@ -28,6 +28,6 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.PASSWORD]: "/password",
   [AppRoutes.ROLES]: "/roles",
   [AppRoutes.EVENT_CREATION]: "/events/create",
-  [AppRoutes.EVENT_ACTIVITIES]: "/events/activities",
+  [AppRoutes.EVENT_DATA]: "/events/event",
   [AppRoutes.NOT_FOUND]: "*"
 };

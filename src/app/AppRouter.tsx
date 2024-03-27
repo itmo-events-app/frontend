@@ -42,8 +42,8 @@ const routes: Record<AppRoutes, RouteProps> = {
     path: RoutePaths.createEvent,
     element: <EventCreationPage />,
   },
-  [AppRoutes.EVENT_ACTIVITIES]: {
-    path: RoutePaths.eventActivities,
+  [AppRoutes.EVENT_DATA]: {
+    path: RoutePaths.eventData,
     element: <EventActivitiesPage />,
   },
   [AppRoutes.NOT_FOUND]: {

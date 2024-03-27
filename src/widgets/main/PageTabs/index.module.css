@@ -9,12 +9,12 @@
 .page_tab_container {
     border: none;
     background-color: var(--itmo-colors-white);
-    border-bottom: 2px solid var(--itmo-colors-dark-gray);
+    border-bottom: 1px solid var(--itmo-colors-dark-gray);
     padding: 5px 5px;
 }
 
 .page_tab_container_selected {
-    border-bottom: 2px solid var(--itmo-colors-blue-selected);
+    border-bottom: 3px solid var(--itmo-colors-blue-selected);;
     padding: 5px 5px;
 }
 
