@@ -12,29 +12,29 @@ type Props = {
 
 function EventHeader(props: Props) {
   return (
-      <div>
+      <div className={styles.info_header}>
         <div className={styles.info_entry}>
-          <p>{props.eventInfo}</p>
+          <div>{props.eventInfo}</div>
         </div>
         <div className={styles.info_entry}>
-          <p>Сроки регистрации:</p>
-          <p>{props.regDates}</p>
+          <div>Сроки регистрации:</div>
+          <div>{props.regDates}</div>
         </div>
         <div className={styles.info_entry}>
-          <p>Сроки проведения:</p>
-          <p>{props.dates}</p>
+          <div>Сроки проведения:</div>
+          <div>{props.dates}</div>
         </div>
         <div className={styles.info_entry}>
-          <p>Количество свободных мест:</p>
-          <p>{props.vacantSlots}</p>
+          <div>Количество свободных мест:</div>
+          <div>{props.vacantSlots}</div>
         </div>
         <div className={styles.info_entry}>
-          <p>Место проведения:</p>
-          <p>{props.place}</p>
+          <div>Место проведения:</div>
+          <div>{props.place}</div>
         </div>
         <div className={styles.info_entry}>
-          <p>Статус:</p>
-          <p>{props.eventStatus}</p>
+          <div>Статус:</div>
+          <div>{props.eventStatus}</div>
         </div>
       </div>
   )
