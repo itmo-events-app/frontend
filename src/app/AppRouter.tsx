@@ -6,6 +6,8 @@ import RestorePage from "@pages/Restore";
 import PasswordPage from "@pages/Password";
 import NotifyPage from "@pages/Notification";
 import RolesPage from "@pages/Roles";
+import EventCreationPage from "@pages/EventCreation";
+import EventActivitiesPage from "@pages/EventActivities";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -35,6 +37,14 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROLES]: {
     path: RoutePaths.roles,
     element: <RolesPage />,
+  },
+  [AppRoutes.EVENT_CREATION]: {
+    path: RoutePaths.createEvent,
+    element: <EventCreationPage />,
+  },
+  [AppRoutes.EVENT_DATA]: {
+    path: RoutePaths.eventData,
+    element: <EventActivitiesPage />,
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,

@@ -1,0 +1,13 @@
+.info_header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 20px;
+}
+
+.info_entry {
+    display: flex;
+    flex-direction: row;
+    margin-left: 5px;
+    gap: 10px;
+}
