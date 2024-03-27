@@ -2,8 +2,6 @@
     background-color: var(--itmo-colors-white);
     border: 1px solid var(--itmo-colors-black);
     border-radius: 10px;
-    font-size: 16px;
-    color: gray;
 }
 
 .dropdown_item_container {
@@ -12,16 +10,14 @@
     padding: 11px 11px;
 }
 
-.dropdown_item_container:not(.dropdown_item_container_selected):not(.dropdown_item_container_disabled):hover {
-    background-color: lightgray;
-    border-radius: 10px;
-    padding: 11px 11px;
+.dropdown_item_container:hover {
+    background-color: var(--itmo-colors-gray);
 }
 
 .dropdown_placeholder {
     text-decoration: none;
     font-size: 16px;
-    color: gray;
+    color: var(--itmo-colors-dark-gray);
 }
 
 .dropdown_item {
