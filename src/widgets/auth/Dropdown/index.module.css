@@ -3,13 +3,13 @@
     border: 1px solid var(--itmo-colors-black);
     border-radius: 10px;
     font-size: 16px;
+    color: gray;
 }
 
 .dropdown_item_container {
     background-color: var(--itmo-colors-white);
     border-radius: 10px;
     padding: 11px 11px;
-    color: var(--itmo-colors-black);
 }
 
 .dropdown_item_container:not(.dropdown_item_container_selected):not(.dropdown_item_container_disabled):hover {
@@ -18,16 +18,14 @@
     padding: 11px 11px;
 }
 
-.dropdown_item_container_selected {
-    background-color: var(--itmo-colors-blue-selected);
-    color: var(--itmo-colors-white);
-}
-
-.dropdown_item_container_disabled {
-    background-color: var(--itmo-colors-white);
+.dropdown_placeholder {
+    text-decoration: none;
+    font-size: 16px;
     color: gray;
 }
 
 .dropdown_item {
+    text-decoration: none;
     font-size: 16px;
+    color: var(--itmo-colors-black);
 }

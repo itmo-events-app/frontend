@@ -5,24 +5,13 @@ import { useState } from 'react'
 class DropdownOption {
     id: string
     text: string
-    private _selected: boolean
-    private _disabled: boolean
 
     constructor(
         text: string,
-        selected: boolean = false,
-        disabled: boolean = false,
     ) {
         this.id = uid();
         this.text = text;
-        this._selected = selected;
-        this._disabled = disabled;
     }
-
-    public get selected() { return this._selected; }
-    public get disabled() { return this._disabled; }
-    public set selected(value: boolean) { this._selected = value; }
-    public set disabled(value: boolean) { this._disabled = value; }
 }
 
 type Props = {
@@ -32,43 +21,46 @@ type Props = {
     items: DropdownOption[]
 }
 
+
 function Dropdown(props: Props) {
-    const [items, setItems] = useState(props.items);
+
+    const [open, setOpen] = useState(false);
+    const [selected, setSelected] = useState("");
+
+    function _select(item: DropdownOption) {
+        return () => {
+            setSelected(item.text);
+            setOpen(false);
+        }
+    }
 
     function _createOption(option: DropdownOption) {
-        const selectedStyle = ' ' + (option.selected && !option.disabled ? styles.dropdown_item_container_selected : '');
-        const disabledStyle = ' ' + (option.disabled ? styles.dropdown_item_container_disabled : '');
-
-        return (<div className={styles.dropdown_item_container + ' ' + (props.className ?? '') + selectedStyle + disabledStyle}>
-                    <div className={styles.dropdown_item}>
-                        {option.text}
-                    </div>
-                </div>
-                );
+        return (
+            <div className={styles.dropdown_item_container + ' ' + (props.className ?? '')} onClick={_select(option)}>
+                <a href="#" className={styles.dropdown_item} onClick={_select(option)}>{option.text}</a>
+            </div>
+        );
     }
 
     function _createOptionList(options: DropdownOption[]) {
-        const elements = []
+        const items = []
         for (const option of options) {
-            elements.push(_createOption(option));
+            items.push(_createOption(option));
         }
-        return elements;
+        return items;
     }
 
-    function _expand() {
-        return () => {
-            setItems([...items]); // NOTE: force object recreation
-        }
-    }
-
-    return  <div onClick={_expand()} className={styles.dropdown + ' ' + (props.className ?? '')}>
-                <div className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_disabled + ' ' + (props.className ?? '')}>
-                    <div className={styles.dropdown_item}>
-                        {props.placeholder}
-                    </div>
-                </div>
-                {_createOptionList(items)}
+    return (
+        <div className={styles.dropdown}>
+            <div className={styles.dropdown_item_container} onClick={() => setOpen(!open)}>
+                <a href="#" className={styles.dropdown_placeholder + ' ' + (props.className ?? '')} onClick={() => setOpen(!open)}>
+                    {selected == "" ? props.placeholder : selected}
+                </a>
             </div>
+
+            {open && _createOptionList(props.items)}
+        </div>
+    );
 }
 
 export default Dropdown
