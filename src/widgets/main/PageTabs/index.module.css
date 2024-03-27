@@ -3,11 +3,13 @@
     background-color: var(--itmo-colors-white);
     display: flex;
     flex-direction: row;
+    gap: 20px
 }
 
 .page_tab_container {
     border: none;
     background-color: var(--itmo-colors-white);
+    border-bottom: 2px solid var(--itmo-colors-dark-gray);
     padding: 5px 5px;
 }
 
@@ -23,7 +25,7 @@
 .page_tab {
     text-decoration: none;
     font-size: 16px;
-    color: var(--itmo-colors-black);
+    color: var(--itmo-colors-dark-gray);
 }
 
 .page_tab_selected {
