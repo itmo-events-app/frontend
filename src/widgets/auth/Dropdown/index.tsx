@@ -44,18 +44,43 @@ function Dropdown(props: Props) {
 
     function _clearOption() {
         return (
-            <div className={styles.dropdown_item_container + ' ' + (props.className ?? '')} onClick={_resetSelection()}>
+            <div
+                className={styles.dropdown_item_container + ' ' + (props.className ?? '')}
+                onClick={_resetSelection()}
+            >
                 <a href="#" className={styles.dropdown_placeholder} onClick={_resetSelection()}>Сброс выбора</a>
             </div>
         );
     }
 
-    function _createOption(option: DropdownOption) {
+    function _createUnselectedOption(option: DropdownOption) {
         return (
-            <div className={styles.dropdown_item_container + ' ' + (props.className ?? '')} onClick={_select(option)}>
+            <div
+                className={styles.dropdown_item_container + ' ' + (props.className ?? '')}
+                onClick={_select(option)}
+            >
                 <a href="#" className={styles.dropdown_item} onClick={_select(option)}>{option.text}</a>
             </div>
         );
+    }
+
+    function _createSelectedOption(option: DropdownOption) {
+        return (
+            <div
+                className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_selected + ' ' + (props.className ?? '')}
+                onClick={_select(option)}
+            >
+                <a href="#" className={styles.dropdown_item_selected} onClick={_select(option)}>{option.text}</a>
+            </div>
+        );
+    }
+
+    function _createOption(option: DropdownOption) {
+        if (option.text == selected) {
+            return _createSelectedOption(option);
+        } else {
+            return _createUnselectedOption(option);
+        }
     }
 
     function _createOptionList(options: DropdownOption[]) {

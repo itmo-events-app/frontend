@@ -10,7 +10,13 @@
     padding: 11px 11px;
 }
 
-.dropdown_item_container:hover {
+.dropdown_item_container_selected {
+    background-color: var(--itmo-colors-blue-selected);
+    border-radius: 10px;
+    padding: 11px 11px;
+}
+
+.dropdown_item_container:not(.dropdown_item_container_selected):hover {
     background-color: var(--itmo-colors-gray);
 }
 
@@ -24,4 +30,10 @@
     text-decoration: none;
     font-size: 16px;
     color: var(--itmo-colors-black);
+}
+
+.dropdown_item_selected {
+    text-decoration: none;
+    font-size: 16px;
+    color: var(--itmo-colors-white);
 }
