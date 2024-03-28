@@ -1,15 +1,10 @@
-.activity_table {
-  display: flex;
-  flex-direction: column;
-  padding-top: 20px;
-  padding-bottom: 50px;
-  gap: 30px;
-}
-
-.activity_row {
+.data_table {
   display: flex;
   flex-direction: row;
+  flex-flow: row wrap;
   justify-content: stretch;
+  padding-top: 20px;
+  padding-bottom: 50px;
   gap: 30px;
 }
 
@@ -54,7 +49,7 @@
   color: var(--itmo-colors-black);
 }
 
-.activity_info {
+.info_block {
   font-size: 16px;
   color: var(--itmo-colors-dark-gray);
 }
@@ -63,4 +58,32 @@
   font-size: 16px;
   color: var(--itmo-colors-dark-gray);
   text-align: center;
+}
+
+.member_container {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  gap: 20px;
+}
+
+.member_isu_id_container {
+  border-radius: 15px;
+  background-color: var(--itmo-colors-blue-10);
+  padding: 7px;
+  width: 50px;
+}
+
+.member_name {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--itmo-colors-black);
+}
+
+.member_isu_id {
+  text-align: center;
+  font-size: 13px;
+  color: var(--itmo-colors-blue);
 }

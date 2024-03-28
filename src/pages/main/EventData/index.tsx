@@ -1,5 +1,6 @@
 import { uid } from 'uid'
 import { Home, Menu, Noted, Users } from '@shared/ui/icons';
+import { useState } from 'react'
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
@@ -39,13 +40,6 @@ const _place: string = "Кронверкский проспект 49";
 
 const _status: string = "Активное";
 
-const _pageTabs: PageTab[] = [
-  new PageTab("Активности"),
-  new PageTab("Организаторы"),
-  new PageTab("Участники"),
-  new PageTab("Задачи")
-]
-
 class Activity {
   id: string
   name: string
@@ -70,6 +64,30 @@ class Activity {
     this.description = description;
     this.date = date;
     this.time = time;
+  }
+}
+
+class Member {
+  id: string
+  isu_id: string
+  name: string
+  spec: string
+  phone_num: string
+  email: string
+
+  constructor(
+    isu_id: string,
+    name: string,
+    spec: string,
+    phone_num: string,
+    email: string,
+  ) {
+    this.id = uid();
+    this.isu_id = isu_id;
+    this.name = name;
+    this.spec = spec;
+    this.phone_num = phone_num;
+    this.email = email;
   }
 }
 
@@ -130,6 +148,72 @@ const _activities: Activity[] = [
     "15:30 - 17:00")
 ]
 
+const _members: Member[] = [
+  new Member(
+    "222222",
+    "Курочкина Дарья Сергеевна",
+    "Студент, 2-й курс, D42001, Институт М....",
+    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  ),
+  new Member(
+    "222222",
+    "Курочкина Дарья Сергеевна",
+    "Студент, 2-й курс, D42001, Институт М....",
+    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  ),
+  new Member(
+    "222222",
+    "Курочкина Дарья Сергеевна",
+    "Студент, 2-й курс, D42001, Институт М....",
+    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  ),
+  new Member(
+    "222222",
+    "Курочкина Дарья Сергеевна",
+    "Студент, 2-й курс, D42001, Институт М....",
+    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  ),
+  new Member(
+    "222222",
+    "Курочкина Дарья Сергеевна",
+    "Студент, 2-й курс, D42001, Институт М....",
+    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  ),
+  new Member(
+    "222222",
+    "Курочкина Дарья Сергеевна",
+    "Студент, 2-й курс, D42001, Институт М....",
+    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  ),
+  new Member(
+    "222222",
+    "Курочкина Дарья Сергеевна",
+    "Студент, 2-й курс, D42001, Институт М....",
+    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  ),
+  new Member(
+    "222222",
+    "Курочкина Дарья Сергеевна",
+    "Студент, 2-й курс, D42001, Институт М....",
+    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  )
+]
+
+const _pageTabs: PageTab[] = [
+  new PageTab("Активности"),
+  new PageTab("Организаторы"),
+  new PageTab("Участники"),
+  new PageTab("Задачи")
+]
+
 function EventActivitiesPage() {
 
   const _brandLogoClick = () => {
@@ -145,7 +229,7 @@ function EventActivitiesPage() {
             <div className={styles.activity_place}>{activity.place}</div>
             <div className={styles.activity_place}>{activity.room}</div>
           </div>
-          <div className={styles.activity_info}>{activity.description}</div>
+          <div className={styles.info_block}>{activity.description}</div>
         </div>
         <div className={styles.activity_time_column}>
           <div className={styles.activity_time}>{activity.date}</div>
@@ -155,47 +239,58 @@ function EventActivitiesPage() {
     )
   }
 
-  function _createActivityRow(activities: Activity[]) {
+  function _createActivityTable(activities: Activity[]) {
     const items = []
     for (const activity of activities) {
       items.push(_createActivity(activity));
     }
     return (
-      <div className={styles.activity_row}>
+      <div className={styles.data_table}>
         {items}
       </div>
     )
   }
 
-  function _createActivityTable(maxRowLen: any, activities: Activity[]) {
-    const rows = []
-    let row = []
-    for (const activity of activities) {
-      row.push(activity);
-      if (row.length == maxRowLen) {
-        rows.push(_createActivityRow(row));
-        row = []
-      }
-    }
-
-    if (row.length > 0) {
-      rows.push(_createActivityRow(row));
-    }
-
+  function _createMember(member: Member) {
     return (
-      <div className={styles.activity_table}>
-        {rows}
+      <div className={styles.member_container}>
+        <div className={styles.member_isu_id_container}>
+          <div className={styles.member_isu_id}>
+            {member.isu_id}
+          </div>
+        </div>
+        <div className={styles.member_name}>
+          {member.name}
+        </div>
+        <div className={styles.info_block}>
+          {member.spec}
+        </div>
       </div>
     )
+  }
+
+  function _createMemberTable(members: Member[]) {
+    const items = []
+    for (const member of members) {
+      items.push(_createMember(member));
+    }
+    return (
+      <div className={styles.data_table}>
+        {items}
+      </div>
+    )
+  }
+
+  const [selectedTab, setSelectedTab] = useState("Активности");
+
+  function pageTabHandler(tab_name: string) {
+    setSelectedTab(tab_name);
   }
 
   return (
     <Layout
       topLeft={<BrandLogo onClick={_brandLogoClick} />}
-      topRight=
-      {
-        <PageName text={_eventName} />
-      }
+      topRight={<PageName text={_eventName} />}
       bottomLeft={<SideBar tabs={_tabs} />}
       bottomRight=
       {
@@ -208,8 +303,11 @@ function EventActivitiesPage() {
             place={_place}
             eventStatus={_status}
           />
-          <PageTabs value="Активности" items={_pageTabs} />
-          {_createActivityTable(3, _activities)}
+          <PageTabs value="Активности" selectionHandler={pageTabHandler} items={_pageTabs}/>
+          {selectedTab == "Активности" && _createActivityTable(_activities)}
+          {selectedTab == "Организаторы" && "ToDo: Страница организаторов"}
+          {selectedTab == "Участники" && _createMemberTable(_members)}
+          {selectedTab == "Задачи" && "ToDo: Страница задач"}
         </Content>
       }
     />

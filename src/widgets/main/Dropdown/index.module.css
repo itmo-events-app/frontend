@@ -7,17 +7,18 @@
 .dropdown_item_container {
   background-color: var(--itmo-colors-white);
   border-radius: 10px;
-  padding: 11px 11px;
+  padding: 9px 9px;
 }
 
 .dropdown_item_container_selected {
   background-color: var(--itmo-colors-blue-selected);
   border-radius: 10px;
-  padding: 11px 11px;
+  padding: 9px 9px;
 }
 
 .dropdown_item_container:not(.dropdown_item_container_selected):hover {
   background-color: var(--itmo-colors-gray);
+  cursor: pointer;
 }
 
 .dropdown_placeholder {
