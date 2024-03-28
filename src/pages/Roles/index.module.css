@@ -1,0 +1,29 @@
+.root {
+  display: grid;
+  grid-template-columns: min-content auto;
+  height: 100%;
+}
+
+.grid_one {
+  grid-column: 1;
+  grid-row: 1;
+  background-color: red;
+}
+
+.grid_two {
+  grid-column: 1;
+  grid-row: 2;
+  background-color: green;
+}
+
+.grid_three {
+  grid-column: 2;
+  grid-row: 1;
+  background-color: blue;
+}
+
+.grid_four {
+  grid-column: 2;
+  grid-row: 2;
+  background-color: yellow;
+}

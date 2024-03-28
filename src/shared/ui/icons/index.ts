@@ -6,5 +6,6 @@ import Noted from './svg/Noted.svg?react';
 import ReactLogo from "./svg/ReactLogo.svg?react";
 import Users from './svg/Users.svg?react';
 import ViteLogo from "./svg/ViteLogo.svg?react";
+import Search from "./svg/Search.svg?react";
 
-export { ArrowDown, Home, Menu, Noted, ReactLogo, ViteLogo, Users, ITMOLogo };
+export { ArrowDown, Home, Menu, Noted, ReactLogo, ViteLogo, Users, ITMOLogo, Search };
