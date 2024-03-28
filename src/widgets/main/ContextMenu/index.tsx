@@ -1,11 +1,12 @@
 import { uid } from 'uid';
 import styles from './index.module.css';
 import { forwardRef, } from 'react';
+import { appendClassName } from '@shared/util';
 
 class ContextMenuItem {
   private _text: string;
-  private _func: () => void;
-  constructor(text: string, func: () => void) {
+  private _func: (e: React.MouseEvent) => void;
+  constructor(text: string, func: (e: React.MouseEvent) => void) {
     this._text = text;
     this._func = func;
   }
@@ -37,7 +38,7 @@ function _createItemList(items: ContextMenuItem[]) {
 
 const ContextMenu = forwardRef((props: Props, ref) => {
   return (
-    <div className={styles.menu} style={props.style} ref={ref as any}>
+    <div className={appendClassName(styles.menu, props.className)} style={props.style} ref={ref as any}>
       {_createItemList(props.items)}
     </div>
   )

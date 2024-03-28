@@ -5,13 +5,16 @@ import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
 import SideBar, { SideBarTab } from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
-
-import styles from './index.module.css'
 import Button from '@widgets/main/Button';
 import RoleList from '@widgets/main/RoleList';
 import { PrivilegeModel, RoleModel } from '@entities/Role';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { useEffect, useRef, useState } from 'react';
+import Dialog from '@widgets/main/Dialog';
+import { appendClassName } from '@shared/util';
+
+import styles from './index.module.css'
+import Fade from '@widgets/main/Fade';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -31,6 +34,19 @@ class ContextMenuData {
     this.visible = visible;
     this.items = items;
   }
+}
+
+class DialogData {
+  content: any;
+  visible: boolean;
+  constructor(
+    content?: any,
+    visible: boolean = false,
+  ) {
+    this.content = content;
+    this.visible = visible;
+  }
+
 }
 
 const _tabs: SideBarTab[] = [
@@ -67,9 +83,29 @@ const _roles: RoleModel[] = [
   new RoleModel(1, 'PLAIN', [], 'Пользователь без привилегий')
 ]
 
+const _CreateRoleDialogContent = () => {
+  return (
+    <div className={styles.dialog_content}>
+      Create role
+    </div>
+  );
+}
+
+const _UpdateRoleDialogContent = (props: {role: RoleModel}) => {
+  return (
+    <div className={styles.dialog_content}>
+      Update role + <div>{props.role.name}</div>
+    </div>
+  );
+}
+
+
 function RolesPage() {
   const [cmData, setCmData] = useState(new ContextMenuData());
+  const [dialogData, setDialogData] = useState(new DialogData(true));
+
   const cmRef = useRef(null);
+  const dialogRef = useRef(null);
 
   // set context menu position. not using transform(-100%, 0%) to handle content bounds
   // NOTE: can move to controller object
@@ -82,22 +118,46 @@ function RolesPage() {
     }
   })
 
-  // close context menu when clicking not on context menu
+  // close context menu when clicking outside
   useEffect(() => {
     const handler = (e: any) => {
       if (cmRef.current) {
         if (cmData.visible && !(cmRef.current as any).contains(e.target)) {
-          setCmData(new ContextMenuData());
+          _closeContextMenu();
         }
       }
     }
-
     document.addEventListener('click', handler);
-
     return () => {
       document.removeEventListener('click', handler);
     }
   }, [cmData, cmRef]);
+
+  // close dialog when clicking outside
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (dialogRef.current) {
+        if (dialogData.visible && !(dialogRef.current as any).contains(e.target)) {
+          console.log('closing dialog.');
+          _closeDialog();
+        }
+      }
+    }
+    document.addEventListener('click', handler);
+    return () => {
+      document.removeEventListener('click', handler);
+    }
+  }, [dialogData, dialogRef]);
+
+
+  const _closeDialog = () => {
+    setDialogData(new DialogData());
+  }
+
+  const _closeContextMenu = () => {
+    setCmData(new ContextMenuData());
+  }
+
 
   const _brandLogoClick = () => {
     console.log('brand logo!')
@@ -107,40 +167,27 @@ function RolesPage() {
     console.log(v);
   }
 
-  const _createRole = (v: any) => {
-    console.log(v);
+  const _createRole = (e: MouseEvent) => {
+    setDialogData(new DialogData(_CreateRoleDialogContent(), true));
+    e.stopPropagation();
   }
 
   const _onMenuClick = (role: RoleModel, e: React.MouseEvent) => {
     const _contextItems: ContextMenuItem[] = [
       new ContextMenuItem('Удалить', () => {
-        console.log(role, 'delete!')
         setCmData({ ...cmData, visible: false });
       }),
-      new ContextMenuItem('Редактировать', () => {
-        console.log(role, 'edit!')
+      new ContextMenuItem('Редактировать', (e: React.MouseEvent) => {
         setCmData({ ...cmData, visible: false });
+        setDialogData(new DialogData(_UpdateRoleDialogContent({role: role}), true));
+        e.stopPropagation();
       }),
       new ContextMenuItem('Дублировать', () => {
-        console.log(role, 'duplicate!')
         setCmData({ ...cmData, visible: false });
       }),
     ]
     e.stopPropagation();
     setCmData(new ContextMenuData(e.clientX, e.clientY, true, _contextItems));
-  }
-
-  const _ContextMenu = () => {
-    const style: React.CSSProperties = {
-      position: 'absolute',
-      visibility: cmData.visible ? 'visible' : 'hidden',
-    }
-
-    return <ContextMenu
-      items={cmData.items}
-      style={style}
-      ref={cmRef}
-    />;
   }
 
   const _RolesContent = () => {
@@ -151,11 +198,32 @@ function RolesPage() {
           <Button onClick={_createRole} >Создать роль</Button>
         </div>
         <RoleList roles={_roles} onMenuClick={_onMenuClick} />
-        <_ContextMenu />
       </Content>
     )
   }
 
+  const _ContextMenu = () => {
+    return <ContextMenu
+      items={cmData.items}
+      className={appendClassName(styles.context_menu,
+        (cmData.visible ? styles.visible : styles.hidden))}
+      ref={cmRef}
+    />;
+  }
+
+  const _Dialog = () => {
+    return (
+      <Dialog
+        className={appendClassName(styles.dialog,
+          (dialogData.visible ? styles.visible : styles.hidden))}
+        text="Создать роль"
+        ref={dialogRef}
+        onClose={_closeDialog}
+      >
+        {dialogData.content}
+      </Dialog>
+    )
+  }
 
   return (
     <Layout
@@ -163,7 +231,14 @@ function RolesPage() {
       topRight={<PageName text="Список ролей" />}
       bottomLeft={<SideBar tabs={_tabs} />}
       bottomRight={<_RolesContent />}
-    />
+    >
+      <_ContextMenu />
+      <Fade
+        className={appendClassName(styles.fade,
+          (dialogData.visible) ? styles.visible : styles.hidden)}>
+        <_Dialog />
+      </Fade>
+    </Layout>
   );
 }
 

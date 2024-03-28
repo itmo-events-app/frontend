@@ -4,24 +4,28 @@ type Props = {
   topLeft?: any,
   topRight?: any,
   bottomLeft?: any,
-  bottomRight?: any
+  bottomRight?: any,
+  children?: any, // fixed positioned children
 }
 
 function Layout(props: Props) {
   return (
     <div className={styles.root}>
-      <div className={styles.grid_one}>
-        {props.topLeft}
+      <div className={styles.grid}>
+        <div className={styles.grid_one}>
+          {props.topLeft}
+        </div>
+        <div className={styles.grid_two}>
+          {props.topRight}
+        </div>
+        <div className={styles.grid_three}>
+          {props.bottomLeft}
+        </div>
+        <div className={styles.grid_four}>
+          {props.bottomRight}
+        </div>
       </div>
-      <div className={styles.grid_two}>
-        {props.topRight}
-      </div>
-      <div className={styles.grid_three}>
-        {props.bottomLeft}
-      </div>
-      <div className={styles.grid_four}>
-        {props.bottomRight}
-      </div>
+      {props.children} 
     </div>
   )
 }
