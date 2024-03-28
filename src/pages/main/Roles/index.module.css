@@ -39,5 +39,19 @@
 }
 
 .dialog_content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
+.dialog_form {
+  display: flex;
+  flex-direction:column;
+  gap: 10px;
+}
+
+.dialog_item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

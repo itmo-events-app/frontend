@@ -15,6 +15,9 @@ import { appendClassName } from '@shared/util';
 
 import styles from './index.module.css'
 import Fade from '@widgets/main/Fade';
+import Input from '@widgets/main/Input';
+import InputLabel from '@widgets/main/InputLabel';
+import SelectionList from '@widgets/main/SelectionList';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -83,18 +86,48 @@ const _roles: RoleModel[] = [
   new RoleModel(1, 'PLAIN', [], 'Пользователь без привилегий')
 ]
 
-const _CreateRoleDialogContent = () => {
+const _privileges: PrivilegeModel[] = [
+  new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
+  new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
+  new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
+]
+
+function _displayPrivilege(item: PrivilegeModel) {
+  return item.name + " - " + item.description;
+}
+
+const _CreateRoleDialogContent = (props: {onDone: any}) => {
   return (
     <div className={styles.dialog_content}>
-      Create role
+      <div className={styles.dialog_form}>
+        <div className={styles.dialog_item}>
+          <InputLabel value="Название роли" />
+          <Input value="РОЛЬ" />
+        </div>
+        <div className={styles.dialog_item}>
+          <InputLabel value="Список привилегий" />
+          <SelectionList items={_privileges} displayName={_displayPrivilege} />
+        </div>
+      </div>
+      <Button onClick={props.onDone}>Создать</Button>
     </div>
   );
 }
 
-const _UpdateRoleDialogContent = (props: {role: RoleModel}) => {
+const _UpdateRoleDialogContent = (props: { role: RoleModel, onDone: any }) => {
   return (
     <div className={styles.dialog_content}>
-      Update role + <div>{props.role.name}</div>
+      <div className={styles.dialog_form}>
+        <div className={styles.dialog_item}>
+          <InputLabel value="Название роли" />
+          <Input value={props.role.name} />
+        </div>
+        <div className={styles.dialog_item}>
+          <InputLabel value="Список привилегий" />
+          <SelectionList items={_privileges} displayName={_displayPrivilege} />
+        </div>
+      </div>
+      <Button onClick={props.onDone}>Изменить</Button>
     </div>
   );
 }
@@ -168,7 +201,7 @@ function RolesPage() {
   }
 
   const _createRole = (e: MouseEvent) => {
-    setDialogData(new DialogData(_CreateRoleDialogContent(), true));
+    setDialogData(new DialogData(_CreateRoleDialogContent({onDone: _closeDialog}), true));
     e.stopPropagation();
   }
 
@@ -179,7 +212,7 @@ function RolesPage() {
       }),
       new ContextMenuItem('Редактировать', (e: React.MouseEvent) => {
         setCmData({ ...cmData, visible: false });
-        setDialogData(new DialogData(_UpdateRoleDialogContent({role: role}), true));
+        setDialogData(new DialogData(_UpdateRoleDialogContent({ role: role, onDone: _closeDialog }), true));
         e.stopPropagation();
       }),
       new ContextMenuItem('Дублировать', () => {
