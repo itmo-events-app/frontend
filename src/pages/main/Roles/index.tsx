@@ -4,7 +4,6 @@ import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
 import SideBar, { SideBarTab } from '@widgets/main/SideBar';
-import EventCreationPage from "@pages/EventCreation";
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -17,7 +16,7 @@ const _tabs: SideBarTab[] = [
   ], true),
   new SideBarTab('Площадки', <Home />, [
     new SideBarTab('Доступные'),
-    new SideBarTab('Создание', <EventCreationPage />),
+    new SideBarTab('Создание'),
   ]),
   new SideBarTab('Уведомления', <Noted />),
   new SideBarTab('Профиль', <Users />),

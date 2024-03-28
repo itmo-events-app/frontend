@@ -10,7 +10,12 @@ import { useState } from "react";
 import { ITMO } from "@widgets/auth/ITMO";
 
 
-function LoginPage() {
+export function appendClassName(base: string, add?: string | null) {
+if (add == null) {
+  return base;
+}
+return base + ' ' + add;
+}function LoginPage() {
   const [isError, _] = useState(true);
 
   const _forgotPassword = () => {

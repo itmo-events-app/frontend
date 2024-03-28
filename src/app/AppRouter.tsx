@@ -1,13 +1,13 @@
-import LoginPage from "@pages/Login";
 import { AppRoutes, RoutePaths } from "@shared/config/routes";
 import { Route, Routes, RouteProps, Navigate } from "react-router-dom";
-import RegisterPage from "@pages/Register";
-import RestorePage from "@pages/Restore";
-import PasswordPage from "@pages/Password";
-import NotifyPage from "@pages/Notification";
-import RolesPage from "@pages/Roles";
-import EventCreationPage from "@pages/EventCreation";
-import EventActivitiesPage from "@pages/EventActivities";
+import LoginPage from "@pages/auth/Login";
+import RegisterPage from "@pages/auth/Register";
+import RestorePage from "@pages/auth/Restore";
+import PasswordPage from "@pages/auth/Password";
+import NotifyPage from "@pages/auth/Notification";
+import RolesPage from "@pages/main/Roles";
+import EventCreationPage from "@pages/main/EventCreation";
+import EventActivitiesPage from "@pages/main/EventActivities";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
