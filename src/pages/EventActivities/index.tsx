@@ -155,36 +155,14 @@ function EventActivitiesPage() {
         )
     }
 
-    function _createActivityRow(activities: Activity[]) {
+    function _createActivityTable(activities: Activity[]) {
         const items = []
         for (const activity of activities) {
             items.push(_createActivity(activity));
         }
         return (
-            <div className={styles.activity_row}>
-                {items}
-            </div>
-        )
-    }
-
-    function _createActivityTable(maxRowLen: any, activities: Activity[]) {
-        const rows = []
-        let row = []
-        for (const activity of activities) {
-            row.push(activity);
-            if (row.length == maxRowLen) {
-                rows.push(_createActivityRow(row));
-                row = []
-            }
-        }
-
-        if (row.length > 0) {
-            rows.push(_createActivityRow(row));
-        }
-
-        return (
             <div className={styles.activity_table}>
-                {rows}
+                {items}
             </div>
         )
     }
@@ -209,7 +187,7 @@ function EventActivitiesPage() {
                             eventStatus={_status}
                         />
                         <PageTabs value="Активности" items={_pageTabs}/>
-                        {_createActivityTable(3, _activities)}
+                        {_createActivityTable(_activities)}
                     </Content>
                 }
         />

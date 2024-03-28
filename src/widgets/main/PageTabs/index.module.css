@@ -14,7 +14,7 @@
 }
 
 .page_tab_container_selected {
-    border-bottom: 3px solid var(--itmo-colors-blue-selected);;
+    border-bottom: 3px solid var(--itmo-colors-blue-selected);
     padding: 5px 5px;
 }
 

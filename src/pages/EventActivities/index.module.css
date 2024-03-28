@@ -1,15 +1,10 @@
 .activity_table {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-flow: row wrap;
+    justify-content: stretch;
     padding-top: 20px;
     padding-bottom: 50px;
-    gap: 30px;
-}
-
-.activity_row {
-    display: flex;
-    flex-direction: row;
-    justify-content: stretch;
     gap: 30px;
 }
 
