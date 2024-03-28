@@ -1,0 +1,83 @@
+.roles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.role {
+  border: 1px solid var(--itmo-colors-border);
+  border-radius: 10px;
+}
+
+.role_entry {
+  display: flex;
+  justify-content: space-between;
+  user-select: none;
+  cursor: pointer;
+}
+
+.role_left {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.role_right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 10px 5px 5px;
+  justify-content: space-between;
+}
+
+.role_name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.role_description {
+  font-size: 14px;
+}
+
+.icon_dots {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.icon_expand {
+  width: 24px;
+  height: 24px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.expanded {
+  transform: rotate(180deg);
+}
+
+.privileges {
+  display: table;
+  table-layout: auto;
+  width: 100%;
+  font-size: 14px;
+  border-top: 1px solid var(--itmo-colors-border);
+}
+
+.privilege {
+  display: table-row;
+}
+
+.privilege_name {
+  display: table-cell;
+  white-space: nowrap;
+  border-right: 1px solid var(--itmo-colors-border);
+  padding: 5px 10px;
+}
+
+.privilege_description {
+  display: table-cell;
+  padding: 5px 10px;
+}

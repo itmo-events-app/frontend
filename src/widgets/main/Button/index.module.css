@@ -1,0 +1,13 @@
+.button {
+  font-size: 16px;
+  padding: 10px;
+  white-space: nowrap;
+  background-color: white;
+  border: 1px solid var(--itmo-colors-border);
+  border-radius: 5px;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: var(--itmo-colors-hover-background);
+}

@@ -7,7 +7,6 @@
 
 .tab {
   cursor: pointer;
-  user-select: none;
 }
 
 .tab_children {
@@ -21,10 +20,11 @@
 .tab_entry {
   display: flex;
   gap: 10px;
+  user-select: none;
 }
 
 .selected {
-  color: var(--itmo-colors-blue-selected);
+  filter: var(--itmo-filter-blue-selected);
 }
 
 .icon_cnt {

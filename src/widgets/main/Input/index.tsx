@@ -9,7 +9,7 @@ type Props = {
 }
 
 function Input(props: Props) {
-  return <input type={props.type} placeholder={props.placeholder} className={appendClassName(styles.input, props.className)} value={props.value} />
+  return <input type={props.type} placeholder={props.placeholder} className={appendClassName(styles.input, props.className)} defaultValue={props.value} />
 }
 
 export default Input
