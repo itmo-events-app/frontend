@@ -1,3 +1,4 @@
+import { appendClassName } from '@shared/util'
 import styles from './index.module.css'
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 }
 
 function Button(props: Props) {
-  return <button className={styles.button + ' ' + (props.className ?? '')} onClick={props.onClick}>{props.children}</button>
+  return <button className={appendClassName(styles.button, props.className)} onClick={props.onClick}>{props.children}</button>
 }
 
 export default Button

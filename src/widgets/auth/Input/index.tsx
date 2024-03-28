@@ -1,3 +1,4 @@
+import { appendClassName } from '@shared/util'
 import styles from './index.module.css'
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
 }
 
 function Input(props: Props) {
-  return <input type={props.type} placeholder={props.placeholder} className={styles.input + ' ' + (props.className ?? '')} value={props.value} />
+  return <input type={props.type} placeholder={props.placeholder} className={appendClassName(styles.input, props.className)} value={props.value} />
 }
 
 export default Input

@@ -43,6 +43,7 @@ const _tabs: SideBarTab[] = [
   new SideBarTab('Площадки', <Home />, [
     new SideBarTab('Доступные'),
     new SideBarTab('Создание'),
+    new SideBarTab('Созданиe'),
   ]),
   new SideBarTab('Уведомления', <Noted />),
   new SideBarTab('Профиль', <Users />),

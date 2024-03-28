@@ -1,3 +1,4 @@
+import { appendClassName } from '@shared/util'
 import styles from './index.module.css'
 
 type Props = {
@@ -6,7 +7,7 @@ type Props = {
 }
 
 function Content(props: Props) {
-  return <div className={styles.content + ' ' + (props.className ?? '')}>{props.children}</div>
+  return <div className={appendClassName(styles.content, props.className)}>{props.children}</div>
 }
 
 export default Content

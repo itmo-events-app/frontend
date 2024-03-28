@@ -3,6 +3,7 @@ import styles from './index.module.css'
 import { PrivilegeModel, RoleModel } from '@entities/Role'
 import { ArrowDown, MenuVertical } from '@shared/ui/icons'
 import { useState } from 'react'
+import { appendClassName } from '@shared/util'
 
 type Props = {
   roles: RoleModel[],
@@ -55,7 +56,7 @@ function RoleList(props: Props) {
     const hasPrivileges = role.entry.privileges.length > 0;
     const Arrow = hasPrivileges
       ? <ArrowDown
-        className={styles.icon_expand + ' ' + (role.expanded ? styles.expanded : '')} />
+        className={appendClassName(styles.icon_expand, (role.expanded ? styles.expanded : null))} />
       : <></>;
 
     const onMenuClick = props.onMenuClick ?? ((_) => { });
@@ -104,3 +105,4 @@ function RoleList(props: Props) {
 }
 
 export default RoleList;
+

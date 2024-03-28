@@ -2,6 +2,7 @@ import { uid } from 'uid'
 import styles from './index.module.css'
 import { useState } from 'react'
 import { ArrowDown } from '@shared/ui/icons'
+import { appendClassName } from '@shared/util'
 
 class SideBarTab {
   id: string
@@ -51,13 +52,13 @@ function SideBar(props: Props) {
     const entryIcon = tab.icon ? <div className={styles.icon_cnt}>{tab.icon}</div> : <></>;
     const entryText = <div className={styles.text_cnt}>{tab.text}</div>;
     const entryArrow = tab.children.length > 0
-      ? (<ArrowDown className={styles.arrow + ' ' + (tab.expanded ? styles.arrow_down : styles.arrow_up)} />)
+      ? (<ArrowDown className={appendClassName(styles.arrow, (tab.expanded ? styles.arrow_down : styles.arrow_up))} />)
       : <></>;
 
     return (
       <div key={tab.id} className={styles.tab}>
         <div
-          className={styles.tab_entry + ' ' + (tab.selected ? styles.selected : '')}
+          className={appendClassName(styles.tab_entry, (tab.selected ? styles.selected : null))}
           onClick={_expandTab(tab)}>
           {entryIcon}
           {entryText}
