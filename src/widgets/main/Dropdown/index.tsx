@@ -91,12 +91,26 @@ function Dropdown(props: Props) {
     return items;
   }
 
+  function _renderPlaceholder(text: string) {
+    return (
+      <a href="#" className={styles.dropdown_placeholder + ' ' + (props.className ?? '')} onClick={() => setOpen(!open)}>
+        {text}
+      </a>
+    );
+  }
+
+  function _renderSelectedOption(text: string) {
+    return (
+      <a href="#" className={styles.dropdown_selected_option + ' ' + (props.className ?? '')} onClick={() => setOpen(!open)}>
+        {text}
+      </a>
+    )
+  }
+
   return (
     <div className={styles.dropdown}>
       <div className={styles.dropdown_item_container} onClick={() => setOpen(!open)}>
-        <a href="#" className={styles.dropdown_placeholder + ' ' + (props.className ?? '')} onClick={() => setOpen(!open)}>
-          {selected == "" ? props.placeholder : selected}
-        </a>
+        {selected == "" ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(selected)}
       </div>
 
       {open && props.clearable && _clearOption()}
