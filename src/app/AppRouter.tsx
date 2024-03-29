@@ -7,7 +7,7 @@ import PasswordPage from "@pages/auth/Password";
 import NotifyPage from "@pages/auth/Notification";
 import RolesPage from "@pages/main/Roles";
 import EventCreationPage from "@pages/main/EventCreation";
-import EventActivitiesPage from "@pages/main/EventActivities";
+import EventActivitiesPage from "@pages/main/EventData";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {

@@ -1,14 +1,13 @@
 import { Home, Menu, Noted, Users } from '@shared/ui/icons';
+import styles from './index.module.css';
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
 import SideBar, { SideBarTab } from '@widgets/main/SideBar';
-import styles from './index.module.css';
-import Input from "@widgets/auth/Input";
-import Button from "@widgets/auth/Button";
+import Input from "@widgets/main/Input";
+import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
-import Block from "@widgets/Block";
 
 const _tabs: SideBarTab[] = [
   new SideBarTab('Мероприятия', <Menu />, [
@@ -50,19 +49,17 @@ function EventCreationPage() {
       bottomRight=
       {
         <Content>
-          <Block>
-            <div className={styles.event_form}>
-              <div className={styles.event_form_item}>
-                <Input type="text" placeholder="Введите название мероприятия" />
-              </div>
-              <div className={styles.event_form_item}>
-                <Dropdown placeholder="Выберите главного организатора" items={_test_orgs} />
-              </div>
-              <div className={styles.event_form_button}>
-                <Button onClick={_createEvent()}>Создать</Button>
-              </div>
+          <div className={styles.event_form}>
+            <div className={styles.event_form_item}>
+              <Input type="text" placeholder="Введите название мероприятия" />
             </div>
-          </Block>
+            <div className={styles.event_form_item}>
+              <Dropdown placeholder="Выберите главного организатора" items={_test_orgs} />
+            </div>
+            <div className={styles.event_form_button}>
+              <Button onClick={_createEvent()}>Создать</Button>
+            </div>
+          </div>
         </Content>
       }
     />
