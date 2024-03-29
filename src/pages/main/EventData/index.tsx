@@ -15,7 +15,7 @@ const _tabs: SideBarTab[] = [
     new SideBarTab('Доступные'),
     new SideBarTab('Участия'),
     new SideBarTab('Организуемые'),
-    new SideBarTab('Создание', undefined, [], true),
+    new SideBarTab('Создание'),
   ], true, true),
   new SideBarTab('Площадки', <Home />, [
     new SideBarTab('Доступные'),
@@ -222,7 +222,7 @@ function EventActivitiesPage() {
 
   function _createActivity(activity: Activity) {
     return (
-      <div className={styles.activity_container}>
+      <div key={activity.id} className={styles.activity_container}>
         <div className={styles.activity_info_column}>
           <div className={styles.activity_name}>{activity.name}</div>
           <div className={styles.activity_place_container}>
@@ -253,7 +253,7 @@ function EventActivitiesPage() {
 
   function _createMember(member: Member) {
     return (
-      <div className={styles.member_container}>
+      <div key={member.id} className={styles.member_container}>
         <div className={styles.member_isu_id_container}>
           <div className={styles.member_isu_id}>
             {member.isu_id}
