@@ -303,7 +303,7 @@ function EventActivitiesPage() {
             place={_place}
             eventStatus={_status}
           />
-          <PageTabs value="Активности" selectionHandler={pageTabHandler} items={_pageTabs}/>
+          <PageTabs value="Активности" handler={pageTabHandler} items={_pageTabs}/>
           {selectedTab == "Активности" && _createActivityTable(_activities)}
           {selectedTab == "Организаторы" && "ToDo: Страница организаторов"}
           {selectedTab == "Участники" && _createMemberTable(_members)}

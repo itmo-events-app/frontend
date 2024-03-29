@@ -17,7 +17,7 @@ class PageTab {
 type Props = {
   value?: string,
   className?: string,
-  selectionHandler: any,
+  handler: any,
   items: PageTab[]
 }
 
@@ -28,7 +28,7 @@ function PageTabs(props: Props) {
   function _select(tab: PageTab) {
     return () => {
       props.value = tab.text;
-      props.selectionHandler(tab.text);
+      props.handler(tab.text);
       setSelected(tab.text);
     }
   }
