@@ -13,19 +13,28 @@ function Layout(props: Props) {
   const topLeftRef = useRef(null);
   const topRightRef = useRef(null);
 
-  // get maximum height of left and right components, apply maximum
+  // update TopLeft height when TopRight height is changed
   useEffect(() => {
-    let height = 0;
-    if (topLeftRef.current) {
-      height = (topLeftRef.current as any).offsetHeight;
-    }
-    if (topRightRef.current) {
-      let h2 = (topRightRef.current as any).offsetHeight;
-      height = h2 > height ? h2 : height;
-    }
-    (topLeftRef.current as any).style.height = `${height}px`;
-    (topRightRef.current as any).style.height = `${height}px`;
-  })
+    const topLeftNode = topLeftRef.current as any;
+    const topRightNode = topRightRef.current as any;
+
+    const adjustTopLeftHeight = () => {
+      const topRightHeight = topRightNode.offsetHeight;
+      topLeftNode.style.height = `${topRightHeight}px`;
+      console.log(topLeftNode.style.top);
+    };
+
+    adjustTopLeftHeight();
+
+    const observer = new ResizeObserver(() => {
+      adjustTopLeftHeight();
+    });
+
+    observer.observe(topRightNode);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <div className={styles.root}>

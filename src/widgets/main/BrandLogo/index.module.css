@@ -1,5 +1,7 @@
 .logo {
-  padding: 20px 25px;
+  padding: 10px 25px;
+  width: calc(100% - 50px);
+  height: calc(100% - 20px);
 }
 
 .logo:hover {

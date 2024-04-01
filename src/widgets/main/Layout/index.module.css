@@ -28,3 +28,11 @@
   display: flex;
   align-items: center;
 }
+
+.bottom_left {
+  padding: 10px;
+}
+
+.bottom_right {
+  padding: 10px;
+}
