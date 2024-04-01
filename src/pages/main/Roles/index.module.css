@@ -9,11 +9,12 @@
   gap: 20px;
 }
 
-.fade {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 20;
+.visible {
+  visibility: visible;
+}
+
+.hidden {
+  visibility: hidden;
 }
 
 .context_menu {
@@ -21,21 +22,20 @@
   z-index: 10;
 }
 
+.fade {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  padding-top: 30px;
+}
+
 .dialog {
-  z-index: 30;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 30px;
-  max-width: 960px;
+  max-height: calc(100% - 60px);
   width: auto;
-}
-
-.visible {
-  visibility: visible;
-}
-
-.hidden {
-  visibility: hidden;
+  max-width: 960px;
 }
 
 .dialog_content {
