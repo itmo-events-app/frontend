@@ -7,7 +7,7 @@ function NotifyPage() {
     <div className={styles.root}>
       <ITMO />
       <Block className={styles.block}>
-        <span>Заявка на восстановление отправлена</span>
+        <span>Заявка на регистрацию успешно создана. Ожидайте письма с подтверждением для входа.</span>
       </Block>
     </div>
   )

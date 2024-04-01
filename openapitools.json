@@ -5,7 +5,7 @@
     "version": "7.1.0",
     "generators": {
       "v7.1.0": {
-        "inputSpec": "#{cwd}/src/shared/api/openapi.yml",
+        "inputSpec": "#{cwd}/src/shared/api/openapi.json",
         "generatorName": "typescript-axios",
         "output": "#{cwd}/src/shared/api/generated",
         "additionalProperties": {
