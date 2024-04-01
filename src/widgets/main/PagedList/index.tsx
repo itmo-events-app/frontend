@@ -121,7 +121,7 @@ function PagedList(props: Props) {
 
     const items: any[] = [];
 
-    for (let i = (index - 1) * props.page_size; i < Math.min(index * props.page_size - 1, props.items.length); i++) {
+    for (let i = (index - 1) * props.page_size; i <= Math.min(index * props.page_size - 1, props.items.length - 1); i++) {
       items.push(props.items[i].render_func());
     }
 
@@ -134,7 +134,6 @@ function PagedList(props: Props) {
 
   return (
     <div className={styles.list_container}>
-      {_createEntries(page)}
       <div className={styles.navigator}>
         <div className={styles.nav_buttons}>
           <a href="#" onClick={_decPage()} className={styles.nav_button}>
@@ -157,6 +156,7 @@ function PagedList(props: Props) {
           </a>
         </div>
       </div>
+      {_createEntries(page)}
     </div>
   )
 }
