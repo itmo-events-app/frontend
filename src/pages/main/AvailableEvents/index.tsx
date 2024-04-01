@@ -60,7 +60,17 @@ const _events: any[] = [
   new PageEntry(() => {return _entryStub(20)}),
   new PageEntry(() => {return _entryStub(21)}),
   new PageEntry(() => {return _entryStub(22)}),
-  new PageEntry(() => {return _entryStub(23)})
+  new PageEntry(() => {return _entryStub(23)}),
+  new PageEntry(() => {return _entryStub(24)}),
+  new PageEntry(() => {return _entryStub(25)}),
+  new PageEntry(() => {return _entryStub(26)}),
+  new PageEntry(() => {return _entryStub(27)}),
+  new PageEntry(() => {return _entryStub(28)}),
+  new PageEntry(() => {return _entryStub(29)}),
+  new PageEntry(() => {return _entryStub(30)}),
+  new PageEntry(() => {return _entryStub(31)}),
+  new PageEntry(() => {return _entryStub(32)}),
+  new PageEntry(() => {return _entryStub(33)})
 ]
 
 function AvailableEventsPage() {
