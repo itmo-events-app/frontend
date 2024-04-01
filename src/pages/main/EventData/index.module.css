@@ -1,4 +1,11 @@
-.data_table {
+.description_box {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.data_list {
   display: flex;
   flex-direction: row;
   flex-flow: row wrap;
@@ -60,50 +67,23 @@
   text-align: center;
 }
 
-.member_container {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  gap: 20px;
-}
-
-.member_isu_id_container {
-  border-radius: 15px;
-  background-color: var(--itmo-colors-blue-10);
-  padding: 7px;
-  width: 50px;
-}
-
-.member_name {
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--itmo-colors-black);
-}
-
-.member_isu_id {
-  text-align: center;
-  font-size: 13px;
-  color: var(--itmo-colors-blue);
-}
-
 .table {
   width: 100%;
   margin: 20px 0;
-  border: 1px solid #dddddd;
+  border: 1px solid var(--itmo-colors-gray);
   border-collapse: collapse;
+  border-radius: 10px;
 }
 
 .table th {
   font-weight: bold;
   padding: 10px 20px;
-  background: #efefef;
+  background: var(--itmo-colors-gray);
   text-align: left;
-  border: 1px solid #dddddd;
+  border: 1px solid var(--itmo-colors-gray);
 }
 
 .table td {
-  border: 1px solid #dddddd;
+  border: 1px solid var(--itmo-colors-gray);
   padding: 10px 20px;
 }

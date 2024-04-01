@@ -107,14 +107,25 @@ function Dropdown(props: Props) {
     )
   }
 
+  function _openDropdown() {
+    return (
+      <div className={styles.option_list}>
+        <div className={styles.dropdown_list_border}>
+          {props.clearable && _clearOption()}
+          {_createOptionList(props.items)}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.dropdown}>
-      <div className={styles.dropdown_item_container} onClick={() => setOpen(!open)}>
-        {selected == "" ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(selected)}
+      <div className={open ? styles.dropdown_border_open : styles.dropdown_border}>
+        <div className={styles.dropdown_item_container} onClick={() => setOpen(!open)}>
+          {selected == "" ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(selected)}
+        </div>
       </div>
-
-      {open && props.clearable && _clearOption()}
-      {open && _createOptionList(props.items)}
+      {open && _openDropdown()}
     </div>
   );
 }

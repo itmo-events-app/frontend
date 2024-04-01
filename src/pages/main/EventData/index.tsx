@@ -8,7 +8,7 @@ import PageName from '@widgets/main/PageName';
 import SideBar, { SideBarTab } from '@widgets/main/SideBar';
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import EventHeader from "@widgets/main/EventHeader";
+import EventHeader, {EventInfo} from "@widgets/main/EventHeader";
 
 const _tabs: SideBarTab[] = [
   new SideBarTab('Мероприятия', <Menu />, [
@@ -28,17 +28,15 @@ const _tabs: SideBarTab[] = [
 
 const _eventName: string = "Славянский Зажим: Поединок за Колосом";
 
-const _eventInfo: string = "Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций!";
+const _eventDescription: string = "Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций!";
 
-const _regDates: string = "01.06.2024 - 10.06.2024";
-
-const _dates: string = "11.06.2024 - 19.06.2024";
-
-const _vacantSlots: string = "40/100";
-
-const _place: string = "Кронверкский проспект 49";
-
-const _status: string = "Активное";
+const _eventInfo: EventInfo = new EventInfo(
+  "01.06.2024 - 10.06.2024",
+  "11.06.2024 - 19.06.2024",
+  "40/100",
+  "Кронверкский проспект 49",
+  "Активное"
+);
 
 class Activity {
   id: string
@@ -67,31 +65,7 @@ class Activity {
   }
 }
 
-class Member {
-  id: string
-  isu_id: string
-  name: string
-  spec: string
-  phone_num: string
-  email: string
-
-  constructor(
-    isu_id: string,
-    name: string,
-    spec: string,
-    phone_num: string,
-    email: string,
-  ) {
-    this.id = uid();
-    this.isu_id = isu_id;
-    this.name = name;
-    this.spec = spec;
-    this.phone_num = phone_num;
-    this.email = email;
-  }
-}
-
-class Org {
+class Person {
   id: string
   name: string
   email: string
@@ -163,89 +137,74 @@ const _activities: Activity[] = [
     "15:30 - 17:00")
 ]
 
-const _members: Member[] = [
-  new Member(
-    "222222",
+const _members: Person[] = [
+  new Person(
     "Курочкина Дарья Сергеевна",
-    "Студент, 2-й курс, D42001, Институт М....",
-    "+7 (999) 999-99-99",
     "example@mail.ru"
   ),
-  new Member(
-    "222222",
+  new Person(
     "Курочкина Дарья Сергеевна",
-    "Студент, 2-й курс, D42001, Институт М....",
-    "+7 (999) 999-99-99",
     "example@mail.ru"
   ),
-  new Member(
-    "222222",
+  new Person(
     "Курочкина Дарья Сергеевна",
-    "Студент, 2-й курс, D42001, Институт М....",
-    "+7 (999) 999-99-99",
     "example@mail.ru"
   ),
-  new Member(
-    "222222",
+  new Person(
     "Курочкина Дарья Сергеевна",
-    "Студент, 2-й курс, D42001, Институт М....",
-    "+7 (999) 999-99-99",
     "example@mail.ru"
   ),
-  new Member(
-    "222222",
+  new Person(
     "Курочкина Дарья Сергеевна",
-    "Студент, 2-й курс, D42001, Институт М....",
-    "+7 (999) 999-99-99",
     "example@mail.ru"
   ),
-  new Member(
-    "222222",
+  new Person(
     "Курочкина Дарья Сергеевна",
-    "Студент, 2-й курс, D42001, Институт М....",
-    "+7 (999) 999-99-99",
     "example@mail.ru"
   ),
-  new Member(
-    "222222",
+  new Person(
     "Курочкина Дарья Сергеевна",
-    "Студент, 2-й курс, D42001, Институт М....",
-    "+7 (999) 999-99-99",
     "example@mail.ru"
   ),
-  new Member(
-    "222222",
+  new Person(
     "Курочкина Дарья Сергеевна",
-    "Студент, 2-й курс, D42001, Институт М....",
-    "+7 (999) 999-99-99",
+    "example@mail.ru"
+  ),
+  new Person(
+    "Курочкина Дарья Сергеевна",
+    "example@mail.ru"
+  ),
+  new Person(
+    "Курочкина Дарья Сергеевна",
     "example@mail.ru"
   )
 ]
 
-const _orgs: Org[] = [
-  new Org(
+const _orgs: Person[] = [
+  new Person(
     "Курочкина Дарья Сергеевна",
     "example@mail.ru"
   ),
-  new Org(
+  new Person(
     "Курочкина Дарья Сергеевна",
     "example@mail.ru"
   ),
-  new Org(
+  new Person(
     "Курочкина Дарья Сергеевна",
     "example@mail.ru"
   ),
-  new Org(
+  new Person(
     "Курочкина Дарья Сергеевна",
     "example@mail.ru"
   ),
-  new Org(
+  new Person(
     "Курочкина Дарья Сергеевна",
     "example@mail.ru"
   ),
 ]
 
 const _pageTabs: PageTab[] = [
+  new PageTab("Описание"),
   new PageTab("Активности"),
   new PageTab("Организаторы"),
   new PageTab("Участники"),
@@ -256,6 +215,14 @@ function EventActivitiesPage() {
 
   const _brandLogoClick = () => {
     console.log('brand logo!')
+  }
+
+  function _createInfoPage(text: string) {
+    return (
+      <div className={styles.description_box}>
+        {text}
+      </div>
+    );
   }
 
   function _createActivity(activity: Activity) {
@@ -277,61 +244,69 @@ function EventActivitiesPage() {
     )
   }
 
-  function _createActivityTable(activities: Activity[]) {
+  function _createActivityList(activities: Activity[]) {
     const items = []
     for (const activity of activities) {
       items.push(_createActivity(activity));
     }
     return (
-      <div className={styles.data_table}>
+      <div className={styles.data_list}>
         {items}
       </div>
     )
   }
 
-  function _createMember(member: Member) {
+  function _createTableHeaderEntry(value: string) {
     return (
-      <div key={member.id} className={styles.member_container}>
-        <div className={styles.member_isu_id_container}>
-          <div className={styles.member_isu_id}>
-            {member.isu_id}
-          </div>
-        </div>
-        <div className={styles.member_name}>
-          {member.name}
-        </div>
-        <div className={styles.info_block}>
-          {member.spec}
-        </div>
+      <th className={styles.info_table_header}>
+        {value}
+      </th>
+    );
+  }
+
+  function _createTableEntry(key: any, value: string) {
+    return (
+      <div key={key} className={styles.info_table_entry}>
+        {value}
       </div>
     )
   }
 
   function _createMemberTable(members: Member[]) {
-    const items = []
+
+    const name_column = [], email_column = [];
+
+    name_column.push(_createTableHeaderEntry("ФИО"));
+    email_column.push(_createTableHeaderEntry("email"));
+
     for (const member of members) {
-      items.push(_createMember(member));
+      name_column.push(_createTableEntry(member.id, member.name));
+      email_column.push(_createTableEntry(member.id, member.email));
     }
+
     return (
       <div className={styles.data_table}>
-        {items}
+        <div className={styles.info_table_data}>
+          <div className={styles.info_table_column}>{name_column}</div>
+          <div className={styles.info_table_column + " " + styles.info_table_column_border}>{email_column}</div>
+        </div>
       </div>
     )
   }
 
-  function _createOrg(org: Org) {
+  function _createPersonRow(person: Person) {
     return (
-      <tr key={org.id}>
-        <td>{org.name}</td>
-        <td>{org.email}</td>
+      <tr key={person.id}>
+        <td>{person.name}</td>
+        <td>{person.email}</td>
       </tr>
     )
   }
 
-  function _createOrgTable(orgs: Org[]) {
+  function _createPersonTable(persons: Person[]) {
     const items = []
-    for (const org of orgs) {
-      items.push(_createOrg(org));
+    for (const person of persons) {
+      items.push(_createPersonRow(person));
     }
     return (
       <table className={styles.table}>
@@ -344,7 +319,7 @@ function EventActivitiesPage() {
     )
   }
 
-  const [selectedTab, setSelectedTab] = useState("Активности");
+  const [selectedTab, setSelectedTab] = useState("Описание");
 
   function pageTabHandler(tab_name: string) {
     setSelectedTab(tab_name);
@@ -358,18 +333,12 @@ function EventActivitiesPage() {
       bottomRight=
       {
         <Content>
-          <EventHeader
-            eventInfo={_eventInfo}
-            regDates={_regDates}
-            dates={_dates}
-            vacantSlots={_vacantSlots}
-            place={_place}
-            eventStatus={_status}
-          />
-          <PageTabs value="Активности" handler={pageTabHandler} items={_pageTabs} />
-          {selectedTab == "Активности" && _createActivityTable(_activities)}
-          {selectedTab == "Организаторы" && _createOrgTable(_orgs)}
-          {selectedTab == "Участники" && _createMemberTable(_members)}
+          <EventHeader eventInfo={_eventInfo} image="http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg" />
+          <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs}/>
+          {selectedTab == "Описание" && _createInfoPage(_eventDescription)}
+          {selectedTab == "Активности" && _createActivityList(_activities)}
+          {selectedTab == "Организаторы" && _createPersonTable(_orgs)}
+          {selectedTab == "Участники" && _createPersonTable(_members)}
           {selectedTab == "Задачи" && "ToDo: Страница задач"}
         </Content>
       }
