@@ -2,6 +2,5 @@
   color: var(--itmo-colors-blue-selected);
   font-size: 36px;
   font-weight: bold;
-  padding-left: 50px;
-  padding-top: 28px;
+  padding: 10px 60px 10px 50px;
 }
