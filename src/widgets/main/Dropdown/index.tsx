@@ -26,7 +26,7 @@ type Props = {
 function Dropdown(props: Props) {
 
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(props.value);
 
   function _select(item: DropdownOption) {
     return () => {
@@ -56,6 +56,7 @@ function Dropdown(props: Props) {
   function _createUnselectedOption(option: DropdownOption) {
     return (
       <div
+        key={option.id}
         className={styles.dropdown_item_container + ' ' + (props.className ?? '')}
         onClick={_select(option)}
       >
@@ -67,6 +68,7 @@ function Dropdown(props: Props) {
   function _createSelectedOption(option: DropdownOption) {
     return (
       <div
+        key={option.id}
         className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_selected + ' ' + (props.className ?? '')}
         onClick={_select(option)}
       >
