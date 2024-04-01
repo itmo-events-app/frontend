@@ -32,30 +32,32 @@ function EventHeader(props: Props) {
   return (
     <div className={styles.info_container}>
       <div className={styles.image}>
-        <img width="400" src={props.image} alt="Event header image"/>
+        <img width="400" src={props.image} alt="Event header image" />
       </div>
-      <div className={styles.info_column}>
-        <div className={styles.info_entry}>
-          <div>Сроки регистрации:</div>
-          <div>{props.eventInfo.regDates}</div>
-        </div>
-        <div className={styles.info_entry}>
-          <div>Сроки проведения:</div>
-          <div>{props.eventInfo.eventDates}</div>
-        </div>
-        <div className={styles.info_entry}>
-          <div>Количество мест:</div>
-          <div>{props.eventInfo.vacantSlots}</div>
-        </div>
-        <div className={styles.info_entry}>
-          <div>Место проведения:</div>
-          <div>{props.eventInfo.place}</div>
-        </div>
-        <div className={styles.info_entry}>
-          <div>Статус:</div>
-          <div>{props.eventInfo.status}</div>
-        </div>
-      </div>
+      <table className={styles.table}>
+        <tbody>
+          <tr>
+            <td>Сроки регистрации:</td>
+            <td>{props.eventInfo.regDates}</td>
+          </tr>
+          <tr>
+            <td>Сроки проведения:</td>
+            <td>{props.eventInfo.eventDates}</td>
+          </tr>
+          <tr>
+            <td>Количество мест:</td>
+            <td>{props.eventInfo.vacantSlots}</td>
+          </tr>
+          <tr>
+            <td>Место проведения:</td>
+            <td>{props.eventInfo.place}</td>
+          </tr>
+          <tr>
+            <td>Статус:</td>
+            <td>{props.eventInfo.status}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   )
 }

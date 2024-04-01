@@ -34,3 +34,27 @@
   flex-direction: row;
   gap: 15px;
 }
+
+.table {
+  width: 500px;
+  margin: 20px 0;
+  border-collapse: collapse;
+  border-radius: 10px;
+  border-spacing: 0;
+  border: 1px solid var(--itmo-colors-gray);
+
+}
+
+.table th {
+  font-weight: bold;
+  padding: 10px 20px;
+  background: var(--itmo-colors-gray);
+  text-align: left;
+  border: 1px solid var(--itmo-colors-gray);
+}
+
+.table td {
+  border: 1px solid var(--itmo-colors-gray);
+  padding: 10px 20px;
+  border-style: none solid solid none;
+}
