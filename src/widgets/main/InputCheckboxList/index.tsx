@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styles from './index.module.css';
 import { uid } from 'uid';
+import InputCheckbox from '../InputCheckbox';
 
 type Props<T> = {
   items: T[],
@@ -19,7 +20,7 @@ class ItemSelection<T> {
 }
 
 
-function SelectionList<T>(props: Props<T>) {
+function CheckboxList<T>(props: Props<T>) {
   const [items, setItems] = useState(props.items.map(v => new ItemSelection(v)));
 
   function _checkboxOnChange(item: ItemSelection<T>) {
@@ -32,10 +33,7 @@ function SelectionList<T>(props: Props<T>) {
   const _ItemSelection = (item: ItemSelection<T>) => {
     return (
       <div className={styles.item} key={item.uid}>
-        <label>
-          <input type="checkbox" checked={item.selected} onChange={_checkboxOnChange(item)} />
-          <span>{props.displayName(item.value)}</span>
-        </label>
+        <InputCheckbox checked={item.selected} text={props.displayName(item.value)} onChange={_checkboxOnChange(item)} />
       </div>
 
     )
@@ -57,4 +55,4 @@ function SelectionList<T>(props: Props<T>) {
 
 }
 
-export default SelectionList
+export default CheckboxList
