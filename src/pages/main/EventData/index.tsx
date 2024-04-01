@@ -256,44 +256,6 @@ function EventActivitiesPage() {
     )
   }
 
-  function _createTableHeaderEntry(value: string) {
-    return (
-      <th className={styles.info_table_header}>
-        {value}
-      </th>
-    );
-  }
-
-  function _createTableEntry(key: any, value: string) {
-    return (
-      <div key={key} className={styles.info_table_entry}>
-        {value}
-      </div>
-    )
-  }
-
-  function _createMemberTable(members: Member[]) {
-
-    const name_column = [], email_column = [];
-
-    name_column.push(_createTableHeaderEntry("ФИО"));
-    email_column.push(_createTableHeaderEntry("email"));
-
-    for (const member of members) {
-      name_column.push(_createTableEntry(member.id, member.name));
-      email_column.push(_createTableEntry(member.id, member.email));
-    }
-
-    return (
-      <div className={styles.data_table}>
-        <div className={styles.info_table_data}>
-          <div className={styles.info_table_column}>{name_column}</div>
-          <div className={styles.info_table_column + " " + styles.info_table_column_border}>{email_column}</div>
-        </div>
-      </div>
-    )
-  }
-
   function _createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -310,11 +272,15 @@ function EventActivitiesPage() {
     }
     return (
       <table className={styles.table}>
-        <tr>
-          <th>Имя</th>
-          <th>Email</th>
-        </tr>
-        {items}
+        <thead>
+          <tr>
+            <th>Имя</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items}
+        </tbody>
       </table>
     )
   }

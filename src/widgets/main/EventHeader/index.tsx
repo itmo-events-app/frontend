@@ -37,23 +37,23 @@ function EventHeader(props: Props) {
       <table className={styles.table}>
         <tbody>
           <tr>
-            <td>Сроки регистрации:</td>
+            <td>Сроки регистрации</td>
             <td>{props.eventInfo.regDates}</td>
           </tr>
           <tr>
-            <td>Сроки проведения:</td>
+            <td>Сроки проведения</td>
             <td>{props.eventInfo.eventDates}</td>
           </tr>
           <tr>
-            <td>Количество мест:</td>
+            <td>Количество мест</td>
             <td>{props.eventInfo.vacantSlots}</td>
           </tr>
           <tr>
-            <td>Место проведения:</td>
+            <td>Место проведения</td>
             <td>{props.eventInfo.place}</td>
           </tr>
           <tr>
-            <td>Статус:</td>
+            <td>Статус</td>
             <td>{props.eventInfo.status}</td>
           </tr>
         </tbody>
