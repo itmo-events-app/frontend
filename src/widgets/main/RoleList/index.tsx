@@ -66,8 +66,13 @@ function RoleList(props: Props) {
       <div key={uid()} className={styles.role}>
         <div className={styles.role_entry} onClick={_expand(role)}>
           <div className={styles.role_left}>
-            <div className={styles.role_name}>
-              {role.entry.name}
+            <div className={styles.role_heading}>
+              <div className={styles.role_name}>
+                {role.entry.name}
+              </div>
+              <div className={styles.role_type}>
+                {role.entry.isGlobal ? 'Глобальная' : 'Организационная'}
+              </div>
             </div>
             <div className={styles.role_description}>
               {role.entry.description}

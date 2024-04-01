@@ -17,7 +17,8 @@ import styles from './index.module.css'
 import Fade from '@widgets/main/Fade';
 import Input from '@widgets/main/Input';
 import InputLabel from '@widgets/main/InputLabel';
-import SelectionList from '@widgets/main/SelectionList';
+import InputCheckboxList from '@widgets/main/InputCheckboxList';
+import InputCheckbox from '@widgets/main/InputCheckbox';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -70,12 +71,12 @@ const _tabs: SideBarTab[] = [
 ]
 
 const _roles: RoleModel[] = [
-  new RoleModel(1, 'USER', [
+  new RoleModel(1, 'USER', false, [
     new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
     new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
     new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
   ], 'Пользователь'),
-  new RoleModel(1, 'ADMIN', [
+  new RoleModel(1, 'ADMIN', false, [
     new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
     new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
     new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
@@ -83,7 +84,7 @@ const _roles: RoleModel[] = [
     new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
     new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
   ], 'Администратор'),
-  new RoleModel(1, 'PLAIN', [], 'Пользователь без привилегий')
+  new RoleModel(1, 'PLAIN', false, [], 'Пользователь без привилегий')
 ]
 
 const _privileges: PrivilegeModel[] = [
@@ -96,7 +97,7 @@ function _displayPrivilege(item: PrivilegeModel) {
   return item.name + " - " + item.description;
 }
 
-const _CreateRoleDialogContent = (props: {onDone: any}) => {
+const _CreateRoleDialogContent = (props: { onDone: any }) => {
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
@@ -105,8 +106,12 @@ const _CreateRoleDialogContent = (props: {onDone: any}) => {
           <Input value="РОЛЬ" />
         </div>
         <div className={styles.dialog_item}>
+          <InputLabel value="Тип роли" />
+          <InputCheckbox checked={true} onChange={(v: any) => { console.log(v) }} text="Организационная" />
+        </div>
+        <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />
-          <SelectionList items={_privileges} displayName={_displayPrivilege} />
+          <InputCheckboxList items={_privileges} displayName={_displayPrivilege} />
         </div>
       </div>
       <Button onClick={props.onDone}>Создать</Button>
@@ -123,8 +128,12 @@ const _UpdateRoleDialogContent = (props: { role: RoleModel, onDone: any }) => {
           <Input value={props.role.name} />
         </div>
         <div className={styles.dialog_item}>
+          <InputLabel value="Тип роли" />
+          <InputCheckbox checked={true} onChange={(v: any) => { console.log(v) }} text="Организационная" />
+        </div>
+        <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />
-          <SelectionList items={_privileges} displayName={_displayPrivilege} />
+          <InputCheckboxList items={_privileges} displayName={_displayPrivilege} />
         </div>
       </div>
       <Button onClick={props.onDone}>Изменить</Button>
@@ -201,7 +210,7 @@ function RolesPage() {
   }
 
   const _createRole = (e: MouseEvent) => {
-    setDialogData(new DialogData(_CreateRoleDialogContent({onDone: _closeDialog}), true));
+    setDialogData(new DialogData(_CreateRoleDialogContent({ onDone: _closeDialog }), true));
     e.stopPropagation();
   }
 
@@ -214,9 +223,6 @@ function RolesPage() {
         setCmData({ ...cmData, visible: false });
         setDialogData(new DialogData(_UpdateRoleDialogContent({ role: role, onDone: _closeDialog }), true));
         e.stopPropagation();
-      }),
-      new ContextMenuItem('Дублировать', () => {
-        setCmData({ ...cmData, visible: false });
       }),
     ]
     e.stopPropagation();
