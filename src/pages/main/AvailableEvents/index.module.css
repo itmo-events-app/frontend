@@ -26,3 +26,9 @@
   padding-top: 50px;
   padding-bottom: 50px;
 }
+
+.event_entry {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  padding: 10px 20px;
+}

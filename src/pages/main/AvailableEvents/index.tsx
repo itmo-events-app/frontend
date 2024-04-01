@@ -33,7 +33,7 @@ const _displayModes: DropdownOption[] = [
 
 function _entryStub(index: number) {
   return (
-    <div key={index}>{index}</div>
+    <div key={index} className={styles.event_entry}>{index}</div>
   );
 }
 
