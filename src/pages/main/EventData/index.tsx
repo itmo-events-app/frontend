@@ -91,6 +91,21 @@ class Member {
   }
 }
 
+class Org {
+  id: string
+  name: string
+  email: string
+
+  constructor(
+    name: string,
+    email: string,
+  ) {
+    this.id = uid();
+    this.name = name;
+    this.email = email;
+  }
+}
+
 const _activities: Activity[] = [
   new Activity("Самый красивый колос",
     "Кронверкский пр. 49",
@@ -207,6 +222,29 @@ const _members: Member[] = [
   )
 ]
 
+const _orgs: Org[] = [
+  new Org(
+    "Курочкина Дарья Сергеевна",
+    "example@mail.ru"
+  ),
+  new Org(
+    "Курочкина Дарья Сергеевна",
+    "example@mail.ru"
+  ),
+  new Org(
+    "Курочкина Дарья Сергеевна",
+    "example@mail.ru"
+  ),
+  new Org(
+    "Курочкина Дарья Сергеевна",
+    "example@mail.ru"
+  ),
+  new Org(
+    "Курочкина Дарья Сергеевна",
+    "example@mail.ru"
+  ),
+]
+
 const _pageTabs: PageTab[] = [
   new PageTab("Активности"),
   new PageTab("Организаторы"),
@@ -281,6 +319,31 @@ function EventActivitiesPage() {
     )
   }
 
+  function _createOrg(org: Org) {
+    return (
+      <tr key={org.id}>
+        <td>{org.name}</td>
+        <td>{org.email}</td>
+      </tr>
+    )
+  }
+
+  function _createOrgTable(orgs: Org[]) {
+    const items = []
+    for (const org of orgs) {
+      items.push(_createOrg(org));
+    }
+    return (
+      <table className={styles.table}>
+        <tr>
+          <th>Имя</th>
+          <th>Email</th>
+        </tr>
+        {items}
+      </table>
+    )
+  }
+
   const [selectedTab, setSelectedTab] = useState("Активности");
 
   function pageTabHandler(tab_name: string) {
@@ -303,9 +366,9 @@ function EventActivitiesPage() {
             place={_place}
             eventStatus={_status}
           />
-          <PageTabs value="Активности" handler={pageTabHandler} items={_pageTabs}/>
+          <PageTabs value="Активности" handler={pageTabHandler} items={_pageTabs} />
           {selectedTab == "Активности" && _createActivityTable(_activities)}
-          {selectedTab == "Организаторы" && "ToDo: Страница организаторов"}
+          {selectedTab == "Организаторы" && _createOrgTable(_orgs)}
           {selectedTab == "Участники" && _createMemberTable(_members)}
           {selectedTab == "Задачи" && "ToDo: Страница задач"}
         </Content>

@@ -87,3 +87,23 @@
   font-size: 13px;
   color: var(--itmo-colors-blue);
 }
+
+.table {
+  width: 100%;
+  margin: 20px 0;
+  border: 1px solid #dddddd;
+  border-collapse: collapse;
+}
+
+.table th {
+  font-weight: bold;
+  padding: 10px 20px;
+  background: #efefef;
+  text-align: left;
+  border: 1px solid #dddddd;
+}
+
+.table td {
+  border: 1px solid #dddddd;
+  padding: 10px 20px;
+}
