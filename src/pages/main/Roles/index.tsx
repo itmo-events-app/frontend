@@ -19,6 +19,7 @@ import Input from '@widgets/main/Input';
 import InputLabel from '@widgets/main/InputLabel';
 import InputCheckboxList from '@widgets/main/InputCheckboxList';
 import InputCheckbox from '@widgets/main/InputCheckbox';
+import TextArea from '@widgets/main/TextArea';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -41,12 +42,15 @@ class ContextMenuData {
 }
 
 class DialogData {
+  heading: string | undefined;
   content: any;
   visible: boolean;
   constructor(
+    heading?: string,
     content?: any,
     visible: boolean = false,
   ) {
+    this.heading = heading;
     this.content = content;
     this.visible = visible;
   }
@@ -106,6 +110,10 @@ const _CreateRoleDialogContent = (props: { onDone: any }) => {
           <Input value="РОЛЬ" />
         </div>
         <div className={styles.dialog_item}>
+          <InputLabel value="Описание" />
+          <TextArea />
+        </div>
+        <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
           <InputCheckbox checked={true} onChange={(v: any) => { console.log(v) }} text="Организационная" />
         </div>
@@ -128,7 +136,11 @@ const _UpdateRoleDialogContent = (props: { role: RoleModel, onDone: any }) => {
           <Input value={props.role.name} />
         </div>
         <div className={styles.dialog_item}>
-          <InputLabel value="Тип роли" />
+          <InputLabel value="Описание" />
+          <TextArea value={props.role.description} />
+        </div>
+        <div className={styles.dialog_item}>
+          <InputLabel value="Тип" />
           <InputCheckbox checked={true} onChange={(v: any) => { console.log(v) }} text="Организационная" />
         </div>
         <div className={styles.dialog_item}>
@@ -144,7 +156,7 @@ const _UpdateRoleDialogContent = (props: { role: RoleModel, onDone: any }) => {
 
 function RolesPage() {
   const [cmData, setCmData] = useState(new ContextMenuData());
-  const [dialogData, setDialogData] = useState(new DialogData(true));
+  const [dialogData, setDialogData] = useState(new DialogData());
 
   const cmRef = useRef(null);
   const dialogRef = useRef(null);
@@ -210,7 +222,7 @@ function RolesPage() {
   }
 
   const _createRole = (e: MouseEvent) => {
-    setDialogData(new DialogData(_CreateRoleDialogContent({ onDone: _closeDialog }), true));
+    setDialogData(new DialogData('Создание роли', _CreateRoleDialogContent({ onDone: _closeDialog }), true));
     e.stopPropagation();
   }
 
@@ -221,7 +233,7 @@ function RolesPage() {
       }),
       new ContextMenuItem('Редактировать', (e: React.MouseEvent) => {
         setCmData({ ...cmData, visible: false });
-        setDialogData(new DialogData(_UpdateRoleDialogContent({ role: role, onDone: _closeDialog }), true));
+        setDialogData(new DialogData('Редактирование роли', _UpdateRoleDialogContent({ role: role, onDone: _closeDialog }), true));
         e.stopPropagation();
       }),
     ]
@@ -255,7 +267,7 @@ function RolesPage() {
       <Dialog
         className={appendClassName(styles.dialog,
           (dialogData.visible ? styles.visible : styles.hidden))}
-        text="Создать роль"
+        text={dialogData.heading}
         ref={dialogRef}
         onClose={_closeDialog}
       >
