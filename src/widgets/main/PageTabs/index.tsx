@@ -59,7 +59,9 @@ function PageTabs(props: Props) {
   function _createTabList(tabs: PageTab[]) {
     const items = []
     for (const tab of tabs) {
-      items.push(_createTab(tab));
+      if (tab != undefined) {
+        items.push(_createTab(tab));
+      }
     }
     return items;
   }

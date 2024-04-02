@@ -9,6 +9,7 @@ import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import EventHeader, {EventInfo} from "@widgets/main/EventHeader";
 import { RoutePaths } from '@shared/config/routes';
+import Button from "@widgets/main/Button";
 
 
 const _eventName: string = "Славянский Зажим: Поединок за Колосом";
@@ -190,12 +191,15 @@ const _orgs: Person[] = [
   ),
 ]
 
+const task_privilege: boolean = true;
+const edit_privilege: boolean = true;
+
 const _pageTabs: PageTab[] = [
   new PageTab("Описание"),
   new PageTab("Активности"),
   new PageTab("Организаторы"),
   new PageTab("Участники"),
-  new PageTab("Задачи")
+  task_privilege ? new PageTab("Задачи") : undefined
 ]
 
 function EventActivitiesPage() {
@@ -204,10 +208,35 @@ function EventActivitiesPage() {
     console.log('brand logo!')
   }
 
+  const _editDescription = () => {
+    console.log('editing description')
+  }
+
+  const _editActivities = () => {
+    console.log('editing activities')
+  }
+
+  const _editOrgs = () => {
+    console.log('editing orgs')
+  }
+
+  const _editParticipants = () => {
+    console.log('editing participants')
+  }
+
+  const _editEvent= () => {
+    console.log('editing event')
+  }
+
   function _createInfoPage(text: string) {
     return (
-      <div className={styles.description_box}>
-        {text}
+      <div className={styles.content}>
+        {edit_privilege ? (
+          <Button onClick={_editDescription}>Редактировать</Button>
+        ) : <></>}
+        <div className={styles.description_box}>
+          {text}
+        </div>
       </div>
     );
   }
@@ -237,8 +266,13 @@ function EventActivitiesPage() {
       items.push(_createActivity(activity));
     }
     return (
-      <div className={styles.data_list}>
-        {items}
+      <div className={styles.content}>
+        {edit_privilege ? (
+            <Button onClick={_editActivities}>Редактировать</Button>
+        ) : <></>}
+        <div className={styles.data_list}>
+          {items}
+        </div>
       </div>
     )
   }
@@ -252,23 +286,28 @@ function EventActivitiesPage() {
     )
   }
 
-  function _createPersonTable(persons: Person[]) {
+  function _createPersonTable(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
       items.push(_createPersonRow(person));
     }
     return (
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Имя</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items}
-        </tbody>
-      </table>
+      <div className={styles.content}>
+        {edit_privilege ? (
+          <Button onClick={edit_func}>Редактировать</Button>
+        ) : <></>}
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Имя</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items}
+          </tbody>
+        </table>
+      </div>
     )
   }
 
@@ -287,11 +326,16 @@ function EventActivitiesPage() {
       {
         <Content>
           <EventHeader eventInfo={_eventInfo} image="http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg" />
+          {edit_privilege ? (
+            <div className={styles.edit_button}>
+              <Button onClick={_editEvent}>Редактировать информацию о мероприятии</Button>
+            </div>
+          ) : <></>}
           <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs}/>
           {selectedTab == "Описание" && _createInfoPage(_eventDescription)}
           {selectedTab == "Активности" && _createActivityList(_activities)}
-          {selectedTab == "Организаторы" && _createPersonTable(_orgs)}
-          {selectedTab == "Участники" && _createPersonTable(_members)}
+          {selectedTab == "Организаторы" && _createPersonTable(_orgs, _editOrgs)}
+          {selectedTab == "Участники" && _createPersonTable(_members, _editParticipants)}
           {selectedTab == "Задачи" && "ToDo: Страница задач"}
         </Content>
       }
