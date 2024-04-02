@@ -19,6 +19,7 @@ class PageEntry {
 type Props = {
   page: number,
   page_size: number,
+  page_step: number,
   className?: string,
   items: PageEntry[]
 }
@@ -26,8 +27,9 @@ type Props = {
 function PagedList(props: Props) {
 
   const [page, setPage] = useState(props.page);
+  const [page_size, setPageSize] = useState(props.page_size);
 
-  const pages_num: number = Math.ceil(props.items.length / props.page_size);
+  const pages_num: number = Math.ceil(props.items.length / page_size);
 
   function _decPage() {
     return () => {
@@ -41,6 +43,24 @@ function PagedList(props: Props) {
     return () => {
       if (page < pages_num) {
         setPage(page + 1);
+      }
+    }
+  }
+
+  function _decPageSize() {
+    return () => {
+      if (page_size > props.page_step) {
+        setPage(Math.floor(((page - 1) * page_size + 1) / (page_size - props.page_step) + 1));
+        setPageSize(page_size - props.page_step);
+      }
+    }
+  }
+
+  function _incPageSize() {
+    return () => {
+      if (page_size < props.items.length - props.page_step) {
+        setPage(Math.floor(((page - 1) * page_size + 1) / (page_size + props.page_step) + 1));
+        setPageSize(page_size + props.page_step);
       }
     }
   }
@@ -75,13 +95,13 @@ function PagedList(props: Props) {
     return (
       <div className={styles.nav_page_nums}>
         <div className={styles.nav_page_num_selected}>
-          {(page - 1) * props.page_size + 1}
+          {(page - 1) * page_size + 1}
         </div>
         <div className={styles.nav_page_num_selected}>
           {"-"}
         </div>
         <div className={styles.nav_page_num_selected}>
-          {(page) * props.page_size <= props.items.length ? (page) * props.page_size : props.items.length}
+          {(page) * page_size <= props.items.length ? (page) * page_size : props.items.length}
         </div>
         <div className={styles.nav_page_num}>
           {"из"}
@@ -121,7 +141,7 @@ function PagedList(props: Props) {
 
     const items: any[] = [];
 
-    for (let i = (index - 1) * props.page_size; i <= Math.min(index * props.page_size - 1, props.items.length - 1); i++) {
+    for (let i = (index - 1) * page_size; i <= Math.min(index * page_size - 1, props.items.length - 1); i++) {
       items.push(props.items[i].render_func());
     }
 
@@ -152,6 +172,20 @@ function PagedList(props: Props) {
           </a>
           {_navPageNums()}
           <a href="#" onClick={_incPage()} className={styles.nav_button}>
+            <ArrowRight className={styles.arrow}/>
+          </a>
+        </div>
+        <div className={styles.nav_buttons}>
+          <a href="#" onClick={_decPageSize()} className={styles.nav_button}>
+            <ArrowLeft className={styles.arrow}/>
+          </a>
+          <div className={styles.nav_page_num}>
+            Размер страницы:
+          </div>
+          <div className={styles.nav_page_num}>
+            {page_size}
+          </div>
+          <a href="#" onClick={_incPageSize()} className={styles.nav_button}>
             <ArrowRight className={styles.arrow}/>
           </a>
         </div>

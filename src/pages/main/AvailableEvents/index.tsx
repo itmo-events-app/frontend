@@ -1,6 +1,5 @@
 import { ReactLogo } from '@shared/ui/icons';
 import styles from './index.module.css';
-import { useLayoutEffect, useState } from 'react'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
@@ -71,25 +70,6 @@ const _events: any[] = [
 
 function AvailableEventsPage() {
 
-  function useWindowHeight() {
-
-    const [height, setHeight] = useState(0);
-
-    useLayoutEffect(() => {
-
-      function updateHeight() {
-        setHeight(window.innerHeight);
-      }
-
-      window.addEventListener("resize", updateHeight);
-      updateHeight();
-
-      return () => window.removeEventListener("resize", updateHeight);
-    }, []);
-
-    return height;
-  }
-
   const _brandLogoClick = () => {
     console.log('brand logo!')
   }
@@ -125,7 +105,7 @@ function AvailableEventsPage() {
               </>
             </div>
             <div className={styles.event_list_container}>
-              <PagedList page={1} page_size={Math.max(1, Math.floor((useWindowHeight() - 250) / 125))} items={_events} />
+              <PagedList page={1} page_size={5} page_step={5} items={_events} />
             </div>
           </div>
         </Content>
