@@ -1,14 +1,15 @@
-import { ITMOLogo } from '@shared/ui/icons'
-import styles from './index.module.css'
+import { useNavigate } from 'react-router-dom'
+import _BrandLogo from './template'
+import { RoutePaths } from '@shared/config/routes';
 
-type Props = {
-  onClick: () => void,
+const BrandLogo = () => {
+  const navigate = useNavigate();
+
+  function _toHome() {
+    navigate(RoutePaths.eventList);
+  }
+
+  return (<_BrandLogo onClick={_toHome} />);
 }
 
-function BrandLogo(props: Props) {
-  return (
-    <ITMOLogo className={styles.logo} onClick={props.onClick} />
-  )
-}
-
-export default BrandLogo
+export default BrandLogo;

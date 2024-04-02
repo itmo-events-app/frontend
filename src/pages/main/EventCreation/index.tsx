@@ -17,17 +17,13 @@ const _test_orgs: DropdownOption[] = [
 ]
 
 function EventCreationPage() {
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
-
   const _createEvent = () => {
     console.log('creating event!');
   }
 
   return (
     <Layout
-      topLeft={<BrandLogo onClick={_brandLogoClick} />}
+      topLeft={<BrandLogo />}
       topRight={<PageName text="Создание мероприятия" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.createEvent} />}
       bottomRight=

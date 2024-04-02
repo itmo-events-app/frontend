@@ -319,7 +319,7 @@ function EventActivitiesPage() {
 
   return (
     <Layout
-      topLeft={<BrandLogo onClick={_brandLogoClick} />}
+      topLeft={<BrandLogo />}
       topRight={<PageName text={_eventName} />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight=

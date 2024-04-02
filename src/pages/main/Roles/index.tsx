@@ -259,11 +259,6 @@ function RolesPage() {
     setCmData(new ContextMenuData());
   }
 
-
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
-
   const _onSearch = (v: string) => {
     console.log(v);
   }
@@ -325,7 +320,7 @@ function RolesPage() {
 
   return (
     <Layout
-      topLeft={<BrandLogo onClick={_brandLogoClick} />}
+      topLeft={<BrandLogo />}
       topRight={<PageName text="Список ролей" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.roleList} />}
       bottomRight={<_RolesContent />}
