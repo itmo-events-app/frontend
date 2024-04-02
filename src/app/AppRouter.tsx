@@ -9,6 +9,7 @@ import RoleListPage from "@pages/main/RoleList";
 import AvailableEventsPage from "@pages/main/AvailableEvents";
 import EventCreationPage from "@pages/main/EventCreation";
 import EventActivitiesPage from "@pages/main/EventData";
+import TaskListPage from "@pages/main/TaskList";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -47,6 +48,10 @@ const routes: Record<AppRoutes, RouteProps> = {
     path: RoutePaths.eventData,
     element: <EventActivitiesPage />,
   },
+  [AppRoutes.TASK_LIST]: {
+    path: RoutePaths.taskList,
+    element: <TaskListPage />,
+  },
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
     element: <>Place list</>,
@@ -58,10 +63,6 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,
     element: <>User List</>,
-  },
-  [AppRoutes.TASK_LIST]: {
-    path: RoutePaths.taskList,
-    element: <>Task list</>,
   },
   [AppRoutes.NOTIFICATIONS]: {
     path: RoutePaths.notifications,
