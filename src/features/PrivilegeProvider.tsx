@@ -1,26 +1,24 @@
+import { PrivilegeNames } from '@shared/config/privileges';
 import { createContext, useState } from 'react';
 
 class PrivilegeData {
-  _id: number;
-  _name: string;
+  _name: PrivilegeNames
 
-  constructor(id: number, name: string) {
-    this._id = id;
+  constructor(name: PrivilegeNames) {
     this._name = name;
   }
 
-  get id() { return this._id; }
   get name() { return this._name };
 }
 
 class PrivilegeContextData {
-  _privileges: PrivilegeData[];
+  _privileges: Set<PrivilegeData>;
 
-  _eventPrivileges: Map<number, PrivilegeData[]>;
+  _eventPrivileges: Map<number, Set<PrivilegeData>>;
 
   constructor(
-    privileges: PrivilegeData[] = [],
-    eventPrivileges: Map<number, PrivilegeData[]> = new Map()
+    privileges: Set<PrivilegeData> = new Set(),
+    eventPrivileges: Map<number, Set<PrivilegeData>> = new Map()
   ) {
     this._privileges = privileges;
     this._eventPrivileges = eventPrivileges;
@@ -31,7 +29,7 @@ class PrivilegeContextData {
     return this._privileges;
   }
 
-  getPrivilegesForEvent(id: number): PrivilegeData[] | undefined {
+  getPrivilegesForEvent(id: number): Set<PrivilegeData> | undefined {
     return this._eventPrivileges.get(id);
   }
 }
