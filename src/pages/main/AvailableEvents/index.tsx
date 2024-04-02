@@ -9,7 +9,7 @@ import Search from "@widgets/main/Search";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Button from "@widgets/main/Button";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
-import { RoutePaths } from '@shared/config/routes';
+import { AppRoutes, RoutePaths } from '@shared/config/routes';
 import Input from "@widgets/main/Input";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
@@ -18,10 +18,6 @@ const _displayModes: DropdownOption[] = [
   new DropdownOption("Показать списком"),
   new DropdownOption("Показать на карте")
 ]
-
-
-
-
 
 const filterStatus: DropdownOption[] = [
   new DropdownOption("Активное"),
@@ -41,19 +37,16 @@ const filterAge: DropdownOption[] = [
 ]
 
 function AvailableEventsPage() {
-
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
+  const navigate = useNavigate();
 
   const _onSearch = () => {
     console.log('searching')
   }
 
   const _onCreation = () => {
+    navigate(RoutePaths.createEvent)
     console.log('creating')
   }
-  const navigate = useNavigate();
   const _event = () => {
     navigate(RoutePaths.eventData);
   }
@@ -99,18 +92,21 @@ function AvailableEventsPage() {
         <ReactLogo className={styles.event_icon} />
         <div className={styles.event_info_column}>
           <div className={styles.event_name}>
-            {"Event " + index}
+            {"Мероприятия " + index}
           </div>
           <div className={styles.event_place}>
-            Place
+            Площадка
           </div>
+        </div>
+        <div className={styles.button} style={{marginLeft: '950px'}}>
+          <Button onClick={_onCreation}>Копировать</Button>
         </div>
       </a>
     );
   }
   return (
     <Layout
-      topLeft={<BrandLogo onClick={_brandLogoClick} />}
+      topLeft={<BrandLogo />}
       topRight={<PageName text="Доступные мероприятия" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventList} />}
       bottomRight=
@@ -120,9 +116,6 @@ function AvailableEventsPage() {
             <div className={styles.horizontal_bar}>
               <div className={styles.search}>
                 <Search onSearch={_onSearch} placeholder="Поиск" />
-              </div>
-              <div className={styles.dropdown}>
-                <Dropdown value="Показать списком" placeholder="Режим отображения" items={_displayModes} />
               </div>
               <div className={styles.button}>
                 <Button onClick={_onCreation}>Создать</Button>

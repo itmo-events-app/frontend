@@ -10,11 +10,14 @@ import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import EventHeader, { EventInfo } from "@widgets/main/EventHeader";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
+import { ASD } from "@shared/ui/images/index";
 
 
 const _eventName: string = "Славянский Зажим: Поединок за Колосом";
 
 const _eventDescription: string = "Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций!";
+
+const _eventFullDescription: string = "Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций! \n Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций! \n Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций!";
 
 const _eventInfo: EventInfo = new EventInfo(
   "01.06.2024 - 10.06.2024",
@@ -231,11 +234,12 @@ function EventActivitiesPage() {
   function _createInfoPage(text: string) {
     return (
       <div className={styles.content}>
-        {edit_privilege ? (
-          <Button onClick={_editDescription}>Редактировать</Button>
-        ) : <></>}
+        {}
         <div className={styles.description_box}>
           {text}
+        </div>
+        <div className={styles.description_box}>
+          {_eventFullDescription}
         </div>
       </div>
     );
@@ -247,7 +251,7 @@ function EventActivitiesPage() {
         <div className={styles.activity_info_column}>
           <div className={styles.activity_name}>{activity.name}</div>
           <div className={styles.activity_place_container}>
-            <div className={styles.activity_place}>{activity.place}</div>
+            <div className={styles.activity_place} >{activity.place}</div>
             <div className={styles.activity_place}>{activity.room}</div>
           </div>
           <div className={styles.info_block}>{activity.description}</div>
@@ -268,7 +272,7 @@ function EventActivitiesPage() {
     return (
       <div className={styles.content}>
         {edit_privilege ? (
-          <Button onClick={_editActivities}>Редактировать</Button>
+          <Button onClick={_editActivities}>Создать</Button>
         ) : <></>}
         <div className={styles.data_list}>
           {items}
@@ -294,7 +298,7 @@ function EventActivitiesPage() {
     return (
       <div className={styles.content}>
         {edit_privilege ? (
-          <Button onClick={edit_func}>Редактировать</Button>
+          <Button onClick={edit_func}>Создать</Button>
         ) : <></>}
         <table className={styles.table}>
           <thead>
@@ -339,6 +343,12 @@ function EventActivitiesPage() {
     )
   }
 
+  function _createTaskTab() {
+    return <div>
+      <img src={ASD} alt="Girl in a jacket" />
+    </div>
+  }
+
   const [selectedTab, setSelectedTab] = useState("Описание");
 
   function pageTabHandler(tab_name: string) {
@@ -364,7 +374,7 @@ function EventActivitiesPage() {
           {selectedTab == "Активности" && _createActivityList(_activities)}
           {selectedTab == "Организаторы" && _createPersonTable(_orgs, _editOrgs)}
           {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
-          {selectedTab == "Задачи" && "ToDo: Страница задач"}
+          {selectedTab == "Задачи" && _createTaskTab()}
         </Content>
       }
     />

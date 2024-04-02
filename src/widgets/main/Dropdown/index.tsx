@@ -70,7 +70,7 @@ function Dropdown(props: Props) {
       <div
         key={option.id}
         className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_selected + ' ' + (props.className ?? '')}
-        onClick={_select(option)}
+        onClick={(e) => { _select(option); e.stopPropagation() }}
       >
         <a href="#" className={styles.dropdown_item_selected} onClick={_select(option)}>{option.text}</a>
       </div>

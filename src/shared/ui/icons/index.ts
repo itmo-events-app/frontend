@@ -13,5 +13,6 @@ import MenuVertical from "./svg/MenuVertical.svg?react";
 import Personal from "./svg/Personal.svg?react";
 import UserCard from "./svg/UserCard.svg?react";
 import DocumentCheck from "./svg/DocumentCheck.svg?react";
+import UserRead from "./svg/UserRead.svg?react";
 
-export { ArrowDown, ArrowLeft, ArrowRight, Home, Menu, Noted, ReactLogo, ViteLogo, Users, ITMOLogo, Search, MenuVertical, Personal, UserCard, DocumentCheck };
+export { ArrowDown, ArrowLeft, ArrowRight, Home, Menu, Noted, ReactLogo, ViteLogo, Users, ITMOLogo, Search, MenuVertical, Personal, UserCard, DocumentCheck, UserRead };

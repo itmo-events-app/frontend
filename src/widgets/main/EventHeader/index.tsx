@@ -63,7 +63,7 @@ function EventHeader(props: Props) {
           </tr>
           <tr>
             <td>Место проведения</td>
-            <td>{props.eventInfo.place}</td>
+            <td className={styles.hover}>{props.eventInfo.place}</td>
           </tr>
           <tr>
             <td>Формат</td>

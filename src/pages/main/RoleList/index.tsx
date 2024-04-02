@@ -54,7 +54,6 @@ class DialogData {
     this.content = content;
     this.visible = visible;
   }
-
 }
 
 const _roles: RoleModel[] = [
@@ -90,7 +89,7 @@ const _CreateRoleDialogContent = (props: { onDone: any }) => {
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           <InputLabel value="Название роли" />
-          <Input value="РОЛЬ" />
+          <Input />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Описание" />

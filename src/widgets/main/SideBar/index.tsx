@@ -1,4 +1,4 @@
-import { DocumentCheck, Home, Menu, Noted, Personal, Users } from '@shared/ui/icons'
+import { DocumentCheck, Home, Menu, Noted, Personal, UserRead, Users } from '@shared/ui/icons'
 import _Sidebar, { SideBarTab } from './template.tsx'
 import { RoutePaths } from '@shared/config/routes.ts';
 import { sharedStart } from '@shared/util.ts';
@@ -11,11 +11,12 @@ type Props = {
 
 const _tabs: SideBarTab[] = [
   new SideBarTab('Мероприятия', RoutePaths.eventList, <Menu />),
+  new SideBarTab('Задачи', RoutePaths.taskList, <Noted />),
   new SideBarTab('Площадки', RoutePaths.placeList, <Home />),
   new SideBarTab('Уведомления', RoutePaths.notifications, <Noted />),
+  new SideBarTab('Заявки на регистрацию', RoutePaths.registrationRequests, <UserRead />),
   new SideBarTab('Роли', RoutePaths.roleList, <DocumentCheck />),
   new SideBarTab('Пользователи', RoutePaths.userList, <Users />),
-  new SideBarTab('Задачи', RoutePaths.taskList, <Noted />),
   new SideBarTab('Профиль', RoutePaths.profile, <Personal />),
 ]
 

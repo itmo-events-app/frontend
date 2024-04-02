@@ -8,6 +8,7 @@ import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { RoutePaths } from '@shared/config/routes';
+import { useNavigate } from 'react-router-dom';
 
 const _test_orgs: DropdownOption[] = [
   new DropdownOption("[408975] Григорьев Георгий Александрович"),
@@ -17,8 +18,10 @@ const _test_orgs: DropdownOption[] = [
 ]
 
 function EventCreationPage() {
+  const navigate = useNavigate();
+
   const _createEvent = () => {
-    console.log('creating event!');
+    navigate(RoutePaths.eventList);
   }
 
   return (
@@ -37,7 +40,7 @@ function EventCreationPage() {
               <Dropdown placeholder="Выберите главного организатора" items={_test_orgs} />
             </div>
             <div className={styles.event_form_button}>
-              <Button onClick={_createEvent()}>Создать</Button>
+              <Button onClick={_createEvent}>Создать</Button>
             </div>
           </div>
         </Content>

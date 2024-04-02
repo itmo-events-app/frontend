@@ -10,6 +10,11 @@ import AvailableEventsPage from "@pages/main/AvailableEvents";
 import EventCreationPage from "@pages/main/EventCreation";
 import EventActivitiesPage from "@pages/main/EventData";
 import TaskListPage from "@pages/main/TaskList";
+import UserListPage from "@pages/main/UserList";
+import ProfilePage from "@pages/main/ProfilePage";
+import PlaceListPage from "@pages/main/PlaceList";
+import NotificationsPage from "@pages/main/Notifications";
+import RegistrationRequestsPage from "@pages/main/RegistrationRequests";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -54,7 +59,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
-    element: <>Place list</>,
+    element: <PlaceListPage />,
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
@@ -62,15 +67,19 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,
-    element: <>User List</>,
+    element: <UserListPage />,
   },
   [AppRoutes.NOTIFICATIONS]: {
     path: RoutePaths.notifications,
-    element: <>Notifications</>,
+    element: <NotificationsPage />,
   },
   [AppRoutes.PROFILE]: {
     path: RoutePaths.profile,
-    element: <>Profile</>,
+    element: <ProfilePage />,
+  },
+  [AppRoutes.REGISTRATION_REQUESTS]: {
+    path: RoutePaths.registrationRequests,
+    element: <RegistrationRequestsPage />,
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,

@@ -1,0 +1,11 @@
+.button {
+  margin-bottom: 30px;
+}
+.button2 {
+  margin-top: 30px;
+}
+
+.fullw {
+ display: flex;
+ flex-direction: row-reverse;
+}

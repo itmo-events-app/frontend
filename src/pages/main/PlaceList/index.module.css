@@ -1,0 +1,147 @@
+.events_page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.horizontal_bar {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+}
+
+.filters {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+  padding: 10px;
+  max-width: 920px;
+}
+
+.filter_element {
+  min-width: 234px;
+  width: 278px;
+}
+
+.dropdown {
+  min-width: 250px;
+  width: 300px;
+}
+
+.search {
+  display: flex;
+  min-width: 250px;
+  width: 800px;
+}
+
+.event_list_container {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  padding-bottom: 50px;
+}
+
+.event_entry {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.event_icon {
+  width: 75px;
+  height: 75px;
+}
+
+.event_info_column {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.event_name {
+  color: var(--itmo-colors-black);
+}
+
+.event_place {
+  color: var(--itmo-colors-dark-gray);
+}
+
+.fade {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  padding-top: 30px;
+}
+
+.dialog {
+  margin-left: auto;
+  margin-right: auto;
+  max-height: calc(100% - 60px);
+  width: auto;
+  max-width: 960px;
+  overflow: visible;
+}
+
+.dialog_content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0px 10px;
+}
+
+.dialog_form {
+  display: flex;
+  flex-direction:column;
+  gap: 10px;
+}
+
+.dialog_item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+
+.event_form {
+  min-height: 100%;
+  background-color: var(--itmo-colors-white);
+  display: block;
+  justify-content: center;
+  align-items: normal;
+  flex-direction: column;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.event_form_item {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  margin: 0.5rem;
+}
+
+.event_form_button {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  width: 10rem;
+  margin: 0.5rem;
+}

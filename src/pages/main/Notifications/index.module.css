@@ -50,7 +50,6 @@
   display: flex;
   flex-direction: row;
   gap: 50px;
-  cursor: pointer;
 }
 
 .event_icon {
@@ -60,15 +59,15 @@
 
 .event_info_column {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   gap: 10px;
   font-size: 16px;
+  width: 100%;
 }
 
 .event_name {
   color: var(--itmo-colors-black);
-  font-weight: bold;
-  white-space: nowrap;
 }
 
 .event_place {
