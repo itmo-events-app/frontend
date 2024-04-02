@@ -7,12 +7,21 @@ import Error from "@widgets/auth/Error";
 import Label from "@widgets/auth/InputLabel";
 import Input from "@widgets/auth/Input";
 import Button from "@widgets/auth/Button";
+import { useNavigate } from "react-router-dom";
+import { RoutePaths } from "@shared/config/routes";
+import { NotifyState } from "../Notification";
+
+const registerMsg = 'Заявка на регистрацию успешно создана. Ожидайте письма с подтверждением для входа.';
 
 function RegisterPage() {
   const [isError, _] = useState(true);
+  const navigate = useNavigate();
 
   const _register = () => {
-    console.log('register!');
+    const state: NotifyState = {
+      msg: registerMsg
+    }
+    navigate(RoutePaths.notify, { state: state });
   }
 
   return (

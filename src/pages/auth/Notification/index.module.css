@@ -4,6 +4,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 30px;
 }
 
 .block {
@@ -13,8 +15,16 @@
   padding: 30px 50px 30px 50px;
 }
 
-.header {
-  font-size: 28px;
+
+.button {
+  background-color: var(--itmo-colors-white);
+  color: black;
+  border-radius: 20px;
   font-weight: bold;
-  text-align: center;
+  font-size: 16px;
+  box-shadow: var(--itmo-box-shadow);
+}
+
+.button:hover {
+  background-color: var(--itmo-colors-gray-2);
 }

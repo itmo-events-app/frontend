@@ -6,12 +6,21 @@ import Input from "@widgets/auth/Input";
 import Button from "@widgets/auth/Button";
 import Error from '@widgets/auth/Error';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '@shared/config/routes';
+import { NotifyState } from '../Notification';
+
+const msg = 'Смена пароля произошла успешно. Вернитесь на страницу входа.'
 
 function PasswordPage() {
   const [isError, _] = useState(true);
+  const navigate = useNavigate();
 
   const _change = () => {
-    console.log('restore!');
+    const state: NotifyState = {
+      msg: msg
+    }
+    navigate(RoutePaths.notify, { state: state });
   }
 
   return (

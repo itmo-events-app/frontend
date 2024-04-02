@@ -8,6 +8,8 @@ import Link from "@widgets/auth/Link";
 import Error from "@widgets/auth/Error";
 import { useState } from "react";
 import { ITMO } from "@widgets/auth/ITMO";
+import { useNavigate } from "react-router-dom";
+import { RoutePaths } from "@shared/config/routes";
 
 
 export function appendClassName(base: string, add?: string | null) {
@@ -17,17 +19,18 @@ if (add == null) {
 return base + ' ' + add;
 }function LoginPage() {
   const [isError, _] = useState(true);
+  const navigate = useNavigate();
 
   const _forgotPassword = () => {
-    console.log('forgot password!');
+    navigate(RoutePaths.restore);
   }
 
   const _register = () => {
-    console.log('register!');
+    navigate(RoutePaths.register);
   }
 
   const _enter = () => {
-    console.log('enter!');
+    navigate(RoutePaths.eventList);
   }
 
   return (
