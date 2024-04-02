@@ -191,7 +191,7 @@ const _orgs: Person[] = [
   ),
 ]
 
-const task_privilege: boolean = false;
+const task_privilege: boolean = true;
 const edit_privilege: boolean = true;
 
 const _pageTabs: PageTab[] = [
