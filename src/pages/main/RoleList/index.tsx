@@ -137,7 +137,7 @@ const _UpdateRoleDialogContent = (props: { role: RoleModel, onDone: any }) => {
 }
 
 
-function RolesPage() {
+function RoleListPage() {
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
 
@@ -271,4 +271,4 @@ function RolesPage() {
   );
 }
 
-export default RolesPage;
+export default RoleListPage;

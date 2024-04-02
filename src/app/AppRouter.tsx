@@ -5,7 +5,7 @@ import RegisterPage from "@pages/auth/Register";
 import RestorePage from "@pages/auth/Restore";
 import PasswordPage from "@pages/auth/Password";
 import NotifyPage from "@pages/auth/Notification";
-import RolesPage from "@pages/main/Roles";
+import RoleListPage from "@pages/main/RoleList";
 import AvailableEventsPage from "@pages/main/AvailableEvents";
 import EventCreationPage from "@pages/main/EventCreation";
 import EventActivitiesPage from "@pages/main/EventData";
@@ -53,7 +53,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
-    element: <RolesPage />,
+    element: <RoleListPage />,
   },
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,
