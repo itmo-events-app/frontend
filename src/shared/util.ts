@@ -11,3 +11,15 @@ export function sharedStart(array: any[]) {
   while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
   return a1.substring(0, i);
 }
+
+export function union<T>(left: Set<T>, right: Set<T>): Set<T> {
+  return new Set([...left, ...right]);
+}
+
+export function intersection<T>(left: Set<T>, right: Set<T>): Set<T> {
+  return new Set([...left].filter(x => right.has(x)))
+}
+
+export function difference<T>(left: Set<T>, right: Set<T>): Set<T> {
+  return new Set([...left].filter(x => !right.has(x)));
+}
