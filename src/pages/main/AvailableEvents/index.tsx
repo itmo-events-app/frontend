@@ -139,6 +139,8 @@ function AvailableEventsPage() {
               <div className={styles.button}>
                 <Button onClick={_onSearch()}>Найти</Button>
               </div>
+              <>
+              </>
             </div>
             <div className={styles.event_list_container}>
               <PagedList page={1} page_size={Math.max(1, Math.floor((useWindowHeight() - 250) / 125))} items={_events} />

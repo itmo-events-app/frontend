@@ -55,6 +55,6 @@
 
 .table td {
   border: 1px solid var(--itmo-colors-gray);
-  padding: 10px 20px;
-  border-style: none solid solid none;
+  padding: 5px 20px;
+  font-size: 14px;
 }

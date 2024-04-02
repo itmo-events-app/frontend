@@ -23,7 +23,6 @@ const _tabs: SideBarTab[] = [
   ]),
   new SideBarTab('Уведомления', <Noted />),
   new SideBarTab('Профиль', <Users />),
-
 ]
 
 const _eventName: string = "Славянский Зажим: Поединок за Колосом";
@@ -32,9 +31,11 @@ const _eventDescription: string = "Присоединяйтесь к нам на
 
 const _eventInfo: EventInfo = new EventInfo(
   "01.06.2024 - 10.06.2024",
+  "05.06.2024 - 11.06.2024",
   "11.06.2024 - 19.06.2024",
   "100",
   "Кронверкский проспект 49",
+  "Очный",
   "Активное"
 );
 

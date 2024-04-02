@@ -2,22 +2,31 @@ import styles from './index.module.css';
 
 class EventInfo {
   regDates: string
+  prepDates: string
   eventDates: string
   vacantSlots: string
   place: string
+  format: string
+  ageRestriction?: string
   status: string
 
   constructor(
     regDates: string,
+    prepDates: string,
     eventDates: string,
     vacantSlots: string,
     place: string,
-    status: string
+    format: string,
+    status: string,
+    ageRestriction: string
   ) {
     this.regDates = regDates;
+    this.prepDates = prepDates;
     this.eventDates = eventDates;
     this.vacantSlots = vacantSlots;
     this.place = place;
+    this.format = format;
+    this.ageRestriction = ageRestriction;
     this.status = status;
   }
 }
@@ -41,6 +50,10 @@ function EventHeader(props: Props) {
             <td>{props.eventInfo.regDates}</td>
           </tr>
           <tr>
+            <td>Сроки подготовки</td>
+            <td>{props.eventInfo.prepDates}</td>
+          </tr>
+          <tr>
             <td>Сроки проведения</td>
             <td>{props.eventInfo.eventDates}</td>
           </tr>
@@ -51,6 +64,14 @@ function EventHeader(props: Props) {
           <tr>
             <td>Место проведения</td>
             <td>{props.eventInfo.place}</td>
+          </tr>
+          <tr>
+            <td>Формат</td>
+            <td>{props.eventInfo.format}</td>
+          </tr>
+          <tr>
+            <td>Возрастное ограничение</td>
+            <td>{props.eventInfo.ageRestriction ?? "Нет"}</td>
           </tr>
           <tr>
             <td>Статус</td>
