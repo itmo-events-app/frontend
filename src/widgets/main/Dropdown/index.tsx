@@ -26,7 +26,7 @@ type Props = {
 function Dropdown(props: Props) {
 
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(props.value);
+  const [selected, setSelected] = useState(props.value ?? "");
 
   function _select(item: DropdownOption) {
     return () => {
