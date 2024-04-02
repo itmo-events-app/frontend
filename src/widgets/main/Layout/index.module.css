@@ -22,7 +22,7 @@
 
 
 .top_right {
-  z-index: 1000;
+  z-index: 100;
   position: sticky;
   top: 0;
   background-color: var(--itmo-colors-white);
