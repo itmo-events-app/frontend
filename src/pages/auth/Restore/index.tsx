@@ -8,8 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { NotifyState } from '../Notification';
 import { RoutePaths } from '@shared/config/routes';
 
-const label = 'Пожалуйста, укажите ваш email. Вы получите письмо со ссылкой для создания нового пароля.';
-const msg = 'Заявка на восстановление отправлена. Вы получите письмо со ссылкой для создания нового пароля.'
+const label = 'Пожалуйста, укажите ваш Email. Вы получите письмо со ссылкой для создания нового пароля.';
+const msg = 'Заявка на восстановление отправлена. Вы получите письмо на ваш Email со ссылкой для создания нового пароля.'
 
 
 function RestorePage() {
