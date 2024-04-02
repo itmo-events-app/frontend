@@ -12,12 +12,12 @@
 .search {
   display: flex;
   min-width: 250px;
-  width: 900px;
+  width: 800px;
 }
 
 .dropdown {
   min-width: 250px;
-  width: 400px;
+  width: 300px;
 }
 
 .event_list_container {
@@ -31,4 +31,28 @@
   border: 1px solid var(--itmo-colors-gray);
   border-radius: 10px;
   padding: 10px 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.event_icon {
+  width: 75px;
+  height: 75px;
+}
+
+.event_info_column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.event_name {
+  color: var(--itmo-colors-black);
+  font-weight: bold;
+}
+
+.event_place {
+  color: var(--itmo-colors-dark-gray);
 }

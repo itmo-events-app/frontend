@@ -1,5 +1,6 @@
-import { Home, Menu, Noted, Users } from '@shared/ui/icons';
+import {Home, Menu, Noted, ReactLogo, Users} from '@shared/ui/icons';
 import styles from './index.module.css';
+import { useLayoutEffect, useState } from 'react'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
@@ -33,7 +34,17 @@ const _displayModes: DropdownOption[] = [
 
 function _entryStub(index: number) {
   return (
-    <div key={index} className={styles.event_entry}>{index}</div>
+    <div key={index} className={styles.event_entry}>
+      <ReactLogo className={styles.event_icon}/>
+      <div className={styles.event_info_column}>
+        <div className={styles.event_name}>
+          {"Event " + index}
+        </div>
+        <div className={styles.event_place}>
+          Place
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -75,12 +86,35 @@ const _events: any[] = [
 
 function AvailableEventsPage() {
 
+  function useWindowHeight() {
+
+    const [height, setHeight] = useState(0);
+
+    useLayoutEffect(() => {
+
+      function updateHeight() {
+        setHeight(window.innerHeight);
+      }
+
+      window.addEventListener("resize", updateHeight);
+      updateHeight();
+
+      return () => window.removeEventListener("resize", updateHeight);
+    }, []);
+
+    return height;
+  }
+
   const _brandLogoClick = () => {
     console.log('brand logo!')
   }
 
   const _onSearch = () => {
     console.log('searching')
+  }
+
+  const _onCreation = () => {
+    console.log('creating')
   }
 
   return (
@@ -100,11 +134,14 @@ function AvailableEventsPage() {
                 <Dropdown value="Показать списком" placeholder="Режим отображения" items={_displayModes} />
               </div>
               <div className={styles.button}>
+                <Button onClick={_onCreation()}>Создать</Button>
+              </div>
+              <div className={styles.button}>
                 <Button onClick={_onSearch()}>Найти</Button>
               </div>
             </div>
             <div className={styles.event_list_container}>
-              <PagedList page={1} page_size={5} items={_events} />
+              <PagedList page={1} page_size={Math.max(1, Math.floor((useWindowHeight() - 250) / 125))} items={_events} />
             </div>
           </div>
         </Content>

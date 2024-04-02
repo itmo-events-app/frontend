@@ -90,7 +90,7 @@ function PagedList(props: Props) {
           {props.items.length}
         </div>
         <div className={styles.nav_page_num}>
-          {"элементов"}
+          {((props.items.length % 10 == 1) && (Math.floor(props.items.length / 10) % 10 != 1)) ? "элемента" : "элементов"}
         </div>
       </div>
     );
