@@ -95,3 +95,7 @@
   border: 1px solid var(--itmo-colors-gray);
   padding: 10px 20px;
 }
+
+.buttonXlsx {
+  margin-right: 20px;
+}

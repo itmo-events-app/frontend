@@ -7,7 +7,7 @@ import PageName from '@widgets/main/PageName';
 import SideBar from '@widgets/main/SideBar';
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import EventHeader, {EventInfo} from "@widgets/main/EventHeader";
+import EventHeader, { EventInfo } from "@widgets/main/EventHeader";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
 
@@ -224,7 +224,7 @@ function EventActivitiesPage() {
     console.log('editing participants')
   }
 
-  const _editEvent= () => {
+  const _editEvent = () => {
     console.log('editing event')
   }
 
@@ -268,7 +268,7 @@ function EventActivitiesPage() {
     return (
       <div className={styles.content}>
         {edit_privilege ? (
-            <Button onClick={_editActivities}>Редактировать</Button>
+          <Button onClick={_editActivities}>Редактировать</Button>
         ) : <></>}
         <div className={styles.data_list}>
           {items}
@@ -310,6 +310,34 @@ function EventActivitiesPage() {
       </div>
     )
   }
+  function _createPersonTableUsers(persons: Person[], edit_func: any) {
+    const items = []
+    for (const person of persons) {
+      items.push(_createPersonRow(person));
+    }
+    return (
+      <div className={styles.content}>
+        {edit_privilege ? (
+          <div className="s">
+            <Button className={styles.buttonXlsx} onClick={edit_func}>Выгрузить xlsx</Button>
+            <Button onClick={edit_func}>Загрузить xlsx</Button>
+          </div>
+
+        ) : <></>}
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Имя</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
 
   const [selectedTab, setSelectedTab] = useState("Описание");
 
@@ -331,11 +359,11 @@ function EventActivitiesPage() {
               <Button onClick={_editEvent}>Редактировать информацию о мероприятии</Button>
             </div>
           ) : <></>}
-          <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs}/>
+          <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs} />
           {selectedTab == "Описание" && _createInfoPage(_eventDescription)}
           {selectedTab == "Активности" && _createActivityList(_activities)}
           {selectedTab == "Организаторы" && _createPersonTable(_orgs, _editOrgs)}
-          {selectedTab == "Участники" && _createPersonTable(_members, _editParticipants)}
+          {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
           {selectedTab == "Задачи" && "ToDo: Страница задач"}
         </Content>
       }
