@@ -10,6 +10,7 @@ import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Button from "@widgets/main/Button";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { RoutePaths } from '@shared/config/routes';
+import Input from "@widgets/main/Input";
 
 const _displayModes: DropdownOption[] = [
   new DropdownOption("Показать списком"),
@@ -68,6 +69,23 @@ const _events: any[] = [
   new PageEntry(() => { return _entryStub(33) })
 ]
 
+const filterStatus: DropdownOption[] = [
+  new DropdownOption("Активное"),
+  new DropdownOption("Проведенное")
+]
+
+const filterFormat: DropdownOption[] = [
+  new DropdownOption("Офлайн"),
+  new DropdownOption("Онлайн")
+]
+
+const filterAge: DropdownOption[] = [
+  new DropdownOption("+0"),
+  new DropdownOption("+12"),
+  new DropdownOption("+16"),
+  new DropdownOption("+18")
+]
+
 function AvailableEventsPage() {
 
   const _brandLogoClick = () => {
@@ -91,7 +109,7 @@ function AvailableEventsPage() {
       {
         <Content>
           <div className={styles.events_page}>
-            <div className={styles.top_bar}>
+            <div className={styles.horizontal_bar}>
               <div className={styles.search}>
                 <Search onSearch={_onSearch} placeholder="Поиск" />
               </div>
@@ -101,8 +119,20 @@ function AvailableEventsPage() {
               <div className={styles.button}>
                 <Button onClick={_onCreation}>Создать</Button>
               </div>
-              <>
-              </>
+            </div>
+            <div className={styles.filters}>
+              <Input className={styles.filter_element} placeholder="Название мероприятия" />
+              <Input className={styles.filter_element} placeholder="Сроки регистрации" />
+              <Input className={styles.filter_element} placeholder="Сроки проведения" />
+              <div className={styles.dropdown}>
+                <Dropdown placeholder="Статус" items={filterStatus} clearable />
+              </div>
+              <div className={styles.dropdown}>
+                <Dropdown placeholder="Формат" items={filterFormat} clearable />
+              </div>
+              <div className={styles.dropdown}>
+                <Dropdown placeholder="Возрастное ограничение" items={filterAge} clearable />
+              </div>
             </div>
             <div className={styles.event_list_container}>
               <PagedList page={1} page_size={5} page_step={5} items={_events} />

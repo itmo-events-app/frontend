@@ -1,12 +1,33 @@
 .events_page {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
-.top_bar {
+.horizontal_bar {
   display: flex;
   flex-flow: row wrap;
   gap: 10px;
+}
+
+.filters {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+  padding: 10px;
+  max-width: 920px;
+}
+
+.filter_element {
+  min-width: 234px;
+  width: 278px;
+}
+
+.dropdown {
+  min-width: 250px;
+  width: 300px;
 }
 
 .search {
@@ -15,15 +36,10 @@
   width: 800px;
 }
 
-.dropdown {
-  min-width: 250px;
-  width: 300px;
-}
-
 .event_list_container {
   display: flex;
   flex-direction: column;
-  padding-top: 50px;
+  padding-top: 20px;
   padding-bottom: 50px;
 }
 
