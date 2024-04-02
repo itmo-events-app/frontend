@@ -136,9 +136,6 @@ function AvailableEventsPage() {
               <div className={styles.button}>
                 <Button onClick={_onCreation()}>Создать</Button>
               </div>
-              <div className={styles.button}>
-                <Button onClick={_onSearch()}>Найти</Button>
-              </div>
               <>
               </>
             </div>

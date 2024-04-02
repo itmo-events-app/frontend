@@ -22,8 +22,9 @@
 
 
 .top_right {
+  z-index: 1000;
   position: sticky;
-  top: 0px;
+  top: 0;
   background-color: var(--itmo-colors-white);
   display: flex;
   align-items: center;
