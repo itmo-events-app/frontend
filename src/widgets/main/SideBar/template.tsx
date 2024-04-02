@@ -3,14 +3,22 @@ import { useState } from 'react'
 import { ArrowDown } from '@shared/ui/icons'
 import { appendClassName } from '@shared/util'
 import { useNavigate } from "react-router-dom"
+import { PrivilegeNames } from '@shared/config/privileges'
+
+type IsVisibleFunc = (x: Set<PrivilegeNames>) => boolean;
+
+function isVisibleFuncTrue(_: Set<PrivilegeNames>) {
+  return true;
+}
 
 class SideBarTab {
-  text: string
-  url: string
-  icon?: any
-  private _children: SideBarTab[]
-  private _selected: boolean
-  private _expanded: boolean
+  text: string;
+  url: string;
+  icon?: any;
+  _children: SideBarTab[];
+  _selected: boolean;
+  _expanded: boolean;
+  _isVisible: IsVisibleFunc;
 
   constructor(
     text: string,
@@ -19,6 +27,7 @@ class SideBarTab {
     children: SideBarTab[] = [],
     selected: boolean = false,
     expanded: boolean = false,
+    isVisible: IsVisibleFunc = isVisibleFuncTrue
   ) {
     this.text = text;
     this.icon = icon;
@@ -26,6 +35,7 @@ class SideBarTab {
     this._children = children;
     this._selected = selected;
     this._expanded = expanded;
+    this._isVisible = isVisible;
   }
 
   public get children() { return this._children; }
@@ -33,6 +43,7 @@ class SideBarTab {
   public get expanded() { return this._expanded; }
   public set selected(value: boolean) { this._selected = value; }
   public set expanded(value: boolean) { this._expanded = value; }
+  public get isVisible() { return this._isVisible; }
 }
 
 type Props = {

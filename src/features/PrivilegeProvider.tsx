@@ -39,12 +39,12 @@ type PrivilegeContextValue = {
   setPrivilegeContext: (token: PrivilegeContextData) => void
 }
 
-export const TokenContext = createContext({} as PrivilegeContextValue);
+const PrivilegeContext = createContext({} as PrivilegeContextValue);
 
 /*
  * NOTE: is not stored in localStorage, works like buffer during until page refresh
  */
-export const PrivilegeContextProvider = (props: { children: any }) => {
+const PrivilegeContextProvider = (props: { children: any }) => {
   const [privilegeContext, setPrivilegeContext] = useState(new PrivilegeContextData());
 
   const contextValue: PrivilegeContextValue = {
@@ -53,11 +53,11 @@ export const PrivilegeContextProvider = (props: { children: any }) => {
   };
 
   return (
-    <TokenContext.Provider value={contextValue}>
+    <PrivilegeContext.Provider value={contextValue}>
       {props.children}
-    </TokenContext.Provider>
+    </PrivilegeContext.Provider>
   );
 };
 
 export type { PrivilegeContextValue }
-export { PrivilegeContextData }
+export { PrivilegeContextData, PrivilegeContextProvider, PrivilegeContext }
