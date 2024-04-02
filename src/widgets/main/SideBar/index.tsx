@@ -1,93 +1,34 @@
-import { uid } from 'uid'
-import styles from './index.module.css'
-import { useState } from 'react'
-import { ArrowDown } from '@shared/ui/icons'
-import { appendClassName } from '@shared/util'
-
-class SideBarTab {
-  id: string
-  text: string
-  icon?: any
-  private _children: SideBarTab[]
-  private _selected: boolean
-  private _expanded: boolean
-
-  constructor(
-    text: string,
-    icon?: any,
-    children: SideBarTab[] = [],
-    selected: boolean = false,
-    expanded: boolean = false,
-  ) {
-    this.id = uid();
-    this.text = text;
-    this.icon = icon;
-    this._children = children;
-    this._selected = selected;
-    this._expanded = expanded;
-  }
-
-  public get children() { return this._children; }
-  public get selected() { return this._selected; }
-  public get expanded() { return this._expanded; }
-  public set selected(value: boolean) { this._selected = value; }
-  public set expanded(value: boolean) { this._expanded = value; }
-}
+import { DocumentCheck, Home, Menu, Noted, Personal, Users } from '@shared/ui/icons'
+import _Sidebar, { SideBarTab } from './template.tsx'
+import { RoutePaths } from '@shared/config/routes.ts';
+import { sharedStart } from '@shared/util.ts';
 
 type Props = {
-  tabs: SideBarTab[],
+  currentPageURL: string,
 }
 
-function SideBar(props: Props) {
-  const [tabs, setTabs] = useState(props.tabs);
+const SideBar = (props: Props) => {
+  const _tabs: SideBarTab[] = [
+    new SideBarTab('Мероприятия', RoutePaths.eventList, <Menu />),
+    new SideBarTab('Площадки', RoutePaths.placeList, <Home />),
+    new SideBarTab('Уведомления', RoutePaths.notifications, <Noted />),
+    new SideBarTab('Роли', RoutePaths.roleList, <DocumentCheck />),
+    new SideBarTab('Пользователи', RoutePaths.userList, <Users />),
+    new SideBarTab('Задачи', RoutePaths.taskList, <Noted />),
+    new SideBarTab('Профиль', RoutePaths.profile, <Personal />),
+  ]
 
-  function _expandTab(tab: SideBarTab) {
-    return () => {
-      tab.expanded = !tab.expanded;
-      setTabs([...tabs]); // NOTE: force object recreation
-    }
-  }
-
-  function _createTab(tab: SideBarTab) {
-    const entryIcon = tab.icon ? <div className={styles.icon_cnt}>{tab.icon}</div> : <></>;
-    const entryText = <div className={styles.text_cnt}>{tab.text}</div>;
-    const entryArrow = tab.children.length > 0
-      ? (<ArrowDown className={appendClassName(styles.arrow, (tab.expanded ? styles.arrow_down : styles.arrow_up))} />)
-      : <></>;
-
-    return (
-      <div key={tab.id} className={styles.tab}>
-        <div
-          className={appendClassName(styles.tab_entry, (tab.selected ? styles.selected : null))}
-          onClick={_expandTab(tab)}>
-          {entryIcon}
-          {entryText}
-          {entryArrow}
-        </div>
-        {(tab.expanded && tab.children.length > 0) ?
-          <div className={styles.tab_children}>
-            {_createTabList(tab.children)}
-          </div>
-          : <></>
-        }
-      </div>
-    );
-  }
-
-  function _createTabList(tabs: SideBarTab[]) {
-    const elements = []
-    for (const tab of tabs) {
-      elements.push(_createTab(tab));
-    }
-    return elements;
+  function processTabs(tabs: SideBarTab[], url: string) {
+    return tabs.map(tab => {
+      const selected = sharedStart([tab.url, url]) === tab.url;
+      tab.selected = selected;
+      return tab;
+    })
   }
 
   return (
-    <div className={styles.sidebar}>
-      {_createTabList(tabs)}
-    </div>
+    <_Sidebar tabs={processTabs(_tabs, props.currentPageURL)} />
   )
 }
 
-export default SideBar;
-export { SideBarTab }
+export default SideBar

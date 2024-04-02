@@ -10,5 +10,8 @@ import Users from './svg/Users.svg?react';
 import ViteLogo from "./svg/ViteLogo.svg?react";
 import Search from "./svg/Search.svg?react";
 import MenuVertical from "./svg/MenuVertical.svg?react";
+import Personal from "./svg/Personal.svg?react";
+import UserCard from "./svg/UserCard.svg?react";
+import DocumentCheck from "./svg/DocumentCheck.svg?react";
 
-export { ArrowDown, ArrowLeft, ArrowRight, Home, Menu, Noted, ReactLogo, ViteLogo, Users, ITMOLogo, Search, MenuVertical };
+export { ArrowDown, ArrowLeft, ArrowRight, Home, Menu, Noted, ReactLogo, ViteLogo, Users, ITMOLogo, Search, MenuVertical, Personal, UserCard, DocumentCheck };

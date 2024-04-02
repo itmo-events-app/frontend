@@ -1,31 +1,16 @@
-import {Home, Menu, Noted, ReactLogo, Users} from '@shared/ui/icons';
+import { ReactLogo } from '@shared/ui/icons';
 import styles from './index.module.css';
 import { useLayoutEffect, useState } from 'react'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
-import SideBar, { SideBarTab } from '@widgets/main/SideBar';
+import SideBar from '@widgets/main/SideBar';
 import Search from "@widgets/main/Search";
-import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Button from "@widgets/main/Button";
-import PagedList, {PageEntry} from "@widgets/main/PagedList";
-
-const _tabs: SideBarTab[] = [
-  new SideBarTab('Мероприятия', <Menu />, [
-    new SideBarTab('Доступные',undefined, [], true),
-    new SideBarTab('Участия'),
-    new SideBarTab('Организуемые'),
-    new SideBarTab('Создание'),
-  ], true, true),
-  new SideBarTab('Площадки', <Home />, [
-    new SideBarTab('Доступные'),
-    new SideBarTab('Создание'),
-  ]),
-  new SideBarTab('Уведомления', <Noted />),
-  new SideBarTab('Профиль', <Users />),
-
-]
+import PagedList, { PageEntry } from "@widgets/main/PagedList";
+import { RoutePaths } from '@shared/config/routes';
 
 const _displayModes: DropdownOption[] = [
   new DropdownOption("Показать списком"),
@@ -35,7 +20,7 @@ const _displayModes: DropdownOption[] = [
 function _entryStub(index: number) {
   return (
     <div key={index} className={styles.event_entry}>
-      <ReactLogo className={styles.event_icon}/>
+      <ReactLogo className={styles.event_icon} />
       <div className={styles.event_info_column}>
         <div className={styles.event_name}>
           {"Event " + index}
@@ -49,39 +34,39 @@ function _entryStub(index: number) {
 }
 
 const _events: any[] = [
-  new PageEntry(() => {return _entryStub(1)}),
-  new PageEntry(() => {return _entryStub(2)}),
-  new PageEntry(() => {return _entryStub(3)}),
-  new PageEntry(() => {return _entryStub(4)}),
-  new PageEntry(() => {return _entryStub(5)}),
-  new PageEntry(() => {return _entryStub(6)}),
-  new PageEntry(() => {return _entryStub(7)}),
-  new PageEntry(() => {return _entryStub(8)}),
-  new PageEntry(() => {return _entryStub(9)}),
-  new PageEntry(() => {return _entryStub(10)}),
-  new PageEntry(() => {return _entryStub(11)}),
-  new PageEntry(() => {return _entryStub(12)}),
-  new PageEntry(() => {return _entryStub(13)}),
-  new PageEntry(() => {return _entryStub(14)}),
-  new PageEntry(() => {return _entryStub(15)}),
-  new PageEntry(() => {return _entryStub(16)}),
-  new PageEntry(() => {return _entryStub(17)}),
-  new PageEntry(() => {return _entryStub(18)}),
-  new PageEntry(() => {return _entryStub(19)}),
-  new PageEntry(() => {return _entryStub(20)}),
-  new PageEntry(() => {return _entryStub(21)}),
-  new PageEntry(() => {return _entryStub(22)}),
-  new PageEntry(() => {return _entryStub(23)}),
-  new PageEntry(() => {return _entryStub(24)}),
-  new PageEntry(() => {return _entryStub(25)}),
-  new PageEntry(() => {return _entryStub(26)}),
-  new PageEntry(() => {return _entryStub(27)}),
-  new PageEntry(() => {return _entryStub(28)}),
-  new PageEntry(() => {return _entryStub(29)}),
-  new PageEntry(() => {return _entryStub(30)}),
-  new PageEntry(() => {return _entryStub(31)}),
-  new PageEntry(() => {return _entryStub(32)}),
-  new PageEntry(() => {return _entryStub(33)})
+  new PageEntry(() => { return _entryStub(1) }),
+  new PageEntry(() => { return _entryStub(2) }),
+  new PageEntry(() => { return _entryStub(3) }),
+  new PageEntry(() => { return _entryStub(4) }),
+  new PageEntry(() => { return _entryStub(5) }),
+  new PageEntry(() => { return _entryStub(6) }),
+  new PageEntry(() => { return _entryStub(7) }),
+  new PageEntry(() => { return _entryStub(8) }),
+  new PageEntry(() => { return _entryStub(9) }),
+  new PageEntry(() => { return _entryStub(10) }),
+  new PageEntry(() => { return _entryStub(11) }),
+  new PageEntry(() => { return _entryStub(12) }),
+  new PageEntry(() => { return _entryStub(13) }),
+  new PageEntry(() => { return _entryStub(14) }),
+  new PageEntry(() => { return _entryStub(15) }),
+  new PageEntry(() => { return _entryStub(16) }),
+  new PageEntry(() => { return _entryStub(17) }),
+  new PageEntry(() => { return _entryStub(18) }),
+  new PageEntry(() => { return _entryStub(19) }),
+  new PageEntry(() => { return _entryStub(20) }),
+  new PageEntry(() => { return _entryStub(21) }),
+  new PageEntry(() => { return _entryStub(22) }),
+  new PageEntry(() => { return _entryStub(23) }),
+  new PageEntry(() => { return _entryStub(24) }),
+  new PageEntry(() => { return _entryStub(25) }),
+  new PageEntry(() => { return _entryStub(26) }),
+  new PageEntry(() => { return _entryStub(27) }),
+  new PageEntry(() => { return _entryStub(28) }),
+  new PageEntry(() => { return _entryStub(29) }),
+  new PageEntry(() => { return _entryStub(30) }),
+  new PageEntry(() => { return _entryStub(31) }),
+  new PageEntry(() => { return _entryStub(32) }),
+  new PageEntry(() => { return _entryStub(33) })
 ]
 
 function AvailableEventsPage() {
@@ -121,7 +106,7 @@ function AvailableEventsPage() {
     <Layout
       topLeft={<BrandLogo onClick={_brandLogoClick} />}
       topRight={<PageName text="Доступные мероприятия" />}
-      bottomLeft={<SideBar tabs={_tabs} />}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.eventList} />}
       bottomRight=
       {
         <Content>
@@ -134,7 +119,7 @@ function AvailableEventsPage() {
                 <Dropdown value="Показать списком" placeholder="Режим отображения" items={_displayModes} />
               </div>
               <div className={styles.button}>
-                <Button onClick={_onCreation()}>Создать</Button>
+                <Button onClick={_onCreation}>Создать</Button>
               </div>
               <>
               </>
