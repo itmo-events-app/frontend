@@ -1,9 +1,8 @@
-import { Home, Menu, Noted, Users } from '@shared/ui/icons';
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
-import SideBar, { SideBarTab } from '@widgets/main/SideBar';
+import SideBar from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
 import Button from '@widgets/main/Button';
 import RoleList from '@widgets/main/RoleList';
@@ -20,6 +19,7 @@ import InputLabel from '@widgets/main/InputLabel';
 import InputCheckboxList from '@widgets/main/InputCheckboxList';
 import InputCheckbox from '@widgets/main/InputCheckbox';
 import TextArea from '@widgets/main/TextArea';
+import { RoutePaths } from '@shared/config/routes';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -56,23 +56,6 @@ class DialogData {
   }
 
 }
-
-const _tabs: SideBarTab[] = [
-  new SideBarTab('Мероприятия', <Menu />, [
-    new SideBarTab('Доступные'),
-    new SideBarTab('Участия'),
-    new SideBarTab('Организуемые'),
-    new SideBarTab('Создание'),
-  ], true),
-  new SideBarTab('Площадки', <Home />, [
-    new SideBarTab('Доступные'),
-    new SideBarTab('Создание'),
-    new SideBarTab('Созданиe'),
-  ]),
-  new SideBarTab('Уведомления', <Noted />),
-  new SideBarTab('Профиль', <Users />),
-
-]
 
 const _roles: RoleModel[] = [
   new RoleModel(1, 'USER', false, [
@@ -344,7 +327,7 @@ function RolesPage() {
     <Layout
       topLeft={<BrandLogo onClick={_brandLogoClick} />}
       topRight={<PageName text="Список ролей" />}
-      bottomLeft={<SideBar tabs={_tabs} />}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.roleList} />}
       bottomRight={<_RolesContent />}
     >
       <_ContextMenu />

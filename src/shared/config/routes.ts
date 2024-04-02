@@ -6,30 +6,41 @@ export enum AppRoutes {
   RESTORE = "restore",
   PASSWORD = "password",
   NOTIFY = "notify",
-  ROLES = "roles",
   EVENT_CREATION = "createEvent",
   EVENT_DATA = "eventData",
   EVENT_LIST = "eventList",
+  PLACE_LIST = "placeList",
+  ROLE_LIST = "roleList",
+  USER_LIST = "userList",
+  TASK_LIST = "taskList",
+  NOTIFICATIONS = "notifications",
+  PROFILE = "profile",
   NOT_FOUND = "notFound",
 }
 
 // чтобы не хардкодить шаблонную строку
 // RoutePaths.user.replace(RouteParams.USERNAME, username)
 export enum RouteParams {
-  POST_ID = ":id",
+  PLACE_ID = ":place_id",
   USERNAME = ":username",
 }
 
 export const RoutePaths: Record<AppRoutes, string> = {
+  // Будем отрисовывать в зависимости от параметра.
   [AppRoutes.ROOT]: "/",
   [AppRoutes.REGISTER]: "/register",
   [AppRoutes.LOGIN]: "/login",
   [AppRoutes.RESTORE]: "/restore",
   [AppRoutes.NOTIFY]: "/notify",
   [AppRoutes.PASSWORD]: "/password",
-  [AppRoutes.ROLES]: "/roles",
   [AppRoutes.EVENT_LIST]: "/events",
   [AppRoutes.EVENT_CREATION]: "/events/create",
   [AppRoutes.EVENT_DATA]: "/events/event",
+  [AppRoutes.PLACE_LIST]: "/places",
+  [AppRoutes.ROLE_LIST]: "/roles",
+  [AppRoutes.USER_LIST]: "/users",
+  [AppRoutes.TASK_LIST]: "/tasks",
+  [AppRoutes.NOTIFICATIONS]: "/notifications",
+  [AppRoutes.PROFILE]: "/profile",
   [AppRoutes.NOT_FOUND]: "*"
 };

@@ -1,29 +1,13 @@
-import { Home, Menu, Noted, Users } from '@shared/ui/icons';
 import styles from './index.module.css';
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
-import SideBar, { SideBarTab } from '@widgets/main/SideBar';
+import SideBar from '@widgets/main/SideBar';
 import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
-
-const _tabs: SideBarTab[] = [
-  new SideBarTab('Мероприятия', <Menu />, [
-    new SideBarTab('Доступные'),
-    new SideBarTab('Участия'),
-    new SideBarTab('Организуемые'),
-    new SideBarTab('Создание', undefined, [], true),
-  ], true, true),
-  new SideBarTab('Площадки', <Home />, [
-    new SideBarTab('Доступные'),
-    new SideBarTab('Создание'),
-  ]),
-  new SideBarTab('Уведомления', <Noted />),
-  new SideBarTab('Профиль', <Users />),
-
-]
+import { RoutePaths } from '@shared/config/routes';
 
 const _test_orgs: DropdownOption[] = [
   new DropdownOption("[408975] Григорьев Георгий Александрович"),
@@ -45,7 +29,7 @@ function EventCreationPage() {
     <Layout
       topLeft={<BrandLogo onClick={_brandLogoClick} />}
       topRight={<PageName text="Создание мероприятия" />}
-      bottomLeft={<SideBar tabs={_tabs} />}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.createEvent} />}
       bottomRight=
       {
         <Content>

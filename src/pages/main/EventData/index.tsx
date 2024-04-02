@@ -1,29 +1,15 @@
 import { uid } from 'uid'
-import { Home, Menu, Noted, Users } from '@shared/ui/icons';
 import { useState } from 'react'
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
-import SideBar, { SideBarTab } from '@widgets/main/SideBar';
+import SideBar from '@widgets/main/SideBar';
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import EventHeader, {EventInfo} from "@widgets/main/EventHeader";
+import { RoutePaths } from '@shared/config/routes';
 
-const _tabs: SideBarTab[] = [
-  new SideBarTab('Мероприятия', <Menu />, [
-    new SideBarTab('Доступные'),
-    new SideBarTab('Участия'),
-    new SideBarTab('Организуемые'),
-    new SideBarTab('Создание'),
-  ], true, true),
-  new SideBarTab('Площадки', <Home />, [
-    new SideBarTab('Доступные'),
-    new SideBarTab('Создание'),
-  ]),
-  new SideBarTab('Уведомления', <Noted />),
-  new SideBarTab('Профиль', <Users />),
-]
 
 const _eventName: string = "Славянский Зажим: Поединок за Колосом";
 
@@ -296,7 +282,7 @@ function EventActivitiesPage() {
     <Layout
       topLeft={<BrandLogo onClick={_brandLogoClick} />}
       topRight={<PageName text={_eventName} />}
-      bottomLeft={<SideBar tabs={_tabs} />}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight=
       {
         <Content>

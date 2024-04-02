@@ -35,8 +35,8 @@ const routes: Record<AppRoutes, RouteProps> = {
     path: RoutePaths.notify,
     element: <NotifyPage />,
   },
-  [AppRoutes.ROLES]: {
-    path: RoutePaths.roles,
+  [AppRoutes.ROLE_LIST]: {
+    path: RoutePaths.roleList,
     element: <RolesPage />,
   },
   [AppRoutes.EVENT_LIST]: {

@@ -21,7 +21,6 @@ function Layout(props: Props) {
     const adjustTopLeftHeight = () => {
       const topRightHeight = topRightNode.offsetHeight;
       topLeftNode.style.height = `${topRightHeight}px`;
-      console.log(topLeftNode.style.top);
     };
 
     adjustTopLeftHeight();
