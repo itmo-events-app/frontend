@@ -1,4 +1,6 @@
 .sidebar {
+  min-width: 220px;
+
   padding-left: 25px;
   padding-right: 25px;
   display: flex;
