@@ -194,8 +194,8 @@ const _orgs: Person[] = [
   ),
 ]
 
-const task_privilege: boolean = false;
-const edit_privilege: boolean = false;
+const task_privilege: boolean = true;
+const edit_privilege: boolean = true;
 
 const _pageTabs: PageTab[] = [
   new PageTab("Описание"),
@@ -344,9 +344,16 @@ function EventActivitiesPage() {
   }
 
   function _createTaskTab() {
-    return <div>
-      <img src={ASD} alt="Girl in a jacket" />
-    </div>
+    return (
+      <div className={styles.content}>
+        {edit_privilege ? (
+          <div className={styles.edit_button}>
+            <Button onClick={_editEvent}>Создать задачу</Button>
+          </div>
+        ) : <></>}
+        <img src={ASD} alt="Girl in a jacket" />
+      </div>
+    )
   }
 
   const [selectedTab, setSelectedTab] = useState("Описание");
