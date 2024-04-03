@@ -36,6 +36,7 @@
 .text_cnt {
   vertical-align: center;
   height: 24px;
+  white-space: nowrap;
 }
 
 .arrow {
