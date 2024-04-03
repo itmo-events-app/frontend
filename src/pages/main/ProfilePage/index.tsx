@@ -24,7 +24,7 @@ class EventRole {
   }
 }
 
-const _mainRole: string = "USER";
+const _mainRole: string = "ADMIN";
 
 const _additionalRoles: EventRole[] = [
   new EventRole("Событие 1", "Главный оргаизатор"),
