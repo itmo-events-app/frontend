@@ -222,9 +222,6 @@ function TaskListPage() {
                         <h2 className="tasks-filter__title">Фильтр задач</h2>
                         <form className={styles.tasksfilter__form}>
                             <div className={styles.dropdown}>
-                                <Dropdown placeholder="Пользователь" items={filterUser} clearable />
-                            </div>
-                            <div className={styles.dropdown}>
                                 <Dropdown placeholder="Мероприятие" items={filterEvent} clearable />
                             </div>
                             <div className={styles.dropdown}>
