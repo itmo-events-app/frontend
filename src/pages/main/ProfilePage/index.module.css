@@ -1,11 +1,83 @@
-.button {
-  margin-bottom: 30px;
-}
-.button2 {
-  margin-top: 30px;
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.fullw {
- display: flex;
- flex-direction: row-reverse;
+.profile {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+  padding: 10px;
+}
+
+.image_container {
+  display: flex;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.profile_col {
+  display: flex;
+  flex-direction: column;
+}
+
+.table {
+  width: 500px;
+  margin: 20px 0;
+  border-collapse: collapse;
+  border-radius: 10px;
+  border-spacing: 0;
+  border: 1px solid var(--itmo-colors-gray);
+}
+
+.table th {
+  font-weight: bold;
+  padding: 10px 20px;
+  background: var(--itmo-colors-gray);
+  text-align: left;
+  border: 1px solid var(--itmo-colors-gray);
+}
+
+.table td {
+  border: 1px solid var(--itmo-colors-gray);
+  padding: 5px 20px;
+  font-size: 16px;
+}
+
+.button_row {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+}
+
+.button {
+  min-width: 245px;
+  width: 245px;
+}
+
+.roles_table {
+  margin: 20px 0;
+  border-collapse: collapse;
+  border-radius: 10px;
+  border-spacing: 0;
+  border: 1px solid var(--itmo-colors-gray);
+}
+
+.roles_table th {
+  font-weight: bold;
+  padding: 10px 20px;
+  background: var(--itmo-colors-blue-80);
+  text-align: left;
+  border: 1px solid var(--itmo-colors-gray);
+  color: var(--itmo-colors-white);
+}
+
+.roles_table td {
+  font-weight: bold;
+  border: 1px solid var(--itmo-colors-gray);
+  padding: 5px 20px;
+  font-size: 16px;
 }

@@ -157,6 +157,12 @@ function PlaceListPage() {
     )
   }
 
+  /*
+                <div className={styles.button}>
+                <Button onClick={_createRole}>Создать</Button>
+              </div>
+   */
+
   return (
     <Layout
       topLeft={<BrandLogo />}
@@ -170,9 +176,7 @@ function PlaceListPage() {
               <div className={styles.search}>
                 <Search onSearch={_onSearch} placeholder="Поиск" />
               </div>
-              <div className={styles.button}>
-                <Button onClick={_createRole}>Создать</Button>
-              </div>
+
             </div>
             <div className={styles.event_list_container}>
               <PagedList page={1} page_size={5} page_step={5} items={_events} />

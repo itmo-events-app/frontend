@@ -86,6 +86,12 @@ function AvailableEventsPage() {
     new PageEntry(() => { return _entryStub(33) })
   ]
 
+  /*
+          <div className={styles.button} style={{marginLeft: '950px'}}>
+          <Button onClick={_onCreation}>Копировать</Button>
+        </div>
+   */
+
   function _entryStub(index: number) {
     return (
       <a key={index} onClick={_event} className={styles.event_entry}>
@@ -98,12 +104,17 @@ function AvailableEventsPage() {
             Площадка
           </div>
         </div>
-        <div className={styles.button} style={{marginLeft: '950px'}}>
-          <Button onClick={_onCreation}>Копировать</Button>
-        </div>
+
       </a>
     );
   }
+
+  /*
+                <div className={styles.button}>
+                <Button onClick={_onCreation}>Создать</Button>
+              </div>
+   */
+
   return (
     <Layout
       topLeft={<BrandLogo />}
@@ -117,9 +128,7 @@ function AvailableEventsPage() {
               <div className={styles.search}>
                 <Search onSearch={_onSearch} placeholder="Поиск" />
               </div>
-              <div className={styles.button}>
-                <Button onClick={_onCreation}>Создать</Button>
-              </div>
+
             </div>
             <div className={styles.filters}>
               <Input className={styles.filter_element} placeholder="Название мероприятия" />

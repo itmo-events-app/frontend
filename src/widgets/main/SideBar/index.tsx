@@ -14,9 +14,9 @@ const _tabs: SideBarTab[] = [
   new SideBarTab('Задачи', RoutePaths.taskList, <Noted />),
   new SideBarTab('Площадки', RoutePaths.placeList, <Home />),
   new SideBarTab('Уведомления', RoutePaths.notifications, <Noted />),
-  new SideBarTab('Заявки на регистрацию', RoutePaths.registrationRequests, <UserRead />),
-  new SideBarTab('Роли', RoutePaths.roleList, <DocumentCheck />),
-  new SideBarTab('Пользователи', RoutePaths.userList, <Users />),
+  // new SideBarTab('Заявки на регистрацию', RoutePaths.registrationRequests, <UserRead />),
+  // new SideBarTab('Роли', RoutePaths.roleList, <DocumentCheck />),
+  // new SideBarTab('Пользователи', RoutePaths.userList, <Users />),
   new SideBarTab('Профиль', RoutePaths.profile, <Personal />),
 ]
 
