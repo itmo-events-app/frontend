@@ -23,3 +23,12 @@ export function intersection<T>(left: Set<T>, right: Set<T>): Set<T> {
 export function difference<T>(left: Set<T>, right: Set<T>): Set<T> {
   return new Set([...left].filter(x => !right.has(x)));
 }
+
+export function truncateTextByWords(text: string, wordLimit: number): string {
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  } else {
+    return text;
+  }
+}

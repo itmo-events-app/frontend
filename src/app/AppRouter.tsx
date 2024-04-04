@@ -10,6 +10,7 @@ import AvailableEventsPage from "@pages/main/AvailableEvents";
 import EventCreationPage from "@pages/main/EventCreation";
 import EventActivitiesPage from "@pages/main/EventData";
 import TaskListPage from "@pages/main/TaskList";
+import NotificationsListPage from "@pages/main/NotificationsListPage";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -66,7 +67,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.NOTIFICATIONS]: {
     path: RoutePaths.notifications,
-    element: <>Notifications</>,
+    element: <NotificationsListPage />,
   },
   [AppRoutes.PROFILE]: {
     path: RoutePaths.profile,

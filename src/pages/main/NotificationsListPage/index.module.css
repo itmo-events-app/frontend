@@ -1,0 +1,69 @@
+.notification_entry {
+  padding: 16px;
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.notification_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.notification_titles {
+  font-weight: bold;
+  color: var(--itmo-colors-black);
+}
+
+.notification_date_time {
+  color: var(--itmo-colors-dark-gray);
+  text-align: right;
+}
+
+.notification_date_and_expand_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification_text {
+  color: #333333;
+  overflow-wrap: break-word; /* Ensures the break of long words if necessary */
+  word-wrap: break-word;     /* Deprecated version of the above property for older browsers */
+  white-space: normal;       /* Allows the text to wrap to the next line */
+}
+
+.notification_delete {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.delete_button {
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.expand_button {
+  /* Style for the expand button, adjust as needed */
+  margin-left: auto; /* Pushes the button to the right */
+  padding: 8px;
+  cursor: pointer;
+  background-color: var(--itmo-colors-blue); /* Example color */
+  color: white;
+  border: none;
+}
+
+.arrow {
+  margin-left: 10px;
+}
+
+.arrow_up {
+  transform: rotate(180deg);
+}
