@@ -3,8 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./AppRouter";
 import "./App.css";
 import { TokenContextProvider } from "@features/TokenProvider";
-import { PrivilegeContextData, PrivilegeContextProvider, PrivilegeData } from "@features/PrivilegeProvider";
-import { PrivilegeNames } from "@shared/config/privileges";
+import {PrivilegeContextProvider } from "@features/PrivilegeProvider";
 import { userAdministrator, userHelper, userOrganizer, userReader } from "./privileges";
 
 const App = () => {

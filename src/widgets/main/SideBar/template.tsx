@@ -48,7 +48,7 @@ class SideBarTab {
 
 type Props = {
   tabs: SideBarTab[],
-  currentPageURL?: string,
+  currentPageURL: string,
   privilegeContext?: PrivilegeContextData
 }
 
@@ -108,7 +108,7 @@ function SideBar(props: Props) {
     return elements;
   }
 
-  function _processSelected(tabs: SideBarTab[], url?: string) {
+  function _processSelected(tabs: SideBarTab[], url: string) {
     return tabs.map(tab => {
       const selected = sharedStart([tab.url, url]) === tab.url;
       tab.selected = selected;
