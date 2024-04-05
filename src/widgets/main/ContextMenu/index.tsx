@@ -37,11 +37,12 @@ function _createItemList(items: ContextMenuItem[]) {
 }
 
 const ContextMenu = forwardRef((props: Props, ref) => {
-  return (
-    <div className={appendClassName(styles.menu, props.className)} style={props.style} ref={ref as any}>
-      {_createItemList(props.items)}
-    </div>
-  )
+  const items = _createItemList(props.items);
+  return items.length > 0
+    ? (<div className={appendClassName(styles.menu, props.className)} style={props.style} ref={ref as any}>
+      {items}
+    </div>)
+    : <></>
 })
 
 export { ContextMenuItem }
