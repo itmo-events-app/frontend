@@ -59,8 +59,11 @@ function RoleList(props: Props) {
         className={appendClassName(styles.icon_expand, (role.expanded ? styles.expanded : null))} />
       : <></>;
 
-    const onMenuClick = props.onMenuClick ?? ((_) => { });
-    const Menu = <MenuVertical onClick={(e) => onMenuClick(role.entry, e)} className={styles.icon_dots} />;
+    const menuVisible = props.onMenuClick != null;
+    const Menu = menuVisible
+      ? <MenuVertical onClick={(e) => props.onMenuClick!(role.entry, e)} className={styles.icon_dots} />
+      : <div></div>;
+
 
     return (
       <div key={uid()} className={styles.role}>
@@ -71,7 +74,7 @@ function RoleList(props: Props) {
                 {role.entry.name}
               </div>
               <div className={styles.role_type}>
-                {role.entry.isGlobal ? 'Глобальная' : 'Организационная'}
+                {role.entry.isGlobal ? 'Системная' : 'Организационная'}
               </div>
             </div>
             <div className={styles.role_description}>

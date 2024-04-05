@@ -57,3 +57,8 @@
   gap: 10px;
   font-size: 16px;
 }
+
+.create_button {
+  border: none;
+  padding: 8px 16px;
+}

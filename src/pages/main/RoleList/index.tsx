@@ -8,7 +8,7 @@ import Button from '@widgets/main/Button';
 import RoleList from '@widgets/main/RoleList';
 import { PrivilegeModel, RoleModel } from '@entities/Role';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Dialog from '@widgets/main/Dialog';
 import { appendClassName } from '@shared/util';
 
@@ -20,6 +20,9 @@ import InputCheckboxList from '@widgets/main/InputCheckboxList';
 import InputCheckbox from '@widgets/main/InputCheckbox';
 import TextArea from '@widgets/main/TextArea';
 import { RoutePaths } from '@shared/config/routes';
+import { PrivilegeContext, PrivilegeData } from '@features/PrivilegeProvider';
+import { hasAnyPrivilege } from '@features/privileges';
+import { PrivilegeNames } from '@shared/config/privileges';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -58,12 +61,12 @@ class DialogData {
 }
 
 const _roles: RoleModel[] = [
-  new RoleModel(1, 'USER', false, [
+  new RoleModel(1, 'USER', true, [
     new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
     new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
     new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
   ], 'Пользователь'),
-  new RoleModel(1, 'ADMIN', false, [
+  new RoleModel(1, 'ADMIN', true, [
     new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
     new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
     new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
@@ -136,13 +139,31 @@ const _UpdateRoleDialogContent = (props: { role: RoleModel, onDone: any }) => {
   );
 }
 
+const privilegeOthers = {
+  create: new Set([
+    new PrivilegeData(PrivilegeNames.CREATE_ROLE)
+  ]),
+  edit: new Set([
+    new PrivilegeData(PrivilegeNames.EDIT_ROLE)
+  ]),
+  delete: new Set([
+    new PrivilegeData(PrivilegeNames.DELETE_ROLE)
+  ])
+}
 
 function RoleListPage() {
+  const { privilegeContext } = useContext(PrivilegeContext);
+
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
 
   const cmRef = useRef(null);
   const dialogRef = useRef(null);
+
+  const menuVisible = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    ...privilegeOthers.edit,
+    ...privilegeOthers.delete
+  ]))
 
   // set context menu position. not using transform(-100%, 0%) to handle content bounds
   // NOTE: can move to controller object
@@ -205,18 +226,28 @@ function RoleListPage() {
   }
 
   const _onMenuClick = (role: RoleModel, e: React.MouseEvent) => {
-    const _contextItems: ContextMenuItem[] = [
-      new ContextMenuItem('Удалить', () => {
-        setCmData({ ...cmData, visible: false });
-      }),
+    const contextItems: ContextMenuItem[] = [
       new ContextMenuItem('Редактировать', (e: React.MouseEvent) => {
         setCmData({ ...cmData, visible: false });
         setDialogData(new DialogData('Редактирование роли', _UpdateRoleDialogContent({ role: role, onDone: _closeDialog }), true));
         e.stopPropagation();
       }),
+      new ContextMenuItem('Удалить', () => {
+        setCmData({ ...cmData, visible: false });
+      }),
     ]
+
+    const mine = privilegeContext.systemPrivileges;
+
+    const filteredItems = contextItems.filter(item => {
+      switch (item.text) {
+        case 'Редактировать': return hasAnyPrivilege(mine, privilegeOthers.edit)
+        case 'Удалить': return hasAnyPrivilege(mine, privilegeOthers.delete)
+      }
+    })
+
     e.stopPropagation();
-    setCmData(new ContextMenuData(e.clientX, e.clientY, true, _contextItems));
+    setCmData(new ContextMenuData(e.clientX, e.clientY, true, filteredItems));
   }
 
   const _RolesContent = () => {
@@ -224,9 +255,11 @@ function RoleListPage() {
       <Content className={styles.content}>
         <div className={styles.top}>
           <Search onSearch={_onSearch} placeholder="Поиск роли" />
-          <Button onClick={_createRole} >Создать роль</Button>
+          {hasAnyPrivilege(privilegeContext.systemPrivileges, privilegeOthers.create)
+            ? <Button onClick={_createRole} className={styles.create_button}>Создать роль</Button>
+            : <></>}
         </div>
-        <RoleList roles={_roles} onMenuClick={_onMenuClick} />
+        <RoleList roles={_roles} onMenuClick={menuVisible ? _onMenuClick : undefined} />
       </Content>
     )
   }
