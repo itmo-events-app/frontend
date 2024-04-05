@@ -8,7 +8,7 @@ import { PrivilegeNames } from "@shared/config/privileges";
 import { userAdministrator, userHelper, userOrganizer, userReader } from "./privileges";
 
 const App = () => {
-  const privilegeContext = userOrganizer;
+  const privilegeContext = userAdministrator;
 
   return (
     <BrowserRouter>
