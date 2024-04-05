@@ -1,7 +1,7 @@
 import styles from './index.module.css'
 import { useState } from 'react'
 import { ArrowDown } from '@shared/ui/icons'
-import { appendClassName } from '@shared/util'
+import { appendClassName, sharedStart } from '@shared/util'
 import { useNavigate } from "react-router-dom"
 import { PrivilegeNames } from '@shared/config/privileges'
 
@@ -15,27 +15,27 @@ class SideBarTab {
   text: string;
   url: string;
   icon?: any;
+  _isVisible: IsVisibleFunc;
   _children: SideBarTab[];
   _selected: boolean;
   _expanded: boolean;
-  _isVisible: IsVisibleFunc;
 
   constructor(
     text: string,
     url: string,
     icon?: any,
+    isVisible: IsVisibleFunc = isVisibleFuncTrue,
     children: SideBarTab[] = [],
     selected: boolean = false,
     expanded: boolean = false,
-    isVisible: IsVisibleFunc = isVisibleFuncTrue
   ) {
     this.text = text;
     this.icon = icon;
     this.url = url;
+    this._isVisible = isVisible;
     this._children = children;
     this._selected = selected;
     this._expanded = expanded;
-    this._isVisible = isVisible;
   }
 
   public get children() { return this._children; }
@@ -48,6 +48,8 @@ class SideBarTab {
 
 type Props = {
   tabs: SideBarTab[],
+  currentPageURL?: string,
+  systemPrivileges?: Set<PrivilegeNames>
 }
 
 function SideBar(props: Props) {
@@ -104,9 +106,21 @@ function SideBar(props: Props) {
     return elements;
   }
 
+  function _processSelected(tabs: SideBarTab[], url?: string) {
+    return tabs.map(tab => {
+      const selected = sharedStart([tab.url, url]) === tab.url;
+      tab.selected = selected;
+      return tab;
+    })
+  }
+
+  function _filterVisible(tabs: SideBarTab[]) {
+    return tabs.filter(tab => tab.isVisible(props.systemPrivileges ?? new Set()));
+  }
+
   return (
     <div className={styles.sidebar}>
-      {_createTabList(tabs)}
+      {_createTabList(_processSelected(_filterVisible(tabs), props.currentPageURL))}
     </div>
   )
 }
