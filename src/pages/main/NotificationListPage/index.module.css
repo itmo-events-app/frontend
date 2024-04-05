@@ -37,17 +37,28 @@
   white-space: normal;       /* Allows the text to wrap to the next line */
 }
 
-.notification_delete {
+.notification_read {
   display: flex;
   justify-content: flex-end;
   margin-top: 8px;
 }
 
-.delete_button {
+.read_button {
   color: white;
   border: none;
   padding: 8px 16px;
-  cursor: pointer;
+  background-color: var(--itmo-colors-gray);
+}
+
+.read_button:hover {
+  cursor: auto;
+  background-color: var(--itmo-colors-gray);
+}
+
+.not_read_button {
+  color: white;
+  border: none;
+  padding: 8px 16px;
 }
 
 .expand_button {
@@ -62,6 +73,11 @@
 
 .arrow {
   margin-left: 10px;
+  height: 32px;
+}
+
+.arrow:hover {
+  cursor: pointer;
 }
 
 .arrow_up {
