@@ -1,6 +1,7 @@
 import { uid } from 'uid'
 import styles from './index.module.css'
 import { useState } from 'react'
+import { appendClassName } from '@shared/util'
 
 class DropdownOption {
   id: string
@@ -45,7 +46,7 @@ function Dropdown(props: Props) {
   function _clearOption() {
     return (
       <div
-        className={styles.dropdown_item_container + ' ' + (props.className ?? '')}
+        className={styles.dropdown_item_container}
         onClick={_resetSelection()}
       >
         <a href="#" className={styles.dropdown_placeholder} onClick={_resetSelection()}>Сброс выбора</a>
@@ -57,7 +58,7 @@ function Dropdown(props: Props) {
     return (
       <div
         key={option.id}
-        className={styles.dropdown_item_container + ' ' + (props.className ?? '')}
+        className={styles.dropdown_item_container}
         onClick={_select(option)}
       >
         <a href="#" className={styles.dropdown_item} onClick={_select(option)}>{option.text}</a>
@@ -69,7 +70,7 @@ function Dropdown(props: Props) {
     return (
       <div
         key={option.id}
-        className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_selected + ' ' + (props.className ?? '')}
+        className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_selected}
         onClick={_select(option)}
       >
         <a href="#" className={styles.dropdown_item_selected} onClick={_select(option)}>{option.text}</a>
@@ -93,9 +94,9 @@ function Dropdown(props: Props) {
     return items;
   }
 
-  function _renderPlaceholder(text: string) {
+  function _renderPlaceholder(text?: string) {
     return (
-      <a href="#" className={styles.dropdown_placeholder + ' ' + (props.className ?? '')} onClick={() => setOpen(!open)}>
+      <a href="#" className={styles.dropdown_placeholder} onClick={() => setOpen(!open)}>
         {text}
       </a>
     );
@@ -103,21 +104,10 @@ function Dropdown(props: Props) {
 
   function _renderSelectedOption(text: string) {
     return (
-      <a href="#" className={styles.dropdown_selected_option + ' ' + (props.className ?? '')} onClick={() => setOpen(!open)}>
+      <a href="#" className={styles.dropdown_selected_option} onClick={() => setOpen(!open)}>
         {text}
       </a>
     )
-  }
-
-  function _openDropdown() {
-    return (
-      <div className={styles.option_list}>
-        <div className={styles.dropdown_list_border}>
-          {props.clearable && _clearOption()}
-          {_createOptionList(props.items)}
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -127,7 +117,12 @@ function Dropdown(props: Props) {
           {selected == "" ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(selected)}
         </div>
       </div>
-      {open && _openDropdown()}
+      <div className={appendClassName(appendClassName(styles.option_list, open ? styles.visible : styles.hidden), props.className)}>
+        <div className={styles.dropdown_list_border}>
+          {props.clearable && _clearOption()}
+          {_createOptionList(props.items)}
+        </div>
+      </div>
     </div>
   );
 }

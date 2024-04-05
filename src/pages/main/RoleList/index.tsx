@@ -17,12 +17,12 @@ import Fade from '@widgets/main/Fade';
 import Input from '@widgets/main/Input';
 import InputLabel from '@widgets/main/InputLabel';
 import InputCheckboxList from '@widgets/main/InputCheckboxList';
-import InputCheckbox from '@widgets/main/InputCheckbox';
-import TextArea from '@widgets/main/TextArea';
 import { RoutePaths } from '@shared/config/routes';
 import { PrivilegeContext, PrivilegeData } from '@features/PrivilegeProvider';
 import { hasAnyPrivilege } from '@features/privileges';
 import { PrivilegeNames } from '@shared/config/privileges';
+import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
+import TextArea from '@widgets/main/TextArea';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 
@@ -101,7 +101,7 @@ const _CreateRoleDialogContent = (props: { onDone: any }) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
-          <InputCheckbox checked={true} onChange={(v: any) => { console.log(v) }} text="Организационная" />
+          <Dropdown items={[new DropdownOption('Организационная'), new DropdownOption('Системная')]} value={'Системная'} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />
@@ -127,7 +127,7 @@ const _UpdateRoleDialogContent = (props: { role: RoleModel, onDone: any }) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип" />
-          <InputCheckbox checked={true} onChange={(v: any) => { console.log(v) }} text="Организационная" />
+          <Dropdown items={[new DropdownOption('Организационная'), new DropdownOption('Системная')]} value={'Системная'} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />
@@ -196,7 +196,6 @@ function RoleListPage() {
     const handler = (e: any) => {
       if (dialogRef.current) {
         if (dialogData.visible && !(dialogRef.current as any).contains(e.target)) {
-          console.log('closing dialog.');
           _closeDialog();
         }
       }
