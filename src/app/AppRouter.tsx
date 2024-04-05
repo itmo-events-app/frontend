@@ -72,6 +72,10 @@ const routes: Record<AppRoutes, RouteProps> = {
     path: RoutePaths.profile,
     element: <>Profile</>,
   },
+  [AppRoutes.REQUEST_LIST]: {
+    path: RoutePaths.requestList,
+    element: <>Request List</>,
+  },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,
     element: <>404 not found</>,

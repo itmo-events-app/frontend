@@ -3,11 +3,11 @@ import { useState } from 'react'
 import { ArrowDown } from '@shared/ui/icons'
 import { appendClassName, sharedStart } from '@shared/util'
 import { useNavigate } from "react-router-dom"
-import { PrivilegeNames } from '@shared/config/privileges'
+import { PrivilegeContextData, PrivilegeData } from '@features/PrivilegeProvider'
 
-type IsVisibleFunc = (x: Set<PrivilegeNames>) => boolean;
+type IsVisibleFunc = (x: Set<PrivilegeData>) => boolean;
 
-function isVisibleFuncTrue(_: Set<PrivilegeNames>) {
+function isVisibleFuncTrue(_: Set<PrivilegeData>) {
   return true;
 }
 
@@ -49,10 +49,12 @@ class SideBarTab {
 type Props = {
   tabs: SideBarTab[],
   currentPageURL?: string,
-  systemPrivileges?: Set<PrivilegeNames>
+  privilegeContext?: PrivilegeContextData
 }
 
 function SideBar(props: Props) {
+  const privilegeContext = props.privilegeContext ?? new PrivilegeContextData();
+
   const [tabs, setTabs] = useState(props.tabs);
 
   const navigate = useNavigate();
@@ -115,7 +117,7 @@ function SideBar(props: Props) {
   }
 
   function _filterVisible(tabs: SideBarTab[]) {
-    return tabs.filter(tab => tab.isVisible(props.systemPrivileges ?? new Set()));
+    return tabs.filter(tab => tab.isVisible(privilegeContext.systemPrivileges));
   }
 
   return (

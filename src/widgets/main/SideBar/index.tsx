@@ -1,7 +1,7 @@
-import { DocumentCheck, Home, Menu, Noted, Personal, Users } from '@shared/ui/icons'
+import { DocumentCheck, Home, Menu, Noted, Personal, Users, UserRead, Notebook } from '@shared/ui/icons'
 import _Sidebar, { SideBarTab } from './template.tsx'
 import { RoutePaths } from '@shared/config/routes.ts';
-import { PrivilegeContext } from '@features/PrivilegeProvider.tsx';
+import { PrivilegeContext, PrivilegeData } from '@features/PrivilegeProvider.tsx';
 import { useContext } from 'react';
 import { anyPrivilege } from '@features/privileges.ts';
 import { PrivilegeNames } from '@shared/config/privileges.ts';
@@ -12,22 +12,26 @@ type Props = {
 
 const _tabs: SideBarTab[] = [
   new SideBarTab('Мероприятия', RoutePaths.eventList, <Menu />, anyPrivilege(new Set([
-    PrivilegeNames.VIEW_ALL_EVENTS_AND_ACTIVITIES,
+    new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS_AND_ACTIVITIES),
   ]))),
-  new SideBarTab('Задачи', RoutePaths.taskList, <Noted />),
+  new SideBarTab('Задачи', RoutePaths.taskList, <Notebook />),
   new SideBarTab('Площадки', RoutePaths.placeList, <Home />, anyPrivilege(new Set([
-    PrivilegeNames.VIEW_EVENT_PLACE,
+    new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
   ]))),
   new SideBarTab('Уведомления', RoutePaths.notifications, <Noted />),
+  new SideBarTab('Заявки на регистрацию', RoutePaths.requestList, <UserRead />, anyPrivilege(new Set([
+    new PrivilegeData(PrivilegeNames.APPROVE_REGISTRATION_REQUEST),
+    new PrivilegeData(PrivilegeNames.REJECT_REGISTRATION_REQUEST),
+  ]))),
   new SideBarTab('Роли', RoutePaths.roleList, <DocumentCheck />, anyPrivilege(new Set([
-    PrivilegeNames.CREATE_ROLE,
-    PrivilegeNames.EDIT_ROLE,
-    PrivilegeNames.DELETE_ROLE,
+    new PrivilegeData(PrivilegeNames.CREATE_ROLE),
+    new PrivilegeData(PrivilegeNames.EDIT_ROLE),
+    new PrivilegeData(PrivilegeNames.DELETE_ROLE),
   ]))),
   new SideBarTab('Пользователи', RoutePaths.userList, <Users />, anyPrivilege(new Set([
-    PrivilegeNames.VIEW_OTHER_USERS_PROFILE,
-    PrivilegeNames.ASSIGN_SYSTEM_ROLE,
-    PrivilegeNames.REVOKE_SYSTEM_ROLE,
+    new PrivilegeData(PrivilegeNames.VIEW_OTHER_USERS_PROFILE),
+    new PrivilegeData(PrivilegeNames.ASSIGN_SYSTEM_ROLE),
+    new PrivilegeData(PrivilegeNames.REVOKE_SYSTEM_ROLE),
   ]))),
   new SideBarTab('Профиль', RoutePaths.profile, <Personal />),
 ]
@@ -36,10 +40,8 @@ const _tabs: SideBarTab[] = [
 const SideBar = (props: Props) => {
   const { privilegeContext } = useContext(PrivilegeContext);
 
-  const systemPrivileges = new Set([...privilegeContext.privileges].map(data => data.name));
-
   return (
-    <_Sidebar tabs={_tabs} systemPrivileges={systemPrivileges} currentPageURL={props.currentPageURL} />
+    <_Sidebar tabs={_tabs} privilegeContext={privilegeContext} currentPageURL={props.currentPageURL} />
   )
 }
 

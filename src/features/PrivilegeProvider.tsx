@@ -1,6 +1,7 @@
 import { PrivilegeNames } from '@shared/config/privileges';
 import { createContext, useState } from 'react';
 
+
 class PrivilegeData {
   _name: PrivilegeNames
 
@@ -12,27 +13,28 @@ class PrivilegeData {
 }
 
 class PrivilegeContextData {
-  _privileges: Set<PrivilegeData>;
+  _systemPrivileges: Set<PrivilegeData>;
 
   _eventPrivileges: Map<number, Set<PrivilegeData>>;
 
   constructor(
-    privileges: Set<PrivilegeData> = new Set(),
+    systemPrivileges: Set<PrivilegeData> = new Set(),
     eventPrivileges: Map<number, Set<PrivilegeData>> = new Map()
   ) {
-    this._privileges = privileges;
+    this._systemPrivileges = systemPrivileges;
     this._eventPrivileges = eventPrivileges;
 
   }
 
-  get privileges() {
-    return this._privileges;
+  get systemPrivileges() {
+    return this._systemPrivileges;
   }
 
-  getPrivilegesForEvent(id: number): Set<PrivilegeData> | undefined {
+  getPrivilegesForEvent(id: number) {
     return this._eventPrivileges.get(id);
   }
 }
+
 
 type PrivilegeContextValue = {
   privilegeContext: PrivilegeContextData,
@@ -41,11 +43,16 @@ type PrivilegeContextValue = {
 
 const PrivilegeContext = createContext({} as PrivilegeContextValue);
 
+type Props = {
+  context?: PrivilegeContextData,
+  children: any
+}
 /*
  * NOTE: is not stored in localStorage, works like buffer during until page refresh
  */
-const PrivilegeContextProvider = (props: { children: any }) => {
-  const [privilegeContext, setPrivilegeContext] = useState(new PrivilegeContextData());
+const PrivilegeContextProvider = (props: Props) => {
+  const context = props.context ?? new PrivilegeContextData();
+  const [privilegeContext, setPrivilegeContext] = useState(context);
 
   const contextValue: PrivilegeContextValue = {
     privilegeContext,
@@ -60,4 +67,4 @@ const PrivilegeContextProvider = (props: { children: any }) => {
 };
 
 export type { PrivilegeContextValue }
-export { PrivilegeContextData, PrivilegeContextProvider, PrivilegeContext }
+export { PrivilegeData, PrivilegeContextData, PrivilegeContextProvider, PrivilegeContext }

@@ -15,6 +15,7 @@ export enum AppRoutes {
   TASK_LIST = "taskList",
   NOTIFICATIONS = "notifications",
   PROFILE = "profile",
+  REQUEST_LIST = "requestList",
   NOT_FOUND = "notFound",
 }
 
@@ -42,5 +43,6 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.TASK_LIST]: "/tasks",
   [AppRoutes.NOTIFICATIONS]: "/notifications",
   [AppRoutes.PROFILE]: "/profile",
+  [AppRoutes.REQUEST_LIST]: "/requests",
   [AppRoutes.NOT_FOUND]: "*"
 };

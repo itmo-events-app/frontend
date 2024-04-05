@@ -1,23 +1,31 @@
-import { PrivilegeNames } from '@shared/config/privileges';
 import { intersection, union } from '@shared/util'
+import { PrivilegeData } from './PrivilegeProvider';
 
-function hasAnyPrivilege(mine: Set<PrivilegeNames>, others: Set<PrivilegeNames>) {
-  return intersection(mine, others).size > 0;
+function getPrivilegeDataNames(set: Set<PrivilegeData>) {
+  return new Set([...set].map(e => e.name));
 }
 
-function hasAllPrivileges(mine: Set<PrivilegeNames>, others: Set<PrivilegeNames>) {
-  return union(mine, others).size == others.size;
+function hasAnyPrivilege(mine: Set<PrivilegeData>, others: Set<PrivilegeData>) {
+  const mineNames = getPrivilegeDataNames(mine);
+  const othersNames = getPrivilegeDataNames(others);
+  return intersection(mineNames, othersNames).size > 0;
+}
+
+function hasAllPrivileges(mine: Set<PrivilegeData>, others: Set<PrivilegeData>) {
+  const mineNames = getPrivilegeDataNames(mine);
+  const othersNames = getPrivilegeDataNames(others);
+  return union(mineNames, othersNames).size == othersNames.size;
 }
 
 
-function anyPrivilege(others: Set<PrivilegeNames>) {
-  return function(mine: Set<PrivilegeNames>) {
+function anyPrivilege(others: Set<PrivilegeData>) {
+  return function(mine: Set<PrivilegeData>) {
     return hasAnyPrivilege(mine, others);
   }
 }
 
-function allPrivileges(others: Set<PrivilegeNames>) {
-  return function(mine: Set<PrivilegeNames>) {
+function allPrivileges(others: Set<PrivilegeData>) {
+  return function(mine: Set<PrivilegeData>) {
     return hasAllPrivileges(mine, others);
   }
 }
