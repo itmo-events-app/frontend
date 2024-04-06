@@ -13,6 +13,12 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { PlaceShortDataResponse } from './place-short-data-response';
+// May contain unused imports in some cases
+// @ts-ignore
+import { UserShortDataResponse } from './user-short-data-response';
 
 /**
  * 
@@ -20,6 +26,12 @@
  * @interface TaskResponse
  */
 export interface TaskResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof TaskResponse
+     */
+    'id'?: number;
     /**
      * 
      * @type {string}
@@ -38,6 +50,24 @@ export interface TaskResponse {
      * @memberof TaskResponse
      */
     'taskStatus'?: TaskResponseTaskStatusEnum;
+    /**
+     * 
+     * @type {UserShortDataResponse}
+     * @memberof TaskResponse
+     */
+    'assignee'?: UserShortDataResponse;
+    /**
+     * 
+     * @type {PlaceShortDataResponse}
+     * @memberof TaskResponse
+     */
+    'place'?: PlaceShortDataResponse;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'creationTime'?: string;
     /**
      * 
      * @type {string}

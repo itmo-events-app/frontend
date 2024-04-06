@@ -37,7 +37,7 @@ export interface TaskRequest {
      * @type {UserShortDataRequest}
      * @memberof TaskRequest
      */
-    'assigner': UserShortDataRequest;
+    'assignee'?: UserShortDataRequest;
     /**
      * 
      * @type {string}

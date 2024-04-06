@@ -38,7 +38,7 @@ return base + ' ' + add;
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Войти</span>
-        <Error value="Неправильный Email или пароль" isError={isError} />
+        <Error value="Неправильный Email или Пароль" isError={isError} />
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Логин" />
@@ -46,7 +46,7 @@ return base + ' ' + add;
           </div>
           <div className={styles.form_item}>
             <Label value="Пароль" />
-            <Input type='password' />
+            <Input type='password' placeholder="Пароль"/>
             <Link onClick={_forgotPassword} value="Забыли пароль?" />
           </div>
         </div>

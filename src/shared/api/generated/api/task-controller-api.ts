@@ -22,8 +22,6 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
-import { TaskFilterRequest } from '../model';
-// @ts-ignore
 import { TaskRequest } from '../model';
 // @ts-ignore
 import { TaskResponse } from '../model';
@@ -208,21 +206,17 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} srcEventId 
          * @param {number} dstEventId 
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListCopy: async (srcEventId: number, dstEventId: number, requestBody: Array<number>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'srcEventId' is not null or undefined
-            assertParamExists('taskListCopy', 'srcEventId', srcEventId)
+        taskListCopy: async (dstEventId: number, requestBody: Array<number>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'dstEventId' is not null or undefined
             assertParamExists('taskListCopy', 'dstEventId', dstEventId)
             // verify required parameter 'requestBody' is not null or undefined
             assertParamExists('taskListCopy', 'requestBody', requestBody)
-            const localVarPath = `/api/tasks/event/{srcEventId}/{dstEventId}`
-                .replace(`{${"srcEventId"}}`, encodeURIComponent(String(srcEventId)))
+            const localVarPath = `/api/tasks/event/{dstEventId}`
                 .replace(`{${"dstEventId"}}`, encodeURIComponent(String(dstEventId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -251,21 +245,17 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} srcEventId 
          * @param {number} dstEventId 
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListMove: async (srcEventId: number, dstEventId: number, requestBody: Array<number>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'srcEventId' is not null or undefined
-            assertParamExists('taskListMove', 'srcEventId', srcEventId)
+        taskListMove: async (dstEventId: number, requestBody: Array<number>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'dstEventId' is not null or undefined
             assertParamExists('taskListMove', 'dstEventId', dstEventId)
             // verify required parameter 'requestBody' is not null or undefined
             assertParamExists('taskListMove', 'requestBody', requestBody)
-            const localVarPath = `/api/tasks/event/{srcEventId}/{dstEventId}`
-                .replace(`{${"srcEventId"}}`, encodeURIComponent(String(srcEventId)))
+            const localVarPath = `/api/tasks/event/{dstEventId}`
                 .replace(`{${"dstEventId"}}`, encodeURIComponent(String(dstEventId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -295,15 +285,18 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @param {number} eventId 
-         * @param {TaskFilterRequest} filter 
+         * @param {number} [assigneeId] 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
+         * @param {boolean} [subEventTasksGet] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowInEvent: async (eventId: number, filter: TaskFilterRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        taskListShowInEvent: async (eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'eventId' is not null or undefined
             assertParamExists('taskListShowInEvent', 'eventId', eventId)
-            // verify required parameter 'filter' is not null or undefined
-            assertParamExists('taskListShowInEvent', 'filter', filter)
             const localVarPath = `/api/tasks/event/{eventId}`
                 .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -317,10 +310,32 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            if (filter !== undefined) {
-                for (const [key, value] of Object.entries(filter)) {
-                    localVarQueryParameter[key] = value;
-                }
+            if (assigneeId !== undefined) {
+                localVarQueryParameter['assigneeId'] = assigneeId;
+            }
+
+            if (assignerId !== undefined) {
+                localVarQueryParameter['assignerId'] = assignerId;
+            }
+
+            if (taskStatus !== undefined) {
+                localVarQueryParameter['taskStatus'] = taskStatus;
+            }
+
+            if (deadlineLowerLimit !== undefined) {
+                localVarQueryParameter['deadlineLowerLimit'] = (deadlineLowerLimit as any instanceof Date) ?
+                    (deadlineLowerLimit as any).toISOString() :
+                    deadlineLowerLimit;
+            }
+
+            if (deadlineUpperLimit !== undefined) {
+                localVarQueryParameter['deadlineUpperLimit'] = (deadlineUpperLimit as any instanceof Date) ?
+                    (deadlineUpperLimit as any).toISOString() :
+                    deadlineUpperLimit;
+            }
+
+            if (subEventTasksGet !== undefined) {
+                localVarQueryParameter['subEventTasksGet'] = subEventTasksGet;
             }
 
 
@@ -337,10 +352,15 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @param {number} eventId 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
+         * @param {boolean} [subEventTasksGet] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowInEventWhereAssignee: async (eventId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        taskListShowInEventWhereAssignee: async (eventId: number, assignerId?: number, taskStatus?: TaskListShowInEventWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'eventId' is not null or undefined
             assertParamExists('taskListShowInEventWhereAssignee', 'eventId', eventId)
             const localVarPath = `/api/tasks/event/{eventId}/where-assignee`
@@ -356,6 +376,30 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            if (assignerId !== undefined) {
+                localVarQueryParameter['assignerId'] = assignerId;
+            }
+
+            if (taskStatus !== undefined) {
+                localVarQueryParameter['taskStatus'] = taskStatus;
+            }
+
+            if (deadlineLowerLimit !== undefined) {
+                localVarQueryParameter['deadlineLowerLimit'] = (deadlineLowerLimit as any instanceof Date) ?
+                    (deadlineLowerLimit as any).toISOString() :
+                    deadlineLowerLimit;
+            }
+
+            if (deadlineUpperLimit !== undefined) {
+                localVarQueryParameter['deadlineUpperLimit'] = (deadlineUpperLimit as any instanceof Date) ?
+                    (deadlineUpperLimit as any).toISOString() :
+                    deadlineUpperLimit;
+            }
+
+            if (subEventTasksGet !== undefined) {
+                localVarQueryParameter['subEventTasksGet'] = subEventTasksGet;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -369,10 +413,15 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
+         * @param {number} [eventId] 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowWhereAssignee: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        taskListShowWhereAssignee: async (eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/tasks/where-assignee`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -385,50 +434,35 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {string} body 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        taskMarkDone: async (id: number, body: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('taskMarkDone', 'id', id)
-            // verify required parameter 'body' is not null or undefined
-            assertParamExists('taskMarkDone', 'body', body)
-            const localVarPath = `/api/tasks/{id}/status/assignee`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
+            if (eventId !== undefined) {
+                localVarQueryParameter['eventId'] = eventId;
             }
 
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
+            if (assignerId !== undefined) {
+                localVarQueryParameter['assignerId'] = assignerId;
+            }
+
+            if (taskStatus !== undefined) {
+                localVarQueryParameter['taskStatus'] = taskStatus;
+            }
+
+            if (deadlineLowerLimit !== undefined) {
+                localVarQueryParameter['deadlineLowerLimit'] = (deadlineLowerLimit as any instanceof Date) ?
+                    (deadlineLowerLimit as any).toISOString() :
+                    deadlineLowerLimit;
+            }
+
+            if (deadlineUpperLimit !== undefined) {
+                localVarQueryParameter['deadlineUpperLimit'] = (deadlineUpperLimit as any instanceof Date) ?
+                    (deadlineUpperLimit as any).toISOString() :
+                    deadlineUpperLimit;
+            }
 
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -584,7 +618,7 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskDeleteAssignee(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async taskDeleteAssignee(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.taskDeleteAssignee(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskDeleteAssignee']?.[index]?.url;
@@ -597,7 +631,7 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskEdit(id: number, taskRequest: TaskRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async taskEdit(id: number, taskRequest: TaskRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.taskEdit(id, taskRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskEdit']?.[index]?.url;
@@ -617,28 +651,26 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} srcEventId 
          * @param {number} dstEventId 
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskListCopy(srcEventId: number, dstEventId: number, requestBody: Array<number>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskRequest>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListCopy(srcEventId, dstEventId, requestBody, options);
+        async taskListCopy(dstEventId: number, requestBody: Array<number>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListCopy(dstEventId, requestBody, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskListCopy']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
          * 
-         * @param {number} srcEventId 
          * @param {number} dstEventId 
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskListMove(srcEventId: number, dstEventId: number, requestBody: Array<number>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListMove(srcEventId, dstEventId, requestBody, options);
+        async taskListMove(dstEventId: number, requestBody: Array<number>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListMove(dstEventId, requestBody, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskListMove']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -646,12 +678,17 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {number} eventId 
-         * @param {TaskFilterRequest} filter 
+         * @param {number} [assigneeId] 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
+         * @param {boolean} [subEventTasksGet] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskListShowInEvent(eventId: number, filter: TaskFilterRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskRequest>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowInEvent(eventId, filter, options);
+        async taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskListShowInEvent']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -659,37 +696,34 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {number} eventId 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
+         * @param {boolean} [subEventTasksGet] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskListShowInEventWhereAssignee(eventId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskRequest>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowInEventWhereAssignee(eventId, options);
+        async taskListShowInEventWhereAssignee(eventId: number, assignerId?: number, taskStatus?: TaskListShowInEventWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowInEventWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskListShowInEventWhereAssignee']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
          * 
+         * @param {number} [eventId] 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskListShowWhereAssignee(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskRequest>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowWhereAssignee(options);
+        async taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskListShowWhereAssignee']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {string} body 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async taskMarkDone(id: number, body: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskMarkDone(id, body, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['TaskControllerApi.taskMarkDone']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -699,7 +733,7 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskSetAssignee(id: number, userId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskRequest>> {
+        async taskSetAssignee(id: number, userId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.taskSetAssignee(id, userId, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskSetAssignee']?.[index]?.url;
@@ -712,7 +746,7 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskSetStatus(id: number, body: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async taskSetStatus(id: number, body: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.taskSetStatus(id, body, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskSetStatus']?.[index]?.url;
@@ -724,7 +758,7 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskTakeOn(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskRequest>> {
+        async taskTakeOn(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.taskTakeOn(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskTakeOn']?.[index]?.url;
@@ -764,7 +798,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskDeleteAssignee(id: number, options?: any): AxiosPromise<object> {
+        taskDeleteAssignee(id: number, options?: any): AxiosPromise<TaskResponse> {
             return localVarFp.taskDeleteAssignee(id, options).then((request) => request(axios, basePath));
         },
         /**
@@ -774,7 +808,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskEdit(id: number, taskRequest: TaskRequest, options?: any): AxiosPromise<object> {
+        taskEdit(id: number, taskRequest: TaskRequest, options?: any): AxiosPromise<TaskResponse> {
             return localVarFp.taskEdit(id, taskRequest, options).then((request) => request(axios, basePath));
         },
         /**
@@ -788,62 +822,65 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} srcEventId 
          * @param {number} dstEventId 
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListCopy(srcEventId: number, dstEventId: number, requestBody: Array<number>, options?: any): AxiosPromise<Array<TaskRequest>> {
-            return localVarFp.taskListCopy(srcEventId, dstEventId, requestBody, options).then((request) => request(axios, basePath));
+        taskListCopy(dstEventId: number, requestBody: Array<number>, options?: any): AxiosPromise<Array<TaskResponse>> {
+            return localVarFp.taskListCopy(dstEventId, requestBody, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {number} srcEventId 
          * @param {number} dstEventId 
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListMove(srcEventId: number, dstEventId: number, requestBody: Array<number>, options?: any): AxiosPromise<object> {
-            return localVarFp.taskListMove(srcEventId, dstEventId, requestBody, options).then((request) => request(axios, basePath));
+        taskListMove(dstEventId: number, requestBody: Array<number>, options?: any): AxiosPromise<Array<TaskResponse>> {
+            return localVarFp.taskListMove(dstEventId, requestBody, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @param {number} eventId 
-         * @param {TaskFilterRequest} filter 
+         * @param {number} [assigneeId] 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
+         * @param {boolean} [subEventTasksGet] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowInEvent(eventId: number, filter: TaskFilterRequest, options?: any): AxiosPromise<Array<TaskRequest>> {
-            return localVarFp.taskListShowInEvent(eventId, filter, options).then((request) => request(axios, basePath));
+        taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: any): AxiosPromise<Array<TaskResponse>> {
+            return localVarFp.taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @param {number} eventId 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
+         * @param {boolean} [subEventTasksGet] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowInEventWhereAssignee(eventId: number, options?: any): AxiosPromise<Array<TaskRequest>> {
-            return localVarFp.taskListShowInEventWhereAssignee(eventId, options).then((request) => request(axios, basePath));
+        taskListShowInEventWhereAssignee(eventId: number, assignerId?: number, taskStatus?: TaskListShowInEventWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: any): AxiosPromise<Array<TaskResponse>> {
+            return localVarFp.taskListShowInEventWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options).then((request) => request(axios, basePath));
         },
         /**
          * 
+         * @param {number} [eventId] 
+         * @param {number} [assignerId] 
+         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] 
+         * @param {string} [deadlineLowerLimit] 
+         * @param {string} [deadlineUpperLimit] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowWhereAssignee(options?: any): AxiosPromise<Array<TaskRequest>> {
-            return localVarFp.taskListShowWhereAssignee(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {string} body 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        taskMarkDone(id: number, body: string, options?: any): AxiosPromise<object> {
-            return localVarFp.taskMarkDone(id, body, options).then((request) => request(axios, basePath));
+        taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: any): AxiosPromise<Array<TaskResponse>> {
+            return localVarFp.taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -852,7 +889,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskSetAssignee(id: number, userId: number, options?: any): AxiosPromise<TaskRequest> {
+        taskSetAssignee(id: number, userId: number, options?: any): AxiosPromise<TaskResponse> {
             return localVarFp.taskSetAssignee(id, userId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -862,7 +899,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskSetStatus(id: number, body: string, options?: any): AxiosPromise<object> {
+        taskSetStatus(id: number, body: string, options?: any): AxiosPromise<TaskResponse> {
             return localVarFp.taskSetStatus(id, body, options).then((request) => request(axios, basePath));
         },
         /**
@@ -871,7 +908,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskTakeOn(id: number, options?: any): AxiosPromise<TaskRequest> {
+        taskTakeOn(id: number, options?: any): AxiosPromise<TaskResponse> {
             return localVarFp.taskTakeOn(id, options).then((request) => request(axios, basePath));
         },
     };
@@ -942,73 +979,74 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} srcEventId 
      * @param {number} dstEventId 
      * @param {Array<number>} requestBody 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public taskListCopy(srcEventId: number, dstEventId: number, requestBody: Array<number>, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListCopy(srcEventId, dstEventId, requestBody, options).then((request) => request(this.axios, this.basePath));
+    public taskListCopy(dstEventId: number, requestBody: Array<number>, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).taskListCopy(dstEventId, requestBody, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {number} srcEventId 
      * @param {number} dstEventId 
      * @param {Array<number>} requestBody 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public taskListMove(srcEventId: number, dstEventId: number, requestBody: Array<number>, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListMove(srcEventId, dstEventId, requestBody, options).then((request) => request(this.axios, this.basePath));
+    public taskListMove(dstEventId: number, requestBody: Array<number>, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).taskListMove(dstEventId, requestBody, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @param {number} eventId 
-     * @param {TaskFilterRequest} filter 
+     * @param {number} [assigneeId] 
+     * @param {number} [assignerId] 
+     * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] 
+     * @param {string} [deadlineLowerLimit] 
+     * @param {string} [deadlineUpperLimit] 
+     * @param {boolean} [subEventTasksGet] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public taskListShowInEvent(eventId: number, filter: TaskFilterRequest, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListShowInEvent(eventId, filter, options).then((request) => request(this.axios, this.basePath));
+    public taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @param {number} eventId 
+     * @param {number} [assignerId] 
+     * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] 
+     * @param {string} [deadlineLowerLimit] 
+     * @param {string} [deadlineUpperLimit] 
+     * @param {boolean} [subEventTasksGet] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public taskListShowInEventWhereAssignee(eventId: number, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListShowInEventWhereAssignee(eventId, options).then((request) => request(this.axios, this.basePath));
+    public taskListShowInEventWhereAssignee(eventId: number, assignerId?: number, taskStatus?: TaskListShowInEventWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).taskListShowInEventWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
+     * @param {number} [eventId] 
+     * @param {number} [assignerId] 
+     * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] 
+     * @param {string} [deadlineLowerLimit] 
+     * @param {string} [deadlineUpperLimit] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public taskListShowWhereAssignee(options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListShowWhereAssignee(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {number} id 
-     * @param {string} body 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof TaskControllerApi
-     */
-    public taskMarkDone(id: number, body: string, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskMarkDone(id, body, options).then((request) => request(this.axios, this.basePath));
+    public taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1047,3 +1085,33 @@ export class TaskControllerApi extends BaseAPI {
     }
 }
 
+/**
+ * @export
+ */
+export const TaskListShowInEventTaskStatusEnum = {
+    New: 'NEW',
+    InProgress: 'IN_PROGRESS',
+    Expired: 'EXPIRED',
+    Done: 'DONE'
+} as const;
+export type TaskListShowInEventTaskStatusEnum = typeof TaskListShowInEventTaskStatusEnum[keyof typeof TaskListShowInEventTaskStatusEnum];
+/**
+ * @export
+ */
+export const TaskListShowInEventWhereAssigneeTaskStatusEnum = {
+    New: 'NEW',
+    InProgress: 'IN_PROGRESS',
+    Expired: 'EXPIRED',
+    Done: 'DONE'
+} as const;
+export type TaskListShowInEventWhereAssigneeTaskStatusEnum = typeof TaskListShowInEventWhereAssigneeTaskStatusEnum[keyof typeof TaskListShowInEventWhereAssigneeTaskStatusEnum];
+/**
+ * @export
+ */
+export const TaskListShowWhereAssigneeTaskStatusEnum = {
+    New: 'NEW',
+    InProgress: 'IN_PROGRESS',
+    Expired: 'EXPIRED',
+    Done: 'DONE'
+} as const;
+export type TaskListShowWhereAssigneeTaskStatusEnum = typeof TaskListShowWhereAssigneeTaskStatusEnum[keyof typeof TaskListShowWhereAssigneeTaskStatusEnum];

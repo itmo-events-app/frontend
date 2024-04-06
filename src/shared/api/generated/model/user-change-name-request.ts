@@ -14,11 +14,23 @@
 
 
 
-export * from './api/auth-controller-api';
-export * from './api/event-controller-api';
-export * from './api/notification-controller-api';
-export * from './api/profile-controller-api';
-export * from './api/role-controller-api';
-export * from './api/task-controller-api';
-export * from './api/test-controller-api';
+/**
+ * 
+ * @export
+ * @interface UserChangeNameRequest
+ */
+export interface UserChangeNameRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UserChangeNameRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserChangeNameRequest
+     */
+    'surname': string;
+}
 

@@ -25,61 +25,61 @@ export interface EventRequest {
      * @type {number}
      * @memberof EventRequest
      */
-    'placeId'?: number;
+    'placeId': number;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'start'?: string;
+    'startDate': string;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'end'?: string;
+    'endDate': string;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'title'?: string;
+    'title': string;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'shortDescription'?: string;
+    'shortDescription': string;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'fullDescription'?: string;
+    'fullDescription': string;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'format'?: EventRequestFormatEnum;
+    'format': EventRequestFormatEnum;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'status'?: EventRequestStatusEnum;
+    'status': EventRequestStatusEnum;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'registrationStart'?: string;
+    'registrationStart': string;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'registrationEnd'?: string;
+    'registrationEnd': string;
     /**
      * 
      * @type {number}
@@ -91,31 +91,37 @@ export interface EventRequest {
      * @type {number}
      * @memberof EventRequest
      */
-    'participantLimit'?: number;
+    'participantLimit': number;
     /**
      * 
      * @type {number}
      * @memberof EventRequest
      */
-    'participantAgeLowest'?: number;
+    'participantAgeLowest': number;
     /**
      * 
      * @type {number}
      * @memberof EventRequest
      */
-    'participantAgeHighest'?: number;
+    'participantAgeHighest': number;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'preparingStart'?: string;
+    'preparingStart': string;
     /**
      * 
      * @type {string}
      * @memberof EventRequest
      */
-    'preparingEnd'?: string;
+    'preparingEnd': string;
+    /**
+     * 
+     * @type {File}
+     * @memberof EventRequest
+     */
+    'image'?: File;
 }
 
 export const EventRequestFormatEnum = {
