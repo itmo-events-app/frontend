@@ -11,6 +11,7 @@ import EventCreationPage from "@pages/main/EventCreation";
 import EventActivitiesPage from "@pages/main/EventData";
 import TaskListPage from "@pages/main/TaskList";
 import NotificationListPage from "@pages/main/NotificationListPage";
+import Authorized from "@features/Authorized";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -40,6 +41,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
     element: <AvailableEventsPage />,
+    // element: <Authorized><AvailableEventsPage /></Authorized>,
   },
   [AppRoutes.EVENT_CREATION]: {
     path: RoutePaths.createEvent,
