@@ -10,14 +10,10 @@ import { useState } from "react";
 import { ITMO } from "@widgets/auth/ITMO";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "@shared/config/routes";
+import { api } from "@shared/api";
 
 
-export function appendClassName(base: string, add?: string | null) {
-if (add == null) {
-  return base;
-}
-return base + ' ' + add;
-}function LoginPage() {
+function LoginPage() {
   const [isError, _] = useState(true);
   const navigate = useNavigate();
 
@@ -42,11 +38,11 @@ return base + ' ' + add;
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Логин" />
-            <Input placeholder="Email"/>
+            <Input placeholder="Email" />
           </div>
           <div className={styles.form_item}>
             <Label value="Пароль" />
-            <Input type='password' placeholder="Пароль"/>
+            <Input type='password' placeholder="Пароль" />
             <Link onClick={_forgotPassword} value="Забыли пароль?" />
           </div>
         </div>
