@@ -22,7 +22,13 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import { CreateEventRequest } from '../model';
+// @ts-ignore
 import { EventRequest } from '../model';
+// @ts-ignore
+import { EventResponse } from '../model';
+// @ts-ignore
+import { UserRoleResponse } from '../model';
 /**
  * EventControllerApi - axios parameter creator
  * @export
@@ -31,14 +37,58 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
     return {
         /**
          * 
-         * @param {EventRequest} eventRequest 
+         * @param {number} placeId 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {string} title 
+         * @param {string} shortDescription 
+         * @param {string} fullDescription 
+         * @param {AddActivityFormatEnum} format 
+         * @param {AddActivityStatusEnum} status 
+         * @param {string} registrationStart 
+         * @param {string} registrationEnd 
+         * @param {number} participantLimit 
+         * @param {number} participantAgeLowest 
+         * @param {number} participantAgeHighest 
+         * @param {string} preparingStart 
+         * @param {string} preparingEnd 
+         * @param {number} [parent] 
+         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addEvent: async (eventRequest: EventRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'eventRequest' is not null or undefined
-            assertParamExists('addEvent', 'eventRequest', eventRequest)
-            const localVarPath = `/events`;
+        addActivity: async (placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'placeId' is not null or undefined
+            assertParamExists('addActivity', 'placeId', placeId)
+            // verify required parameter 'startDate' is not null or undefined
+            assertParamExists('addActivity', 'startDate', startDate)
+            // verify required parameter 'endDate' is not null or undefined
+            assertParamExists('addActivity', 'endDate', endDate)
+            // verify required parameter 'title' is not null or undefined
+            assertParamExists('addActivity', 'title', title)
+            // verify required parameter 'shortDescription' is not null or undefined
+            assertParamExists('addActivity', 'shortDescription', shortDescription)
+            // verify required parameter 'fullDescription' is not null or undefined
+            assertParamExists('addActivity', 'fullDescription', fullDescription)
+            // verify required parameter 'format' is not null or undefined
+            assertParamExists('addActivity', 'format', format)
+            // verify required parameter 'status' is not null or undefined
+            assertParamExists('addActivity', 'status', status)
+            // verify required parameter 'registrationStart' is not null or undefined
+            assertParamExists('addActivity', 'registrationStart', registrationStart)
+            // verify required parameter 'registrationEnd' is not null or undefined
+            assertParamExists('addActivity', 'registrationEnd', registrationEnd)
+            // verify required parameter 'participantLimit' is not null or undefined
+            assertParamExists('addActivity', 'participantLimit', participantLimit)
+            // verify required parameter 'participantAgeLowest' is not null or undefined
+            assertParamExists('addActivity', 'participantAgeLowest', participantAgeLowest)
+            // verify required parameter 'participantAgeHighest' is not null or undefined
+            assertParamExists('addActivity', 'participantAgeHighest', participantAgeHighest)
+            // verify required parameter 'preparingStart' is not null or undefined
+            assertParamExists('addActivity', 'preparingStart', preparingStart)
+            // verify required parameter 'preparingEnd' is not null or undefined
+            assertParamExists('addActivity', 'preparingEnd', preparingEnd)
+            const localVarPath = `/api/events/activity`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -47,6 +97,357 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             }
 
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
+
+
+            if (placeId !== undefined) { 
+                localVarFormParams.append('placeId', placeId as any);
+            }
+    
+            if (startDate !== undefined) { 
+                localVarFormParams.append('startDate', startDate as any);
+            }
+    
+            if (endDate !== undefined) { 
+                localVarFormParams.append('endDate', endDate as any);
+            }
+    
+            if (title !== undefined) { 
+                localVarFormParams.append('title', title as any);
+            }
+    
+            if (shortDescription !== undefined) { 
+                localVarFormParams.append('shortDescription', shortDescription as any);
+            }
+    
+            if (fullDescription !== undefined) { 
+                localVarFormParams.append('fullDescription', fullDescription as any);
+            }
+    
+            if (format !== undefined) { 
+                localVarFormParams.append('format', format as any);
+            }
+    
+            if (status !== undefined) { 
+                localVarFormParams.append('status', status as any);
+            }
+    
+            if (registrationStart !== undefined) { 
+                localVarFormParams.append('registrationStart', registrationStart as any);
+            }
+    
+            if (registrationEnd !== undefined) { 
+                localVarFormParams.append('registrationEnd', registrationEnd as any);
+            }
+    
+            if (parent !== undefined) { 
+                localVarFormParams.append('parent', parent as any);
+            }
+    
+            if (participantLimit !== undefined) { 
+                localVarFormParams.append('participantLimit', participantLimit as any);
+            }
+    
+            if (participantAgeLowest !== undefined) { 
+                localVarFormParams.append('participantAgeLowest', participantAgeLowest as any);
+            }
+    
+            if (participantAgeHighest !== undefined) { 
+                localVarFormParams.append('participantAgeHighest', participantAgeHighest as any);
+            }
+    
+            if (preparingStart !== undefined) { 
+                localVarFormParams.append('preparingStart', preparingStart as any);
+            }
+    
+            if (preparingEnd !== undefined) { 
+                localVarFormParams.append('preparingEnd', preparingEnd as any);
+            }
+    
+            if (image !== undefined) { 
+                localVarFormParams.append('image', image as any);
+            }
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = localVarFormParams;
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {CreateEventRequest} createEventRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addEventByOrganizer: async (createEventRequest: CreateEventRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createEventRequest' is not null or undefined
+            assertParamExists('addEventByOrganizer', 'createEventRequest', createEventRequest)
+            const localVarPath = `/api/events`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createEventRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {boolean} [deep] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        copyEvent: async (id: number, deep?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('copyEvent', 'id', id)
+            const localVarPath = `/api/events/{id}/copy`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (deep !== undefined) {
+                localVarQueryParameter['deep'] = deep;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteEventById: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteEventById', 'id', id)
+            const localVarPath = `/api/events/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] 
+         * @param {number} [size] 
+         * @param {number} [parentId] 
+         * @param {string} [title] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {GetAllOrFilteredEventsStatusEnum} [status] 
+         * @param {GetAllOrFilteredEventsFormatEnum} [format] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllOrFilteredEvents: async (page?: number, size?: number, parentId?: number, title?: string, startDate?: string, endDate?: string, status?: GetAllOrFilteredEventsStatusEnum, format?: GetAllOrFilteredEventsFormatEnum, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/events`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+            if (parentId !== undefined) {
+                localVarQueryParameter['parentId'] = parentId;
+            }
+
+            if (title !== undefined) {
+                localVarQueryParameter['title'] = title;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString() :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString() :
+                    endDate;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (format !== undefined) {
+                localVarQueryParameter['format'] = format;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getEventById: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getEventById', 'id', id)
+            const localVarPath = `/api/events/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUsersHavingRoles: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getUsersHavingRoles', 'id', id)
+            const localVarPath = `/api/events/{id}/organizers`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {EventRequest} [eventRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateEvent: async (id: number, eventRequest?: EventRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateEvent', 'id', id)
+            const localVarPath = `/api/events/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -76,14 +477,123 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {EventRequest} eventRequest 
+         * @param {number} placeId 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {string} title 
+         * @param {string} shortDescription 
+         * @param {string} fullDescription 
+         * @param {AddActivityFormatEnum} format 
+         * @param {AddActivityStatusEnum} status 
+         * @param {string} registrationStart 
+         * @param {string} registrationEnd 
+         * @param {number} participantLimit 
+         * @param {number} participantAgeLowest 
+         * @param {number} participantAgeHighest 
+         * @param {string} preparingStart 
+         * @param {string} preparingEnd 
+         * @param {number} [parent] 
+         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async addEvent(eventRequest: EventRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.addEvent(eventRequest, options);
+        async addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options);
             const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['EventControllerApi.addEvent']?.[index]?.url;
+            const operationBasePath = operationServerMap['EventControllerApi.addActivity']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {CreateEventRequest} createEventRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async addEventByOrganizer(createEventRequest: CreateEventRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addEventByOrganizer(createEventRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['EventControllerApi.addEventByOrganizer']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {boolean} [deep] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async copyEvent(id: number, deep?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.copyEvent(id, deep, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['EventControllerApi.copyEvent']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteEventById(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteEventById(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['EventControllerApi.deleteEventById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} [page] 
+         * @param {number} [size] 
+         * @param {number} [parentId] 
+         * @param {string} [title] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {GetAllOrFilteredEventsStatusEnum} [status] 
+         * @param {GetAllOrFilteredEventsFormatEnum} [format] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllOrFilteredEvents(page?: number, size?: number, parentId?: number, title?: string, startDate?: string, endDate?: string, status?: GetAllOrFilteredEventsStatusEnum, format?: GetAllOrFilteredEventsFormatEnum, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<EventResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllOrFilteredEvents(page, size, parentId, title, startDate, endDate, status, format, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['EventControllerApi.getAllOrFilteredEvents']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getEventById(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EventResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getEventById(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['EventControllerApi.getEventById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getUsersHavingRoles(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UserRoleResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUsersHavingRoles(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['EventControllerApi.getUsersHavingRoles']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {EventRequest} [eventRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateEvent(id: number, eventRequest?: EventRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EventResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateEvent(id, eventRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['EventControllerApi.updateEvent']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -98,12 +608,100 @@ export const EventControllerApiFactory = function (configuration?: Configuration
     return {
         /**
          * 
-         * @param {EventRequest} eventRequest 
+         * @param {number} placeId 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {string} title 
+         * @param {string} shortDescription 
+         * @param {string} fullDescription 
+         * @param {AddActivityFormatEnum} format 
+         * @param {AddActivityStatusEnum} status 
+         * @param {string} registrationStart 
+         * @param {string} registrationEnd 
+         * @param {number} participantLimit 
+         * @param {number} participantAgeLowest 
+         * @param {number} participantAgeHighest 
+         * @param {string} preparingStart 
+         * @param {string} preparingEnd 
+         * @param {number} [parent] 
+         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addEvent(eventRequest: EventRequest, options?: any): AxiosPromise<object> {
-            return localVarFp.addEvent(eventRequest, options).then((request) => request(axios, basePath));
+        addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: any): AxiosPromise<number> {
+            return localVarFp.addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {CreateEventRequest} createEventRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addEventByOrganizer(createEventRequest: CreateEventRequest, options?: any): AxiosPromise<number> {
+            return localVarFp.addEventByOrganizer(createEventRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {boolean} [deep] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        copyEvent(id: number, deep?: boolean, options?: any): AxiosPromise<number> {
+            return localVarFp.copyEvent(id, deep, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteEventById(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteEventById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] 
+         * @param {number} [size] 
+         * @param {number} [parentId] 
+         * @param {string} [title] 
+         * @param {string} [startDate] 
+         * @param {string} [endDate] 
+         * @param {GetAllOrFilteredEventsStatusEnum} [status] 
+         * @param {GetAllOrFilteredEventsFormatEnum} [format] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllOrFilteredEvents(page?: number, size?: number, parentId?: number, title?: string, startDate?: string, endDate?: string, status?: GetAllOrFilteredEventsStatusEnum, format?: GetAllOrFilteredEventsFormatEnum, options?: any): AxiosPromise<Array<EventResponse>> {
+            return localVarFp.getAllOrFilteredEvents(page, size, parentId, title, startDate, endDate, status, format, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getEventById(id: number, options?: any): AxiosPromise<EventResponse> {
+            return localVarFp.getEventById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUsersHavingRoles(id: number, options?: any): AxiosPromise<Array<UserRoleResponse>> {
+            return localVarFp.getUsersHavingRoles(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {EventRequest} [eventRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateEvent(id: number, eventRequest?: EventRequest, options?: any): AxiosPromise<EventResponse> {
+            return localVarFp.updateEvent(id, eventRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -117,13 +715,153 @@ export const EventControllerApiFactory = function (configuration?: Configuration
 export class EventControllerApi extends BaseAPI {
     /**
      * 
-     * @param {EventRequest} eventRequest 
+     * @param {number} placeId 
+     * @param {string} startDate 
+     * @param {string} endDate 
+     * @param {string} title 
+     * @param {string} shortDescription 
+     * @param {string} fullDescription 
+     * @param {AddActivityFormatEnum} format 
+     * @param {AddActivityStatusEnum} status 
+     * @param {string} registrationStart 
+     * @param {string} registrationEnd 
+     * @param {number} participantLimit 
+     * @param {number} participantAgeLowest 
+     * @param {number} participantAgeHighest 
+     * @param {string} preparingStart 
+     * @param {string} preparingEnd 
+     * @param {number} [parent] 
+     * @param {File} [image] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
      */
-    public addEvent(eventRequest: EventRequest, options?: AxiosRequestConfig) {
-        return EventControllerApiFp(this.configuration).addEvent(eventRequest, options).then((request) => request(this.axios, this.basePath));
+    public addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {CreateEventRequest} createEventRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventControllerApi
+     */
+    public addEventByOrganizer(createEventRequest: CreateEventRequest, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).addEventByOrganizer(createEventRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {boolean} [deep] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventControllerApi
+     */
+    public copyEvent(id: number, deep?: boolean, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).copyEvent(id, deep, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventControllerApi
+     */
+    public deleteEventById(id: number, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).deleteEventById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] 
+     * @param {number} [size] 
+     * @param {number} [parentId] 
+     * @param {string} [title] 
+     * @param {string} [startDate] 
+     * @param {string} [endDate] 
+     * @param {GetAllOrFilteredEventsStatusEnum} [status] 
+     * @param {GetAllOrFilteredEventsFormatEnum} [format] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventControllerApi
+     */
+    public getAllOrFilteredEvents(page?: number, size?: number, parentId?: number, title?: string, startDate?: string, endDate?: string, status?: GetAllOrFilteredEventsStatusEnum, format?: GetAllOrFilteredEventsFormatEnum, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).getAllOrFilteredEvents(page, size, parentId, title, startDate, endDate, status, format, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventControllerApi
+     */
+    public getEventById(id: number, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).getEventById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventControllerApi
+     */
+    public getUsersHavingRoles(id: number, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).getUsersHavingRoles(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {EventRequest} [eventRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventControllerApi
+     */
+    public updateEvent(id: number, eventRequest?: EventRequest, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).updateEvent(id, eventRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
+/**
+ * @export
+ */
+export const AddActivityFormatEnum = {
+    Online: 'ONLINE',
+    Offline: 'OFFLINE',
+    Hybrid: 'HYBRID'
+} as const;
+export type AddActivityFormatEnum = typeof AddActivityFormatEnum[keyof typeof AddActivityFormatEnum];
+/**
+ * @export
+ */
+export const AddActivityStatusEnum = {
+    Draft: 'DRAFT',
+    Published: 'PUBLISHED',
+    Completed: 'COMPLETED',
+    Canceled: 'CANCELED'
+} as const;
+export type AddActivityStatusEnum = typeof AddActivityStatusEnum[keyof typeof AddActivityStatusEnum];
+/**
+ * @export
+ */
+export const GetAllOrFilteredEventsStatusEnum = {
+    Draft: 'DRAFT',
+    Published: 'PUBLISHED',
+    Completed: 'COMPLETED',
+    Canceled: 'CANCELED'
+} as const;
+export type GetAllOrFilteredEventsStatusEnum = typeof GetAllOrFilteredEventsStatusEnum[keyof typeof GetAllOrFilteredEventsStatusEnum];
+/**
+ * @export
+ */
+export const GetAllOrFilteredEventsFormatEnum = {
+    Online: 'ONLINE',
+    Offline: 'OFFLINE',
+    Hybrid: 'HYBRID'
+} as const;
+export type GetAllOrFilteredEventsFormatEnum = typeof GetAllOrFilteredEventsFormatEnum[keyof typeof GetAllOrFilteredEventsFormatEnum];

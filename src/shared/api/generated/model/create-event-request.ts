@@ -14,11 +14,23 @@
 
 
 
-export * from './api/auth-controller-api';
-export * from './api/event-controller-api';
-export * from './api/notification-controller-api';
-export * from './api/profile-controller-api';
-export * from './api/role-controller-api';
-export * from './api/task-controller-api';
-export * from './api/test-controller-api';
+/**
+ * 
+ * @export
+ * @interface CreateEventRequest
+ */
+export interface CreateEventRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof CreateEventRequest
+     */
+    'userId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateEventRequest
+     */
+    'title': string;
+}
 
