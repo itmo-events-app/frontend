@@ -7,14 +7,46 @@ import PageName from '@widgets/main/PageName';
 import SideBar from '@widgets/main/SideBar';
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import EventHeader, { EventInfo } from "@widgets/main/EventHeader";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
 
 
-const _eventName: string = "Славянский Зажим: Поединок за Колосом";
+class EventInfo {
+  regDates: string
+  prepDates: string
+  eventDates: string
+  vacantSlots: string
+  place: string
+  format: string
+  ageRestriction?: string
+  status: string
+  eventName: string
+  description: string
 
-const _eventDescription: string = "Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций!";
+  constructor(
+    regDates: string,
+    prepDates: string,
+    eventDates: string,
+    vacantSlots: string,
+    place: string,
+    format: string,
+    status: string,
+    ageRestriction: string,
+    eventName: string,
+    description: string
+  ) {
+    this.regDates = regDates;
+    this.prepDates = prepDates;
+    this.eventDates = eventDates;
+    this.vacantSlots = vacantSlots;
+    this.place = place;
+    this.format = format;
+    this.ageRestriction = ageRestriction;
+    this.status = status;
+    this.eventName = eventName;
+    this.description = description;
+  }
+}
 
 const _eventInfo: EventInfo = new EventInfo(
   "01.06.2024 - 10.06.2024",
@@ -23,7 +55,10 @@ const _eventInfo: EventInfo = new EventInfo(
   "100",
   "Кронверкский проспект 49",
   "Очный",
-  "Активное"
+  "Активное",
+  "16+",
+  "Славянский Зажим: Поединок за Колосом",
+  "Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций!"
 );
 
 class Activity {
@@ -228,16 +263,74 @@ function EventActivitiesPage() {
     console.log('editing event')
   }
 
-  function _createInfoPage(text: string) {
+  function _createInfoPage(eventInfo: EventInfo) {
     return (
-      <div className={styles.content}>
-        {edit_privilege ? (
-          <Button onClick={_editDescription}>Редактировать</Button>
-        ) : <></>}
-        <div className={styles.description_box}>
-          {text}
+      <>
+        <div className={styles.image_box}>
+          <img className={styles.image} src="http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg" alt="Event image" />
         </div>
-      </div>
+        {edit_privilege ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_editEvent}>Редактировать информацию о мероприятии</Button>
+          </div>
+        ) : <></>}
+        <div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Сроки регистрации
+            </div>
+            {eventInfo.regDates}
+          </div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Сроки подготовки
+            </div>
+            {eventInfo.prepDates}
+          </div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Сроки проведения
+            </div>
+            {eventInfo.eventDates}
+          </div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Количество мест
+            </div>
+            {eventInfo.vacantSlots}
+          </div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Площадка
+            </div>
+            {eventInfo.place}
+          </div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Формат проведения
+            </div>
+            {eventInfo.format}
+          </div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Статус
+            </div>
+            {eventInfo.status}
+          </div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Возрастное ограничение
+            </div>
+            {eventInfo.ageRestriction}
+          </div>
+          <div className={styles.description_box}>
+            <div className={styles.field_title}>
+              Информация о мероприятии
+            </div>
+            {eventInfo.description}
+          </div>
+        </div>
+      </>
     );
   }
 
@@ -266,14 +359,16 @@ function EventActivitiesPage() {
       items.push(_createActivity(activity));
     }
     return (
-      <div className={styles.content}>
+      <>
         {edit_privilege ? (
-          <Button onClick={_editActivities}>Редактировать</Button>
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_editActivities}>Редактировать</Button>
+          </div>
         ) : <></>}
         <div className={styles.data_list}>
           {items}
         </div>
-      </div>
+      </>
     )
   }
 
@@ -292,9 +387,11 @@ function EventActivitiesPage() {
       items.push(_createPersonRow(person));
     }
     return (
-      <div className={styles.content}>
+      <>
         {edit_privilege ? (
-          <Button onClick={edit_func}>Редактировать</Button>
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={edit_func}>Редактировать</Button>
+          </div>
         ) : <></>}
         <table className={styles.table}>
           <thead>
@@ -307,7 +404,7 @@ function EventActivitiesPage() {
             {items}
           </tbody>
         </table>
-      </div>
+      </>
     )
   }
   function _createPersonTableUsers(persons: Person[], edit_func: any) {
@@ -316,13 +413,12 @@ function EventActivitiesPage() {
       items.push(_createPersonRow(person));
     }
     return (
-      <div className={styles.content}>
+      <>
         {edit_privilege ? (
-          <div className="s">
+          <div className={styles.button_container}>
             <Button className={styles.buttonXlsx} onClick={edit_func}>Выгрузить xlsx</Button>
-            <Button onClick={edit_func}>Загрузить xlsx</Button>
+            <Button className={styles.buttonXlsx} onClick={edit_func}>Загрузить xlsx</Button>
           </div>
-
         ) : <></>}
         <table className={styles.table}>
           <thead>
@@ -335,7 +431,7 @@ function EventActivitiesPage() {
             {items}
           </tbody>
         </table>
-      </div>
+      </>
     )
   }
 
@@ -348,23 +444,25 @@ function EventActivitiesPage() {
   return (
     <Layout
       topLeft={<BrandLogo />}
-      topRight={<PageName text={_eventName} />}
+      topRight={
+        <div className={styles.header}>
+          <PageName text={_eventInfo.eventName} />
+          <div className={styles.tabs}>
+            <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs} />
+          </div>
+        </div>
+      }
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight=
       {
         <Content>
-          <EventHeader eventInfo={_eventInfo} image="http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg" />
-          {edit_privilege ? (
-            <div className={styles.edit_button}>
-              <Button onClick={_editEvent}>Редактировать информацию о мероприятии</Button>
-            </div>
-          ) : <></>}
-          <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs} />
-          {selectedTab == "Описание" && _createInfoPage(_eventDescription)}
-          {selectedTab == "Активности" && _createActivityList(_activities)}
-          {selectedTab == "Организаторы" && _createPersonTable(_orgs, _editOrgs)}
-          {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
-          {selectedTab == "Задачи" && "ToDo: Страница задач"}
+          <div className={styles.content}>
+            {selectedTab == "Описание" && _createInfoPage(_eventInfo)}
+            {selectedTab == "Активности" && _createActivityList(_activities)}
+            {selectedTab == "Организаторы" && _createPersonTable(_orgs, _editOrgs)}
+            {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
+            {selectedTab == "Задачи" && "ToDo: Страница задач"}
+          </div>
         </Content>
       }
     />
