@@ -54,8 +54,31 @@
 .info_column {
   display: flex;
   flex-direction: column;
-  max-width: 62%;
   gap: 10px;
+  max-width: 62%;
+}
+
+.table {
+  margin-top: 20px;
+  border: 1px solid var(--itmo-colors-gray);
+  border-collapse: collapse;
+  border-radius: 10px;
+}
+
+@media screen and (max-width: 1080px) {
+  .info_page {
+    flex-direction: column;
+    justify-content: normal;
+  }
+
+  .info_column {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .table {
+    width: 100%;
+  }
 }
 
 .description_box {
@@ -64,6 +87,19 @@
   margin-top: 20px;
   padding: 20px;
   height: max-content;
+}
+
+.table th {
+  font-weight: bold;
+  padding: 10px 20px;
+  background: var(--itmo-colors-gray);
+  text-align: left;
+  border: 1px solid var(--itmo-colors-gray);
+}
+
+.table td {
+  border: 1px solid var(--itmo-colors-gray);
+  padding: 10px 20px;
 }
 
 .field_title {
@@ -131,25 +167,4 @@
   font-size: 16px;
   color: var(--itmo-colors-dark-gray);
   text-align: center;
-}
-
-.table {
-  width: 100%;
-  margin-top: 20px;
-  border: 1px solid var(--itmo-colors-gray);
-  border-collapse: collapse;
-  border-radius: 10px;
-}
-
-.table th {
-  font-weight: bold;
-  padding: 10px 20px;
-  background: var(--itmo-colors-gray);
-  text-align: left;
-  border: 1px solid var(--itmo-colors-gray);
-}
-
-.table td {
-  border: 1px solid var(--itmo-colors-gray);
-  padding: 10px 20px;
 }
