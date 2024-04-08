@@ -62,7 +62,7 @@
 .info_column {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   max-width: 62%;
 }
 
