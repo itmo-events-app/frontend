@@ -11,6 +11,7 @@ import EventCreationPage from "@pages/main/EventCreation";
 import EventActivitiesPage from "@pages/main/EventData";
 import TaskListPage from "@pages/main/TaskList";
 import NotificationListPage from "@pages/main/NotificationListPage";
+import ProfilePage from "@pages/main/ProfilePage";
 import Authorized from "@features/Authorized";
 
 const routes: Record<AppRoutes, RouteProps> = {
@@ -73,7 +74,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.PROFILE]: {
     path: RoutePaths.profile,
-    element: <>Profile</>,
+    element: <ProfilePage />,
   },
   [AppRoutes.REQUEST_LIST]: {
     path: RoutePaths.requestList,

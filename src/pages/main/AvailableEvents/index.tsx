@@ -29,7 +29,7 @@ const filterStatus: DropdownOption[] = [
 ]
 
 const filterFormat: DropdownOption[] = [
-  new DropdownOption("Офлайн"),
+  new DropdownOption("Очный"),
   new DropdownOption("Онлайн")
 ]
 
@@ -129,7 +129,6 @@ function AvailableEventsPage() {
               </div>
             </div>
             <div className={styles.filters}>
-              <Input className={styles.filter_element} placeholder="Название мероприятия" />
               <Input className={styles.filter_element} placeholder="Сроки регистрации" />
               <Input className={styles.filter_element} placeholder="Сроки проведения" />
               <div className={styles.dropdown}>
