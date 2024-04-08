@@ -121,7 +121,6 @@
   flex-direction: row;
   flex-flow: row wrap;
   justify-content: stretch;
-  padding-top: 20px;
   padding-bottom: 50px;
   gap: 30px;
 }
