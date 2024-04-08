@@ -1,0 +1,61 @@
+.places_page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.horizontal_bar {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+}
+
+.search {
+  display: flex;
+  min-width: 250px;
+  width: 705px;
+}
+
+.top_bar {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+}
+
+.place_list_container {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  padding-bottom: 50px;
+}
+
+.place_entry {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+  cursor: pointer;
+}
+
+.place_icon {
+  width: 75px;
+  height: 75px;
+}
+
+.place_info_column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.place_name {
+  color: var(--itmo-colors-black);
+  font-weight: bold;
+}
+
+.place_address {
+  color: var(--itmo-colors-dark-gray);
+}

@@ -13,6 +13,7 @@ import TaskListPage from "@pages/main/TaskList";
 import NotificationListPage from "@pages/main/NotificationListPage";
 import ProfilePage from "@pages/main/ProfilePage";
 import Authorized from "@features/Authorized";
+import PlaceListPage from "@pages/main/PlaceList";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -58,7 +59,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
-    element: <>Place list</>,
+    element: <PlaceListPage />,
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
