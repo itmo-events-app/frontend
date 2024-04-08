@@ -24,13 +24,16 @@ const _displayModes: DropdownOption[] = [
 
 
 const filterStatus: DropdownOption[] = [
+  new DropdownOption("Черновик"),
   new DropdownOption("Активное"),
-  new DropdownOption("Проведенное")
+  new DropdownOption("Проведенное"),
+  new DropdownOption("Отмененное")
 ]
 
 const filterFormat: DropdownOption[] = [
   new DropdownOption("Очный"),
-  new DropdownOption("Онлайн")
+  new DropdownOption("Онлайн"),
+  new DropdownOption("Смешанный")
 ]
 
 const filterAge: DropdownOption[] = [
@@ -129,16 +132,22 @@ function AvailableEventsPage() {
               </div>
             </div>
             <div className={styles.filters}>
-              <Input className={styles.filter_element} placeholder="Сроки регистрации" />
-              <Input className={styles.filter_element} placeholder="Сроки проведения" />
-              <div className={styles.dropdown}>
-                <Dropdown placeholder="Статус" items={filterStatus} clearable />
+              <div className={styles.filter_group}>
+                <Input className={styles.filter_element} placeholder="Начало регистрации" />
+                <Input className={styles.filter_element} placeholder="Конец регистрации" />
+                <Input className={styles.filter_element} placeholder="Начало проведения" />
+                <Input className={styles.filter_element} placeholder="Конец проведения" />
               </div>
-              <div className={styles.dropdown}>
-                <Dropdown placeholder="Формат" items={filterFormat} clearable />
-              </div>
-              <div className={styles.dropdown}>
-                <Dropdown placeholder="Возрастное ограничение" items={filterAge} clearable />
+              <div className={styles.filter_group}>
+                <div className={styles.dropdown}>
+                  <Dropdown placeholder="Статус" items={filterStatus} clearable />
+                </div>
+                <div className={styles.dropdown}>
+                  <Dropdown placeholder="Формат" items={filterFormat} clearable />
+                </div>
+                <div className={styles.dropdown}>
+                  <Dropdown placeholder="Возрастное ограничение" items={filterAge} clearable />
+                </div>
               </div>
             </div>
             <div className={styles.event_list_container}>
