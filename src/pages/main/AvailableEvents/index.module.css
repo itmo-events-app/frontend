@@ -11,31 +11,31 @@
 }
 
 .filters {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
   display: flex;
   flex-flow: row wrap;
   gap: 5px;
-  padding: 10px;
   max-width: 920px;
 }
 
 .filter_group {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
   display: flex;
   flex-flow: row wrap;
   width: 100%;
   gap: 5px;
   justify-content: space-between;
+  padding: 10px;
 }
 
 .filter_element {
-  min-width: 204px;
-  width: 204px;
+  min-width: 197px;
+  width: 197px;
 }
 
 .dropdown {
-  min-width: 200px;
-  width: 300px;
+  min-width: 197px;
+  width: 296px;
 }
 
 .search {
