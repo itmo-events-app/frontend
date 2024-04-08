@@ -44,11 +44,26 @@
   margin: auto;
 }
 
+.info_page {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.info_column {
+  display: flex;
+  flex-direction: column;
+  max-width: 62%;
+  gap: 10px;
+}
+
 .description_box {
   border: 1px solid var(--itmo-colors-gray);
   border-radius: 10px;
   margin-top: 20px;
   padding: 20px;
+  height: max-content;
 }
 
 .field_title {
@@ -120,7 +135,7 @@
 
 .table {
   width: 100%;
-  margin: 20px 0;
+  margin-top: 20px;
   border: 1px solid var(--itmo-colors-gray);
   border-collapse: collapse;
   border-radius: 10px;

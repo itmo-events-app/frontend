@@ -274,61 +274,53 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_editEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
-        <div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Сроки регистрации
+        <div className={styles.info_page}>
+          <div className={styles.info_column}>
+            <div className={styles.description_box}>
+              <div className={styles.field_title}>
+                Информация о мероприятии
+              </div>
+              {eventInfo.description}
             </div>
-            {eventInfo.regDates}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Сроки подготовки
+            <div className={styles.description_box}>
+              <div className={styles.field_title}>
+                Место проведения
+              </div>
+              {eventInfo.place}
             </div>
-            {eventInfo.prepDates}
           </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Сроки проведения
-            </div>
-            {eventInfo.eventDates}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Количество мест
-            </div>
-            {eventInfo.vacantSlots}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Площадка
-            </div>
-            {eventInfo.place}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Формат проведения
-            </div>
-            {eventInfo.format}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Статус
-            </div>
-            {eventInfo.status}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Возрастное ограничение
-            </div>
-            {eventInfo.ageRestriction}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Информация о мероприятии
-            </div>
-            {eventInfo.description}
-          </div>
+          <table className={styles.table}>
+            <tbody>
+            <tr>
+              <td>Сроки регистрации</td>
+              <td>{eventInfo.regDates}</td>
+            </tr>
+            <tr>
+              <td>Сроки проведения</td>
+              <td>{eventInfo.eventDates}</td>
+            </tr>
+            <tr>
+              <td>Сроки подготовки</td>
+              <td>{eventInfo.prepDates}</td>
+            </tr>
+            <tr>
+              <td>Количество мест</td>
+              <td>{eventInfo.vacantSlots}</td>
+            </tr>
+            <tr>
+              <td>Формат проведения</td>
+              <td>{eventInfo.format}</td>
+            </tr>
+            <tr>
+              <td>Статус</td>
+              <td>{eventInfo.status}</td>
+            </tr>
+            <tr>
+              <td>Возрастное ограничение</td>
+              <td>{eventInfo.ageRestriction}</td>
+            </tr>
+            </tbody>
+          </table>
         </div>
       </>
     );
