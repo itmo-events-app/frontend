@@ -265,7 +265,7 @@ function EventActivitiesPage() {
 
   function _createInfoPage(eventInfo: EventInfo) {
     return (
-      <>
+      <div className={styles.root}>
         <div className={styles.image_box}>
           <img className={styles.image} src="http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg" alt="Event image" />
         </div>
@@ -322,7 +322,7 @@ function EventActivitiesPage() {
             </tbody>
           </table>
         </div>
-      </>
+      </div>
     );
   }
 
