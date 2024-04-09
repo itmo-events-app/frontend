@@ -380,12 +380,15 @@ function EventActivitiesPage() {
   const [orgs, setOrgs] = useState([] as Person[]);
 
   useEffect(() => {
-    api.event.getUsersHavingRoles(EVENT_ID)
-      .then(response => {
+    api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
+      .then((response) => {
         const list = response.data.map(user => {
-          return new Person(user.name, user.surname, user.login);
+          return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
         })
         setOrgs(list);
+      })
+      .catch((error) => {
+        console.log("Error: " + error)
       })
   }, [])
 
