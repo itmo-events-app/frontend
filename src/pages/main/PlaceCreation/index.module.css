@@ -1,0 +1,38 @@
+.place_form {
+  min-height: 100%;
+  background-color: var(--itmo-colors-white);
+  display: block;
+  justify-content: center;
+  align-items: normal;
+  flex-direction: column;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.place_form_item {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  padding-top: 1rem;
+  width: 250px ;
+}
+
+.place_form_button {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  width: 10rem;
+  padding-top: 1rem;
+}
+.place_textArea {
+  width: 500px
+
+}
+.place_icon {
+  width: 240px;
+  height: 240px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+
