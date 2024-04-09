@@ -12,14 +12,13 @@ import { useNavigate } from "react-router-dom";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
 import { api } from "@shared/api";
 import { LoginRequest } from "@shared/api/generated";
-import { TokenContext, TokenContextData } from "@features/TokenProvider";
+import { TokenContextData, setTokenContextData } from "@shared/lib/token";
 
 const LOGIN_MAX_LENGTH = 128;
 const PASSWORD_MIN_LENGTH = 8;
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { setTokenContext } = useContext(TokenContext);
 
   const [isError, setIsError] = useState(false);
   const [errorText, setErrorText] = useState('');
@@ -83,7 +82,7 @@ function LoginPage() {
       api.auth.login(request)
         .then(r => {
           const token = r.data;
-          setTokenContext(new TokenContextData(token))
+          setTokenContextData(new TokenContextData(token))
           navigate(RoutePaths.eventList);
         })
         .catch(e => {
