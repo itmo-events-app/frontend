@@ -5,7 +5,7 @@ import Content from '@widgets/main/Content';
 import SideBar from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
 import Button from '@widgets/main/Button';
-import RoleList, { RoleElement, createRoleElementList } from '@widgets/main/RoleList';
+import RoleList, { RoleElement, createRoleElementList, roleElementListGetElements } from '@widgets/main/RoleList';
 import { RoleModel, fromRoleModel } from '@entities/role';
 import { PrivilegeModel } from '@entities/privilege';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
@@ -210,17 +210,26 @@ function RoleListPage() {
   const _createRoleFromModel = (role: RoleModel) => {
     const request = fromRoleModel(role);
     api.withReauth(() => api.role.createRole(request))
-      .then(r => {
-        console.log(r);
+      .then(_ => {
+        const prevRoles = roleElementListGetElements(roles);
+        setRoles(createRoleElementList([...prevRoles, role]));
+        setDialogData(new DialogData());
       })
-    setDialogData(new DialogData());
   }
 
   const _updateRoleFromModel = (prev: RoleModel, cur: RoleModel) => {
     const request = fromRoleModel(cur);
     api.withReauth(() => api.role.editRole(prev.id, request))
-      .then(r => {
-        console.log(r);
+      .then(_ => {
+        const prevRoles = roleElementListGetElements(roles);
+
+        setRoles(createRoleElementList(prevRoles.map(p => {
+          if (p.id == prev.id) {
+            return cur;
+          }
+          return p;
+        })));
+
         setDialogData(new DialogData());
       })
   }
