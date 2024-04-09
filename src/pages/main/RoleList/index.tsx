@@ -5,8 +5,9 @@ import Content from '@widgets/main/Content';
 import SideBar from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
 import Button from '@widgets/main/Button';
-import RoleList from '@widgets/main/RoleList';
-import { PrivilegeModel, RoleModel } from '@entities/Role';
+import RoleList, { RoleElement, createRoleElementList, roleElementListGetElements } from '@widgets/main/RoleList';
+import { RoleModel, fromRoleModel } from '@entities/role';
+import { PrivilegeModel } from '@entities/privilege';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { useContext, useEffect, useRef, useState } from 'react';
 import Dialog from '@widgets/main/Dialog';
@@ -14,17 +15,14 @@ import { appendClassName } from '@shared/util';
 
 import styles from './index.module.css'
 import Fade from '@widgets/main/Fade';
-import Input from '@widgets/main/Input';
-import InputLabel from '@widgets/main/InputLabel';
-import InputCheckboxList from '@widgets/main/InputCheckboxList';
 import { RoutePaths } from '@shared/config/routes';
 import { PrivilegeContext, PrivilegeData } from '@features/PrivilegeProvider';
 import { hasAnyPrivilege } from '@features/privileges';
 import { PrivilegeNames } from '@shared/config/privileges';
-import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
-import TextArea from '@widgets/main/TextArea';
-
-// const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
+import { api } from '@shared/api';
+import { toRoleModel } from '@entities/role';
+import CreateDialogContent from './CreateDialogContent';
+import UpdateDialogContent from './UpdateDialogContext';
 
 class ContextMenuData {
   clientX: number;
@@ -44,99 +42,25 @@ class ContextMenuData {
   }
 }
 
+enum DialogSelected {
+  NONE,
+  CREATE,
+  UPDATE
+}
+
 class DialogData {
   heading: string | undefined;
-  content: any;
-  visible: boolean;
+  visible: DialogSelected;
+  args: any;
   constructor(
     heading?: string,
-    content?: any,
-    visible: boolean = false,
+    visible: DialogSelected = DialogSelected.NONE,
+    args: any = {}
   ) {
     this.heading = heading;
-    this.content = content;
     this.visible = visible;
+    this.args = args;
   }
-
-}
-
-const _roles: RoleModel[] = [
-  new RoleModel(1, 'USER', true, [
-    new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
-    new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
-    new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
-  ], 'Пользователь'),
-  new RoleModel(1, 'ADMIN', true, [
-    new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
-    new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
-    new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
-    new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
-    new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
-    new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
-  ], 'Администратор'),
-  new RoleModel(1, 'PLAIN', false, [], 'Пользователь без привилегий'),
-]
-
-const _privileges: PrivilegeModel[] = [
-  new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
-  new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
-  new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
-]
-
-function _displayPrivilege(item: PrivilegeModel) {
-  return item.name + " - " + item.description;
-}
-
-const _CreateRoleDialogContent = (props: { onDone: any }) => {
-  return (
-    <div className={styles.dialog_content}>
-      <div className={styles.dialog_form}>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Название роли" />
-          <Input value="РОЛЬ" />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Описание" />
-          <TextArea />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Тип роли" />
-          <Dropdown items={[new DropdownOption('Организационная'), new DropdownOption('Системная')]} value={'Системная'} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Список привилегий" />
-          <InputCheckboxList items={_privileges} displayName={_displayPrivilege} />
-        </div>
-      </div>
-      <Button onClick={props.onDone}>Создать</Button>
-    </div>
-  );
-}
-
-const _UpdateRoleDialogContent = (props: { role: RoleModel, onDone: any }) => {
-  return (
-    <div className={styles.dialog_content}>
-      <div className={styles.dialog_form}>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Название роли" />
-          <Input value={props.role.name} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Описание" />
-          <TextArea value={props.role.description} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Тип" />
-          <Dropdown items={[new DropdownOption('Организационная'), new DropdownOption('Системная')]} value={'Системная'} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Список привилегий" />
-          <InputCheckboxList items={_privileges} displayName={_displayPrivilege} />
-        </div>
-      </div>
-      <Button onClick={props.onDone}>Изменить</Button>
-    </div>
-  );
 }
 
 const privilegeOthers = {
@@ -148,7 +72,8 @@ const privilegeOthers = {
   ]),
   delete: new Set([
     new PrivilegeData(PrivilegeNames.DELETE_ROLE)
-  ])
+  ]),
+
 }
 
 function RoleListPage() {
@@ -164,6 +89,8 @@ function RoleListPage() {
     ...privilegeOthers.edit,
     ...privilegeOthers.delete
   ]))
+
+  const [roles, setRoles] = useState([] as RoleElement[]);
 
   // set context menu position. not using transform(-100%, 0%) to handle content bounds
   // NOTE: can move to controller object
@@ -206,6 +133,14 @@ function RoleListPage() {
     }
   }, [dialogData, dialogRef]);
 
+  // load roles on page open
+  useEffect(() => {
+    api.withReauth(() => api.role.getAllRoles())
+      .then(r => {
+        const l = createRoleElementList(r.data.map(role => toRoleModel(role)))
+        setRoles(l);
+      })
+  }, [])
 
   const _closeDialog = () => {
     setDialogData(new DialogData());
@@ -220,7 +155,7 @@ function RoleListPage() {
   }
 
   const _createRole = (e: MouseEvent) => {
-    setDialogData(new DialogData('Создание роли', _CreateRoleDialogContent({ onDone: _closeDialog }), true));
+    setDialogData(new DialogData('Создание роли', DialogSelected.CREATE));
     e.stopPropagation();
   }
 
@@ -228,7 +163,7 @@ function RoleListPage() {
     const contextItems: ContextMenuItem[] = [
       new ContextMenuItem('Редактировать', (e: React.MouseEvent) => {
         setCmData({ ...cmData, visible: false });
-        setDialogData(new DialogData('Редактирование роли', _UpdateRoleDialogContent({ role: role, onDone: _closeDialog }), true));
+        setDialogData(new DialogData('Редактирование роли', DialogSelected.UPDATE, { role: role }));
         e.stopPropagation();
       }),
       new ContextMenuItem('Удалить', () => {
@@ -258,7 +193,7 @@ function RoleListPage() {
             ? <Button onClick={_createRole} className={styles.create_button}>Создать роль</Button>
             : <></>}
         </div>
-        <RoleList roles={_roles} onMenuClick={menuVisible ? _onMenuClick : undefined} />
+        <RoleList roles={roles} setRoles={setRoles} onMenuClick={menuVisible ? _onMenuClick : undefined} />
       </Content>
     )
   }
@@ -272,7 +207,49 @@ function RoleListPage() {
     />;
   }
 
+  const _createRoleFromModel = (role: RoleModel) => {
+    const request = fromRoleModel(role);
+    api.withReauth(() => api.role.createRole(request))
+      .then(_ => {
+        const prevRoles = roleElementListGetElements(roles);
+        setRoles(createRoleElementList([...prevRoles, role]));
+        setDialogData(new DialogData());
+      })
+  }
+
+  const _updateRoleFromModel = (prev: RoleModel, cur: RoleModel) => {
+    const request = fromRoleModel(cur);
+    api.withReauth(() => api.role.editRole(prev.id, request))
+      .then(_ => {
+        const prevRoles = roleElementListGetElements(roles);
+
+        setRoles(createRoleElementList(prevRoles.map(p => {
+          if (p.id == prev.id) {
+            return cur;
+          }
+          return p;
+        })));
+
+        setDialogData(new DialogData());
+      })
+  }
+
   const _Dialog = () => {
+    let component = <></>
+    switch (dialogData.visible) {
+      case DialogSelected.CREATE:
+        component = <CreateDialogContent
+          onDone={_createRoleFromModel}
+          {...dialogData.args}
+        />
+        break;
+      case DialogSelected.UPDATE:
+        component = <UpdateDialogContent
+          onDone={_updateRoleFromModel}
+          {...dialogData.args}
+        />;
+        break;
+    }
     return (
       <Dialog
         className={appendClassName(styles.dialog,
@@ -281,7 +258,7 @@ function RoleListPage() {
         ref={dialogRef}
         onClose={_closeDialog}
       >
-        {dialogData.content}
+        {component}
       </Dialog>
     )
   }
@@ -302,5 +279,7 @@ function RoleListPage() {
     </Layout>
   );
 }
+
+
 
 export default RoleListPage;
