@@ -1,5 +1,5 @@
 import { uid } from 'uid'
-import { useState } from 'react'
+import { useEffect, useState } from "react";
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
@@ -203,29 +203,6 @@ const _members: Person[] = [
   )
 ]
 
-const _orgs: Person[] = [
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-]
-
 const task_privilege: boolean = false;
 const edit_privilege: boolean = false;
 
@@ -427,6 +404,28 @@ function EventActivitiesPage() {
     )
   }
 
+  type JsonOrgEntry = {
+    name: string,
+    surname: string,
+    email: string
+  }
+
+  const [orgList, setOrgList] = useState<JsonOrgEntry[]>([]);
+
+  const fetchOrgs = () => {
+    fetch("http://158.160.158.58:8080/api/events/1/organizers")
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        setOrgList(data)
+      })
+  }
+
+  useEffect(() => {
+    fetchOrgs()
+  }, [])
+
   const [selectedTab, setSelectedTab] = useState("Описание");
 
   function pageTabHandler(tab_name: string) {
@@ -438,7 +437,7 @@ function EventActivitiesPage() {
       topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={_eventInfo.eventName} />
+          <PageName text={"Event"} />
           <div className={styles.tabs}>
             <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs} />
           </div>
@@ -451,7 +450,9 @@ function EventActivitiesPage() {
           <div className={styles.content}>
             {selectedTab == "Описание" && _createInfoPage(_eventInfo)}
             {selectedTab == "Активности" && _createActivityList(_activities)}
-            {selectedTab == "Организаторы" && _createPersonTable(_orgs, _editOrgs)}
+            {selectedTab == "Организаторы" && _createPersonTable(orgList.map(entry => {
+              return new Person(entry.name + " " + entry.surname, entry.email)
+            }), _editOrgs)}
             {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
             {selectedTab == "Задачи" && "ToDo: Страница задач"}
           </div>
