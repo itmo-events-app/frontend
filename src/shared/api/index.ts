@@ -1,4 +1,5 @@
 import { getTokenContextData } from "@shared/lib/token";
+import type { AxiosResponse } from 'axios';
 import { AuthControllerApi, Configuration, ConfigurationParameters, EventControllerApi, NotificationControllerApi, ProfileControllerApi, RoleControllerApi, TaskControllerApi, TestControllerApi } from "./generated";
 
 const configurationParameters: ConfigurationParameters = {
@@ -26,6 +27,53 @@ class Api {
     this.task = new TaskControllerApi(configuration);
     this.test = new TestControllerApi(configuration);
   }
+
+  // // NOTE: does nothing, need refresh token
+  // async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
+  //   return func();
+  // }
+
+  /* example of implementation
+
+  async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
+    return func()
+      .catch(async (e) => {
+        if (e.response.status == 401) {
+          const request: RefreshRequest = {
+            refreshToken: getTokenContextData().refreshToken ?? ""
+          }
+          return this.auth.refresh(request)
+            .then(r => {
+              setTokenContextData(new TokenContextData(<tokenData>));
+              return func();
+            })
+            .catch((_: any) => {
+              throw e; // forward func error
+            });
+        }
+        throw e; // forward error if can't process
+      });
+  }
+
+
+  usage:
+
+  api.withReauth(() => api.auth.apiCall(request))
+    .then(r => {
+      // process request
+      const token = r.data;
+      setTokenContext(new TokenContextData(token))
+      navigate(RoutePaths.eventList);
+    })
+    .catch(e => {
+      // process error
+      setErrorText(e.response.data);
+      setIsError(true);
+    })
+   *
+   *
+
+  */
 }
 
 // export Global API
