@@ -1,5 +1,5 @@
-import { RoleResponse, RoleResponseTypeEnum } from "@shared/api/generated";
-import { PrivilegeModel, fromPrivilegeModel, toPrivilegeModel } from "@entities/privilege";
+import { RoleRequest, RoleResponse, RoleResponseTypeEnum } from "@shared/api/generated";
+import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
 
 enum RoleModelType {
   SYSTEM = "Системная",
@@ -40,22 +40,21 @@ function toRoleModel(role: RoleResponse): RoleModel {
   return new RoleModel(role.id!, role.name!, type, privileges, role.description);
 }
 
-function fromRoleModel(role: RoleModel): RoleResponse {
+function fromRoleModel(role: RoleModel): RoleRequest {
   let privileges = undefined;
   if (role.privileges) {
-    privileges = role.privileges.map(p => fromPrivilegeModel(p));
+    privileges = role.privileges.map(p => p.id);
   }
 
-  const modelType = Object.keys(RoleModelType)[Object.values(RoleModelType).indexOf(role.type)];
-  const responseType = Object.keys(RoleResponseTypeEnum)
-    .find(key => RoleResponseTypeEnum[(key as keyof typeof RoleResponseTypeEnum)] === modelType);
+  // const modelType = Object.keys(RoleModelType)[Object.values(RoleModelType).indexOf(role.type)];
+  // const responseType = Object.keys(RoleResponseTypeEnum)
+  //   .find(key => RoleResponseTypeEnum[(key as keyof typeof RoleResponseTypeEnum)] === modelType);
 
   return {
-    id: role.id,
     name: role.name,
-    type: responseType as any,
-    description: role.description,
-    privileges: privileges,
+    description: role.description ?? '',
+    isEvent: role.type == RoleModelType.EVENT,
+    privileges: privileges ?? [],
   }
 }
 

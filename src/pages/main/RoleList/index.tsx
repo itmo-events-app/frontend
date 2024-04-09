@@ -6,7 +6,7 @@ import SideBar from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
 import Button from '@widgets/main/Button';
 import RoleList, { RoleElement, createRoleElementList } from '@widgets/main/RoleList';
-import { RoleModel } from '@entities/role';
+import { RoleModel, fromRoleModel } from '@entities/role';
 import { PrivilegeModel } from '@entities/privilege';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -209,13 +209,21 @@ function RoleListPage() {
   }
 
   const _createRoleFromModel = (role: RoleModel) => {
-    console.log(role);
+    const request = fromRoleModel(role);
+    api.withReauth(() => api.role.createRole(request))
+      .then(r => {
+        console.log(r);
+      })
     setDialogData(new DialogData());
   }
 
   const _updateRoleFromModel = (prev: RoleModel, cur: RoleModel) => {
-    console.log(prev, cur);
-    setDialogData(new DialogData());
+    const request = fromRoleModel(cur);
+    api.withReauth(() => api.role.editRole(prev.id, request))
+      .then(r => {
+        console.log(r);
+        setDialogData(new DialogData());
+      })
   }
 
   const _Dialog = () => {
@@ -223,19 +231,19 @@ function RoleListPage() {
     switch (dialogData.visible) {
       case DialogSelected.CREATE:
         component = <CreateDialogContent
-            privileges={privileges}
-            setPrivileges={setPrivileges}
-            onDone={_createRoleFromModel}
+          privileges={privileges}
+          setPrivileges={setPrivileges}
+          onDone={_createRoleFromModel}
           {...dialogData.args}
         />
         break;
       case DialogSelected.UPDATE:
         component = <UpdateDialogContent
-            privileges={privileges}
-            setPrivileges={setPrivileges}
-            onDone={_updateRoleFromModel}
-            {...dialogData.args}
-          />;
+          privileges={privileges}
+          setPrivileges={setPrivileges}
+          onDone={_updateRoleFromModel}
+          {...dialogData.args}
+        />;
         break;
     }
     return (

@@ -19,11 +19,10 @@ type UpdateProps = {
 }
 
 const UpdateDialogContent = (props: UpdateProps) => {
-
   const [name, setName] = useState(props.role.name ?? '');
   const [description, setDescription] = useState(props.role.description ?? '');
   const [type, setType] = useState(props.role.type ?? RoleModelType.SYSTEM);
-  const [privileges, setPrivileges] = useState(createItemSelectionList(props.role.privileges ?? []));
+  const [privileges, setPrivileges] = useState(createItemSelectionList(props.role.privileges ?? [], true));
 
 
   const _onDoneWrapper = () => {

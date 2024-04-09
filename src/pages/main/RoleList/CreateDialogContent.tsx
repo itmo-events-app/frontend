@@ -1,6 +1,5 @@
-import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
-import { api } from "@shared/api";
-import { useEffect, useState } from "react";
+import { PrivilegeModel } from "@entities/privilege";
+import { useState } from "react";
 
 import styles from './index.module.css'
 
@@ -20,12 +19,10 @@ type CreateProps = {
 }
 
 const CreateDialogContent = (props: CreateProps) => {
-
   const [name, setName] = useState("")
   const [description, setDescription] = useState("");
   const [type, setType] = useState(RoleModelType.SYSTEM);
   const [privileges, setPrivileges] = useState([]);
-
 
   const _onDoneWrapper = () => {
     const role = new RoleModel(

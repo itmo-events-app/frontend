@@ -38,8 +38,8 @@ function CheckboxList<T>(props: Props<T>) {
 
 }
 
-function createItemSelectionList<T>(roles: T[]) {
-  return roles.map(r => new ItemSelection(r));
+function createItemSelectionList<T>(roles: T[], selected: boolean = false) {
+  return roles.map(r => new ItemSelection(r, selected));
 }
 
 function itemSelectionGetSelected<T>(items: ItemSelection<T>[]) {

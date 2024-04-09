@@ -1,4 +1,4 @@
-import { PrivilegeResponse, PrivilegeResponseNameEnum } from "@shared/api/generated";
+import { PrivilegeResponse } from "@shared/api/generated";
 
 class PrivilegeModel {
   private _id: number;
@@ -20,14 +20,6 @@ function toPrivilegeModel(priv: PrivilegeResponse) {
   return new PrivilegeModel(priv.id!, priv.name!, priv.description);
 }
 
-function fromPrivilegeModel(priv: PrivilegeModel): PrivilegeResponse {
-  return {
-    id: priv.id,
-    name: priv.name as PrivilegeResponseNameEnum,
-    description: priv.description
-  }
-}
-
 function copyPrivilege(item: PrivilegeModel) {
   return new PrivilegeModel(
     item.id,
@@ -35,5 +27,5 @@ function copyPrivilege(item: PrivilegeModel) {
     item.description);
 }
 
-export { toPrivilegeModel, fromPrivilegeModel, copyPrivilege }
+export { toPrivilegeModel, copyPrivilege }
 export { PrivilegeModel }
