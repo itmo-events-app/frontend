@@ -6,8 +6,8 @@ import SideBar from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
 import Button from '@widgets/main/Button';
 import RoleList, { RoleElement, createRoleElementList } from '@widgets/main/RoleList';
-import { RoleModel, RoleModelType } from '@entities/role';
-import { PrivilegeModel, toPrivilegeModel } from '@entities/privilege';
+import { RoleModel } from '@entities/role';
+import { PrivilegeModel } from '@entities/privilege';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { useContext, useEffect, useRef, useState } from 'react';
 import Dialog from '@widgets/main/Dialog';
@@ -15,17 +15,14 @@ import { appendClassName } from '@shared/util';
 
 import styles from './index.module.css'
 import Fade from '@widgets/main/Fade';
-import Input from '@widgets/main/Input';
-import InputLabel from '@widgets/main/InputLabel';
-import InputCheckboxList from '@widgets/main/InputCheckboxList';
 import { RoutePaths } from '@shared/config/routes';
 import { PrivilegeContext, PrivilegeData } from '@features/PrivilegeProvider';
 import { hasAnyPrivilege } from '@features/privileges';
 import { PrivilegeNames } from '@shared/config/privileges';
-import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
-import TextArea from '@widgets/main/TextArea';
 import { api } from '@shared/api';
 import { toRoleModel } from '@entities/role';
+import CreateDialogContent from './CreateDialogContent';
+import UpdateDialogContent from './UpdateDialogContext';
 
 class ContextMenuData {
   clientX: number;
@@ -64,12 +61,6 @@ class DialogData {
     this.visible = visible;
     this.args = args;
   }
-}
-
-const dropdownOptions = Object.values(RoleModelType).map(e => new DropdownOption(e));
-
-function _displayPrivilege(item: PrivilegeModel) {
-  return item.name + " - " + item.description;
 }
 
 const privilegeOthers = {
@@ -221,10 +212,10 @@ function RoleListPage() {
     let component = <></>
     switch (dialogData.visible) {
       case DialogSelected.CREATE:
-        component = <_CreateRoleDialogContent privileges={privileges} setPrivileges={setPrivileges} {...dialogData.args} />
+        component = <CreateDialogContent privileges={privileges} setPrivileges={setPrivileges} {...dialogData.args} />
         break;
       case DialogSelected.UPDATE:
-        component = <_UpdateRoleDialogContent privileges={privileges} setPrivileges={setPrivileges} {...dialogData.args} />;
+        component = <UpdateDialogContent privileges={privileges} setPrivileges={setPrivileges} {...dialogData.args} />;
         break;
     }
     return (
@@ -257,80 +248,6 @@ function RoleListPage() {
   );
 }
 
-type CreateProps = {
-  privileges: PrivilegeModel[]
-  setPrivileges: React.Dispatch<React.SetStateAction<PrivilegeModel[]>>,
-  onDone: any
-}
-
-const _CreateRoleDialogContent = (props: CreateProps) => {
-  useEffect(() => {
-    if (props.privileges === undefined) {
-      api.withReauth(() => api.role.getAllPrivileges())
-        .then(r => {
-          const list = r.data.map(p => toPrivilegeModel(p));
-          props.setPrivileges(list);
-        })
-    }
-  }, []);
-
-  return (
-    <div className={styles.dialog_content}>
-      <div className={styles.dialog_form}>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Название роли" />
-          <Input value="РОЛЬ" />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Описание" />
-          <TextArea />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Тип роли" />
-          <Dropdown items={dropdownOptions} value={dropdownOptions[0].text} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Список привилегий" />
-          <InputCheckboxList items={props.privileges ?? []} displayName={_displayPrivilege} />
-        </div>
-      </div>
-      <Button onClick={props.onDone}>Создать</Button>
-    </div>
-  );
-}
-
-type UpdateProps = {
-  privileges: PrivilegeModel[]
-  setPrivileges: React.Dispatch<React.SetStateAction<PrivilegeModel[]>>,
-  role: RoleModel,
-  onDone: any
-}
-
-const _UpdateRoleDialogContent = (props: UpdateProps) => {
-  return (
-    <div className={styles.dialog_content}>
-      <div className={styles.dialog_form}>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Название роли" />
-          <Input value={props.role.name} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Описание" />
-          <TextArea value={props.role.description} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Тип роли" />
-          <Dropdown items={dropdownOptions} value={props.role.type} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Список привилегий" />
-          <InputCheckboxList items={props.privileges ?? []} displayName={_displayPrivilege} />
-        </div>
-      </div>
-      <Button onClick={props.onDone}>Изменить</Button>
-    </div>
-  );
-}
 
 
 export default RoleListPage;
