@@ -60,15 +60,10 @@ class Api {
 
   api.withReauth(() => api.auth.apiCall(request))
     .then(r => {
-      // process request
-      const token = r.data;
-      setTokenContext(new TokenContextData(token))
-      navigate(RoutePaths.eventList);
+      // process apiCall request
     })
     .catch(e => {
-      // process error
-      setErrorText(e.response.data);
-      setIsError(true);
+      // process apiCall error
     })
    *
    *
