@@ -91,7 +91,6 @@ function RoleListPage() {
   ]))
 
   const [roles, setRoles] = useState([] as RoleElement[]);
-  const [privileges, setPrivileges] = useState<PrivilegeModel[] | undefined>(undefined);
 
   // set context menu position. not using transform(-100%, 0%) to handle content bounds
   // NOTE: can move to controller object
@@ -231,16 +230,12 @@ function RoleListPage() {
     switch (dialogData.visible) {
       case DialogSelected.CREATE:
         component = <CreateDialogContent
-          privileges={privileges}
-          setPrivileges={setPrivileges}
           onDone={_createRoleFromModel}
           {...dialogData.args}
         />
         break;
       case DialogSelected.UPDATE:
         component = <UpdateDialogContent
-          privileges={privileges}
-          setPrivileges={setPrivileges}
           onDone={_updateRoleFromModel}
           {...dialogData.args}
         />;

@@ -1,4 +1,4 @@
-import { PrivilegeModel } from "@entities/privilege";
+import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
 import { RoleModel, RoleModelType } from "@entities/role";
 import Button from "@widgets/main/Button";
 import Dropdown from "@widgets/main/Dropdown";
@@ -9,7 +9,8 @@ import TextArea from "@widgets/main/TextArea";
 
 import styles from './index.module.css'
 import { privilegeToText, dropdownOptionToText, dropdownOptions } from "./common";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "@shared/api";
 
 type UpdateProps = {
   privileges: PrivilegeModel[]
@@ -22,8 +23,42 @@ const UpdateDialogContent = (props: UpdateProps) => {
   const [name, setName] = useState(props.role.name ?? '');
   const [description, setDescription] = useState(props.role.description ?? '');
   const [type, setType] = useState(props.role.type ?? RoleModelType.SYSTEM);
-  const [privileges, setPrivileges] = useState(createItemSelectionList(props.role.privileges ?? [], true));
+  const [privileges, setPrivileges] = useState(createItemSelectionList(props.role.privileges ?? []));
 
+  const [prevType, setPrevType] = useState<RoleModelType | undefined>(undefined);
+
+  // NOTE: maybe cache privilege list results?
+  useEffect(() => {
+    if (prevType == type) {
+      return;
+    }
+
+    if (type == RoleModelType.SYSTEM) {
+      api.withReauth(() => api.role.getSystemPrivileges())
+        .then((r) => {
+          const privs = r.data.map(p => toPrivilegeModel(p));
+          setPrivileges(createItemSelectionList(privs, _isItemSelected));
+        })
+    }
+
+    if (type == RoleModelType.EVENT) {
+      api.withReauth(() => api.role.getOrganizationalPrivileges())
+        .then((r) => {
+          const privs = r.data.map(p => toPrivilegeModel(p));
+          setPrivileges(createItemSelectionList(privs, _isItemSelected));
+        })
+    }
+
+    setPrevType(type);
+  }, [type]);
+
+  // select privileges that were on previous role
+  const _isItemSelected = (item: PrivilegeModel) => {
+    if (props.role.privileges) {
+      return props.role.privileges.find(k => k.id == item.id) !== undefined;
+    }
+    return false;
+  }
 
   const _onDoneWrapper = () => {
     const role = new RoleModel(
