@@ -1,14 +1,12 @@
-import { Task } from "../model/task.ts";
-import { BASE_PATH } from "@shared/api/generated/base.ts";
+import { api } from "@shared/api";
+import { TaskResponse } from "@shared/api/generated";
 
 export const taskService = {
 
-  getTasks: (): Promise<Task[]> => {
-    return Promise.resolve(
-      fetch(`${BASE_PATH}/api/tasks/where-assignee`, {
-        method: "GET",
-      })
-        .then((response) => response.json() as Promise<Task[]>),
+  getTasks: (): Promise<TaskResponse[]> => {
+    return Promise.resolve(api
+      .withReauth(() => api.task.taskListShowWhereAssignee())
+      .then((response) => response.data),
     );
   },
 
@@ -20,14 +18,9 @@ export const taskService = {
       "Просрочено": "EXPIRED",
     };
 
-    return fetch(`${BASE_PATH}/api/tasks/${id}/status`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(status[newStatus]),
-    })
-      .then((response) => response.json() as Promise<unknown>);
+    return api
+      .withReauth(() => api.task.taskSetStatus(id, status[newStatus]))
+      .then((response) => response.data as Promise<unknown>);
   },
 
 };

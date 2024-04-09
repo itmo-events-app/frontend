@@ -8,7 +8,6 @@ import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { RoutePaths } from "@shared/config/routes";
 import { FC, useContext } from "react";
-import { Task } from "../../../model/task.ts";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { taskService } from "../../../service/task-service.ts";
 import { format } from "date-fns";
@@ -16,9 +15,10 @@ import { ru } from "date-fns/locale/ru";
 import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeContext, PrivilegeData } from "@features/PrivilegeProvider.tsx";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
+import { TaskResponse } from "@shared/api/generated";
 
 type TaskTableProps = {
-  tasks: Task[];
+  tasks: TaskResponse[];
 }
 
 const newTaskOptions: DropdownOption[] = [
@@ -46,10 +46,6 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
     new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
   ]));
 
-  const canEditTask = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
-    new PrivilegeData(PrivilegeNames.EDIT_TASK),
-  ])); // todo: использовать эту проверку?
-
   const { mutate: updateTaskStatus } = useMutation({
     mutationFn: taskService.updateTaskStatus,
     mutationKey: ["updateTaskStatus"],
@@ -57,10 +53,6 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
 
   return (
     <div className={styles.content}>
-      {canEditTask ? (
-        <Button>Редактировать</Button>
-      ) : <></>}
-
       <table className={styles.table}>
         <thead>
         <tr>
@@ -79,20 +71,20 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
             <td>{task.title}</td>
             <td>{task.description}</td>
             <td>
-              {format(task.deadline, "H:mm")} <br />
-              {format(task.deadline, "do MMMM, yyyy", { locale: ru })}
+              {format(task.deadline!, "H:mm")} <br />
+              {format(task.deadline!, "do MMMM, yyyy", { locale: ru })}
             </td>
-            <td>{task.assignee.name + " " + task.assignee.surname}</td>
+            <td>{task.assignee!.name + " " + task.assignee!.surname}</td>
             <td>{task.eventId}</td>
             {/*todo: ждем доработку бэка чтобы вывести мероприятие и активность*/}
             <td>{"-"}</td>
             <td className={styles.dropdown}>
-              {canChangeTaskStatus ? (<Dropdown placeholder={statusTranslation[task.taskStatus]}
+              {canChangeTaskStatus ? (<Dropdown placeholder={statusTranslation[task.taskStatus!]}
                                                 items={newTaskOptions}
                                                 onSelect={({ text }) => {
-                                                  updateTaskStatus({ newStatus: text, id: task.id });
+                                                  updateTaskStatus({ newStatus: text, id: task.id! });
                                                 }} />
-              ) : (<>{statusTranslation[task.taskStatus]}</>)}
+              ) : (<>{statusTranslation[task.taskStatus!]}</>)}
             </td>
           </tr>
         ))}
