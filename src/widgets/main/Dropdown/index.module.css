@@ -30,12 +30,18 @@
 .dropdown_item_container {
   border-radius: 10px;
   padding: 9px 9px;
+  text-decoration: none;
+  font-size: 16px;
+  color: var(--itmo-colors-black);
 }
 
 .dropdown_item_container_selected {
   background-color: var(--itmo-colors-blue-selected);
   border-radius: 10px;
   padding: 9px 9px;
+  text-decoration: none;
+  font-size: 16px;
+  color: var(--itmo-colors-white);
 }
 
 .dropdown_item_container:not(.dropdown_item_container_selected):hover {
@@ -53,18 +59,6 @@
   text-decoration: none;
   font-size: 16px;
   color: var(--itmo-colors-black);
-}
-
-.dropdown_item {
-  text-decoration: none;
-  font-size: 16px;
-  color: var(--itmo-colors-black);
-}
-
-.dropdown_item_selected {
-  text-decoration: none;
-  font-size: 16px;
-  color: var(--itmo-colors-white);
 }
 
 .hidden {

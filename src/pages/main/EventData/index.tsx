@@ -10,9 +10,9 @@ import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
 import { useParams } from "react-router-dom";
-import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { getImageUrl } from "@shared/lib/image.ts"
-import { info } from "sass";
+import { api } from "@shared/api";
+
 
 class EventInfo {
   regDates: string
@@ -94,14 +94,17 @@ class Activity {
 class Person {
   id: string
   name: string
+  surname: string
   email: string
 
   constructor(
     name: string,
+    surname: string,
     email: string,
   ) {
     this.id = uid();
     this.name = name;
+    this.surname = surname;
     this.email = email;
   }
 }
@@ -165,49 +168,16 @@ const _activities: Activity[] = [
 
 const _members: Person[] = [
   new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
+    "Дарья Сергеевна",
+    "Курочкина",
     "example@mail.ru"
   )
 ]
 
 const task_privilege: boolean = false;
 const edit_privilege: boolean = false;
+
+const EVENT_ID: number = 1;
 
 const _pageTabs: PageTab[] = [
   new PageTab("Описание"),
@@ -409,13 +379,13 @@ function EventActivitiesPage() {
   function _createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
-        <td>{person.name}</td>
+        <td>{person.surname + " " + person.name}</td>
         <td>{person.email}</td>
       </tr>
     )
   }
 
-  function _createPersonTable(persons: Person[], edit_func: any) {
+  function createOrgsTable(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
       items.push(_createPersonRow(person));
@@ -441,6 +411,7 @@ function EventActivitiesPage() {
       </>
     )
   }
+
   function _createPersonTableUsers(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
@@ -469,26 +440,19 @@ function EventActivitiesPage() {
     )
   }
 
-  type JsonOrgEntry = {
-    name: string,
-    surname: string,
-    email: string
-  }
-
-  const [orgList, setOrgList] = useState<JsonOrgEntry[]>([]);
-
-  const fetchOrgs = () => {
-    fetch("http://158.160.158.58:8080/api/events/1/organizers")
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        setOrgList(data)
-      })
-  }
+  const [orgs, setOrgs] = useState([] as Person[]);
 
   useEffect(() => {
-    fetchOrgs()
+    api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
+      .then((response) => {
+        const list = response.data.map(user => {
+          return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
+        })
+        setOrgs(list);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      })
   }, [])
 
   const [selectedTab, setSelectedTab] = useState("Описание");
@@ -519,9 +483,7 @@ function EventActivitiesPage() {
               selectedTab == "Описание" && _createInfoPage(event, id)
             )}
             {selectedTab == "Активности" && _createActivityList(_activities)}
-            {selectedTab == "Организаторы" && _createPersonTable(orgList.map(entry => {
-              return new Person(entry.name + " " + entry.surname, entry.email)
-            }), _editOrgs)}
+            {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
             {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
             {selectedTab == "Задачи" && "ToDo: Страница задач"}
           </div>

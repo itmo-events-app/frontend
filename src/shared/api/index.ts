@@ -32,7 +32,7 @@ class Api {
   async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
     return func()
       .catch(async (e) => {
-        if (e.response.status == 401) {
+        if (e.response != undefined && e.response.status == 401) {
           setTokenContextData(new TokenContextData());
         }
         throw e;
