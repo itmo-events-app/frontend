@@ -8,6 +8,7 @@ export * from './place-response';
 export * from './place-short-data-request';
 export * from './place-short-data-response';
 export * from './privilege-response';
+export * from './registration-request-for-admin';
 export * from './registration-user-request';
 export * from './role-request';
 export * from './role-response';

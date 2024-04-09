@@ -25,6 +25,7 @@ model/place-response.ts
 model/place-short-data-request.ts
 model/place-short-data-response.ts
 model/privilege-response.ts
+model/registration-request-for-admin.ts
 model/registration-user-request.ts
 model/role-request.ts
 model/role-response.ts
