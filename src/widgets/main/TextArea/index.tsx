@@ -4,7 +4,8 @@ import ReactTextareaAutosize from 'react-textarea-autosize';
 
 type Props = {
   type?: React.HTMLInputTypeAttribute,
-  value?: string,
+  value: string,
+  onChange: React.ChangeEventHandler<HTMLTextAreaElement>,
   placeholder?: string,
   className?: string,
   minRows?: number,
@@ -15,7 +16,8 @@ function TextArea(props: Props) {
     minRows={props.minRows ?? 3}
     placeholder={props.placeholder}
     className={appendClassName(styles.textarea, props.className)}
-    defaultValue={props.value}
+    onChange={props.onChange}
+    value={props.value}
   />
 }
 

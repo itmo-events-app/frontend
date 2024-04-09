@@ -12,7 +12,11 @@ import EventActivitiesPage from "@pages/main/EventData";
 import TaskListPage from "@pages/main/TaskList";
 import NotificationListPage from "@pages/main/NotificationListPage";
 import ProfilePage from "@pages/main/ProfilePage";
+import Authenticated from "@features/Authenticated";
 import Authorized from "@features/Authorized";
+import { anyPrivilege } from "@features/privileges";
+import { PrivilegeNames } from "@shared/config/privileges";
+import { PrivilegeData } from "@features/PrivilegeProvider";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -42,7 +46,6 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
     element: <AvailableEventsPage />,
-    // element: <Authorized><AvailableEventsPage /></Authorized>,
   },
   [AppRoutes.EVENT_CREATION]: {
     path: RoutePaths.createEvent,
@@ -62,7 +65,17 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
-    element: <RoleListPage />,
+    element: <Authenticated>
+      <Authorized
+        whenAllowed={anyPrivilege(new Set([
+          new PrivilegeData(PrivilegeNames.CREATE_ROLE),
+          new PrivilegeData(PrivilegeNames.EDIT_ROLE),
+          new PrivilegeData(PrivilegeNames.DELETE_ROLE),
+        ]))}
+        rejectNavigateTo={RoutePaths.eventList}>
+        <RoleListPage />
+      </Authorized>
+    </Authenticated>,
   },
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,

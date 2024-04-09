@@ -1,14 +1,18 @@
-import { uid } from 'uid'
-import { useEffect, useState } from "react";
+import {uid} from 'uid'
+import {useContext, useEffect, useState} from "react";
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import SideBar from '@widgets/main/SideBar';
 import Content from "@widgets/main/Content";
-import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import { RoutePaths } from '@shared/config/routes';
+import PageTabs, {PageTab} from "@widgets/main/PageTabs";
+import {RoutePaths} from '@shared/config/routes';
 import Button from "@widgets/main/Button";
+import {api} from "@shared/api";
+import {PrivilegeContext, PrivilegeData} from "@features/PrivilegeProvider.tsx";
+import {hasAnyPrivilege} from "@features/privileges.ts";
+import {PrivilegeNames} from "@shared/config/privileges.ts";
 
 
 class EventInfo {
@@ -91,14 +95,17 @@ class Activity {
 class Person {
   id: string
   name: string
+  surname: string
   email: string
 
   constructor(
     name: string,
+    surname: string,
     email: string,
   ) {
     this.id = uid();
     this.name = name;
+    this.surname = surname;
     this.email = email;
   }
 }
@@ -162,59 +169,50 @@ const _activities: Activity[] = [
 
 const _members: Person[] = [
   new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
+    "Дарья Сергеевна",
+    "Курочкина",
     "example@mail.ru"
   )
 ]
 
-const task_privilege: boolean = false;
 const edit_privilege: boolean = false;
 
-const _pageTabs: PageTab[] = [
-  new PageTab("Описание"),
-  new PageTab("Активности"),
-  new PageTab("Организаторы"),
-  new PageTab("Участники"),
-  task_privilege ? new PageTab("Задачи") : undefined
-]
+const EVENT_ID: number = 2;
 
 function EventActivitiesPage() {
+
+  const { privilegeContext } = useContext(PrivilegeContext);
+
+  const activitiesVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)
+  ]));
+
+  const orgsVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)
+  ]));
+
+  const tasksVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)
+  ]));
+
+
+  const pageTabs: PageTab[] = []
+
+  pageTabs.push(new PageTab("Описание"));
+
+  if (activitiesVisible) {
+    pageTabs.push(new PageTab("Активности"));
+  }
+
+  if (orgsVisible) {
+    pageTabs.push(new PageTab("Организаторы"));
+  }
+
+  pageTabs.push(new PageTab("Участники"));
+
+  if (tasksVisible) {
+    pageTabs.push(new PageTab("Задачи"));
+  }
 
   const _brandLogoClick = () => {
     console.log('brand logo!')
@@ -344,13 +342,13 @@ function EventActivitiesPage() {
   function _createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
-        <td>{person.name}</td>
+        <td>{person.surname + " " + person.name}</td>
         <td>{person.email}</td>
       </tr>
     )
   }
 
-  function _createPersonTable(persons: Person[], edit_func: any) {
+  function createOrgsTable(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
       items.push(_createPersonRow(person));
@@ -376,6 +374,7 @@ function EventActivitiesPage() {
       </>
     )
   }
+
   function _createPersonTableUsers(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
@@ -404,27 +403,22 @@ function EventActivitiesPage() {
     )
   }
 
-  type JsonOrgEntry = {
-    name: string,
-    surname: string,
-    email: string
-  }
-
-  const [orgList, setOrgList] = useState<JsonOrgEntry[]>([]);
-
-  const fetchOrgs = () => {
-    fetch("http://158.160.158.58:8080/api/events/1/organizers")
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        setOrgList(data)
-      })
-  }
+  const [orgs, setOrgs] = useState([] as Person[]);
 
   useEffect(() => {
-    fetchOrgs()
-  }, [])
+    if (orgsVisible) {
+      api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
+          .then((response) => {
+            const list = response.data.map(user => {
+              return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
+            })
+            setOrgs(list);
+          })
+          .catch((error) => {
+            console.log(error.response.data);
+          })
+    }
+  }, [orgsVisible])
 
   const [selectedTab, setSelectedTab] = useState("Описание");
 
@@ -439,7 +433,7 @@ function EventActivitiesPage() {
         <div className={styles.header}>
           <PageName text={"Event"} />
           <div className={styles.tabs}>
-            <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs} />
+            <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
           </div>
         </div>
       }
@@ -450,9 +444,7 @@ function EventActivitiesPage() {
           <div className={styles.content}>
             {selectedTab == "Описание" && _createInfoPage(_eventInfo)}
             {selectedTab == "Активности" && _createActivityList(_activities)}
-            {selectedTab == "Организаторы" && _createPersonTable(orgList.map(entry => {
-              return new Person(entry.name + " " + entry.surname, entry.email)
-            }), _editOrgs)}
+            {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
             {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
             {selectedTab == "Задачи" && "ToDo: Страница задач"}
           </div>
