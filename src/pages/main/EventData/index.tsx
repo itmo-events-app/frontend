@@ -388,7 +388,7 @@ function EventActivitiesPage() {
         setOrgs(list);
       })
       .catch((error) => {
-        console.log("Error: " + error)
+        console.log(error.response.data);
       })
   }, [])
 
