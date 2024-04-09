@@ -383,7 +383,7 @@ function EventActivitiesPage() {
     api.event.getUsersHavingRoles(EVENT_ID)
       .then(response => {
         const list = response.data.map(user => {
-          return new Person(user.name, user.surname, "email");
+          return new Person(user.name, user.surname, user.login);
         })
         setOrgs(list);
       })
