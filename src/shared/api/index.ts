@@ -28,10 +28,10 @@ class Api {
     this.test = new TestControllerApi(configuration);
   }
 
-  // // NOTE: does nothing, need refresh token
-  // async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
-  //   return func();
-  // }
+  // NOTE: does nothing, need refresh token
+  async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
+    return func();
+  }
 
   /* example of implementation
 
