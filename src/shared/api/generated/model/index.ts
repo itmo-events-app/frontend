@@ -3,6 +3,8 @@ export * from './event-request';
 export * from './event-response';
 export * from './login-request';
 export * from './notification-response';
+export * from './place-request';
+export * from './place-response';
 export * from './place-short-data-request';
 export * from './place-short-data-response';
 export * from './privilege-response';

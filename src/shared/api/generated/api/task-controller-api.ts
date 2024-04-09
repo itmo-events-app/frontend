@@ -33,6 +33,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
     return {
         /**
          * 
+         * @summary Создание задачи
          * @param {TaskRequest} taskRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -68,7 +69,8 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -101,7 +103,8 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление исполнителя задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -134,7 +137,8 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Редактирование задачи
+         * @param {number} id ID задачи
          * @param {TaskRequest} taskRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -173,7 +177,8 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение задачи по id
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -206,7 +211,8 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} dstEventId 
+         * @summary Копирование списка задач
+         * @param {number} dstEventId ID мероприятия, куда задача будет скопирована
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -245,7 +251,8 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} dstEventId 
+         * @summary Перемещение списка задач
+         * @param {number} dstEventId ID мероприятия, куда задача будет перемещена
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -284,13 +291,14 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} eventId 
-         * @param {number} [assigneeId] 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
-         * @param {boolean} [subEventTasksGet] 
+         * @summary Получение списка задач мероприятия
+         * @param {number} eventId ID мероприятия
+         * @param {number} [assigneeId] ID Исполнителя задачи
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {boolean} [subEventTasksGet] Включить получение подзадач
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -351,12 +359,13 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} eventId 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
-         * @param {boolean} [subEventTasksGet] 
+         * @summary Получение списка задач мероприятия где пользователь является исполнителем
+         * @param {number} eventId ID мероприятия
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {boolean} [subEventTasksGet] Включить получение подзадач
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -413,11 +422,12 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} [eventId] 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
+         * @summary Получение списка задач где пользователь является исполнителем
+         * @param {number} [eventId] ID мероприятия
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -471,8 +481,9 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} id 
-         * @param {number} userId 
+         * @summary Назначение исполнителя задачи
+         * @param {number} id ID задачи
+         * @param {number} userId ID пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -508,7 +519,8 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Установка статуса задачи
+         * @param {number} id ID задачи
          * @param {string} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -547,7 +559,8 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Назначение себя исполнителем задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -590,6 +603,7 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Создание задачи
          * @param {TaskRequest} taskRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -602,11 +616,12 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskDelete(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async taskDelete(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.taskDelete(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskDelete']?.[index]?.url;
@@ -614,7 +629,8 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление исполнителя задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -626,7 +642,8 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Редактирование задачи
+         * @param {number} id ID задачи
          * @param {TaskRequest} taskRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -639,7 +656,8 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение задачи по id
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -651,7 +669,8 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} dstEventId 
+         * @summary Копирование списка задач
+         * @param {number} dstEventId ID мероприятия, куда задача будет скопирована
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -664,7 +683,8 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} dstEventId 
+         * @summary Перемещение списка задач
+         * @param {number} dstEventId ID мероприятия, куда задача будет перемещена
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -677,13 +697,14 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} eventId 
-         * @param {number} [assigneeId] 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
-         * @param {boolean} [subEventTasksGet] 
+         * @summary Получение списка задач мероприятия
+         * @param {number} eventId ID мероприятия
+         * @param {number} [assigneeId] ID Исполнителя задачи
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {boolean} [subEventTasksGet] Включить получение подзадач
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -695,12 +716,13 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} eventId 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
-         * @param {boolean} [subEventTasksGet] 
+         * @summary Получение списка задач мероприятия где пользователь является исполнителем
+         * @param {number} eventId ID мероприятия
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {boolean} [subEventTasksGet] Включить получение подзадач
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -712,11 +734,12 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} [eventId] 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
+         * @summary Получение списка задач где пользователь является исполнителем
+         * @param {number} [eventId] ID мероприятия
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -728,8 +751,9 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
-         * @param {number} userId 
+         * @summary Назначение исполнителя задачи
+         * @param {number} id ID задачи
+         * @param {number} userId ID пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -741,7 +765,8 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Установка статуса задачи
+         * @param {number} id ID задачи
          * @param {string} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -754,7 +779,8 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Назначение себя исполнителем задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -776,6 +802,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
     return {
         /**
          * 
+         * @summary Создание задачи
          * @param {TaskRequest} taskRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -785,16 +812,18 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskDelete(id: number, options?: any): AxiosPromise<object> {
+        taskDelete(id: number, options?: any): AxiosPromise<void> {
             return localVarFp.taskDelete(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление исполнителя задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -803,7 +832,8 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Редактирование задачи
+         * @param {number} id ID задачи
          * @param {TaskRequest} taskRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -813,7 +843,8 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение задачи по id
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -822,7 +853,8 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} dstEventId 
+         * @summary Копирование списка задач
+         * @param {number} dstEventId ID мероприятия, куда задача будет скопирована
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -832,7 +864,8 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} dstEventId 
+         * @summary Перемещение списка задач
+         * @param {number} dstEventId ID мероприятия, куда задача будет перемещена
          * @param {Array<number>} requestBody 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -842,13 +875,14 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} eventId 
-         * @param {number} [assigneeId] 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
-         * @param {boolean} [subEventTasksGet] 
+         * @summary Получение списка задач мероприятия
+         * @param {number} eventId ID мероприятия
+         * @param {number} [assigneeId] ID Исполнителя задачи
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {boolean} [subEventTasksGet] Включить получение подзадач
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -857,12 +891,13 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} eventId 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
-         * @param {boolean} [subEventTasksGet] 
+         * @summary Получение списка задач мероприятия где пользователь является исполнителем
+         * @param {number} eventId ID мероприятия
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {boolean} [subEventTasksGet] Включить получение подзадач
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -871,11 +906,12 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} [eventId] 
-         * @param {number} [assignerId] 
-         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] 
-         * @param {string} [deadlineLowerLimit] 
-         * @param {string} [deadlineUpperLimit] 
+         * @summary Получение списка задач где пользователь является исполнителем
+         * @param {number} [eventId] ID мероприятия
+         * @param {number} [assignerId] ID Создателя задачи
+         * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
+         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -884,8 +920,9 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} id 
-         * @param {number} userId 
+         * @summary Назначение исполнителя задачи
+         * @param {number} id ID задачи
+         * @param {number} userId ID пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -894,7 +931,8 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Установка статуса задачи
+         * @param {number} id ID задачи
          * @param {string} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -904,7 +942,8 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Назначение себя исполнителем задачи
+         * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -923,6 +962,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
 export class TaskControllerApi extends BaseAPI {
     /**
      * 
+     * @summary Создание задачи
      * @param {TaskRequest} taskRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -934,7 +974,8 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Удаление задачи
+     * @param {number} id ID задачи
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
@@ -945,7 +986,8 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Удаление исполнителя задачи
+     * @param {number} id ID задачи
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
@@ -956,7 +998,8 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Редактирование задачи
+     * @param {number} id ID задачи
      * @param {TaskRequest} taskRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -968,7 +1011,8 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Получение задачи по id
+     * @param {number} id ID задачи
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
@@ -979,7 +1023,8 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} dstEventId 
+     * @summary Копирование списка задач
+     * @param {number} dstEventId ID мероприятия, куда задача будет скопирована
      * @param {Array<number>} requestBody 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -991,7 +1036,8 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} dstEventId 
+     * @summary Перемещение списка задач
+     * @param {number} dstEventId ID мероприятия, куда задача будет перемещена
      * @param {Array<number>} requestBody 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -1003,13 +1049,14 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} eventId 
-     * @param {number} [assigneeId] 
-     * @param {number} [assignerId] 
-     * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] 
-     * @param {string} [deadlineLowerLimit] 
-     * @param {string} [deadlineUpperLimit] 
-     * @param {boolean} [subEventTasksGet] 
+     * @summary Получение списка задач мероприятия
+     * @param {number} eventId ID мероприятия
+     * @param {number} [assigneeId] ID Исполнителя задачи
+     * @param {number} [assignerId] ID Создателя задачи
+     * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] Статус задачи
+     * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+     * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+     * @param {boolean} [subEventTasksGet] Включить получение подзадач
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
@@ -1020,12 +1067,13 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} eventId 
-     * @param {number} [assignerId] 
-     * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] 
-     * @param {string} [deadlineLowerLimit] 
-     * @param {string} [deadlineUpperLimit] 
-     * @param {boolean} [subEventTasksGet] 
+     * @summary Получение списка задач мероприятия где пользователь является исполнителем
+     * @param {number} eventId ID мероприятия
+     * @param {number} [assignerId] ID Создателя задачи
+     * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
+     * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+     * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+     * @param {boolean} [subEventTasksGet] Включить получение подзадач
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
@@ -1036,11 +1084,12 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} [eventId] 
-     * @param {number} [assignerId] 
-     * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] 
-     * @param {string} [deadlineLowerLimit] 
-     * @param {string} [deadlineUpperLimit] 
+     * @summary Получение списка задач где пользователь является исполнителем
+     * @param {number} [eventId] ID мероприятия
+     * @param {number} [assignerId] ID Создателя задачи
+     * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
+     * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
+     * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
@@ -1051,8 +1100,9 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
-     * @param {number} userId 
+     * @summary Назначение исполнителя задачи
+     * @param {number} id ID задачи
+     * @param {number} userId ID пользователя
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
@@ -1063,7 +1113,8 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Установка статуса задачи
+     * @param {number} id ID задачи
      * @param {string} body 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -1075,7 +1126,8 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Назначение себя исполнителем задачи
+     * @param {number} id ID задачи
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
