@@ -1,11 +1,11 @@
-import { uid } from 'uid'
-import styles from './index.module.css'
-import { useState } from 'react'
-import { appendClassName } from '@shared/util'
+import { uid } from "uid";
+import styles from "./index.module.css";
+import { FC, useState } from "react";
+import { appendClassName } from "@shared/util";
 
 class DropdownOption {
-  id: string
-  text: string
+  id: string;
+  text: string;
 
   constructor(
     text: string,
@@ -21,26 +21,30 @@ type Props = {
   className?: string,
   clearable?: boolean,
   items: DropdownOption[]
+  onSelect?: (data: { text: string; id: string }) => void;
 }
 
 
-function Dropdown(props: Props) {
+const Dropdown: FC<Props> = ({ value, items, onSelect, placeholder, className, clearable}) => {
 
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(props.value ?? "");
+  const [selected, setSelected] = useState(value ?? "");
+
 
   function _select(item: DropdownOption) {
     return () => {
-      setSelected(item.text);
+      const { text, id } = item;
+      setSelected(text);
       setOpen(false);
-    }
+      onSelect?.({ text, id });
+    };
   }
 
   function _resetSelection() {
     return () => {
       setSelected("");
       setOpen(false);
-    }
+    };
   }
 
   function _clearOption() {
@@ -70,7 +74,7 @@ function Dropdown(props: Props) {
     return (
       <div
         key={option.id}
-        className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_selected}
+        className={styles.dropdown_item_container + " " + styles.dropdown_item_container_selected}
         onClick={_select(option)}
       >
         <a href="#" className={styles.dropdown_item_selected} onClick={_select(option)}>{option.text}</a>
@@ -87,7 +91,7 @@ function Dropdown(props: Props) {
   }
 
   function _createOptionList(options: DropdownOption[]) {
-    const items = []
+    const items = [];
     for (const option of options) {
       items.push(_createOption(option));
     }
@@ -107,25 +111,26 @@ function Dropdown(props: Props) {
       <a href="#" className={styles.dropdown_selected_option} onClick={() => setOpen(!open)}>
         {text}
       </a>
-    )
+    );
   }
 
   return (
     <div className={styles.dropdown}>
       <div className={open ? styles.dropdown_border_open : styles.dropdown_border}>
         <div className={styles.dropdown_item_container} onClick={() => setOpen(!open)}>
-          {selected == "" ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(selected)}
+          {selected == "" ? _renderPlaceholder(placeholder) : _renderSelectedOption(selected)}
         </div>
       </div>
-      <div className={appendClassName(appendClassName(styles.option_list, open ? styles.visible : styles.hidden), props.className)}>
+      <div
+        className={appendClassName(appendClassName(styles.option_list, open ? styles.visible : styles.hidden), className)}>
         <div className={styles.dropdown_list_border}>
-          {props.clearable && _clearOption()}
-          {_createOptionList(props.items)}
+          {clearable && _clearOption()}
+          {_createOptionList(items)}
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default Dropdown
-export { DropdownOption }
+export default Dropdown;
+export { DropdownOption };
