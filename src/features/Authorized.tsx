@@ -1,28 +1,27 @@
-import { useEffect, useState } from "react"
-import { RoutePaths } from "@shared/config/routes";
+import { useEffect, useState, useContext } from "react"
 import { Navigate } from "react-router-dom";
-import { getTokenContextData } from "@shared/lib/token";
+import { PrivilegeContext, PrivilegeData } from "./PrivilegeProvider";
 
 type Props = {
   children: any,
+  whenAllowed: (x: Set<PrivilegeData>) => boolean,
+  rejectNavigateTo: string,
 }
 
 const Authorized = (props: Props) => {
-  const [isAuthorized, setIsAuthorized] = useState<boolean | undefined>();
-  const tokenContext = getTokenContextData();
+  const { privilegeContext } = useContext(PrivilegeContext);
 
-  useEffect(() => {
-    const v = tokenContext.accessToken == null || tokenContext.accessToken == "";
-    setIsAuthorized(!v);
-  });
+  let isAuthorized = true;
+
+  if (privilegeContext.isSystemPrivilegesLoaded()) {
+    isAuthorized = props.whenAllowed(privilegeContext.systemPrivileges!);
+  }
 
   function _Content() {
-    if (isAuthorized == null) {
-      return <></>
-    } else if (isAuthorized) {
+    if (isAuthorized) {
       return props.children;
     }
-    return <Navigate to={RoutePaths.login} replace />
+    return <Navigate to={props.rejectNavigateTo} replace />
   }
 
   return _Content();

@@ -23,6 +23,7 @@ import { hasAnyPrivilege } from '@features/privileges';
 import { PrivilegeNames } from '@shared/config/privileges';
 import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
 import TextArea from '@widgets/main/TextArea';
+import { useNavigate } from 'react-router-dom';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
 const _privileges = []
@@ -127,7 +128,8 @@ const privilegeOthers = {
   ]),
   delete: new Set([
     new PrivilegeData(PrivilegeNames.DELETE_ROLE)
-  ])
+  ]),
+
 }
 
 function RoleListPage() {

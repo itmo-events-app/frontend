@@ -27,7 +27,7 @@ class PrivilegeContextData {
   }
 
   isSystemPrivilegesLoaded() {
-    return this._systemPrivileges === undefined;
+    return this._systemPrivileges !== undefined;
   }
 
   get systemPrivileges() {
@@ -35,7 +35,7 @@ class PrivilegeContextData {
   }
 
   isPrivilegesForEventLoaded(id: number) {
-    return this._eventPrivileges.get(id) === undefined;
+    return this._eventPrivileges.get(id) !== undefined;
   }
 
   getPrivilegesForEvent(id: number) {
