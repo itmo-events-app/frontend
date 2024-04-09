@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { RoutePaths } from "@shared/config/routes";
 import { Navigate } from "react-router-dom";
 import { getTokenContextData } from "@shared/lib/token";
@@ -8,18 +7,12 @@ type Props = {
 }
 
 const Authenticated = (props: Props) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>();
   const tokenContext = getTokenContextData();
 
-  useEffect(() => {
-    const v = tokenContext.accessToken == null || tokenContext.accessToken == "";
-    setIsAuthenticated(!v);
-  });
+  const isAuthenticated = tokenContext.accessToken != null && tokenContext.accessToken != "";
 
   function _Content() {
-    if (isAuthenticated == null) {
-      return <></>
-    } else if (isAuthenticated) {
+    if (isAuthenticated) {
       return props.children;
     }
     return <Navigate to={RoutePaths.login} replace />
