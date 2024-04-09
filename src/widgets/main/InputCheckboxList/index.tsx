@@ -1,6 +1,6 @@
+import InputCheckbox, { ItemSelection } from '@features/InputCheckbox';
 import styles from './index.module.css';
 import { uid } from 'uid';
-import InputCheckbox, { ItemSelection } from '../InputCheckbox';
 
 type Props<T> = {
   items: ItemSelection<T>[],

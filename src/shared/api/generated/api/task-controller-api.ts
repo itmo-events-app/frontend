@@ -53,6 +53,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -90,6 +94,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -123,6 +131,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -161,6 +173,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -198,6 +214,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -234,6 +254,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -275,6 +299,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -296,13 +324,16 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
          * @param {number} [assigneeId] ID Исполнителя задачи
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
-         * @param {boolean} [subEventTasksGet] Включить получение подзадач
+         * @param {string} [deadlineLowerLimit] Нижняя граница для фильтрации задач по дедлайну
+         * @param {string} [deadlineUpperLimit] Верхняя граница для фильтрации задач по дедлайну
+         * @param {boolean} [subEventTasksGet] Включить получение задач активностей мероприятия
+         * @param {boolean} [personalTasksGet] Получить свои задачи в мероприятии. Более приоритетный параметр, чем assigneeId
+         * @param {number} [page] Номер страницы
+         * @param {number} [pageSize] Размер страницы
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowInEvent: async (eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        taskListShowInEvent: async (eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, personalTasksGet?: boolean, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'eventId' is not null or undefined
             assertParamExists('taskListShowInEvent', 'eventId', eventId)
             const localVarPath = `/api/tasks/event/{eventId}`
@@ -317,6 +348,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
             if (assigneeId !== undefined) {
                 localVarQueryParameter['assigneeId'] = assigneeId;
@@ -346,67 +381,16 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
                 localVarQueryParameter['subEventTasksGet'] = subEventTasksGet;
             }
 
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Получение списка задач мероприятия где пользователь является исполнителем
-         * @param {number} eventId ID мероприятия
-         * @param {number} [assignerId] ID Создателя задачи
-         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
-         * @param {boolean} [subEventTasksGet] Включить получение подзадач
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        taskListShowInEventWhereAssignee: async (eventId: number, assignerId?: number, taskStatus?: TaskListShowInEventWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'eventId' is not null or undefined
-            assertParamExists('taskListShowInEventWhereAssignee', 'eventId', eventId)
-            const localVarPath = `/api/tasks/event/{eventId}/where-assignee`
-                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
+            if (personalTasksGet !== undefined) {
+                localVarQueryParameter['personalTasksGet'] = personalTasksGet;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            if (assignerId !== undefined) {
-                localVarQueryParameter['assignerId'] = assignerId;
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
             }
 
-            if (taskStatus !== undefined) {
-                localVarQueryParameter['taskStatus'] = taskStatus;
-            }
-
-            if (deadlineLowerLimit !== undefined) {
-                localVarQueryParameter['deadlineLowerLimit'] = (deadlineLowerLimit as any instanceof Date) ?
-                    (deadlineLowerLimit as any).toISOString() :
-                    deadlineLowerLimit;
-            }
-
-            if (deadlineUpperLimit !== undefined) {
-                localVarQueryParameter['deadlineUpperLimit'] = (deadlineUpperLimit as any instanceof Date) ?
-                    (deadlineUpperLimit as any).toISOString() :
-                    deadlineUpperLimit;
-            }
-
-            if (subEventTasksGet !== undefined) {
-                localVarQueryParameter['subEventTasksGet'] = subEventTasksGet;
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
             }
 
 
@@ -426,12 +410,14 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
          * @param {number} [eventId] ID мероприятия
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {string} [deadlineLowerLimit] Нижняя граница для фильтрации задач по дедлайну
+         * @param {string} [deadlineUpperLimit] Верхняя граница для фильтрации задач по дедлайну
+         * @param {number} [page] Номер страницы
+         * @param {number} [pageSize] Размер страницы
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowWhereAssignee: async (eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        taskListShowWhereAssignee: async (eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/tasks/where-assignee`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -443,6 +429,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
             if (eventId !== undefined) {
                 localVarQueryParameter['eventId'] = eventId;
@@ -466,6 +456,14 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
                 localVarQueryParameter['deadlineUpperLimit'] = (deadlineUpperLimit as any instanceof Date) ?
                     (deadlineUpperLimit as any).toISOString() :
                     deadlineUpperLimit;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
             }
 
 
@@ -506,6 +504,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -543,6 +545,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -579,6 +585,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -702,34 +712,19 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * @param {number} [assigneeId] ID Исполнителя задачи
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
-         * @param {boolean} [subEventTasksGet] Включить получение подзадач
+         * @param {string} [deadlineLowerLimit] Нижняя граница для фильтрации задач по дедлайну
+         * @param {string} [deadlineUpperLimit] Верхняя граница для фильтрации задач по дедлайну
+         * @param {boolean} [subEventTasksGet] Включить получение задач активностей мероприятия
+         * @param {boolean} [personalTasksGet] Получить свои задачи в мероприятии. Более приоритетный параметр, чем assigneeId
+         * @param {number} [page] Номер страницы
+         * @param {number} [pageSize] Размер страницы
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options);
+        async taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, personalTasksGet?: boolean, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, personalTasksGet, page, pageSize, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskListShowInEvent']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Получение списка задач мероприятия где пользователь является исполнителем
-         * @param {number} eventId ID мероприятия
-         * @param {number} [assignerId] ID Создателя задачи
-         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
-         * @param {boolean} [subEventTasksGet] Включить получение подзадач
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async taskListShowInEventWhereAssignee(eventId: number, assignerId?: number, taskStatus?: TaskListShowInEventWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowInEventWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['TaskControllerApi.taskListShowInEventWhereAssignee']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -738,13 +733,15 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * @param {number} [eventId] ID мероприятия
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {string} [deadlineLowerLimit] Нижняя граница для фильтрации задач по дедлайну
+         * @param {string} [deadlineUpperLimit] Верхняя граница для фильтрации задач по дедлайну
+         * @param {number} [page] Номер страницы
+         * @param {number} [pageSize] Размер страницы
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options);
+        async taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, page, pageSize, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskListShowWhereAssignee']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -880,29 +877,17 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * @param {number} [assigneeId] ID Исполнителя задачи
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
-         * @param {boolean} [subEventTasksGet] Включить получение подзадач
+         * @param {string} [deadlineLowerLimit] Нижняя граница для фильтрации задач по дедлайну
+         * @param {string} [deadlineUpperLimit] Верхняя граница для фильтрации задач по дедлайну
+         * @param {boolean} [subEventTasksGet] Включить получение задач активностей мероприятия
+         * @param {boolean} [personalTasksGet] Получить свои задачи в мероприятии. Более приоритетный параметр, чем assigneeId
+         * @param {number} [page] Номер страницы
+         * @param {number} [pageSize] Размер страницы
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: any): AxiosPromise<Array<TaskResponse>> {
-            return localVarFp.taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Получение списка задач мероприятия где пользователь является исполнителем
-         * @param {number} eventId ID мероприятия
-         * @param {number} [assignerId] ID Создателя задачи
-         * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
-         * @param {boolean} [subEventTasksGet] Включить получение подзадач
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        taskListShowInEventWhereAssignee(eventId: number, assignerId?: number, taskStatus?: TaskListShowInEventWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: any): AxiosPromise<Array<TaskResponse>> {
-            return localVarFp.taskListShowInEventWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options).then((request) => request(axios, basePath));
+        taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, personalTasksGet?: boolean, page?: number, pageSize?: number, options?: any): AxiosPromise<Array<TaskResponse>> {
+            return localVarFp.taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, personalTasksGet, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -910,13 +895,15 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * @param {number} [eventId] ID мероприятия
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
-         * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-         * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+         * @param {string} [deadlineLowerLimit] Нижняя граница для фильтрации задач по дедлайну
+         * @param {string} [deadlineUpperLimit] Верхняя граница для фильтрации задач по дедлайну
+         * @param {number} [page] Номер страницы
+         * @param {number} [pageSize] Размер страницы
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: any): AxiosPromise<Array<TaskResponse>> {
-            return localVarFp.taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options).then((request) => request(axios, basePath));
+        taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<Array<TaskResponse>> {
+            return localVarFp.taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1054,32 +1041,18 @@ export class TaskControllerApi extends BaseAPI {
      * @param {number} [assigneeId] ID Исполнителя задачи
      * @param {number} [assignerId] ID Создателя задачи
      * @param {TaskListShowInEventTaskStatusEnum} [taskStatus] Статус задачи
-     * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-     * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
-     * @param {boolean} [subEventTasksGet] Включить получение подзадач
+     * @param {string} [deadlineLowerLimit] Нижняя граница для фильтрации задач по дедлайну
+     * @param {string} [deadlineUpperLimit] Верхняя граница для фильтрации задач по дедлайну
+     * @param {boolean} [subEventTasksGet] Включить получение задач активностей мероприятия
+     * @param {boolean} [personalTasksGet] Получить свои задачи в мероприятии. Более приоритетный параметр, чем assigneeId
+     * @param {number} [page] Номер страницы
+     * @param {number} [pageSize] Размер страницы
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Получение списка задач мероприятия где пользователь является исполнителем
-     * @param {number} eventId ID мероприятия
-     * @param {number} [assignerId] ID Создателя задачи
-     * @param {TaskListShowInEventWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
-     * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-     * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
-     * @param {boolean} [subEventTasksGet] Включить получение подзадач
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof TaskControllerApi
-     */
-    public taskListShowInEventWhereAssignee(eventId: number, assignerId?: number, taskStatus?: TaskListShowInEventWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListShowInEventWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, options).then((request) => request(this.axios, this.basePath));
+    public taskListShowInEvent(eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, personalTasksGet?: boolean, page?: number, pageSize?: number, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).taskListShowInEvent(eventId, assigneeId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, subEventTasksGet, personalTasksGet, page, pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1088,14 +1061,16 @@ export class TaskControllerApi extends BaseAPI {
      * @param {number} [eventId] ID мероприятия
      * @param {number} [assignerId] ID Создателя задачи
      * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
-     * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
-     * @param {string} [deadlineUpperLimit] Жесткий дедлайн задачи
+     * @param {string} [deadlineLowerLimit] Нижняя граница для фильтрации задач по дедлайну
+     * @param {string} [deadlineUpperLimit] Верхняя граница для фильтрации задач по дедлайну
+     * @param {number} [page] Номер страницы
+     * @param {number} [pageSize] Размер страницы
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options).then((request) => request(this.axios, this.basePath));
+    public taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, page, pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1147,16 +1122,6 @@ export const TaskListShowInEventTaskStatusEnum = {
     Done: 'DONE'
 } as const;
 export type TaskListShowInEventTaskStatusEnum = typeof TaskListShowInEventTaskStatusEnum[keyof typeof TaskListShowInEventTaskStatusEnum];
-/**
- * @export
- */
-export const TaskListShowInEventWhereAssigneeTaskStatusEnum = {
-    New: 'NEW',
-    InProgress: 'IN_PROGRESS',
-    Expired: 'EXPIRED',
-    Done: 'DONE'
-} as const;
-export type TaskListShowInEventWhereAssigneeTaskStatusEnum = typeof TaskListShowInEventWhereAssigneeTaskStatusEnum[keyof typeof TaskListShowInEventWhereAssigneeTaskStatusEnum];
 /**
  * @export
  */

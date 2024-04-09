@@ -37,7 +37,13 @@ export interface RegistrationUserRequest {
      * @type {string}
      * @memberof RegistrationUserRequest
      */
-    'email': string;
+    'login': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegistrationUserRequest
+     */
+    'type': RegistrationUserRequestTypeEnum;
     /**
      * 
      * @type {string}
@@ -51,4 +57,11 @@ export interface RegistrationUserRequest {
      */
     'confirmPassword': string;
 }
+
+export const RegistrationUserRequestTypeEnum = {
+    Email: 'EMAIL'
+} as const;
+
+export type RegistrationUserRequestTypeEnum = typeof RegistrationUserRequestTypeEnum[keyof typeof RegistrationUserRequestTypeEnum];
+
 

@@ -1,6 +1,7 @@
+import { PrivilegeData } from "@entities/privilege-context";
+import PrivilegeContext from "@features/privilege-context";
 import { useContext } from "react"
 import { Navigate } from "react-router-dom";
-import { PrivilegeContext, PrivilegeData } from "./PrivilegeProvider";
 
 type Props = {
   children: any,
