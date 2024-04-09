@@ -59,5 +59,16 @@ function fromRoleModel(role: RoleModel): RoleResponse {
   }
 }
 
-export { toRoleModel, fromRoleModel }
+function copyRole(item: RoleModel) {
+  return new RoleModel(
+    item.id,
+    item.name,
+    item.type,
+    [...(item.privileges ?? [])],
+    item.description,
+  )
+}
+
+
+export { toRoleModel, fromRoleModel, copyRole }
 export { RoleModel, RoleModelType }

@@ -208,14 +208,32 @@ function RoleListPage() {
     />;
   }
 
+  const _createRoleFromModel = (role: RoleModel) => {
+    console.log(role);
+  }
+
+  const _updateRoleFromModel = (prev: RoleModel, cur: RoleModel) => {
+    console.log(prev, cur);
+  }
+
   const _Dialog = () => {
     let component = <></>
     switch (dialogData.visible) {
       case DialogSelected.CREATE:
-        component = <CreateDialogContent privileges={privileges} setPrivileges={setPrivileges} {...dialogData.args} />
+        component = <CreateDialogContent
+            privileges={privileges}
+            setPrivileges={setPrivileges}
+            onDone={_createRoleFromModel}
+          {...dialogData.args}
+        />
         break;
       case DialogSelected.UPDATE:
-        component = <UpdateDialogContent privileges={privileges} setPrivileges={setPrivileges} {...dialogData.args} />;
+        component = <UpdateDialogContent
+            privileges={privileges}
+            setPrivileges={setPrivileges}
+            onDone={_updateRoleFromModel}
+            {...dialogData.args}
+          />;
         break;
     }
     return (

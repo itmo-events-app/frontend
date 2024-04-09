@@ -28,5 +28,12 @@ function fromPrivilegeModel(priv: PrivilegeModel): PrivilegeResponse {
   }
 }
 
-export { toPrivilegeModel, fromPrivilegeModel }
+function copyPrivilege(item: PrivilegeModel) {
+  return new PrivilegeModel(
+    item.id,
+    item.name,
+    item.description);
+}
+
+export { toPrivilegeModel, fromPrivilegeModel, copyPrivilege }
 export { PrivilegeModel }

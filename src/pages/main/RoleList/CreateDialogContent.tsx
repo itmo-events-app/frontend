@@ -1,6 +1,6 @@
 import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
 import { api } from "@shared/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import styles from './index.module.css'
 
@@ -10,46 +10,58 @@ import Input from "@widgets/main/Input";
 import Dropdown from "@widgets/main/Dropdown";
 import InputCheckboxList from "@widgets/main/InputCheckboxList";
 import Button from "@widgets/main/Button";
-import { displayPrivilege, dropdownOptions } from "./common";
+import { displayPrivilege, dropdownOptionToText, dropdownOptions } from "./common";
+import { RoleModel, RoleModelType } from "@entities/role";
 
 type CreateProps = {
   privileges: PrivilegeModel[]
   setPrivileges: React.Dispatch<React.SetStateAction<PrivilegeModel[]>>,
-  onDone: any
+  onDone: (role: RoleModel) => void
 }
 
 const CreateDialogContent = (props: CreateProps) => {
-  useEffect(() => {
-    if (props.privileges === undefined) {
-      api.withReauth(() => api.role.getAllPrivileges())
-        .then(r => {
-          const list = r.data.map(p => toPrivilegeModel(p));
-          props.setPrivileges(list);
-        })
-    }
-  }, []);
+
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("");
+  const [type, setType] = useState(RoleModelType.SYSTEM);
+  const [privileges, setPrivileges] = useState([]);
+
+
+  const _onDoneWrapper = () => {
+    const role = new RoleModel(
+      0,
+      name,
+      type,
+      privileges,
+      description,
+    )
+    props.onDone(role);
+  }
 
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           <InputLabel value="Название роли" />
-          <Input value="РОЛЬ" />
+          <Input value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Описание" />
-          <TextArea />
+          <TextArea value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
-          <Dropdown items={dropdownOptions} value={dropdownOptions[0].text} />
+          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} value={type} onChange={
+            (e) => setType(e)
+          }
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />
-          <InputCheckboxList items={props.privileges ?? []} displayName={displayPrivilege} />
+          <InputCheckboxList items={privileges!} displayName={displayPrivilege} />
         </div>
       </div>
-      <Button onClick={props.onDone}>Создать</Button>
+      <Button onClick={_onDoneWrapper}>Создать</Button>
     </div>
   );
 }
