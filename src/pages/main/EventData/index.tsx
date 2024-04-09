@@ -404,7 +404,13 @@ function EventActivitiesPage() {
     )
   }
 
-  const [orgList, setOrgList] = useState([]);
+  type JsonOrgEntry = {
+    name: string,
+    surname: string,
+    email: string
+  }
+
+  const [orgList, setOrgList] = useState<JsonOrgEntry[]>([]);
 
   const fetchOrgs = () => {
     fetch("http://158.160.158.58:8080/api/events/1/organizers")
