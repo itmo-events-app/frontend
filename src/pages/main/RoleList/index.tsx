@@ -210,10 +210,12 @@ function RoleListPage() {
 
   const _createRoleFromModel = (role: RoleModel) => {
     console.log(role);
+    setDialogData(new DialogData());
   }
 
   const _updateRoleFromModel = (prev: RoleModel, cur: RoleModel) => {
     console.log(prev, cur);
+    setDialogData(new DialogData());
   }
 
   const _Dialog = () => {

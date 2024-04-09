@@ -7,7 +7,7 @@ function dropdownOptionToText(e: RoleModelType): string {
   return e;
 }
 
-function displayPrivilege(item: PrivilegeModel) {
+function privilegeToText(item: PrivilegeModel) {
   return item.name + " - " + item.description;
 }
-export { dropdownOptions, dropdownOptionToText, displayPrivilege }
+export { dropdownOptions, dropdownOptionToText, privilegeToText }

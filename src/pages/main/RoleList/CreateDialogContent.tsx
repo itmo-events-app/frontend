@@ -8,9 +8,9 @@ import InputLabel from "@widgets/main/InputLabel";
 import TextArea from "@widgets/main/TextArea";
 import Input from "@widgets/main/Input";
 import Dropdown from "@widgets/main/Dropdown";
-import InputCheckboxList from "@widgets/main/InputCheckboxList";
+import InputCheckboxList, { ItemSelection } from "@widgets/main/InputCheckboxList";
 import Button from "@widgets/main/Button";
-import { displayPrivilege, dropdownOptionToText, dropdownOptions } from "./common";
+import { privilegeToText, dropdownOptionToText, dropdownOptions } from "./common";
 import { RoleModel, RoleModelType } from "@entities/role";
 
 type CreateProps = {
@@ -38,6 +38,11 @@ const CreateDialogContent = (props: CreateProps) => {
     props.onDone(role);
   }
 
+  const _onPrivilegeChange = (e: ItemSelection<PrivilegeModel>) => {
+    e.selected = !e.selected;
+    setPrivileges([...privileges]);
+  }
+
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
@@ -58,10 +63,14 @@ const CreateDialogContent = (props: CreateProps) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />
-          <InputCheckboxList items={privileges!} displayName={displayPrivilege} />
+          <InputCheckboxList
+            items={privileges}
+            toText={privilegeToText}
+            onChange={_onPrivilegeChange}
+          />
         </div>
       </div>
-      <Button onClick={_onDoneWrapper}>Создать</Button>
+      <Button onClick={_onDoneWrapper}>Изменить</Button>
     </div>
   );
 }

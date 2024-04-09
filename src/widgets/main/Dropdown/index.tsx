@@ -29,6 +29,7 @@ function Dropdown<T>(props: Props<T>) {
   const [open, setOpen] = useState(false);
 
   const clearable = props.onClear != null;
+  const toText = props.toText ?? ((_) => "toText is undefined");
 
   // NOTE: onClear and onChange can lead to component rerendering (because of value change)
   // usage of stopPropagation is forced
@@ -68,7 +69,7 @@ function Dropdown<T>(props: Props<T>) {
         className={styles.dropdown_item_container}
         onClick={_onChange(option.value)}
       >
-        {props.toText(option.value)}
+        {toText(option.value)}
       </div>
     );
   }
@@ -80,7 +81,7 @@ function Dropdown<T>(props: Props<T>) {
         className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_selected}
         onClick={_onChange(option.value)}
       >
-        {props.toText(option.value)}
+        {toText(option.value)}
       </div>
     );
   }
@@ -112,7 +113,7 @@ function Dropdown<T>(props: Props<T>) {
   function _renderSelectedOption(text: DropdownOption<T>) {
     return (
       <a className={styles.dropdown_selected_option} onClick={() => setOpen(!open)}>
-        {props.toText(text.value)}
+        {toText(text.value)}
       </a>
     )
   }
