@@ -6,8 +6,6 @@ import Content from '@widgets/main/Content';
 import SideBar, { SideBarTab } from "@widgets/main/SideBar";
 import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
-// import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
-// import { RoutePaths } from '@shared/config/routes';
 import { Home, Menu, LocationIcon, Noted, Users } from "@shared/ui/icons";
 import InputLabel from "@widgets/auth/InputLabel";
 import InputCheckbox from "@widgets/main/InputCheckbox";
