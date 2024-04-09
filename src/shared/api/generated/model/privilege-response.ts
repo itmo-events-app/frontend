@@ -45,7 +45,7 @@ export const PrivilegeResponseNameEnum = {
     RejectRegistrationRequest: 'REJECT_REGISTRATION_REQUEST',
     ModifyProfileData: 'MODIFY_PROFILE_DATA',
     ViewOtherUsersProfile: 'VIEW_OTHER_USERS_PROFILE',
-    ViewAllEventsAndActivities: 'VIEW_ALL_EVENTS_AND_ACTIVITIES',
+    ViewAllEvents: 'VIEW_ALL_EVENTS',
     SearchEventsAndActivities: 'SEARCH_EVENTS_AND_ACTIVITIES',
     CreateEvent: 'CREATE_EVENT',
     ViewEventPlace: 'VIEW_EVENT_PLACE',

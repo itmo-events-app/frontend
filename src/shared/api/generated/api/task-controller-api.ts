@@ -103,7 +103,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @summary Удалеине исполнителя задачи
+         * @summary Удаление исполнителя задачи
          * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -423,6 +423,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Получение списка задач где пользователь является исполнителем
+         * @param {number} [eventId] ID мероприятия
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
          * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
@@ -430,7 +431,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowWhereAssignee: async (assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        taskListShowWhereAssignee: async (eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/tasks/where-assignee`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -442,6 +443,10 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (eventId !== undefined) {
+                localVarQueryParameter['eventId'] = eventId;
+            }
 
             if (assignerId !== undefined) {
                 localVarQueryParameter['assignerId'] = assignerId;
@@ -624,7 +629,7 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Удалеине исполнителя задачи
+         * @summary Удаление исполнителя задачи
          * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -730,6 +735,7 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Получение списка задач где пользователь является исполнителем
+         * @param {number} [eventId] ID мероприятия
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
          * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
@@ -737,8 +743,8 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async taskListShowWhereAssignee(assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowWhereAssignee(assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options);
+        async taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.taskListShowWhereAssignee']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -816,7 +822,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @summary Удалеине исполнителя задачи
+         * @summary Удаление исполнителя задачи
          * @param {number} id ID задачи
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -901,6 +907,7 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Получение списка задач где пользователь является исполнителем
+         * @param {number} [eventId] ID мероприятия
          * @param {number} [assignerId] ID Создателя задачи
          * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
          * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
@@ -908,8 +915,8 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        taskListShowWhereAssignee(assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: any): AxiosPromise<Array<TaskResponse>> {
-            return localVarFp.taskListShowWhereAssignee(assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options).then((request) => request(axios, basePath));
+        taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: any): AxiosPromise<Array<TaskResponse>> {
+            return localVarFp.taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -979,7 +986,7 @@ export class TaskControllerApi extends BaseAPI {
 
     /**
      * 
-     * @summary Удалеине исполнителя задачи
+     * @summary Удаление исполнителя задачи
      * @param {number} id ID задачи
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -1078,6 +1085,7 @@ export class TaskControllerApi extends BaseAPI {
     /**
      * 
      * @summary Получение списка задач где пользователь является исполнителем
+     * @param {number} [eventId] ID мероприятия
      * @param {number} [assignerId] ID Создателя задачи
      * @param {TaskListShowWhereAssigneeTaskStatusEnum} [taskStatus] Статус задачи
      * @param {string} [deadlineLowerLimit] Мягкий дедлайн задачи
@@ -1086,8 +1094,8 @@ export class TaskControllerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public taskListShowWhereAssignee(assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).taskListShowWhereAssignee(assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options).then((request) => request(this.axios, this.basePath));
+    public taskListShowWhereAssignee(eventId?: number, assignerId?: number, taskStatus?: TaskListShowWhereAssigneeTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).taskListShowWhereAssignee(eventId, assignerId, taskStatus, deadlineLowerLimit, deadlineUpperLimit, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -441,15 +441,13 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
          * 
          * @summary Обновление мероприятия
          * @param {number} id ID мероприятия
-         * @param {EventRequest} eventRequest 
+         * @param {EventRequest} [eventRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateEvent: async (id: number, eventRequest: EventRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateEvent: async (id: number, eventRequest?: EventRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateEvent', 'id', id)
-            // verify required parameter 'eventRequest' is not null or undefined
-            assertParamExists('updateEvent', 'eventRequest', eventRequest)
             const localVarPath = `/api/events/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -606,11 +604,11 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
          * 
          * @summary Обновление мероприятия
          * @param {number} id ID мероприятия
-         * @param {EventRequest} eventRequest 
+         * @param {EventRequest} [eventRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateEvent(id: number, eventRequest: EventRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EventResponse>> {
+        async updateEvent(id: number, eventRequest?: EventRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EventResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.updateEvent(id, eventRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['EventControllerApi.updateEvent']?.[index]?.url;
@@ -724,11 +722,11 @@ export const EventControllerApiFactory = function (configuration?: Configuration
          * 
          * @summary Обновление мероприятия
          * @param {number} id ID мероприятия
-         * @param {EventRequest} eventRequest 
+         * @param {EventRequest} [eventRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateEvent(id: number, eventRequest: EventRequest, options?: any): AxiosPromise<EventResponse> {
+        updateEvent(id: number, eventRequest?: EventRequest, options?: any): AxiosPromise<EventResponse> {
             return localVarFp.updateEvent(id, eventRequest, options).then((request) => request(axios, basePath));
         },
     };
@@ -853,12 +851,12 @@ export class EventControllerApi extends BaseAPI {
      * 
      * @summary Обновление мероприятия
      * @param {number} id ID мероприятия
-     * @param {EventRequest} eventRequest 
+     * @param {EventRequest} [eventRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
      */
-    public updateEvent(id: number, eventRequest: EventRequest, options?: AxiosRequestConfig) {
+    public updateEvent(id: number, eventRequest?: EventRequest, options?: AxiosRequestConfig) {
         return EventControllerApiFp(this.configuration).updateEvent(id, eventRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
