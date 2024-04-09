@@ -1,4 +1,4 @@
-import { getTokenContextData } from "@shared/lib/token";
+import { TokenContextData, getTokenContextData, setTokenContextData } from "@shared/lib/token";
 import type { AxiosResponse } from 'axios';
 import { AuthControllerApi, Configuration, ConfigurationParameters, EventControllerApi, NotificationControllerApi, ProfileControllerApi, RoleControllerApi, TaskControllerApi, TestControllerApi } from "./generated";
 
@@ -28,12 +28,18 @@ class Api {
     this.test = new TestControllerApi(configuration);
   }
 
-  // NOTE: does nothing, need refresh token
+  // NOTE: token invalid => reset token context
   async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
-    return func();
+    return func()
+      .catch(async (e) => {
+        if (e.response.status == 401) {
+          setTokenContextData(new TokenContextData());
+        }
+        throw e;
+      });
   }
 
-  /* example of implementation
+  /* token invalid => use refreshToken to refresh context. Then if error during refresh => reset token context
 
   async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
     return func()
@@ -48,6 +54,7 @@ class Api {
               return func();
             })
             .catch((_: any) => {
+              setTokenContextData(new TokenContextData()); // reset tokenContextData
               throw e; // forward func error
             });
         }
