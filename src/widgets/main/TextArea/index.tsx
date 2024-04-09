@@ -9,6 +9,7 @@ type Props = {
   placeholder?: string,
   className?: string,
   minRows?: number,
+  maxLength?: number,
 }
 
 function TextArea(props: Props) {
@@ -18,6 +19,7 @@ function TextArea(props: Props) {
     className={appendClassName(styles.textarea, props.className)}
     onChange={props.onChange}
     value={props.value}
+    maxLength={props.maxLength}
   />
 }
 
