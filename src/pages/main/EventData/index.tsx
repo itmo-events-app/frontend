@@ -10,7 +10,9 @@ import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
 import { useParams } from "react-router-dom";
-
+import PagedList, { PageEntry } from "@widgets/main/PagedList";
+import { getImageUrl } from "@shared/lib/image.ts"
+import { info } from "sass";
 
 class EventInfo {
   regDates: string
@@ -217,8 +219,66 @@ const _pageTabs: PageTab[] = [
 
 function EventActivitiesPage() {
   const { id } = useParams();
+  const [event,setEvent] = useState(null)
+  const [loadingEvent, setLoadingEvent] = useState(true);
+  const [eventImageUrl, setEventImageUrl] = useState("");
   useEffect(() => {
-    console.log(id);
+    function readDate(dateTime: string){
+      const date = new Date(dateTime);
+      const formattedDate = date.toISOString().split('T')[0];
+      return formattedDate
+    }
+    const getEvent = async () => {
+      try {
+        const eventResponse = await fetch('/api/events/'+id, {
+          method: 'GET'
+        });
+        if (eventResponse.status === 200) {
+          const data = await eventResponse.json();
+          let placeAddress = ""
+          const placePromise = await fetch('/api/places/'+data.placeId,{
+            method:'GET'
+          }).then(
+            placeResponse => {
+              if (placeResponse.status == 200) {
+                const place = placeResponse.json();
+                place.then(p => {
+                  placeAddress = p.address;
+                  const info = new EventInfo(
+                    readDate(data.registrationStart) + " - " + readDate(data.registrationEnd),
+                    readDate(data.preparingStart) + " - " + readDate(data.preparingEnd),
+                    readDate(data.startDate) +" - "+readDate(data.endDate),
+                    data.participantLimit,
+                    placeAddress,
+                    data.format,
+                    data.status,
+                    data.participantAgeLowest + " - " + data.participantAgeHighest,
+                    data.title,
+                    data.fullDescription
+                  );
+                  setEvent(info);
+                  getImageUrl(id).then(url=>{
+                    if(url==''){
+                      setEventImageUrl("http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg");
+                    }else{
+                      setEventImageUrl(url);
+                    }
+                  })
+                });
+              } else {
+                console.log(placeResponse.status);
+              }
+            }
+          )
+        } else {
+          console.error('Error fetching event list:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching event list:', error);
+      }
+    };
+    getEvent();
+    setLoadingEvent(false);
   }, []);
   const _brandLogoClick = () => {
     console.log('brand logo!')
@@ -245,10 +305,11 @@ function EventActivitiesPage() {
   }
 
   function _createInfoPage(eventInfo: EventInfo) {
+
     return (
       <div className={styles.root}>
         <div className={styles.image_box}>
-          <img className={styles.image} src="http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg" alt="Event image" />
+          {<img className={styles.image} src= {eventImageUrl} alt="Event image" />}
         </div>
         {edit_privilege ? (
           <div className={styles.button_container}>
@@ -452,7 +513,11 @@ function EventActivitiesPage() {
       {
         <Content>
           <div className={styles.content}>
-            {selectedTab == "Описание" && _createInfoPage(_eventInfo)}
+            {event==null || loadingEvent ? (
+              <p>Loading...</p>
+            ) : (
+              selectedTab == "Описание" && _createInfoPage(event, id)
+            )}
             {selectedTab == "Активности" && _createActivityList(_activities)}
             {selectedTab == "Организаторы" && _createPersonTable(orgList.map(entry => {
               return new Person(entry.name + " " + entry.surname, entry.email)
