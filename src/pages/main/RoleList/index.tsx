@@ -25,6 +25,9 @@ import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
 import TextArea from '@widgets/main/TextArea';
 
 // const _PlainIcon = () => <div style={{ height: '24px', width: '24px' }}></div>;
+const _privileges = []
+const _roles = []
+
 
 class ContextMenuData {
   clientX: number;
@@ -57,31 +60,7 @@ class DialogData {
     this.content = content;
     this.visible = visible;
   }
-
 }
-
-const _roles: RoleModel[] = [
-  new RoleModel(1, 'USER', true, [
-    new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
-    new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
-    new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
-  ], 'Пользователь'),
-  new RoleModel(1, 'ADMIN', true, [
-    new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
-    new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
-    new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
-    new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
-    new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
-    new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
-  ], 'Администратор'),
-  new RoleModel(1, 'PLAIN', false, [], 'Пользователь без привилегий'),
-]
-
-const _privileges: PrivilegeModel[] = [
-  new PrivilegeModel(1, 'CREATE', 'Создание презентаций'),
-  new PrivilegeModel(2, 'UPDATE', 'Обновление презентаций'),
-  new PrivilegeModel(3, 'DELETE', 'Удаление презентаций'),
-]
 
 function _displayPrivilege(item: PrivilegeModel) {
   return item.name + " - " + item.description;

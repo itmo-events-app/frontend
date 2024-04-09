@@ -42,7 +42,6 @@ const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
     element: <AvailableEventsPage />,
-    // element: <Authorized><AvailableEventsPage /></Authorized>,
   },
   [AppRoutes.EVENT_CREATION]: {
     path: RoutePaths.createEvent,
@@ -62,7 +61,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
-    element: <RoleListPage />,
+    element: <Authorized><RoleListPage /></Authorized>,
   },
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,
