@@ -14,6 +14,7 @@ import NotificationListPage from "@pages/main/NotificationListPage";
 import ProfilePage from "@pages/main/ProfilePage";
 import Authorized from "@features/Authorized";
 import PlaceCreationPage from "@pages/main/PlaceCreation";
+import PlaceListPage from "@pages/main/PlaceList";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -59,7 +60,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
-    element: <>PlaceListPage </>,
+    element: <PlaceListPage />,
   },
   [AppRoutes.PLACE_CREATION]: {
     path: RoutePaths.createPlace,
