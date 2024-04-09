@@ -6,16 +6,31 @@ import styles from './index.module.css';
 import Label from "@widgets/auth/InputLabel";
 import Link from "@widgets/auth/Link";
 import Error from "@widgets/auth/Error";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ITMO } from "@widgets/auth/ITMO";
 import { useNavigate } from "react-router-dom";
-import { RoutePaths } from "@shared/config/routes";
+import { RouteParams, RoutePaths } from "@shared/config/routes";
 import { api } from "@shared/api";
+import { LoginRequest } from "@shared/api/generated";
+import { TokenContext, TokenContextData } from "@features/TokenProvider";
 
+const LOGIN_MAX_LENGTH = 128;
+const PASSWORD_MIN_LENGTH = 8;
 
 function LoginPage() {
-  const [isError, _] = useState(true);
   const navigate = useNavigate();
+  const { setTokenContext } = useContext(TokenContext);
+
+  const [isError, setIsError] = useState(false);
+  const [errorText, setErrorText] = useState('');
+
+  const [loginValue, setLoginValue] = useState('');
+  const [loginError, setLoginError] = useState(false);
+  const [loginErrorText, setLoginErrorText] = useState('');
+
+  const [passwordValue, setPasswordValue] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorText, setPasswordErrorText] = useState('');
 
   const _forgotPassword = () => {
     navigate(RoutePaths.restore);
@@ -25,8 +40,68 @@ function LoginPage() {
     navigate(RoutePaths.register);
   }
 
-  const _enter = () => {
-    navigate(RoutePaths.eventList);
+  const _loginOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length > LOGIN_MAX_LENGTH) {
+      return;
+    }
+    setLoginValue(value);
+  }
+
+  const _passwordOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPasswordValue(value);
+
+    const validation = _validatePassword(value);
+    if (!validation) {
+      setPasswordError(false);
+    }
+  }
+
+  const _enterOnClick = () => {
+    let ok = true;
+    const login = _validateLogin(loginValue);
+    const password = _validatePassword(passwordValue);
+
+    if (login) {
+      setLoginError(true);
+      setLoginErrorText(login);
+      ok = false;
+    }
+
+    if (password) {
+      setPasswordError(true);
+      setPasswordErrorText(password);
+      ok = false;
+    }
+
+    if (ok) {
+      const request: LoginRequest = {
+        login: loginValue,
+        password: passwordValue
+      }
+      api.auth.login(request)
+        .then(r => {
+          const token = r.data;
+          setTokenContext(new TokenContextData(token))
+          navigate(RoutePaths.eventList);
+        })
+        .catch(e => {
+          setErrorText(e.response.data);
+          setIsError(true);
+        })
+    }
+  }
+
+  const _validateLogin = (_: string) => {
+    return null;
+  }
+
+  const _validatePassword = (password: string) => {
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      return 'Пароль должен быть не короче 8 символов';
+    }
+    return null;
   }
 
   return (
@@ -34,19 +109,19 @@ function LoginPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Войти</span>
-        <Error value="Неправильный Email или Пароль" isError={isError} />
+        <Error value={errorText} isError={isError} />
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Логин" />
-            <Input placeholder="Email" />
+            <Input placeholder="Email" value={loginValue} onChange={_loginOnChange} error={loginError} errorText={loginErrorText} />
           </div>
           <div className={styles.form_item}>
             <Label value="Пароль" />
-            <Input type='password' placeholder="Пароль" />
+            <Input type='password' placeholder="Пароль" value={passwordValue} onChange={_passwordOnChange} error={passwordError} errorText={passwordErrorText} />
             <Link onClick={_forgotPassword} value="Забыли пароль?" />
           </div>
         </div>
-        <Button onClick={_enter}>Войти</Button>
+        <Button onClick={_enterOnClick}>Войти</Button>
         <Link className={styles.register} onClick={_register} value="Нет учетной записи? Зарегистрироваться" />
       </Block>
     </div>
