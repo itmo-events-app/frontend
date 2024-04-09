@@ -16,8 +16,8 @@ class DropdownOption<T> {
 }
 
 type Props<T> = {
-  value: T,
-  onChange: (sel: T) => void,
+  value?: T,
+  onChange?: (sel: T) => void,
   onClear?: () => void,
   placeholder?: string,
   className?: string,
@@ -45,7 +45,7 @@ function Dropdown<T>(props: Props<T>) {
 
   function _onChange(v: T) {
     return function(e: React.MouseEvent<HTMLDivElement>) {
-      props.onChange(v);
+      props.onChange?.(v);
       setOpen(false);
       e.stopPropagation();
     }
