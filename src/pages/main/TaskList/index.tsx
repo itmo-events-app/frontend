@@ -28,15 +28,15 @@ const newTaskOptions: DropdownOption[] = [
   new DropdownOption("Просрочено"),
 ];
 
+const statusTranslation: Record<string, string> = {
+  "NEW": "Новое",
+  "IN_PROGRESS": "В работе",
+  "EXPIRED": "Просрочено",
+  "DONE": "Выполнено",
+};
+
 const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
   const { privilegeContext } = useContext(PrivilegeContext);
-
-  const statusTranslation: Record<string, string> = {
-    "NEW": "Новое",
-    "IN_PROGRESS": "В работе",
-    "EXPIRED": "Просрочено",
-    "DONE": "Выполнено",
-  };
 
   const canAssignTaskToOther = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
     new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR),
@@ -46,6 +46,7 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
     new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
   ]));
 
+  // для автоматического обновления статуса в бд
   const { mutate: updateTaskStatus } = useMutation({
     mutationFn: taskService.updateTaskStatus,
     mutationKey: ["updateTaskStatus"],
@@ -102,6 +103,11 @@ function TaskListPage() {
     queryKey: ["getTasks"],
   });
 
+  const { data: eventsNames = [] } = useQuery({
+    queryFn: taskService.getTasks,
+    queryKey: ["getTasks"],
+  });
+
   const filterEvent: DropdownOption[] = [
     new DropdownOption("Мероприятие 1"),
     new DropdownOption("Мероприятие 2"),
@@ -116,7 +122,7 @@ function TaskListPage() {
   return (
     <Layout
       topLeft={<BrandLogo />}
-      topRight={<PageName text="Задачи" />}
+      topRight={<PageName text="Мои задачи" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.taskList} />}
       bottomRight=
         {
