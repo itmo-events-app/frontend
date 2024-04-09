@@ -17,8 +17,9 @@
 export * from './api/auth-controller-api';
 export * from './api/event-controller-api';
 export * from './api/notification-controller-api';
+export * from './api/participants-controller-api';
+export * from './api/place-controller-api';
 export * from './api/profile-controller-api';
 export * from './api/role-controller-api';
 export * from './api/task-controller-api';
-export * from './api/test-controller-api';
 

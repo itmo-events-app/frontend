@@ -37,6 +37,7 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
     return {
         /**
          * 
+         * @summary Смена email пользователя
          * @param {UserChangeEmailRequest} userChangeEmailRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -72,6 +73,7 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
         },
         /**
          * 
+         * @summary Смена имени пользователя
          * @param {UserChangeNameRequest} userChangeNameRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -107,6 +109,7 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
         },
         /**
          * 
+         * @summary Смена пароля пользователя
          * @param {UserChangePasswordRequest} userChangePasswordRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -143,7 +146,7 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
         /**
          * 
          * @summary Получение списка всех привилегий пользователя в данном мероприятии
-         * @param {number} id 
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -152,6 +155,36 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             assertParamExists('getUserEventPrivileges', 'id', id)
             const localVarPath = `/api/profile/event-privileges/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получение списка системных привилегий пользователя
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserSystemPrivileges: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/profile/system-privileges`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -186,6 +219,7 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Смена email пользователя
          * @param {UserChangeEmailRequest} userChangeEmailRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -198,6 +232,7 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Смена имени пользователя
          * @param {UserChangeNameRequest} userChangeNameRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -210,6 +245,7 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Смена пароля пользователя
          * @param {UserChangePasswordRequest} userChangePasswordRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -223,7 +259,7 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Получение списка всех привилегий пользователя в данном мероприятии
-         * @param {number} id 
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -231,6 +267,18 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUserEventPrivileges(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProfileControllerApi.getUserEventPrivileges']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Получение списка системных привилегий пользователя
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getUserSystemPrivileges(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PrivilegeResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUserSystemPrivileges(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ProfileControllerApi.getUserSystemPrivileges']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -245,6 +293,7 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
     return {
         /**
          * 
+         * @summary Смена email пользователя
          * @param {UserChangeEmailRequest} userChangeEmailRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -254,6 +303,7 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Смена имени пользователя
          * @param {UserChangeNameRequest} userChangeNameRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -263,6 +313,7 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Смена пароля пользователя
          * @param {UserChangePasswordRequest} userChangePasswordRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -273,12 +324,21 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
         /**
          * 
          * @summary Получение списка всех привилегий пользователя в данном мероприятии
-         * @param {number} id 
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getUserEventPrivileges(id: number, options?: any): AxiosPromise<Array<PrivilegeResponse>> {
             return localVarFp.getUserEventPrivileges(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получение списка системных привилегий пользователя
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserSystemPrivileges(options?: any): AxiosPromise<Array<PrivilegeResponse>> {
+            return localVarFp.getUserSystemPrivileges(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -292,6 +352,7 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
 export class ProfileControllerApi extends BaseAPI {
     /**
      * 
+     * @summary Смена email пользователя
      * @param {UserChangeEmailRequest} userChangeEmailRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -303,6 +364,7 @@ export class ProfileControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Смена имени пользователя
      * @param {UserChangeNameRequest} userChangeNameRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -314,6 +376,7 @@ export class ProfileControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Смена пароля пользователя
      * @param {UserChangePasswordRequest} userChangePasswordRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -326,13 +389,24 @@ export class ProfileControllerApi extends BaseAPI {
     /**
      * 
      * @summary Получение списка всех привилегий пользователя в данном мероприятии
-     * @param {number} id 
+     * @param {number} id ID мероприятия
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProfileControllerApi
      */
     public getUserEventPrivileges(id: number, options?: AxiosRequestConfig) {
         return ProfileControllerApiFp(this.configuration).getUserEventPrivileges(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получение списка системных привилегий пользователя
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProfileControllerApi
+     */
+    public getUserSystemPrivileges(options?: AxiosRequestConfig) {
+        return ProfileControllerApiFp(this.configuration).getUserSystemPrivileges(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -4,10 +4,11 @@ api.ts
 api/auth-controller-api.ts
 api/event-controller-api.ts
 api/notification-controller-api.ts
+api/participants-controller-api.ts
+api/place-controller-api.ts
 api/profile-controller-api.ts
 api/role-controller-api.ts
 api/task-controller-api.ts
-api/test-controller-api.ts
 base.ts
 common.ts
 configuration.ts
@@ -19,6 +20,11 @@ model/event-response.ts
 model/index.ts
 model/login-request.ts
 model/notification-response.ts
+model/participant-response.ts
+model/participants-list-request.ts
+model/participants-list-response.ts
+model/place-request.ts
+model/place-response.ts
 model/place-short-data-request.ts
 model/place-short-data-response.ts
 model/privilege-response.ts

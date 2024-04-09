@@ -34,6 +34,12 @@ export interface TaskResponse {
     'id'?: number;
     /**
      * 
+     * @type {number}
+     * @memberof TaskResponse
+     */
+    'eventId'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof TaskResponse
      */
