@@ -43,11 +43,9 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
     new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR),
   ])); // todo: использовать эту проверку?
 
-  // const canChangeTaskStatus = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
-  //   new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
-  // ]));
-
-  const canChangeTaskStatus = true;
+  const canChangeTaskStatus = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
+  ]));
 
   // для автоматического обновления статуса в бд
   const { mutate: updateTaskStatus } = useMutation({
