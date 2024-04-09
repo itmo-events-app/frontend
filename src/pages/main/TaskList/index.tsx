@@ -7,7 +7,7 @@ import SideBar from "@widgets/main/SideBar";
 import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { RoutePaths } from "@shared/config/routes";
-import { FC, useContext } from "react";
+import { FC, useContext, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { taskService } from "../../../service/task-service.ts";
 import { format } from "date-fns";
@@ -21,7 +21,7 @@ type TaskTableProps = {
   tasks: TaskResponse[];
 }
 
-const newTaskOptions: DropdownOption[] = [
+const newTaskOptions: DropdownOption<string>[] = [
   new DropdownOption("Новое"),
   new DropdownOption("В работе"),
   new DropdownOption("Выполнено"),
@@ -37,14 +37,17 @@ const statusTranslation: Record<string, string> = {
 
 const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
   const { privilegeContext } = useContext(PrivilegeContext);
+  const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
 
   const canAssignTaskToOther = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
     new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR),
   ])); // todo: использовать эту проверку?
 
-  const canChangeTaskStatus = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
-    new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
-  ]));
+  // const canChangeTaskStatus = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+  //   new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
+  // ]));
+
+  const canChangeTaskStatus = true;
 
   // для автоматического обновления статуса в бд
   const { mutate: updateTaskStatus } = useMutation({
@@ -76,15 +79,18 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
               {format(task.deadline!, "do MMMM, yyyy", { locale: ru })}
             </td>
             <td>{task.assignee!.name + " " + task.assignee!.surname}</td>
-            <td>{task.eventId}</td>
-            {/*todo: ждем доработку бэка чтобы вывести мероприятие и активность*/}
-            <td>{"-"}</td>
+            <td>{task.event.eventTitle}</td>
+            <td>{task.event.activityTitle ? task.event.activityTitle : "-"}</td>
             <td className={styles.dropdown}>
               {canChangeTaskStatus ? (<Dropdown placeholder={statusTranslation[task.taskStatus!]}
                                                 items={newTaskOptions}
-                                                onSelect={({ text }) => {
-                                                  updateTaskStatus({ newStatus: text, id: task.id! });
-                                                }} />
+                                                toText={(item) => item.value}
+                                                value={selectedStatus}
+                                                onChange={(sel) => {
+                                                  updateTaskStatus({ newStatus: sel.value, id: task.id! })
+                                                  setStatus(sel)
+                                                }}
+                />
               ) : (<>{statusTranslation[task.taskStatus!]}</>)}
             </td>
           </tr>
@@ -98,26 +104,24 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
 
 function TaskListPage() {
 
+  //todo: можно оптимизировать
   const { data: tasks = [] } = useQuery({
     queryFn: taskService.getTasks,
     queryKey: ["getTasks"],
   });
 
-  const { data: eventsNames = [] } = useQuery({
-    queryFn: taskService.getTasks,
-    queryKey: ["getTasks"],
+  const { data: filterEvent = [] } = useQuery({
+    queryFn: taskService.getEventsNames,
+    queryKey: ["getEventsNames"],
   });
 
-  const filterEvent: DropdownOption[] = [
-    new DropdownOption("Мероприятие 1"),
-    new DropdownOption("Мероприятие 2"),
-  ];
+  const { data: filterActivity = [] } = useQuery({
+    queryFn: taskService.getActivitiesNames,
+    queryKey: ["getActivitiesNames"],
+  });
 
-  const filterActivity: DropdownOption[] = [
-    new DropdownOption("Активность 1"),
-    new DropdownOption("Активность 2"),
-    new DropdownOption("Активность 3"),
-  ];
+  const [selectedEvent, setSelectedEvent] = useState<DropdownOption<string> | undefined>();
+  const [selectedActivity, setSelectedActivity] = useState<DropdownOption<string> | undefined>();
 
   return (
     <Layout
@@ -131,10 +135,13 @@ function TaskListPage() {
               <h2 className="tasks-filter__title">Фильтр задач</h2>
               <form className={styles.tasksfilter__form}>
                 <div className={styles.dropdown}>
-                  <Dropdown placeholder="Мероприятие" items={filterEvent} clearable />
+                  <Dropdown value={selectedEvent} placeholder="Мероприятие" items={filterEvent}
+                            toText={(item) => item.value}
+                            onChange={setSelectedEvent} />
                 </div>
                 <div className={styles.dropdown}>
-                  <Dropdown placeholder="Активность" items={filterActivity} clearable />
+                  <Dropdown value={selectedActivity} onChange={setSelectedActivity} placeholder="Активность"
+                            items={filterActivity} toText={(item) => item.value} />
                 </div>
                 <Button onClick={() => {
                   console.log("Применить");
