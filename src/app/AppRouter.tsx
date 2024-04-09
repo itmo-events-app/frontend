@@ -22,6 +22,8 @@ import { PrivilegeData } from "@entities/privilege-context";
 import { PrivilegeNames } from "@shared/config/privileges";
 import Authorized from "@features/Authorized";
 import PlaceCreationPage from "@pages/main/PlaceCreation";
+import PlaceListPage from "@pages/main/PlaceList";
+import PlaceDataPage from "@pages/main/PlaceData";
 
 // root urls with privileges
 const routes: Record<AppRoutes, AppRouteProps> = {
@@ -72,11 +74,12 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
     authenticated: true
-    element: <PlaceListPage />,
   },
   [AppRoutes.PLACE_CREATION]: {
     path: RoutePaths.createPlace,
-    element: <PlaceCreationPage />,
+  },
+  [AppRoutes.PLACE_DATA]: {
+    path: RoutePaths.placeData,
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
@@ -145,7 +148,10 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <TaskListPage />,
   },
   [AppRoutes.PLACE_LIST]: {
-    element: <>Place list</>,
+    element: <PlaceListPage />,
+  },
+  [AppRoutes.PLACE_DATA]: {
+    element: <PlaceDataPage />,
   },
   [AppRoutes.ROLE_LIST]: {
     element: <RoleListPage />,
