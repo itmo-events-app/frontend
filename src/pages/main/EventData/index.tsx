@@ -241,7 +241,7 @@ function EventActivitiesPage() {
             }
           )
         } else {
-          console.error('Error fetching event list:', response.statusText);
+          console.error('Error fetching event list:', eventResponse.statusText);
         }
       } catch (error) {
         console.error('Error fetching event list:', error);
@@ -480,7 +480,7 @@ function EventActivitiesPage() {
             {event==null || loadingEvent ? (
               <p>Loading...</p>
             ) : (
-              selectedTab == "Описание" && _createInfoPage(event, id)
+              selectedTab == "Описание" && _createInfoPage(event)
             )}
             {selectedTab == "Активности" && _createActivityList(_activities)}
             {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
