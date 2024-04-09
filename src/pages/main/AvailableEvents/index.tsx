@@ -1,4 +1,3 @@
-import { ReactLogo } from '@shared/ui/icons';
 import styles from './index.module.css';
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
@@ -11,15 +10,14 @@ import Button from "@widgets/main/Button";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { RoutePaths } from '@shared/config/routes';
 import Input from "@widgets/main/Input";
-import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-
+import { useEffect, useState } from "react";
+import { getImageUrl } from "@shared/lib/image.ts"
+import { ReactLogo } from "@shared/ui/icons";
 const _displayModes: DropdownOption[] = [
   new DropdownOption("Показать списком"),
   new DropdownOption("Показать на карте")
 ]
-
-
 
 
 
@@ -41,6 +39,50 @@ const filterAge: DropdownOption[] = [
 ]
 
 function AvailableEventsPage() {
+  const [events,setEvents] = useState([])
+  const [loading, setLoading] = useState(true);
+
+  const getEventList = async () => {
+    try {
+      const response = await fetch('/api/events', {
+        method: 'GET'
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        // console.log(data);
+        const pagesPromises = data.map(async (e) => {
+          let address = ''
+          await fetch('/api/places/' + e.placeId, {
+            method: 'GET'
+          }).then(response => {
+              if (response.status == 200) {
+                const place = response.json();
+                place.then(p => {
+                  address = p.address;
+                });
+              } else {
+                console.log(response.status);
+              }
+            }
+          )
+          return new PageEntry(() => {
+            return _entryStub(parseInt(e.id), address, e.title)
+          });
+        });
+        const pages = await Promise.all(pagesPromises);
+        setEvents(pages.filter(page => page !== null));
+        setLoading(false);
+      } else {
+        console.error('Error fetching event list:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching event list:', error);
+    }
+  };
+  useEffect(() => {
+    getEventList();
+  }, []);
+
 
   const _brandLogoClick = () => {
     console.log('brand logo!')
@@ -54,55 +96,35 @@ function AvailableEventsPage() {
     console.log('creating')
   }
   const navigate = useNavigate();
-  const _event = () => {
-    navigate(RoutePaths.eventData);
+  const _event = (id:number) => {
+    navigate("/events/event/"+id.toString());
   }
-  const _events: any[] = [
-    new PageEntry(() => { return _entryStub(1) }),
-    new PageEntry(() => { return _entryStub(2) }),
-    new PageEntry(() => { return _entryStub(3) }),
-    new PageEntry(() => { return _entryStub(4) }),
-    new PageEntry(() => { return _entryStub(5) }),
-    new PageEntry(() => { return _entryStub(6) }),
-    new PageEntry(() => { return _entryStub(7) }),
-    new PageEntry(() => { return _entryStub(8) }),
-    new PageEntry(() => { return _entryStub(9) }),
-    new PageEntry(() => { return _entryStub(10) }),
-    new PageEntry(() => { return _entryStub(11) }),
-    new PageEntry(() => { return _entryStub(12) }),
-    new PageEntry(() => { return _entryStub(13) }),
-    new PageEntry(() => { return _entryStub(14) }),
-    new PageEntry(() => { return _entryStub(15) }),
-    new PageEntry(() => { return _entryStub(16) }),
-    new PageEntry(() => { return _entryStub(17) }),
-    new PageEntry(() => { return _entryStub(18) }),
-    new PageEntry(() => { return _entryStub(19) }),
-    new PageEntry(() => { return _entryStub(20) }),
-    new PageEntry(() => { return _entryStub(21) }),
-    new PageEntry(() => { return _entryStub(22) }),
-    new PageEntry(() => { return _entryStub(23) }),
-    new PageEntry(() => { return _entryStub(24) }),
-    new PageEntry(() => { return _entryStub(25) }),
-    new PageEntry(() => { return _entryStub(26) }),
-    new PageEntry(() => { return _entryStub(27) }),
-    new PageEntry(() => { return _entryStub(28) }),
-    new PageEntry(() => { return _entryStub(29) }),
-    new PageEntry(() => { return _entryStub(30) }),
-    new PageEntry(() => { return _entryStub(31) }),
-    new PageEntry(() => { return _entryStub(32) }),
-    new PageEntry(() => { return _entryStub(33) })
-  ]
 
-  function _entryStub(index: number) {
+
+  function _entryStub(index: number, place: string, title: string) {
+    const [imageUrl, setImageUrl] = useState('');
+    useEffect(() => {
+      getImageUrl(index.toString()).then(url => {
+        setImageUrl(url);
+      });
+    }, []);
+    const handleClick = () => {
+      _event(index);
+    };
     return (
-      <a key={index} onClick={_event} className={styles.event_entry}>
-        <ReactLogo className={styles.event_icon} />
+      <a key={index} onClick={handleClick} className={styles.event_entry}>
+        {imageUrl==''?(
+          <ReactLogo className={styles.event_icon}/>
+          ):(
+          <img src={imageUrl}
+               className={styles.event_icon}/>
+        )}
         <div className={styles.event_info_column}>
           <div className={styles.event_name}>
-            {"Event " + index}
+            {"Event " + index + ": " + title}
           </div>
           <div className={styles.event_place}>
-            Place
+            {place}
           </div>
         </div>
       </a>
@@ -142,7 +164,11 @@ function AvailableEventsPage() {
               </div>
             </div>
             <div className={styles.event_list_container}>
-              <PagedList page={1} page_size={5} page_step={5} items={_events} />
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <PagedList page={1} page_size={5} page_step={5} items={events} />
+              )}
             </div>
           </div>
         </Content>

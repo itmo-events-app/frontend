@@ -1,5 +1,5 @@
 import { uid } from 'uid'
-import { useState } from 'react'
+import { useEffect, useState } from "react";
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
@@ -9,6 +9,7 @@ import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
+import { useParams } from "react-router-dom";
 
 
 class EventInfo {
@@ -238,7 +239,10 @@ const _pageTabs: PageTab[] = [
 ]
 
 function EventActivitiesPage() {
-
+  const { id } = useParams();
+  useEffect(() => {
+    console.log(id);
+  }, []);
   const _brandLogoClick = () => {
     console.log('brand logo!')
   }
