@@ -204,31 +204,8 @@ const _members: Person[] = [
   )
 ]
 
-const _orgs: Person[] = [
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-  new Person(
-    "Курочкина Дарья Сергеевна",
-    "example@mail.ru"
-  ),
-]
-
-const task_privilege: boolean = true;
-const edit_privilege: boolean = true;
+const task_privilege: boolean = false;
+const edit_privilege: boolean = false;
 
 const _pageTabs: PageTab[] = [
   new PageTab("Описание"),
@@ -269,7 +246,7 @@ function EventActivitiesPage() {
 
   function _createInfoPage(eventInfo: EventInfo) {
     return (
-      <>
+      <div className={styles.root}>
         <div className={styles.image_box}>
           <img className={styles.image} src="http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg" alt="Event image" />
         </div>
@@ -278,63 +255,55 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_editEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
-        <div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Сроки регистрации
+        <div className={styles.info_page}>
+          <div className={styles.info_column}>
+            <div className={styles.description_box}>
+              <div className={styles.field_title}>
+                Информация о мероприятии
+              </div>
+              {eventInfo.description}
             </div>
-            {eventInfo.regDates}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Сроки подготовки
+            <div className={styles.description_box}>
+              <div className={styles.field_title}>
+                Место проведения
+              </div>
+              {eventInfo.place}
             </div>
-            {eventInfo.prepDates}
           </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Сроки проведения
-            </div>
-            {eventInfo.eventDates}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Количество мест
-            </div>
-            {eventInfo.vacantSlots}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Площадка
-            </div>
-            {eventInfo.place}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Формат проведения
-            </div>
-            {eventInfo.format}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Статус
-            </div>
-            {eventInfo.status}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Возрастное ограничение
-            </div>
-            {eventInfo.ageRestriction}
-          </div>
-          <div className={styles.description_box}>
-            <div className={styles.field_title}>
-              Информация о мероприятии
-            </div>
-            {eventInfo.description}
-          </div>
+          <table className={styles.table}>
+            <tbody>
+            <tr>
+              <td>Сроки регистрации</td>
+              <td>{eventInfo.regDates}</td>
+            </tr>
+            <tr>
+              <td>Сроки проведения</td>
+              <td>{eventInfo.eventDates}</td>
+            </tr>
+            <tr>
+              <td>Сроки подготовки</td>
+              <td>{eventInfo.prepDates}</td>
+            </tr>
+            <tr>
+              <td>Количество мест</td>
+              <td>{eventInfo.vacantSlots}</td>
+            </tr>
+            <tr>
+              <td>Формат проведения</td>
+              <td>{eventInfo.format}</td>
+            </tr>
+            <tr>
+              <td>Статус</td>
+              <td>{eventInfo.status}</td>
+            </tr>
+            <tr>
+              <td>Возрастное ограничение</td>
+              <td>{eventInfo.ageRestriction}</td>
+            </tr>
+            </tbody>
+          </table>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -439,6 +408,28 @@ function EventActivitiesPage() {
     )
   }
 
+  type JsonOrgEntry = {
+    name: string,
+    surname: string,
+    email: string
+  }
+
+  const [orgList, setOrgList] = useState<JsonOrgEntry[]>([]);
+
+  const fetchOrgs = () => {
+    fetch("http://158.160.158.58:8080/api/events/1/organizers")
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        setOrgList(data)
+      })
+  }
+
+  useEffect(() => {
+    fetchOrgs()
+  }, [])
+
   const [selectedTab, setSelectedTab] = useState("Описание");
 
   function pageTabHandler(tab_name: string) {
@@ -450,7 +441,7 @@ function EventActivitiesPage() {
       topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={_eventInfo.eventName} />
+          <PageName text={"Event"} />
           <div className={styles.tabs}>
             <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs} />
           </div>
@@ -463,7 +454,9 @@ function EventActivitiesPage() {
           <div className={styles.content}>
             {selectedTab == "Описание" && _createInfoPage(_eventInfo)}
             {selectedTab == "Активности" && _createActivityList(_activities)}
-            {selectedTab == "Организаторы" && _createPersonTable(_orgs, _editOrgs)}
+            {selectedTab == "Организаторы" && _createPersonTable(orgList.map(entry => {
+              return new Person(entry.name + " " + entry.surname, entry.email)
+            }), _editOrgs)}
             {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
             {selectedTab == "Задачи" && "ToDo: Страница задач"}
           </div>

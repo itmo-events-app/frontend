@@ -17,38 +17,44 @@
 /**
  * 
  * @export
- * @interface UserRoleResponse
+ * @interface ParticipantsListResponse
  */
-export interface UserRoleResponse {
+export interface ParticipantsListResponse {
     /**
      * 
      * @type {number}
-     * @memberof UserRoleResponse
+     * @memberof ParticipantsListResponse
      */
     'id'?: number;
     /**
      * 
      * @type {string}
-     * @memberof UserRoleResponse
+     * @memberof ParticipantsListResponse
      */
     'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof UserRoleResponse
+     * @memberof ParticipantsListResponse
      */
-    'surname'?: string;
+    'email'?: string;
     /**
      * 
      * @type {string}
-     * @memberof UserRoleResponse
+     * @memberof ParticipantsListResponse
      */
-    'login'?: string;
+    'additionalInf0'?: string;
     /**
      * 
-     * @type {string}
-     * @memberof UserRoleResponse
+     * @type {boolean}
+     * @memberof ParticipantsListResponse
      */
-    'roleName'?: string;
+    'visited'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof ParticipantsListResponse
+     */
+    'eventId'?: number;
 }
 

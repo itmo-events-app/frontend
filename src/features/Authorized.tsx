@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react"
-import { TokenContext } from "./TokenProvider"
+import { useEffect, useState } from "react"
 import { RoutePaths } from "@shared/config/routes";
 import { Navigate } from "react-router-dom";
+import { getTokenContextData } from "@shared/lib/token";
 
 type Props = {
   children: any,
@@ -9,7 +9,7 @@ type Props = {
 
 const Authorized = (props: Props) => {
   const [isAuthorized, setIsAuthorized] = useState<boolean | undefined>();
-  const { tokenContext } = useContext(TokenContext);
+  const tokenContext = getTokenContextData();
 
   useEffect(() => {
     const v = tokenContext.accessToken == null || tokenContext.accessToken == "";

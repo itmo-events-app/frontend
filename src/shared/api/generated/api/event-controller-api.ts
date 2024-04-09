@@ -37,6 +37,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
     return {
         /**
          * 
+         * @summary Создание активности мероприятия
          * @param {number} placeId 
          * @param {string} startDate 
          * @param {string} endDate 
@@ -52,12 +53,12 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
          * @param {number} participantAgeHighest 
          * @param {string} preparingStart 
          * @param {string} preparingEnd 
+         * @param {File} image 
          * @param {number} [parent] 
-         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addActivity: async (placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        addActivity: async (placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, image: File, parent?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'placeId' is not null or undefined
             assertParamExists('addActivity', 'placeId', placeId)
             // verify required parameter 'startDate' is not null or undefined
@@ -88,6 +89,8 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             assertParamExists('addActivity', 'preparingStart', preparingStart)
             // verify required parameter 'preparingEnd' is not null or undefined
             assertParamExists('addActivity', 'preparingEnd', preparingEnd)
+            // verify required parameter 'image' is not null or undefined
+            assertParamExists('addActivity', 'image', image)
             const localVarPath = `/api/events/activity`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -185,6 +188,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
+         * @summary Создание мероприятия
          * @param {CreateEventRequest} createEventRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -220,8 +224,9 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @param {number} id 
-         * @param {boolean} [deep] 
+         * @summary Копирование мероприятия
+         * @param {number} id ID мероприятия
+         * @param {boolean} [deep] Включить копирование активностей
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -258,7 +263,8 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление мероприятия
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -291,14 +297,15 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @param {number} [page] 
-         * @param {number} [size] 
-         * @param {number} [parentId] 
-         * @param {string} [title] 
-         * @param {string} [startDate] 
-         * @param {string} [endDate] 
-         * @param {GetAllOrFilteredEventsStatusEnum} [status] 
-         * @param {GetAllOrFilteredEventsFormatEnum} [format] 
+         * @summary Фильрация мероприятий
+         * @param {number} [page] Номер страницы, с которой начать показ мероприятий
+         * @param {number} [size] Число мероприятий на странице
+         * @param {number} [parentId] ID родительского мероприятия
+         * @param {string} [title] Название мероприятия
+         * @param {string} [startDate] Дата начала мероприятия
+         * @param {string} [endDate] Дата окончания мероприятия
+         * @param {GetAllOrFilteredEventsStatusEnum} [status] Статус мероприятия
+         * @param {GetAllOrFilteredEventsFormatEnum} [format] Формат мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -364,7 +371,8 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение мероприятия по id
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -397,7 +405,8 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение списка пользователей, имеющих роль в данном мероприятии
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -430,7 +439,8 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Обновление мероприятия
+         * @param {number} id ID мероприятия
          * @param {EventRequest} [eventRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -477,6 +487,7 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Создание активности мероприятия
          * @param {number} placeId 
          * @param {string} startDate 
          * @param {string} endDate 
@@ -492,19 +503,20 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
          * @param {number} participantAgeHighest 
          * @param {string} preparingStart 
          * @param {string} preparingEnd 
+         * @param {File} image 
          * @param {number} [parent] 
-         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options);
+        async addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, image: File, parent?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, image, parent, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['EventControllerApi.addActivity']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
          * 
+         * @summary Создание мероприятия
          * @param {CreateEventRequest} createEventRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -517,8 +529,9 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
-         * @param {boolean} [deep] 
+         * @summary Копирование мероприятия
+         * @param {number} id ID мероприятия
+         * @param {boolean} [deep] Включить копирование активностей
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -530,7 +543,8 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление мероприятия
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -542,14 +556,15 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} [page] 
-         * @param {number} [size] 
-         * @param {number} [parentId] 
-         * @param {string} [title] 
-         * @param {string} [startDate] 
-         * @param {string} [endDate] 
-         * @param {GetAllOrFilteredEventsStatusEnum} [status] 
-         * @param {GetAllOrFilteredEventsFormatEnum} [format] 
+         * @summary Фильрация мероприятий
+         * @param {number} [page] Номер страницы, с которой начать показ мероприятий
+         * @param {number} [size] Число мероприятий на странице
+         * @param {number} [parentId] ID родительского мероприятия
+         * @param {string} [title] Название мероприятия
+         * @param {string} [startDate] Дата начала мероприятия
+         * @param {string} [endDate] Дата окончания мероприятия
+         * @param {GetAllOrFilteredEventsStatusEnum} [status] Статус мероприятия
+         * @param {GetAllOrFilteredEventsFormatEnum} [format] Формат мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -561,7 +576,8 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение мероприятия по id
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -573,7 +589,8 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение списка пользователей, имеющих роль в данном мероприятии
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -585,7 +602,8 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Обновление мероприятия
+         * @param {number} id ID мероприятия
          * @param {EventRequest} [eventRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -608,6 +626,7 @@ export const EventControllerApiFactory = function (configuration?: Configuration
     return {
         /**
          * 
+         * @summary Создание активности мероприятия
          * @param {number} placeId 
          * @param {string} startDate 
          * @param {string} endDate 
@@ -623,16 +642,17 @@ export const EventControllerApiFactory = function (configuration?: Configuration
          * @param {number} participantAgeHighest 
          * @param {string} preparingStart 
          * @param {string} preparingEnd 
+         * @param {File} image 
          * @param {number} [parent] 
-         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: any): AxiosPromise<number> {
-            return localVarFp.addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options).then((request) => request(axios, basePath));
+        addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, image: File, parent?: number, options?: any): AxiosPromise<number> {
+            return localVarFp.addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, image, parent, options).then((request) => request(axios, basePath));
         },
         /**
          * 
+         * @summary Создание мероприятия
          * @param {CreateEventRequest} createEventRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -642,8 +662,9 @@ export const EventControllerApiFactory = function (configuration?: Configuration
         },
         /**
          * 
-         * @param {number} id 
-         * @param {boolean} [deep] 
+         * @summary Копирование мероприятия
+         * @param {number} id ID мероприятия
+         * @param {boolean} [deep] Включить копирование активностей
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -652,7 +673,8 @@ export const EventControllerApiFactory = function (configuration?: Configuration
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Удаление мероприятия
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -661,14 +683,15 @@ export const EventControllerApiFactory = function (configuration?: Configuration
         },
         /**
          * 
-         * @param {number} [page] 
-         * @param {number} [size] 
-         * @param {number} [parentId] 
-         * @param {string} [title] 
-         * @param {string} [startDate] 
-         * @param {string} [endDate] 
-         * @param {GetAllOrFilteredEventsStatusEnum} [status] 
-         * @param {GetAllOrFilteredEventsFormatEnum} [format] 
+         * @summary Фильрация мероприятий
+         * @param {number} [page] Номер страницы, с которой начать показ мероприятий
+         * @param {number} [size] Число мероприятий на странице
+         * @param {number} [parentId] ID родительского мероприятия
+         * @param {string} [title] Название мероприятия
+         * @param {string} [startDate] Дата начала мероприятия
+         * @param {string} [endDate] Дата окончания мероприятия
+         * @param {GetAllOrFilteredEventsStatusEnum} [status] Статус мероприятия
+         * @param {GetAllOrFilteredEventsFormatEnum} [format] Формат мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -677,7 +700,8 @@ export const EventControllerApiFactory = function (configuration?: Configuration
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение мероприятия по id
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -686,7 +710,8 @@ export const EventControllerApiFactory = function (configuration?: Configuration
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Получение списка пользователей, имеющих роль в данном мероприятии
+         * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -695,7 +720,8 @@ export const EventControllerApiFactory = function (configuration?: Configuration
         },
         /**
          * 
-         * @param {number} id 
+         * @summary Обновление мероприятия
+         * @param {number} id ID мероприятия
          * @param {EventRequest} [eventRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -715,6 +741,7 @@ export const EventControllerApiFactory = function (configuration?: Configuration
 export class EventControllerApi extends BaseAPI {
     /**
      * 
+     * @summary Создание активности мероприятия
      * @param {number} placeId 
      * @param {string} startDate 
      * @param {string} endDate 
@@ -730,18 +757,19 @@ export class EventControllerApi extends BaseAPI {
      * @param {number} participantAgeHighest 
      * @param {string} preparingStart 
      * @param {string} preparingEnd 
+     * @param {File} image 
      * @param {number} [parent] 
-     * @param {File} [image] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
      */
-    public addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: AxiosRequestConfig) {
-        return EventControllerApiFp(this.configuration).addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options).then((request) => request(this.axios, this.basePath));
+    public addActivity(placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: AddActivityFormatEnum, status: AddActivityStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, image: File, parent?: number, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).addActivity(placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, image, parent, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
+     * @summary Создание мероприятия
      * @param {CreateEventRequest} createEventRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -753,8 +781,9 @@ export class EventControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
-     * @param {boolean} [deep] 
+     * @summary Копирование мероприятия
+     * @param {number} id ID мероприятия
+     * @param {boolean} [deep] Включить копирование активностей
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
@@ -765,7 +794,8 @@ export class EventControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Удаление мероприятия
+     * @param {number} id ID мероприятия
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
@@ -776,14 +806,15 @@ export class EventControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} [page] 
-     * @param {number} [size] 
-     * @param {number} [parentId] 
-     * @param {string} [title] 
-     * @param {string} [startDate] 
-     * @param {string} [endDate] 
-     * @param {GetAllOrFilteredEventsStatusEnum} [status] 
-     * @param {GetAllOrFilteredEventsFormatEnum} [format] 
+     * @summary Фильрация мероприятий
+     * @param {number} [page] Номер страницы, с которой начать показ мероприятий
+     * @param {number} [size] Число мероприятий на странице
+     * @param {number} [parentId] ID родительского мероприятия
+     * @param {string} [title] Название мероприятия
+     * @param {string} [startDate] Дата начала мероприятия
+     * @param {string} [endDate] Дата окончания мероприятия
+     * @param {GetAllOrFilteredEventsStatusEnum} [status] Статус мероприятия
+     * @param {GetAllOrFilteredEventsFormatEnum} [format] Формат мероприятия
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
@@ -794,7 +825,8 @@ export class EventControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Получение мероприятия по id
+     * @param {number} id ID мероприятия
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
@@ -805,7 +837,8 @@ export class EventControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Получение списка пользователей, имеющих роль в данном мероприятии
+     * @param {number} id ID мероприятия
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
@@ -816,7 +849,8 @@ export class EventControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
+     * @summary Обновление мероприятия
+     * @param {number} id ID мероприятия
      * @param {EventRequest} [eventRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}

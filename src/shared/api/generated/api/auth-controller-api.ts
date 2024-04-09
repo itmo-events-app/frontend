@@ -33,7 +33,8 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
     return {
         /**
          * 
-         * @param {number} requestId 
+         * @summary Одобрение заявки на регистрацию
+         * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -66,6 +67,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
+         * @summary Получение логина пользователя
          * @param {LoginRequest} loginRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -101,6 +103,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
+         * @summary Регистрация пользователя
          * @param {RegistrationUserRequest} registrationUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -146,7 +149,8 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {number} requestId 
+         * @summary Одобрение заявки на регистрацию
+         * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -158,6 +162,7 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Получение логина пользователя
          * @param {LoginRequest} loginRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -170,6 +175,7 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Регистрация пользователя
          * @param {RegistrationUserRequest} registrationUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -192,7 +198,8 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
     return {
         /**
          * 
-         * @param {number} requestId 
+         * @summary Одобрение заявки на регистрацию
+         * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -201,6 +208,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @summary Получение логина пользователя
          * @param {LoginRequest} loginRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -210,6 +218,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @summary Регистрация пользователя
          * @param {RegistrationUserRequest} registrationUserRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -229,7 +238,8 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
 export class AuthControllerApi extends BaseAPI {
     /**
      * 
-     * @param {number} requestId 
+     * @summary Одобрение заявки на регистрацию
+     * @param {number} requestId ID заявки на регистрацию
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthControllerApi
@@ -240,6 +250,7 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Получение логина пользователя
      * @param {LoginRequest} loginRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -251,6 +262,7 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Регистрация пользователя
      * @param {RegistrationUserRequest} registrationUserRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
