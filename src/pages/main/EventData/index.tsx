@@ -1,17 +1,20 @@
-import { uid } from 'uid'
-import { useEffect, useState } from "react";
+import {uid} from 'uid'
+import {useContext, useEffect, useState} from "react";
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import SideBar from '@widgets/main/SideBar';
 import Content from "@widgets/main/Content";
-import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import { RoutePaths } from '@shared/config/routes';
+import PageTabs, {PageTab} from "@widgets/main/PageTabs";
+import {RoutePaths} from '@shared/config/routes';
 import Button from "@widgets/main/Button";
-import { useParams } from "react-router-dom";
 import { getImageUrl } from "@shared/lib/image.ts"
 import { api } from "@shared/api";
+import {PrivilegeContext, PrivilegeData} from "@features/PrivilegeProvider.tsx";
+import {hasAnyPrivilege} from "@features/privileges.ts";
+import {PrivilegeNames} from "@shared/config/privileges.ts";
+import { useParams } from "react-router-dom";
 
 
 class EventInfo {
@@ -174,18 +177,9 @@ const _members: Person[] = [
   )
 ]
 
-const task_privilege: boolean = false;
 const edit_privilege: boolean = false;
 
-const EVENT_ID: number = 1;
-
-const _pageTabs: PageTab[] = [
-  new PageTab("Описание"),
-  new PageTab("Активности"),
-  new PageTab("Организаторы"),
-  new PageTab("Участники"),
-  task_privilege ? new PageTab("Задачи") : undefined
-]
+const EVENT_ID: number = 2;
 
 function EventActivitiesPage() {
   const { id } = useParams();
@@ -250,6 +244,40 @@ function EventActivitiesPage() {
     getEvent();
     setLoadingEvent(false);
   }, []);
+
+  const { privilegeContext } = useContext(PrivilegeContext);
+
+  const activitiesVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)
+  ]));
+
+  const orgsVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)
+  ]));
+
+  const tasksVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)
+  ]));
+
+
+  const pageTabs: PageTab[] = []
+
+  pageTabs.push(new PageTab("Описание"));
+
+  if (activitiesVisible) {
+    pageTabs.push(new PageTab("Активности"));
+  }
+
+  if (orgsVisible) {
+    pageTabs.push(new PageTab("Организаторы"));
+  }
+
+  pageTabs.push(new PageTab("Участники"));
+
+  if (tasksVisible) {
+    pageTabs.push(new PageTab("Задачи"));
+  }
+
   const _brandLogoClick = () => {
     console.log('brand logo!')
   }
@@ -443,17 +471,19 @@ function EventActivitiesPage() {
   const [orgs, setOrgs] = useState([] as Person[]);
 
   useEffect(() => {
-    api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
-      .then((response) => {
-        const list = response.data.map(user => {
-          return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
-        })
-        setOrgs(list);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      })
-  }, [])
+    if (orgsVisible) {
+      api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
+          .then((response) => {
+            const list = response.data.map(user => {
+              return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
+            })
+            setOrgs(list);
+          })
+          .catch((error) => {
+            console.log(error.response.data);
+          })
+    }
+  }, [orgsVisible])
 
   const [selectedTab, setSelectedTab] = useState("Описание");
 
@@ -468,7 +498,7 @@ function EventActivitiesPage() {
         <div className={styles.header}>
           <PageName text={"Event"} />
           <div className={styles.tabs}>
-            <PageTabs value="Описание" handler={pageTabHandler} items={_pageTabs} />
+            <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
           </div>
         </div>
       }
