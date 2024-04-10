@@ -13,12 +13,6 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import { PlaceShortDataRequest } from './place-short-data-request';
-// May contain unused imports in some cases
-// @ts-ignore
-import { UserShortDataRequest } from './user-short-data-request';
 
 /**
  * 
@@ -34,10 +28,10 @@ export interface TaskRequest {
     'eventId': number;
     /**
      * 
-     * @type {UserShortDataRequest}
+     * @type {number}
      * @memberof TaskRequest
      */
-    'assignee'?: UserShortDataRequest;
+    'assigneeId'?: number;
     /**
      * 
      * @type {string}
@@ -58,10 +52,10 @@ export interface TaskRequest {
     'taskStatus'?: TaskRequestTaskStatusEnum;
     /**
      * 
-     * @type {PlaceShortDataRequest}
+     * @type {number}
      * @memberof TaskRequest
      */
-    'place'?: PlaceShortDataRequest;
+    'placeId'?: number;
     /**
      * 
      * @type {string}
@@ -73,7 +67,7 @@ export interface TaskRequest {
      * @type {string}
      * @memberof TaskRequest
      */
-    'notificationDeadline': string;
+    'reminder': string;
 }
 
 export const TaskRequestTaskStatusEnum = {

@@ -17,44 +17,32 @@
 /**
  * 
  * @export
- * @interface NotificationResponse
+ * @interface EventShortDataResponse
  */
-export interface NotificationResponse {
+export interface EventShortDataResponse {
     /**
      * 
      * @type {number}
-     * @memberof NotificationResponse
+     * @memberof EventShortDataResponse
      */
-    'id'?: number;
+    'eventId'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof EventShortDataResponse
+     */
+    'activityId'?: number;
     /**
      * 
      * @type {string}
-     * @memberof NotificationResponse
+     * @memberof EventShortDataResponse
      */
-    'title'?: string;
+    'eventTitle'?: string;
     /**
      * 
      * @type {string}
-     * @memberof NotificationResponse
+     * @memberof EventShortDataResponse
      */
-    'description'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationResponse
-     */
-    'seen'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationResponse
-     */
-    'sent_time'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationResponse
-     */
-    'link'?: string;
+    'activityTitle'?: string;
 }
 

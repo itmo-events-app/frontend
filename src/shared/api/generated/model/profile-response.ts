@@ -15,57 +15,61 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { PrivilegeResponse } from './privilege-response';
+import { UserInfoResponse } from './user-info-response';
 
 /**
  * 
  * @export
- * @interface RoleResponse
+ * @interface ProfileResponse
  */
-export interface RoleResponse {
+export interface ProfileResponse {
     /**
      * 
      * @type {number}
-     * @memberof RoleResponse
+     * @memberof ProfileResponse
      */
-    'id'?: number;
+    'userId'?: number;
     /**
      * 
      * @type {string}
-     * @memberof RoleResponse
+     * @memberof ProfileResponse
      */
     'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof RoleResponse
+     * @memberof ProfileResponse
      */
-    'description'?: string;
+    'surname'?: string;
+    /**
+     * 
+     * @type {Array<UserInfoResponse>}
+     * @memberof ProfileResponse
+     */
+    'userInfo'?: Array<UserInfoResponse>;
     /**
      * 
      * @type {string}
-     * @memberof RoleResponse
+     * @memberof ProfileResponse
      */
-    'type'?: RoleResponseTypeEnum;
-    /**
-     * 
-     * @type {Array<PrivilegeResponse>}
-     * @memberof RoleResponse
-     */
-    'privileges'?: Array<PrivilegeResponse>;
+    'lastLoginDate'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof RoleResponse
+     * @memberof ProfileResponse
      */
-    'isEditable'?: boolean;
+    'enablePushNotifications'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ProfileResponse
+     */
+    'enableEmailNotifications'?: boolean;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ProfileResponse
+     */
+    'devices'?: Array<string>;
 }
-
-export const RoleResponseTypeEnum = {
-    System: 'SYSTEM',
-    Event: 'EVENT'
-} as const;
-
-export type RoleResponseTypeEnum = typeof RoleResponseTypeEnum[keyof typeof RoleResponseTypeEnum];
-
 
