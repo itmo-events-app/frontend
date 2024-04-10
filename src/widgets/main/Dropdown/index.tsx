@@ -57,7 +57,9 @@ function Dropdown<T>(props: Props<T>) {
         className={styles.dropdown_item_container}
         onClick={() => onClear()}
       >
-        Сброс выбора
+        <div className={styles.dropdown_placeholder} onClick={() => onClear()}>
+          Сброс выбора
+        </div>
       </div>
     );
   }
