@@ -12,6 +12,8 @@ import { Home, Menu, LocationIcon, Noted, Users } from "@shared/ui/icons";
 import InputLabel from "@widgets/auth/InputLabel";
 import InputCheckbox from "@widgets/main/InputCheckbox";
 import TextArea from "@widgets/main/TextArea";
+import Dropzone from "@widgets/main/Dropzone";
+import { useCallback, useState } from "react";
 
 
 const _tabs: SideBarTab[] = [
@@ -38,6 +40,12 @@ function PlaceCreationPage() {
   const _createPlace = () => {
     console.log('creating place!');
   }
+
+  const [files, setFiles] = useState<File[]>([]);
+
+  const handleDrop = useCallback((droppedFiles: File[]) => {
+    setFiles(droppedFiles);
+  }, []);
 
 
   return (
@@ -76,7 +84,22 @@ function PlaceCreationPage() {
             </div>
             <div className={styles.place_form_item}>
               <InputLabel value={"Фото"} />
-              <Input type="text" placeholder="TO BE CHANGED TO PHOTO HOLDER" className={styles.place_textArea} />
+              <Dropzone
+                onDrop={handleDrop}
+                acceptType="image/*"
+                maxFileSize={2 * 1024 ** 2} // Limit to 2 MB for images
+              />
+              {files.length > 0 && (
+                <>
+                  <ul>
+                    {files.map((file, index) => (
+                      <li key={index}>
+                        {file.name} ({file.type}) - {(file.size / 1024).toFixed(2)} KB
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
             <div className={styles.place_form_button}>
               <Button onClick={_createPlace()}>Создать</Button>
