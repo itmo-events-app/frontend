@@ -10,7 +10,6 @@ import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
 import { api } from "@shared/api";
-import {PrivilegeContext, PrivilegeData} from "@features/PrivilegeProvider.tsx";
 import {hasAnyPrivilege} from "@features/privileges.ts";
 import {PrivilegeNames} from "@shared/config/privileges.ts";
 import { useParams } from "react-router-dom";
@@ -20,6 +19,10 @@ import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import { RoleElement } from "@widgets/main/RoleList";
 import CreateDialogContent from "./CreateDialogContext.tsx";
+import { Gantt } from 'gantt-task-react';
+import { PrivilegeData } from '@entities/privilege-context.ts';
+import PrivilegeContext from '@features/privilege-context.ts';
+import { getImageUrl } from '@shared/lib/image.ts';
 
 class EventInfo {
   regDates: string
