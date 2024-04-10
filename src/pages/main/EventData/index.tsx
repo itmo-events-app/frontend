@@ -192,7 +192,6 @@ function EventActivitiesPage() {
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState("");
   useEffect(() => {
-    console.log(id);
     function readDate(dateTime: string){
       const date = new Date(dateTime);
       const formattedDate = date.toISOString().split('T')[0];
