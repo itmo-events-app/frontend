@@ -11,43 +11,39 @@ import Button from "@widgets/main/Button";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { RoutePaths } from '@shared/config/routes';
 import Input from "@widgets/main/Input";
-import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-const _displayModes: DropdownOption[] = [
-  new DropdownOption("Показать списком"),
-  new DropdownOption("Показать на карте")
-]
+enum DisplayModes {
+  LIST = "Показать списком",
+  MAP = "Показать на карте",
+}
 
+enum EventStatusList {
+  DRAFT = "Черновик",
+  ACTIVE = "Активное",
+  FINISHED = "Проведенное",
+  CANCELLED = "Отмененное"
+}
 
+enum EventFormatList {
+  OFFLINE = "Очный",
+  ONLINE = "Онлайн",
+  COMBINED = "Смешанный"
+}
 
+enum EventAgeList {
+  FIRST = "12+",
+  SECOND = "16+",
+  THIRD = "18+"
+}
 
-
-const filterStatus: DropdownOption[] = [
-  new DropdownOption("Черновик"),
-  new DropdownOption("Активное"),
-  new DropdownOption("Проведенное"),
-  new DropdownOption("Отмененное")
-]
-
-const filterFormat: DropdownOption[] = [
-  new DropdownOption("Очный"),
-  new DropdownOption("Онлайн"),
-  new DropdownOption("Смешанный")
-]
-
-const filterAge: DropdownOption[] = [
-  new DropdownOption("+0"),
-  new DropdownOption("+12"),
-  new DropdownOption("+16"),
-  new DropdownOption("+18")
-]
+const displayModes = Object.values(DisplayModes);
+const eventStatusList = Object.values(EventStatusList);
+const eventFormatList = Object.values(EventFormatList);
+const eventAgeList = Object.values(EventAgeList);
 
 function AvailableEventsPage() {
-
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
 
   const _onSearch = () => {
     console.log('searching')
@@ -111,9 +107,15 @@ function AvailableEventsPage() {
       </a>
     );
   }
+
+  const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
+  const [eventStatus, setEventStatus] = useState("");
+  const [eventFormat, setEventFormat] = useState("");
+  const [eventAge, setEventAge] = useState("");
+
   return (
     <Layout
-      topLeft={<BrandLogo onClick={_brandLogoClick} />}
+      topLeft={<BrandLogo />}
       topRight={<PageName text="Доступные мероприятия" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventList} />}
       bottomRight=
@@ -125,7 +127,12 @@ function AvailableEventsPage() {
                 <Search onSearch={_onSearch} placeholder="Поиск" />
               </div>
               <div className={styles.dropdown}>
-                <Dropdown value="Показать списком" placeholder="Режим отображения" items={_displayModes} />
+                <Dropdown
+                  placeholder="Режим отображения"
+                  items={displayModes}
+                  value={displayMode}
+                  onChange={(mode) => {setDisplayMode(mode)}}
+                  toText={(input: string) => {return input}} />
               </div>
               <div className={styles.button}>
                 <Button onClick={_onCreation}>Создать</Button>
@@ -133,20 +140,38 @@ function AvailableEventsPage() {
             </div>
             <div className={styles.filters}>
               <div className={styles.filter_group}>
-                <Input className={styles.filter_element} placeholder="Начало регистрации" />
-                <Input className={styles.filter_element} placeholder="Конец регистрации" />
-                <Input className={styles.filter_element} placeholder="Начало проведения" />
-                <Input className={styles.filter_element} placeholder="Конец проведения" />
+                <Input value="" onChange={() => {}} className={styles.filter_element} placeholder="Начало регистрации" />
+                <Input value="" onChange={() => {}} className={styles.filter_element} placeholder="Конец регистрации" />
+                <Input value="" onChange={() => {}} className={styles.filter_element} placeholder="Начало проведения" />
+                <Input value="" onChange={() => {}} className={styles.filter_element} placeholder="Конец проведения" />
               </div>
               <div className={styles.filter_group}>
                 <div className={styles.dropdown}>
-                  <Dropdown placeholder="Статус" items={filterStatus} clearable />
+                  <Dropdown
+                    placeholder="Статус"
+                    items={eventStatusList}
+                    value={eventStatus}
+                    onChange={(status) => {setEventStatus(status)}}
+                    onClear={() => {setEventStatus("")}}
+                    toText={(input: string) => {return input}} />
                 </div>
                 <div className={styles.dropdown}>
-                  <Dropdown placeholder="Формат" items={filterFormat} clearable />
+                  <Dropdown
+                    placeholder="Формат"
+                    items={eventFormatList}
+                    value={eventFormat}
+                    onChange={(format) => {setEventFormat(format)}}
+                    onClear={() => {setEventFormat("")}}
+                    toText={(input: string) => {return input}} />
                 </div>
                 <div className={styles.dropdown}>
-                  <Dropdown placeholder="Возрастное ограничение" items={filterAge} clearable />
+                  <Dropdown
+                    placeholder="Возрастное ограничение"
+                    items={eventAgeList}
+                    value={eventAge}
+                    onChange={(age) => {setEventAge(age)}}
+                    onClear={() => {setEventAge("")}}
+                    toText={(input: string) => {return input}} />
                 </div>
               </div>
             </div>

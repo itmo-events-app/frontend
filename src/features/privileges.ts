@@ -1,5 +1,5 @@
+import { PrivilegeData } from '@entities/privilege-context';
 import { intersection, union } from '@shared/util'
-import { PrivilegeData } from './PrivilegeProvider';
 
 function getPrivilegeDataNames(set: Set<PrivilegeData>) {
   return new Set([...set].map(e => e.name));

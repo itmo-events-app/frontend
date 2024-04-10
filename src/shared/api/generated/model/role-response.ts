@@ -53,6 +53,12 @@ export interface RoleResponse {
      * @memberof RoleResponse
      */
     'privileges'?: Array<PrivilegeResponse>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof RoleResponse
+     */
+    'isEditable'?: boolean;
 }
 
 export const RoleResponseTypeEnum = {
