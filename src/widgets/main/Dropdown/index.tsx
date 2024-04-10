@@ -55,9 +55,12 @@ function Dropdown<T>(props: Props<T>) {
     return (
       <div
         className={styles.dropdown_item_container}
-        onClick={() => onClear()}
+        onClick={onClear()}
       >
-        <div className={styles.dropdown_placeholder} onClick={() => onClear()}>
+        <div
+          className={styles.dropdown_placeholder}
+          onClick={onClear()}
+        >
           Сброс выбора
         </div>
       </div>
@@ -124,7 +127,7 @@ function Dropdown<T>(props: Props<T>) {
     <div className={styles.dropdown} onClick={() => setOpen(!open)}>
       <div className={open ? styles.dropdown_border_open : styles.dropdown_border}>
         <div className={styles.dropdown_item_container}>
-          {props.value == null ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(new DropdownOption(props.value))}
+          {(props.value == null || props.value == "") ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(new DropdownOption(props.value))}
         </div>
       </div>
       <div className={appendClassName(appendClassName(styles.option_list, open ? styles.visible : styles.hidden), props.className)}>

@@ -109,9 +109,9 @@ function AvailableEventsPage() {
   }
 
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
-  const [eventStatus, setEventStatus] = useState(null);
-  const [eventFormat, setEventFormat] = useState(null);
-  const [eventAge, setEventAge] = useState(null);
+  const [eventStatus, setEventStatus] = useState("");
+  const [eventFormat, setEventFormat] = useState("");
+  const [eventAge, setEventAge] = useState("");
 
   return (
     <Layout
@@ -152,7 +152,7 @@ function AvailableEventsPage() {
                     items={eventStatusList}
                     value={eventStatus}
                     onChange={(status) => {setEventStatus(status)}}
-                    onClear={() => {setEventStatus(null)}}
+                    onClear={() => {setEventStatus("")}}
                     toText={(input: string) => {return input}} />
                 </div>
                 <div className={styles.dropdown}>
@@ -161,7 +161,7 @@ function AvailableEventsPage() {
                     items={eventFormatList}
                     value={eventFormat}
                     onChange={(format) => {setEventFormat(format)}}
-                    onClear={() => {setEventFormat(null)}}
+                    onClear={() => {setEventFormat("")}}
                     toText={(input: string) => {return input}} />
                 </div>
                 <div className={styles.dropdown}>
@@ -170,7 +170,7 @@ function AvailableEventsPage() {
                     items={eventAgeList}
                     value={eventAge}
                     onChange={(age) => {setEventAge(age)}}
-                    onClear={() => {setEventAge(null)}}
+                    onClear={() => {setEventAge("")}}
                     toText={(input: string) => {return input}} />
                 </div>
               </div>
