@@ -67,7 +67,7 @@ function AvailableEventsPage() {
             });
           });
           const pages = await Promise.all(pagesPromises);
-          setEvents(pages.filter(page => page !== null));
+          setEvents(pages);
           setLoading(false);
         } else {
           console.error('Error fetching event list:', response.statusText);
