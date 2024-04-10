@@ -10,11 +10,12 @@ import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
 import { api } from "@shared/api";
-import { PrivilegeContext, PrivilegeData } from "@features/PrivilegeProvider.tsx";
 import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
 import { Gantt, Task } from 'gantt-task-react';
 import "gantt-task-react/dist/index.css";
+import PrivilegeContext from '@features/privilege-context';
+import { PrivilegeData } from '@entities/privilege-context';
 
 class EventInfo {
   regDates: string
