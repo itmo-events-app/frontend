@@ -40,10 +40,6 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
   const { privilegeContext } = useContext(PrivilegeContext);
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
 
-  const canAssignTaskToOther = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
-    new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR),
-  ])); // todo: использовать эту проверку?
-
   const canChangeTaskStatus = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
     new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
   ]));
@@ -179,7 +175,7 @@ function TaskListPage() {
         }
     />
   );
-};
+}
 
 
 export default TaskListPage;
