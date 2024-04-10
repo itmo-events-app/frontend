@@ -7,7 +7,7 @@ import SideBar from "@widgets/main/SideBar";
 import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { RoutePaths } from "@shared/config/routes";
-import { FC, useContext, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { taskService } from "../../../service/task-service.ts";
 import { format } from "date-fns";
@@ -16,6 +16,7 @@ import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeContext, PrivilegeData } from "@features/PrivilegeProvider.tsx";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
 import { TaskResponse } from "@shared/api/generated";
+import { i } from "vite/dist/node/types.d-aGj9QkWt";
 
 type TaskTableProps = {
   tasks: TaskResponse[];
@@ -80,16 +81,16 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
             <td>{task.event.eventTitle}</td>
             <td>{task.event.activityTitle ? task.event.activityTitle : "-"}</td>
             <td className={styles.dropdown}>
-              {canChangeTaskStatus ? (<Dropdown placeholder={statusTranslation[task.taskStatus!]}
-                                                items={newTaskOptions}
-                                                toText={(item) => item.value}
-                                                value={selectedStatus}
-                                                onChange={(sel) => {
-                                                  updateTaskStatus({ newStatus: sel.value, id: task.id! })
-                                                  setStatus(sel)
-                                                }}
-                />
-              ) : (<>{statusTranslation[task.taskStatus!]}</>)}
+              {canChangeTaskStatus ?
+                (<Dropdown placeholder={statusTranslation[task.taskStatus!]}
+                           items={newTaskOptions}
+                           toText={(item) => item.value}
+                           value={selectedStatus}
+                           onChange={(sel) => {
+                             updateTaskStatus({ newStatus: sel.value, id: task.id! });
+                             setStatus(sel);
+                           }}
+                />) : (<>{statusTranslation[task.taskStatus!]}</>)}
             </td>
           </tr>
         ))}
@@ -118,8 +119,29 @@ function TaskListPage() {
     queryKey: ["getActivitiesNames"],
   });
 
+  const { mutate: getFilteredTasksByEvent } = useMutation({
+    mutationFn: taskService.getEventTasks,
+    mutationKey: ["getEventTasks"],
+    onSuccess: (res) => {
+      setFilteredTasks(res)
+    }
+  });
+
   const [selectedEvent, setSelectedEvent] = useState<DropdownOption<string> | undefined>();
   const [selectedActivity, setSelectedActivity] = useState<DropdownOption<string> | undefined>();
+  const [filteredTasks, setFilteredTasks] = useState<TaskResponse[]>(tasks);
+
+  // use effect
+  useEffect(() => {
+    setFilteredTasks(tasks)
+  }, [tasks]);
+
+  const handleFilterClick = () => {
+    console.log(selectedEvent)
+    selectedEvent !== undefined || selectedActivity !== undefined
+      ? getFilteredTasksByEvent({id: selectedEvent.value.split(" ")[1]})
+      : setFilteredTasks(tasks);
+  };
 
   return (
     <Layout
@@ -134,21 +156,20 @@ function TaskListPage() {
               <form className={styles.tasksfilter__form}>
                 <div className={styles.dropdown}>
                   <Dropdown value={selectedEvent} placeholder="Мероприятие" items={filterEvent}
-                            toText={(item) => item.value}
-                            onChange={setSelectedEvent} />
+                            toText={(item) => item.value.split(" ")[0]}
+                            onChange={setSelectedEvent}
+                  />
                 </div>
                 <div className={styles.dropdown}>
                   <Dropdown value={selectedActivity} onChange={setSelectedActivity} placeholder="Активность"
                             items={filterActivity} toText={(item) => item.value} />
                 </div>
-                <Button onClick={() => {
-                  console.log("Применить");
-                }}>
+                <Button onClick={handleFilterClick}>
                   Применить
                 </Button>
               </form>
             </div>
-            <TaskTable tasks={tasks} />
+            <TaskTable tasks={filteredTasks} />
           </Content>
         }
     />
