@@ -98,16 +98,19 @@ class Person {
   name: string
   surname: string
   email: string
+  role?: string
 
   constructor(
     name: string,
     surname: string,
     email: string,
+    role: string
   ) {
     this.id = uid();
     this.name = name;
     this.surname = surname;
     this.email = email;
+    this.role = role;
   }
 }
 
@@ -172,10 +175,12 @@ const _members: Person[] = [
   new Person(
     "Дарья Сергеевна",
     "Курочкина",
-    "example@mail.ru"
+    "example@mail.ru",
+    "Организатор"
   )
 ]
-let tasks: Task[] = [
+
+const tasks: Task[] = [
   {
     start: new Date(2024, 1, 1),
     end: new Date(2024, 1, 2),
@@ -265,14 +270,6 @@ function EventActivitiesPage() {
 
   if (tasksVisible) {
     pageTabs.push(new PageTab("Задачи"));
-  }
-
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
-
-  const _editDescription = () => {
-    console.log('editing description')
   }
 
   const _editActivities = () => {
@@ -392,19 +389,29 @@ function EventActivitiesPage() {
     )
   }
 
-  function _createPersonRow(person: Person) {
-    return (
-      <tr key={person.id}>
-        <td>{person.surname + " " + person.name}</td>
-        <td>{person.email}</td>
-      </tr>
-    )
+  function createPersonRow(person: Person, showRole: boolean) {
+    if (!showRole) {
+      return (
+        <tr key={person.id}>
+          <td>{person.surname + " " + person.name}</td>
+          <td>{person.email}</td>
+        </tr>
+      )
+    } else {
+      return (
+        <tr key={person.id}>
+          <td>{person.role}</td>
+          <td>{person.surname + " " + person.name}</td>
+          <td>{person.email}</td>
+        </tr>
+      )
+    }
   }
 
   function createOrgsTable(persons: Person[], edit_func: any) {
-    const items = []
+    const items = [];
     for (const person of persons) {
-      items.push(_createPersonRow(person));
+      items.push(createPersonRow(person, true));
     }
     return (
       <>
@@ -415,28 +422,24 @@ function EventActivitiesPage() {
         ) : <></>}
         <table className={styles.table}>
           <thead>
-            <tr>
-              <th>Имя</th>
-              <th>Email</th>
-            </tr>
+          <tr>
+            <th>Роль</th>
+            <th>Имя</th>
+            <th>Email</th>
+          </tr>
           </thead>
           <tbody>
-            {items}
+          {items}
           </tbody>
         </table>
       </>
     )
   }
-  function _createTasksTable() {
-    return (
 
-      <Gantt tasks={tasks} />
-    )
-  }
   function _createPersonTableUsers(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
-      items.push(_createPersonRow(person));
+      items.push(createPersonRow(person, false));
     }
     return (
       <>
@@ -448,13 +451,13 @@ function EventActivitiesPage() {
         ) : <></>}
         <table className={styles.table}>
           <thead>
-            <tr>
-              <th>Имя</th>
-              <th>Email</th>
-            </tr>
+          <tr>
+            <th>Имя</th>
+            <th>Email</th>
+          </tr>
           </thead>
           <tbody>
-            {items}
+          {items}
           </tbody>
         </table>
       </>
@@ -467,9 +470,15 @@ function EventActivitiesPage() {
     if (orgsVisible) {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
-          const list = response.data.map(user => {
-            return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
-          })
+          const list = response.data
+            .map((user) => {
+              return new Person(
+                user.name ?? "",
+                user.surname ?? "",
+                user.login ?? "",
+                user.roleName ?? ""
+              );
+            })
           setOrgs(list);
         })
         .catch((error) => {
@@ -477,6 +486,13 @@ function EventActivitiesPage() {
         })
     }
   }, [orgsVisible])
+
+
+  function _createTasksTable() {
+    return (
+      <Gantt tasks={tasks} />
+    )
+  }
 
   const [selectedTab, setSelectedTab] = useState("Описание");
 
