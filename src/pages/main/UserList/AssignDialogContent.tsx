@@ -38,9 +38,9 @@ const AssignDialogContent = (props: CreateProps) => {
     new UserRole("REDACTOR", "редактор")
   ]
 
-  useEffect(() => {
-    setRoles(createItemSelectionList(exampleRoles))
-  })
+  // useEffect(() => {
+  // })
+  setRoles(createItemSelectionList(exampleRoles))
 
   return (
     <div className={styles.dialog_content}>
