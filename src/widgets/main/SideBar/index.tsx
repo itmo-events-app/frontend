@@ -1,10 +1,11 @@
 import { DocumentCheck, Home, Menu, Noted, Personal, Users, UserRead, Notebook } from '@shared/ui/icons'
 import _Sidebar, { SideBarTab } from './template.tsx'
 import { RoutePaths } from '@shared/config/routes.ts';
-import { PrivilegeContext, PrivilegeData } from '@features/PrivilegeProvider.tsx';
 import { useContext } from 'react';
 import { anyPrivilege } from '@features/privileges.ts';
 import { PrivilegeNames } from '@shared/config/privileges.ts';
+import { PrivilegeData } from '@entities/privilege-context.ts';
+import PrivilegeContext from '@features/privilege-context.ts';
 
 type Props = {
   currentPageURL: string,

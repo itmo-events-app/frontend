@@ -13,9 +13,10 @@ import { taskService } from "../../../service/task-service.ts";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale/ru";
 import { hasAnyPrivilege } from "@features/privileges.ts";
-import { PrivilegeContext, PrivilegeData } from "@features/PrivilegeProvider.tsx";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
 import { TaskResponse } from "@shared/api/generated";
+import PrivilegeContext from "@features/privilege-context.ts";
+import { PrivilegeData } from "@entities/privilege-context.ts";
 
 type TaskTableProps = {
   tasks: TaskResponse[];
