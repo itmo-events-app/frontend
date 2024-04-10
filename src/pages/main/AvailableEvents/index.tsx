@@ -8,7 +8,7 @@ import Search from "@widgets/main/Search";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Button from "@widgets/main/Button";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
-import { RoutePaths } from '@shared/config/routes';
+import { RouteParams, RoutePaths } from "@shared/config/routes";
 import Input from "@widgets/main/Input";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -97,7 +97,7 @@ function AvailableEventsPage() {
   }
   const navigate = useNavigate();
   const _event = (id:number) => {
-    navigate("/events/event/"+id.toString());
+    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID,id.toString()));
   }
   const _events: any[] = [
     new PageEntry(() => {

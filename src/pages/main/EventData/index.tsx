@@ -248,6 +248,7 @@ function EventActivitiesPage() {
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState("");
   useEffect(() => {
+    console.log(id);
     function readDate(dateTime: string){
       const date = new Date(dateTime);
       const formattedDate = date.toISOString().split('T')[0];
@@ -420,7 +421,7 @@ function EventActivitiesPage() {
         </div>
         {edit_privilege ? (
           <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_editEvent}>Редактировать информацию о мероприятии</Button>
+            <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
         {/*{*/}
@@ -508,7 +509,7 @@ function EventActivitiesPage() {
       <>
         {edit_privilege ? (
            <div className={styles.button_container}>
-             <Button className={styles.button} onClick={_editActivities}>Редактировать</Button>
+             <Button className={styles.button} onClick={_addActivity}>Редактировать</Button>
            </div>
          ) : (<></>)}
         {/*<div className={styles.button_container}>*/}
