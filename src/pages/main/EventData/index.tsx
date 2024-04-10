@@ -1,5 +1,5 @@
-import { uid } from 'uid'
-import { useContext, useEffect, useState } from "react";
+import {uid} from 'uid'
+import { useContext, useEffect, useRef, useState } from "react";
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
@@ -10,12 +10,16 @@ import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
 import { api } from "@shared/api";
-import { hasAnyPrivilege } from "@features/privileges.ts";
-import { PrivilegeNames } from "@shared/config/privileges.ts";
-import { Gantt, Task } from 'gantt-task-react';
-import "gantt-task-react/dist/index.css";
-import PrivilegeContext from '@features/privilege-context';
-import { PrivilegeData } from '@entities/privilege-context';
+import {PrivilegeContext, PrivilegeData} from "@features/PrivilegeProvider.tsx";
+import {hasAnyPrivilege} from "@features/privileges.ts";
+import {PrivilegeNames} from "@shared/config/privileges.ts";
+import { useParams } from "react-router-dom";
+import { appendClassName } from "@shared/util.ts";
+import Fade from "@widgets/main/Fade";
+import UpdateDialogContent from "./UpdateDialogContext.tsx";
+import Dialog from "@widgets/main/Dialog";
+import { RoleElement } from "@widgets/main/RoleList";
+import CreateDialogContent from "./CreateDialogContext.tsx";
 
 class EventInfo {
   regDates: string
@@ -239,6 +243,66 @@ const edit_privilege: boolean = false;
 const EVENT_ID: number = 1;
 
 function EventActivitiesPage() {
+  const { id } = useParams();
+  const [event,setEvent] = useState(null)
+  const [loadingEvent, setLoadingEvent] = useState(true);
+  const [eventImageUrl, setEventImageUrl] = useState("");
+  useEffect(() => {
+    function readDate(dateTime: string){
+      const date = new Date(dateTime);
+      const formattedDate = date.toISOString().split('T')[0];
+      return formattedDate
+    }
+    const getEvent = async () => {
+      try {
+        const eventResponse = await api.event.getEventById(parseInt(id));
+        if (eventResponse.status === 200) {
+          const data = eventResponse.data;
+          let placeAddress = ""
+          await fetch('/api/places/'+data.placeId,{
+            method:'GET'
+          }).then(
+            placeResponse => {
+              if (placeResponse.status == 200) {
+                const place = placeResponse.json();
+                place.then(p => {
+                  placeAddress = p.address;
+                  const info = new EventInfo(
+                    readDate(data.registrationStart) + " - " + readDate(data.registrationEnd),
+                    readDate(data.preparingStart) + " - " + readDate(data.preparingEnd),
+                    readDate(data.startDate) +" - "+readDate(data.endDate),
+                    data.participantLimit,
+                    placeAddress,
+                    data.format,
+                    data.status,
+                    data.participantAgeLowest + " - " + data.participantAgeHighest,
+                    data.title,
+                    data.fullDescription
+                  );
+                  setEvent(info);
+                });
+              } else {
+                console.log(placeResponse.status);
+              }
+            }
+          )
+        } else {
+          console.error('Error fetching event list:', eventResponse.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching event list:', error);
+      }
+    };
+    getEvent();
+    getImageUrl(id).then(url=>{
+      if(url==''){
+        setEventImageUrl("http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg");
+      }else{
+        setEventImageUrl(url);
+      }
+    })
+    setLoadingEvent(false);
+  }, []);
 
   const { privilegeContext } = useContext(PrivilegeContext);
 
@@ -261,6 +325,7 @@ function EventActivitiesPage() {
   if (activitiesVisible) {
     pageTabs.push(new PageTab("Активности"));
   }
+  pageTabs.push(new PageTab("Активности"));
 
   if (orgsVisible) {
     pageTabs.push(new PageTab("Организаторы"));
@@ -270,6 +335,10 @@ function EventActivitiesPage() {
 
   if (tasksVisible) {
     pageTabs.push(new PageTab("Задачи"));
+  }
+
+  const _brandLogoClick = () => {
+    console.log('brand logo!')
   }
 
   const _editActivities = () => {
@@ -284,12 +353,67 @@ function EventActivitiesPage() {
     console.log('editing participants')
   }
 
-  const _editEvent = () => {
-    console.log('editing event')
+  class DialogData {
+    heading: string | undefined;
+    visible: DialogSelected;
+    args: any;
+    constructor(
+      heading?: string,
+      visible: DialogSelected = DialogSelected.NONE,
+      args: any = {}
+    ) {
+      this.heading = heading;
+      this.visible = visible;
+      this.args = args;
+    }
+  }
+  const [dialogData, setDialogData] = useState(new DialogData());
+  const [roles, setRoles] = useState([] as RoleElement[]);
+  const dialogRef = useRef(null);
+  enum DialogSelected {
+    NONE,
+    UPDATE,
+    CREATEACTIVITY = 2
   }
 
-  function _createInfoPage(eventInfo: EventInfo) {
+  const _Dialog = () => {
+    let component = <></>
+    switch (dialogData.visible) {
+      case DialogSelected.UPDATE:
+        component = <UpdateDialogContent
+          {...dialogData.args}
+        />;
+        break;
+      case DialogSelected.CREATEACTIVITY:
+        component = <CreateDialogContent
+          {...dialogData.args}
+        />;
+    }
+    return (
+      <Dialog
+        className={appendClassName(styles.dialog,
+          (dialogData.visible ? styles.visible : styles.hidden))}
+        text={dialogData.heading}
+        ref={dialogRef}
+        onClose={_closeDialog}
+      >
+        {component}
+      </Dialog>
+    )
+  }
 
+  const _closeDialog = () => {
+    setDialogData(new DialogData());
+  }
+  const _updateEvent = (e: MouseEvent) => {
+    setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
+    e.stopPropagation();
+  }
+  const _addActivity = (e: MouseEvent) => {
+    setDialogData(new DialogData('Создать активность', DialogSelected.CREATEACTIVITY));
+    e.stopPropagation();
+  }
+  function _createInfoPage(eventInfo: EventInfo) {
     return (
       <div className={styles.root}>
         <div className={styles.image_box}>
@@ -300,6 +424,11 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_editEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
+        {/*{*/}
+        {/*  <div className={styles.button_container}>*/}
+        {/*    <Button onClick={_updateEvent} className={styles.create_button}>Редактировать</Button>*/}
+        {/*  </div>*/}
+        {/*}*/}
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
@@ -379,10 +508,13 @@ function EventActivitiesPage() {
     return (
       <>
         {edit_privilege ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_editActivities}>Редактировать</Button>
-          </div>
-        ) : <></>}
+           <div className={styles.button_container}>
+             <Button className={styles.button} onClick={_editActivities}>Редактировать</Button>
+           </div>
+         ) : (<></>)}
+        {/*<div className={styles.button_container}>*/}
+        {/*  <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>*/}
+        {/*</div>*/}
         <div className={styles.data_list}>
           {items}
         </div>
@@ -424,7 +556,6 @@ function EventActivitiesPage() {
         <table className={styles.table}>
           <thead>
           <tr>
-            <th>Роль</th>
             <th>Имя</th>
             <th>Email</th>
           </tr>
@@ -471,15 +602,9 @@ function EventActivitiesPage() {
     if (orgsVisible) {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
-          const list = response.data
-            .map((user) => {
-              return new Person(
-                user.name ?? "",
-                user.surname ?? "",
-                user.login ?? "",
-                user.roleName ?? ""
-              );
-            })
+          const list = response.data.map(user => {
+            return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
+          })
           setOrgs(list);
         })
         .catch((error) => {
@@ -513,21 +638,26 @@ function EventActivitiesPage() {
       }
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight=
-      {
-        <Content>
-          <div className={styles.content}>
-            {event==null || loadingEvent ? (
-              <p>Loading...</p>
-            ) : (
-              selectedTab == "Описание" && _createInfoPage(event)
-            )}
-            {selectedTab == "Активности" && _createActivityList(_activities)}
-            {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
-            {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
-            {selectedTab == "Задачи" && _createTasksTable()}
-          </div>
-        </Content>
-      }
+        {
+          <Content>
+            <div className={styles.content}>
+              {event==null || loadingEvent ? (
+                <p></p>
+              ) : (
+                selectedTab == "Описание" && _createInfoPage(event)
+              )}
+              {selectedTab == "Активности" && _createActivityList(_activities)}
+              {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
+              {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
+              {selectedTab == "Задачи" && "ToDo: Страница задач"}
+            </div>
+            <Fade
+              className={appendClassName(styles.fade,
+                (dialogData.visible) ? styles.visible : styles.hidden)}>
+              <_Dialog />
+            </Fade>
+          </Content>
+        }
     />
   );
 }
