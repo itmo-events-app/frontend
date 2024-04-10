@@ -17,6 +17,7 @@ import Authorized from "@features/Authorized";
 import { anyPrivilege } from "@features/privileges";
 import { PrivilegeNames } from "@shared/config/privileges";
 import { PrivilegeData } from "@features/PrivilegeProvider";
+import UserListPage from "@pages/main/UserList";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -79,7 +80,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,
-    element: <>User List</>,
+    element: <UserListPage />,
   },
   [AppRoutes.NOTIFICATIONS]: {
     path: RoutePaths.notifications,
