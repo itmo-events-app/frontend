@@ -2,14 +2,12 @@ import {useEffect, useState} from "react";
 
 import styles from './index.module.css'
 
-import InputLabel from "@widgets/main/InputLabel";
 import Button from "@widgets/main/Button";
 import { UserRole } from "@pages/main/UserList/index";
 import InputCheckboxList, {
   createItemSelectionList,
   ItemSelection,
 } from "@widgets/main/InputCheckboxList";
-import {privilegeToText} from "@pages/main/RoleList/common";
 
 // privileges are ignored
 type CreateProps = {
@@ -28,6 +26,22 @@ const AssignDialogContent = (props: CreateProps) => {
     console.log("save user roles")
   }
 
+  const exampleRoles: UserRole[] = [
+    new UserRole("ADMIN", "администратор"),
+    new UserRole("READER", "читатель"),
+    new UserRole("REDACTOR", "редактор"),
+    new UserRole("ADMIN", "администратор"),
+    new UserRole("READER", "читатель"),
+    new UserRole("REDACTOR", "редактор"),
+    new UserRole("ADMIN", "администратор"),
+    new UserRole("READER", "читатель"),
+    new UserRole("REDACTOR", "редактор")
+  ]
+
+  useEffect(() => {
+    setRoles(createItemSelectionList(exampleRoles))
+  })
+
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
@@ -35,7 +49,7 @@ const AssignDialogContent = (props: CreateProps) => {
           {/*<InputLabel value="" />*/}
           <InputCheckboxList
             items={roles}
-            toText={privilegeToText}
+            toText={userRoleToText}
             onChange={_onRoleChange}
           />
         </div>
@@ -43,6 +57,10 @@ const AssignDialogContent = (props: CreateProps) => {
       <Button onClick={_onDoneWrapper}>Сохранить изменения</Button>
     </div>
   );
+}
+
+function userRoleToText(item: UserRole){
+  return item.name + " - " + item.description;
 }
 
 export default AssignDialogContent;
