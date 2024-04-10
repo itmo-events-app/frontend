@@ -9,11 +9,29 @@ import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import Layout from "@widgets/main/Layout";
 import { uid } from "uid";
 import Button from "@widgets/main/Button";
-import { appendClassName, truncateTextByWords } from "@shared/util.ts";
+import { appendClassName } from "@shared/util.ts";
 import { ArrowDown } from "@shared/ui/icons";
 import Search from "@widgets/main/Search";
+import Dialog from "@widgets/main/Dialog";
+import AssignDialogContent from "@pages/main/UserList/AssignDialogContent";
+import Fade from "@widgets/main/Fade";
 
-class UserRole {
+class DialogData {
+  heading: string | undefined;
+  visible: boolean;
+  args: any;
+  constructor(
+    heading?: string,
+    visible: boolean = false,
+    args: any = {}
+  ) {
+    this.heading = heading;
+    this.visible = visible;
+    this.args = args;
+  }
+}
+
+export class UserRole {
   name: string;
   description: string;
 
@@ -75,6 +93,7 @@ class UserEntry {
 
 export default function UserListPage() {
   const [users, setUsers] = useState(_users);
+  const [dialogData, setDialogData] = useState(new DialogData());
   const [userEntries, setUserEntries] = useState(
     users.map(u => new UserEntry(u, false))
   );
@@ -122,7 +141,7 @@ export default function UserListPage() {
         </div>
         <div className={styles.entry_side_container}>
           <div className={styles.read_button_container}>
-            <Button onClick={() => console.log("assign role")}>
+            <Button onClick={() => setDialogData(new DialogData('Назначение ролей', true, { roles: ue.data.roles }))}>
               Назначить роли
             </Button>
           </div>
@@ -150,6 +169,28 @@ export default function UserListPage() {
     console.log('searching')
   }
 
+  const _closeDialog = () => {
+    setDialogData(new DialogData());
+  }
+
+  const _Dialog = () => {
+    let component = <></>
+    component = <AssignDialogContent
+      onDone={() => console.log("assign roles")}
+      roles={_userRoles}
+      {...dialogData.args}
+    />
+    return (
+      <Dialog
+        className={appendClassName(styles.dialog,
+          (dialogData.visible ? styles.visible : styles.hidden))}
+        onClose={_closeDialog}
+      >
+        {component}
+      </Dialog>
+    )
+  }
+
   return (
     <Layout
       topLeft={<BrandLogo />}
@@ -161,6 +202,11 @@ export default function UserListPage() {
             <Search onSearch={_onSearch} placeholder="Поиск" />
           </div>
           <PagedList page={1} page_size={5} page_step={5} items={_renderedUserEntries} />
+          <Fade
+            className={appendClassName(styles.fade,
+              (dialogData.visible) ? styles.visible : styles.hidden)}>
+            <_Dialog />
+          </Fade>
         </Content>
       }
     />
