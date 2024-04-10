@@ -34,7 +34,7 @@ const UpdateDialogContent = (props: UpdateProps) => {
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
-          <InputLabel value="Тема" />
+          <InputLabel value="Название" />
           <Input value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
@@ -47,15 +47,15 @@ const UpdateDialogContent = (props: UpdateProps) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальное количество участников" />
-          <TextArea value={participantLimit} onChange={(e) => setParticipantLimit(e.target.value)} />
+          <Input value={participantLimit} onChange={(e) => setParticipantLimit(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
-          <TextArea value={participantHighestAge} onChange={(e) => setParticipantHighestAge(e.target.value)} />
+          <Input value={participantHighestAge} onChange={(e) => setParticipantHighestAge(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
-          <TextArea value={participantLowestAge} onChange={(e) => setParticipantLowestAge(e.target.value)} />
+          <Input value={participantLowestAge} onChange={(e) => setParticipantLowestAge(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Формат" />

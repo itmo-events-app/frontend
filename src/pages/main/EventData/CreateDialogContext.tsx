@@ -34,7 +34,7 @@ const CreateDialogContent = (props: UpdateProps) => {
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
-          <InputLabel value="Тема" />
+          <InputLabel value="Название" />
           <Input value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
