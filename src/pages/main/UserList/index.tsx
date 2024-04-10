@@ -184,6 +184,7 @@ export default function UserListPage() {
       <Dialog
         className={appendClassName(styles.dialog,
           (dialogData.visible ? styles.visible : styles.hidden))}
+        text={dialogData.heading}
         onClose={_closeDialog}
       >
         {component}

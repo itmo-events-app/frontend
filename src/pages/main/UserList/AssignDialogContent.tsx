@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 
 import styles from './index.module.css'
 
@@ -8,7 +8,6 @@ import { UserRole } from "@pages/main/UserList/index";
 import InputCheckboxList, {
   createItemSelectionList,
   ItemSelection,
-  itemSelectionGetSelected
 } from "@widgets/main/InputCheckboxList";
 import {privilegeToText} from "@pages/main/RoleList/common";
 
@@ -20,7 +19,7 @@ type CreateProps = {
 const AssignDialogContent = (props: CreateProps) => {
   const [roles, setRoles] = useState(createItemSelectionList([] as UserRole[]));
 
-  const _onRoleChange = (e: ItemSelection<UserRole>) => {
+  const _onRoleChange = (e: ItemSelection<UserRole[]>) => {
     e.selected = !e.selected;
     setRoles([...roles]);
   }
@@ -33,7 +32,7 @@ const AssignDialogContent = (props: CreateProps) => {
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
-          <InputLabel value="Список Ролей" />
+          {/*<InputLabel value="" />*/}
           <InputCheckboxList
             items={roles}
             toText={privilegeToText}
