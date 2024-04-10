@@ -22,6 +22,8 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import { EventResponse } from '../model';
+// @ts-ignore
 import { PrivilegeResponse } from '../model';
 // @ts-ignore
 import { RoleRequest } from '../model';
@@ -337,6 +339,40 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
          */
         getAllRoles: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/roles/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получение списка мероприятий пользователя по роли
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getEventsByRole: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getEventsByRole', 'id', id)
+            const localVarPath = `/api/roles/{id}/events`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -805,6 +841,19 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Получение списка мероприятий пользователя по роли
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getEventsByRole(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<EventResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getEventsByRole(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['RoleControllerApi.getEventsByRole']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Получение списка организационных привилегий
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1027,6 +1076,16 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @summary Получение списка мероприятий пользователя по роли
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getEventsByRole(id: number, options?: any): AxiosPromise<Array<EventResponse>> {
+            return localVarFp.getEventsByRole(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Получение списка организационных привилегий
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1236,6 +1295,18 @@ export class RoleControllerApi extends BaseAPI {
      */
     public getAllRoles(options?: AxiosRequestConfig) {
         return RoleControllerApiFp(this.configuration).getAllRoles(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получение списка мероприятий пользователя по роли
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RoleControllerApi
+     */
+    public getEventsByRole(id: number, options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).getEventsByRole(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -16,7 +16,6 @@ import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeContext, PrivilegeData } from "@features/PrivilegeProvider.tsx";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
 import { TaskResponse } from "@shared/api/generated";
-import { i } from "vite/dist/node/types.d-aGj9QkWt";
 
 type TaskTableProps = {
   tasks: TaskResponse[];
@@ -77,9 +76,10 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
               {format(task.deadline!, "H:mm")} <br />
               {format(task.deadline!, "do MMMM, yyyy", { locale: ru })}
             </td>
-            <td>{task.assignee!.name + " " + task.assignee!.surname}</td>
-            <td>{task.event.eventTitle}</td>
-            <td>{task.event.activityTitle ? task.event.activityTitle : "-"}</td>
+            <td>{task.assignee?.name + " " + task.assignee?.surname}
+            </td>
+            <td>{task.event?.eventTitle}</td>
+            <td>{task.event?.activityTitle ? task.event.activityTitle : "-"}</td>
             <td className={styles.dropdown}>
               {canChangeTaskStatus ?
                 (<Dropdown placeholder={statusTranslation[task.taskStatus!]}
@@ -109,39 +109,40 @@ function TaskListPage() {
     queryKey: ["getTasks"],
   });
 
-  const { data: filterEvent = [] } = useQuery({
+  const { data: filterEvents = [] } = useQuery({
     queryFn: taskService.getEventsNames,
     queryKey: ["getEventsNames"],
-  });
-
-  const { data: filterActivity = [] } = useQuery({
-    queryFn: taskService.getActivitiesNames,
-    queryKey: ["getActivitiesNames"],
   });
 
   const { mutate: getFilteredTasksByEvent } = useMutation({
     mutationFn: taskService.getEventTasks,
     mutationKey: ["getEventTasks"],
     onSuccess: (res) => {
-      setFilteredTasks(res)
-    }
+      setFilteredTasks(res);
+    },
   });
 
   const [selectedEvent, setSelectedEvent] = useState<DropdownOption<string> | undefined>();
-  const [selectedActivity, setSelectedActivity] = useState<DropdownOption<string> | undefined>();
   const [filteredTasks, setFilteredTasks] = useState<TaskResponse[]>(tasks);
 
   // use effect
   useEffect(() => {
-    setFilteredTasks(tasks)
+    setFilteredTasks(tasks);
   }, [tasks]);
 
   const handleFilterClick = () => {
-    console.log(selectedEvent)
-    selectedEvent !== undefined || selectedActivity !== undefined
-      ? getFilteredTasksByEvent({id: selectedEvent.value.split(" ")[1]})
-      : setFilteredTasks(tasks);
+    if (tasks.at(0) !== undefined) {
+      if (selectedEvent !== undefined) {
+        getFilteredTasksByEvent({
+          id: Number(selectedEvent.value.split(" ")[1]),
+          userId: Number(tasks.at(0)!.assignee!.id),
+        });
+      } else {
+        setFilteredTasks(tasks);
+      }
+    }
   };
+
 
   return (
     <Layout
@@ -155,16 +156,19 @@ function TaskListPage() {
               <h2 className="tasks-filter__title">Фильтр задач</h2>
               <form className={styles.tasksfilter__form}>
                 <div className={styles.dropdown}>
-                  <Dropdown value={selectedEvent} placeholder="Мероприятие" items={filterEvent}
+                  <Dropdown value={selectedEvent} placeholder="Мероприятие"
+                            items={filterEvents}
                             toText={(item) => item.value.split(" ")[0]}
                             onChange={setSelectedEvent}
+                            onClear={() => {
+                              setSelectedEvent(undefined);
+                            }}
                   />
                 </div>
-                <div className={styles.dropdown}>
-                  <Dropdown value={selectedActivity} onChange={setSelectedActivity} placeholder="Активность"
-                            items={filterActivity} toText={(item) => item.value} />
-                </div>
-                <Button onClick={handleFilterClick}>
+                <Button onClick={(event) => {
+                  event.preventDefault();
+                  handleFilterClick();
+                }}>
                   Применить
                 </Button>
               </form>
@@ -174,7 +178,7 @@ function TaskListPage() {
         }
     />
   );
-}
+};
 
 
 export default TaskListPage;

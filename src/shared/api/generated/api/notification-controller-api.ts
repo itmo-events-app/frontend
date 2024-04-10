@@ -33,7 +33,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
          * 
          * @summary Получение списка всех уведомлений
          * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число мероприятий на странице
+         * @param {number} size Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -77,7 +77,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
          * 
          * @summary Установка статуса прочитано у всех уведомлений
          * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число мероприятий на странице
+         * @param {number} size Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -165,7 +165,7 @@ export const NotificationControllerApiFp = function(configuration?: Configuratio
          * 
          * @summary Получение списка всех уведомлений
          * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число мероприятий на странице
+         * @param {number} size Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -179,7 +179,7 @@ export const NotificationControllerApiFp = function(configuration?: Configuratio
          * 
          * @summary Установка статуса прочитано у всех уведомлений
          * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число мероприятий на странице
+         * @param {number} size Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -216,7 +216,7 @@ export const NotificationControllerApiFactory = function (configuration?: Config
          * 
          * @summary Получение списка всех уведомлений
          * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число мероприятий на странице
+         * @param {number} size Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -227,7 +227,7 @@ export const NotificationControllerApiFactory = function (configuration?: Config
          * 
          * @summary Установка статуса прочитано у всех уведомлений
          * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число мероприятий на странице
+         * @param {number} size Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -258,7 +258,7 @@ export class NotificationControllerApi extends BaseAPI {
      * 
      * @summary Получение списка всех уведомлений
      * @param {number} page Номер страницы, с которой начать показ уведомлений
-     * @param {number} size Число мероприятий на странице
+     * @param {number} size Число уведомлений на странице
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof NotificationControllerApi
@@ -271,7 +271,7 @@ export class NotificationControllerApi extends BaseAPI {
      * 
      * @summary Установка статуса прочитано у всех уведомлений
      * @param {number} page Номер страницы, с которой начать показ уведомлений
-     * @param {number} size Число мероприятий на странице
+     * @param {number} size Число уведомлений на странице
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof NotificationControllerApi
