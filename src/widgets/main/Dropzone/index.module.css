@@ -1,0 +1,14 @@
+.dropzone_form_container {
+  min-height: 100%;
+  border: 1px dashed var(--itmo-colors-black);
+  border-radius: 10px;
+  padding: 10px 10px;
+  width: 500px;
+  text-align: center;
+  cursor: pointer;
+
+}
+
+.dropzone_form_container span {
+  color: var(--itmo-colors-blue);
+}

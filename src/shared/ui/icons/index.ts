@@ -16,5 +16,6 @@ import DocumentCheck from "./svg/DocumentCheck.svg?react";
 import UserRead from "./svg/UserRead.svg?react";
 import Notebook from "./svg/Notebook.svg?react";
 import LocationIcon from "./svg/LocationIcon.svg?react";
+import CloudUpload from "./svg/CloudUpload.svg?react";
 
-export { ArrowDown, ArrowLeft, ArrowRight, Home, Menu, Noted, ReactLogo, ViteLogo, Users, ITMOLogo, Search, MenuVertical, Personal, UserCard, DocumentCheck, UserRead, Notebook, LocationIcon };
+export { ArrowDown, ArrowLeft, ArrowRight, Home, Menu, Noted, ReactLogo, ViteLogo, Users, ITMOLogo, Search, MenuVertical, Personal, UserCard, DocumentCheck, UserRead, Notebook, LocationIcon, CloudUpload};
