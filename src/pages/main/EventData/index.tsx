@@ -325,7 +325,6 @@ function EventActivitiesPage() {
   if (activitiesVisible) {
     pageTabs.push(new PageTab("Активности"));
   }
-  pageTabs.push(new PageTab("Активности"));
 
   if (orgsVisible) {
     pageTabs.push(new PageTab("Организаторы"));
