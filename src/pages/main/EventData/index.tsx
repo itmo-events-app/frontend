@@ -17,9 +17,8 @@ import { appendClassName } from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
-import { RoleElement } from "@widgets/main/RoleList";
 import CreateDialogContent from "./CreateDialogContext.tsx";
-import { Gantt } from 'gantt-task-react';
+import { Gantt, Task } from 'gantt-task-react';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
@@ -60,19 +59,6 @@ class EventInfo {
     this.description = description;
   }
 }
-
-const _eventInfo: EventInfo = new EventInfo(
-  "01.06.2024 - 10.06.2024",
-  "05.06.2024 - 11.06.2024",
-  "11.06.2024 - 19.06.2024",
-  "100",
-  "Кронверкский проспект 49",
-  "Очный",
-  "Активное",
-  "16+",
-  "Славянский Зажим: Поединок за Колосом",
-  "Присоединяйтесь к нам на захватывающий славянский мукамольный турнир, где лучшие мукамолы из разных уголков земли сойдутся в смешных и острых схватках за звание Короля (или Королевы) Муки! Участники будут соревноваться в различных видах муканья, в том числе в муканье кукурузы, муканье муки через сито, а также в конкурсе на самый оригинальный муканьяльный костюм. Вас ждут веселые призы и масса улыбок! Приходите и окунитесь в мир старинных славянских традиций!"
-);
 
 class Activity {
   id: string
@@ -370,7 +356,6 @@ function EventActivitiesPage() {
     }
   }
   const [dialogData, setDialogData] = useState(new DialogData());
-  const [roles, setRoles] = useState([] as RoleElement[]);
   const dialogRef = useRef(null);
   enum DialogSelected {
     NONE,
