@@ -13,7 +13,7 @@ import { api } from "@shared/api";
 import { PrivilegeContext, PrivilegeData } from "@features/PrivilegeProvider.tsx";
 import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
-import { Gantt, Task, EventOption, StylingOption, ViewMode, DisplayOption } from 'gantt-task-react';
+import { Gantt, Task } from 'gantt-task-react';
 import "gantt-task-react/dist/index.css";
 
 class EventInfo {
@@ -235,24 +235,23 @@ const tasks: Task[] = [
 
 const edit_privilege: boolean = false;
 
-const EVENT_ID: number = 2;
+const EVENT_ID: number = 1;
 
 function EventActivitiesPage() {
 
   const { privilegeContext } = useContext(PrivilegeContext);
 
-  const activitiesVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+  const activitiesVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
     new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)
   ]));
 
-  const orgsVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+  const orgsVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
     new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)
   ]));
 
-  const tasksVisible: boolean = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+  const tasksVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
     new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)
   ]));
-
 
   const pageTabs: PageTab[] = []
 
@@ -485,8 +484,7 @@ function EventActivitiesPage() {
           console.log(error.response.data);
         })
     }
-  }, [orgsVisible])
-
+  }, [orgsVisible]);
 
   function _createTasksTable() {
     return (
