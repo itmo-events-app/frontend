@@ -336,7 +336,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
         taskListShowInEvent: async (eventId: number, assigneeId?: number, assignerId?: number, taskStatus?: TaskListShowInEventTaskStatusEnum, deadlineLowerLimit?: string, deadlineUpperLimit?: string, subEventTasksGet?: boolean, personalTasksGet?: boolean, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'eventId' is not null or undefined
             assertParamExists('taskListShowInEvent', 'eventId', eventId)
-            const localVarPath = `/api/tasks/event/{eventId}`
+            const localVarPath = `/api/tasks/event/{eventId}/where-assignee`
                 .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
