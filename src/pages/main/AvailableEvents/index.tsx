@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getImageUrl } from "@shared/lib/image.ts"
 import { ReactLogo } from "@shared/ui/icons";
+import { api } from "@shared/api";
 const _displayModes: DropdownOption[] = [
   new DropdownOption("Показать списком"),
   new DropdownOption("Показать на карте")
@@ -47,37 +48,30 @@ function AvailableEventsPage() {
 
   const getEventList = async () => {
     try {
-      const response = await fetch('/api/events', {
-        method: 'GET'
-      });
-      if (response.status === 200) {
-        const data = await response.json();
-        // console.log(data);
-        const pagesPromises = data.map(async (e) => {
-          let address = ''
-          await fetch('/api/places/' + e.placeId, {
-            method: 'GET'
-          }).then(response => {
-              if (response.status == 200) {
-                const place = response.json();
-                place.then(p => {
-                  address = p.address;
-                });
-              } else {
-                console.log(response.status);
-              }
+     const response = await api.event.getAllOrFilteredEvents();
+        if (response.status === 200) {
+          const data = response.data;
+          const pagesPromises = data.map(async (e) => {
+            let address = ''
+            const response = await fetch('/api/places/' + e.placeId, {
+              method: 'GET'
+            })
+            if (response.status == 200) {
+              const place = await response.json();
+              address = place.address;
+            } else {
+              console.log(response.status);
             }
-          )
-          return new PageEntry(() => {
-            return _entryStub(parseInt(e.id), address, e.title)
+            return new PageEntry(() => {
+              return _entryStub(parseInt(e.id), address, e.title)
+            });
           });
-        });
-        const pages = await Promise.all(pagesPromises);
-        setEvents(pages.filter(page => page !== null));
-        setLoading(false);
-      } else {
-        console.error('Error fetching event list:', response.statusText);
-      }
+          const pages = await Promise.all(pagesPromises);
+          setEvents(pages.filter(page => page !== null));
+          setLoading(false);
+        } else {
+          console.error('Error fetching event list:', response.statusText);
+        }
     } catch (error) {
       console.error('Error fetching event list:', error);
     }
@@ -102,7 +96,23 @@ function AvailableEventsPage() {
   const _event = (id:number) => {
     navigate("/events/event/"+id.toString());
   }
-
+  const _events: any[] = [
+    new PageEntry(() => {
+      return _entryStub(1);
+    }),
+    new PageEntry(() => {
+      return _entryStub(2);
+    }),
+    new PageEntry(() => {
+      return _entryStub(3);
+    }),
+    new PageEntry(() => {
+      return _entryStub(4);
+    }),
+    new PageEntry(() => {
+      return _entryStub(5);
+    }),
+  ];
 
   function _entryStub(index: number, place: string, title: string) {
     const [imageUrl, setImageUrl] = useState('');
