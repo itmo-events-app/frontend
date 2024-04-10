@@ -1,19 +1,20 @@
-import {uid} from 'uid'
-import {useContext, useEffect, useState} from "react";
+import { uid } from 'uid'
+import { useContext, useEffect, useState } from "react";
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import SideBar from '@widgets/main/SideBar';
 import Content from "@widgets/main/Content";
-import PageTabs, {PageTab} from "@widgets/main/PageTabs";
-import {RoutePaths} from '@shared/config/routes';
+import PageTabs, { PageTab } from "@widgets/main/PageTabs";
+import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
-import {api} from "@shared/api";
-import {PrivilegeContext, PrivilegeData} from "@features/PrivilegeProvider.tsx";
-import {hasAnyPrivilege} from "@features/privileges.ts";
-import {PrivilegeNames} from "@shared/config/privileges.ts";
-
+import { api } from "@shared/api";
+import { PrivilegeContext, PrivilegeData } from "@features/PrivilegeProvider.tsx";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
+import { Gantt, Task, EventOption, StylingOption, ViewMode, DisplayOption } from 'gantt-task-react';
+import "gantt-task-react/dist/index.css";
 
 class EventInfo {
   regDates: string
@@ -174,6 +175,58 @@ const _members: Person[] = [
     "example@mail.ru"
   )
 ]
+let tasks: Task[] = [
+  {
+    start: new Date(2024, 1, 1),
+    end: new Date(2024, 1, 2),
+    name: 'Создать зум',
+    id: 'Task 0',
+    type: 'task',
+    progress: 100,
+    isDisabled: false,
+    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
+    project: "sdsd",
+    hideChildren: false,
+    displayOrder: 1,
+  },
+  {
+    start: new Date(2024, 1, 3),
+    end: new Date(2024, 1, 14),
+    name: 'Забронировать аудиторию',
+    id: 'Task 2',
+    type: 'task',
+    progress: 100,
+    isDisabled: false,
+    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
+    project: "sdsd",
+  },
+  {
+    start: new Date(2024, 1, 2),
+    end: new Date(2024, 1, 10),
+    name: 'Написать программу выступления в зуме',
+    id: 'Task 3',
+    type: 'task',
+    progress: 100,
+    isDisabled: false,
+    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
+    project: "sdsd",
+    dependencies: ["Task 0"],
+    displayOrder: 2,
+  },
+  {
+    start: new Date(2024, 1, 11),
+    end: new Date(2024, 1, 16),
+    name: 'Тестовый прогон',
+    id: 'Task 4',
+    type: 'task',
+    progress: 100,
+    isDisabled: false,
+    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
+    project: "sdsd",
+    dependencies: ["Task 3"],
+    displayOrder: 3,
+  },
+];
 
 const edit_privilege: boolean = false;
 
@@ -266,34 +319,34 @@ function EventActivitiesPage() {
           </div>
           <table className={styles.table}>
             <tbody>
-            <tr>
-              <td>Сроки регистрации</td>
-              <td>{eventInfo.regDates}</td>
-            </tr>
-            <tr>
-              <td>Сроки проведения</td>
-              <td>{eventInfo.eventDates}</td>
-            </tr>
-            <tr>
-              <td>Сроки подготовки</td>
-              <td>{eventInfo.prepDates}</td>
-            </tr>
-            <tr>
-              <td>Количество мест</td>
-              <td>{eventInfo.vacantSlots}</td>
-            </tr>
-            <tr>
-              <td>Формат проведения</td>
-              <td>{eventInfo.format}</td>
-            </tr>
-            <tr>
-              <td>Статус</td>
-              <td>{eventInfo.status}</td>
-            </tr>
-            <tr>
-              <td>Возрастное ограничение</td>
-              <td>{eventInfo.ageRestriction}</td>
-            </tr>
+              <tr>
+                <td>Сроки регистрации</td>
+                <td>{eventInfo.regDates}</td>
+              </tr>
+              <tr>
+                <td>Сроки проведения</td>
+                <td>{eventInfo.eventDates}</td>
+              </tr>
+              <tr>
+                <td>Сроки подготовки</td>
+                <td>{eventInfo.prepDates}</td>
+              </tr>
+              <tr>
+                <td>Количество мест</td>
+                <td>{eventInfo.vacantSlots}</td>
+              </tr>
+              <tr>
+                <td>Формат проведения</td>
+                <td>{eventInfo.format}</td>
+              </tr>
+              <tr>
+                <td>Статус</td>
+                <td>{eventInfo.status}</td>
+              </tr>
+              <tr>
+                <td>Возрастное ограничение</td>
+                <td>{eventInfo.ageRestriction}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -374,7 +427,12 @@ function EventActivitiesPage() {
       </>
     )
   }
+  function _createTasksTable() {
+    return (
 
+      <Gantt tasks={tasks} />
+    )
+  }
   function _createPersonTableUsers(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
@@ -408,15 +466,15 @@ function EventActivitiesPage() {
   useEffect(() => {
     if (orgsVisible) {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
-          .then((response) => {
-            const list = response.data.map(user => {
-              return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
-            })
-            setOrgs(list);
+        .then((response) => {
+          const list = response.data.map(user => {
+            return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
           })
-          .catch((error) => {
-            console.log(error.response.data);
-          })
+          setOrgs(list);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        })
     }
   }, [orgsVisible])
 
@@ -446,7 +504,7 @@ function EventActivitiesPage() {
             {selectedTab == "Активности" && _createActivityList(_activities)}
             {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
             {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
-            {selectedTab == "Задачи" && "ToDo: Страница задач"}
+            {selectedTab == "Задачи" && _createTasksTable()}
           </div>
         </Content>
       }
