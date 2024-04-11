@@ -85,7 +85,7 @@ function LoginPage() {
           const token = r.data;
           setToken(new TokenContextData(token))
           console.log('token updated');
-          navigate(RoutePaths.eventList);
+          navigate(RoutePaths.home);
         })
         .catch((e): any => {
           const response = e.response.data;
