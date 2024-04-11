@@ -28,6 +28,9 @@ const UpdateDialogContent = (props: UpdateProps) => {
 
   const [prevType, setPrevType] = useState<RoleModelType | undefined>(undefined);
 
+  const [nameError, setNameError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
+
   // NOTE: maybe cache privilege list results?
   useEffect(() => {
     if (prevType == type) {
@@ -63,7 +66,14 @@ const UpdateDialogContent = (props: UpdateProps) => {
     return false;
   }
 
+  const _onPrivilegeChange = (e: ItemSelection<PrivilegeModel>) => {
+    e.selected = !e.selected;
+    setPrivileges([...privileges]);
+  }
+
   const _onDoneWrapper = () => {
+    let ok = true;
+
     const role = new RoleModel(
       props.role.id,
       name,
@@ -71,12 +81,30 @@ const UpdateDialogContent = (props: UpdateProps) => {
       itemSelectionGetSelected(privileges),
       description,
     )
-    props.onDone(props.role, role);
+
+    if (role.name == "") {
+      setNameError('Имя роли не должно быть пустым');
+      ok = false;
+    }
+
+    if (role.description == "") {
+      setDescriptionError('Описание не должно быть пустым');
+      ok = false;
+    }
+
+    if (ok) {
+      props.onDone(props.role, role);
+    }
   }
 
-  const _onPrivilegeChange = (e: ItemSelection<PrivilegeModel>) => {
-    e.selected = !e.selected;
-    setPrivileges([...privileges]);
+  const _nameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    setNameError('');
+  }
+
+  const _descriptionOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+    setDescriptionError('');
   }
 
   return (
@@ -84,11 +112,11 @@ const UpdateDialogContent = (props: UpdateProps) => {
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           <InputLabel value="Название роли" />
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <Input value={name} onChange={_nameOnChange} errorText={nameError} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Описание" />
-          <TextArea value={description} onChange={(e) => setDescription(e.target.value)} />
+          <TextArea value={description} onChange={_descriptionOnChange} errorText={descriptionError} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
