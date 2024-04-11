@@ -24,6 +24,7 @@ export enum AppRoutes {
 export enum RouteParams {
   PLACE_ID = ":place_id",
   USERNAME = ":username",
+  EVENT_ID = ":id"
 }
 
 export const RoutePaths: Record<AppRoutes, string> = {
@@ -36,7 +37,7 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.PASSWORD]: "/password",
   [AppRoutes.EVENT_LIST]: "/events",
   [AppRoutes.EVENT_CREATION]: "/events/create",
-  [AppRoutes.EVENT_DATA]: "/events/event/:id",
+  [AppRoutes.EVENT_DATA]: "/events/"+ RouteParams.EVENT_ID,
   [AppRoutes.PLACE_LIST]: "/places",
   [AppRoutes.ROLE_LIST]: "/roles",
   [AppRoutes.USER_LIST]: "/users",

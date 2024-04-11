@@ -16,19 +16,12 @@ const _test_orgs: DropdownOption[] = [
   new DropdownOption("[107589] Лебедев Леонид Петрович")
 ]
 
-function EventCreationPage() {
+function EventCreationPage({ contentOnly = false}) {
   const _createEvent = () => {
-    console.log('creating event!');
+    console.log('creating event! hello');
   }
-
-  return (
-    <Layout
-      topLeft={<BrandLogo />}
-      topRight={<PageName text="Создание мероприятия" />}
-      bottomLeft={<SideBar currentPageURL={RoutePaths.createEvent} />}
-      bottomRight=
-      {
-        <Content>
+  const content = (
+    <Content>
           <div className={styles.event_form}>
             <div className={styles.event_form_item}>
               <Input type="text" placeholder="Введите название мероприятия" />
@@ -41,8 +34,19 @@ function EventCreationPage() {
             </div>
           </div>
         </Content>
+  );  
+  return (
+    <>
+      {contentOnly 
+        ? content 
+        : <Layout
+          topLeft={<BrandLogo />}
+          topRight={<PageName text="Создание мероприятия" />}
+          bottomLeft={<SideBar currentPageURL={RoutePaths.createEvent} />}
+          bottomRight={content}
+        />
       }
-    />
+    </>
   );
 }
 

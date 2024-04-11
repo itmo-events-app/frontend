@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { ArrowDown } from '@shared/ui/icons'
 import { appendClassName, sharedStart } from '@shared/util'
 import { useNavigate } from "react-router-dom"
-import { PrivilegeContextData, PrivilegeData } from '@features/PrivilegeProvider'
+import { PrivilegeContextData } from '@entities/privilege-context'
 
 type IsVisibleFunc = (x: Set<PrivilegeData>) => boolean;
 

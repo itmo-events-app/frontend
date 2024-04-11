@@ -1,4 +1,4 @@
-import { PrivilegeContextData, PrivilegeData } from "@features/PrivilegeProvider";
+import { PrivilegeContextData, PrivilegeData } from "@entities/privilege-context";
 import { PrivilegeNames } from "@shared/config/privileges";
 
 const administratorEvent = new Map<number, Set<PrivilegeData>>();

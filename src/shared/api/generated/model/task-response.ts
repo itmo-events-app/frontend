@@ -15,6 +15,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import { EventShortDataResponse } from './event-short-data-response';
+// May contain unused imports in some cases
+// @ts-ignore
 import { PlaceShortDataResponse } from './place-short-data-response';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -34,10 +37,10 @@ export interface TaskResponse {
     'id'?: number;
     /**
      * 
-     * @type {number}
+     * @type {EventShortDataResponse}
      * @memberof TaskResponse
      */
-    'eventId'?: number;
+    'event'?: EventShortDataResponse;
     /**
      * 
      * @type {string}
@@ -85,7 +88,7 @@ export interface TaskResponse {
      * @type {string}
      * @memberof TaskResponse
      */
-    'notificationDeadline'?: string;
+    'reminder'?: string;
 }
 
 export const TaskResponseTaskStatusEnum = {

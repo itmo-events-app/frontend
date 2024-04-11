@@ -17,14 +17,20 @@
 /**
  * 
  * @export
- * @interface ParticipantsListRequest
+ * @interface NotificationSettingsRequest
  */
-export interface ParticipantsListRequest {
+export interface NotificationSettingsRequest {
     /**
      * 
-     * @type {File}
-     * @memberof ParticipantsListRequest
+     * @type {boolean}
+     * @memberof NotificationSettingsRequest
      */
-    'participantsListFile': File;
+    'enableEmail': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof NotificationSettingsRequest
+     */
+    'enablePush': boolean;
 }
 

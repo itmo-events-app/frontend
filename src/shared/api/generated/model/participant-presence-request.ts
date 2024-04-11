@@ -17,14 +17,20 @@
 /**
  * 
  * @export
- * @interface ParticipantsListRequest
+ * @interface ParticipantPresenceRequest
  */
-export interface ParticipantsListRequest {
+export interface ParticipantPresenceRequest {
     /**
      * 
-     * @type {File}
-     * @memberof ParticipantsListRequest
+     * @type {number}
+     * @memberof ParticipantPresenceRequest
      */
-    'participantsListFile': File;
+    'participantId'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ParticipantPresenceRequest
+     */
+    'isVisited'?: boolean;
 }
 

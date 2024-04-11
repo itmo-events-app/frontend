@@ -1,31 +1,38 @@
-import { TokenContextData, getTokenContextData, setTokenContextData } from "@shared/lib/token";
+import { AuthControllerApi, Configuration, EventControllerApi, NotificationControllerApi, ParticipantsControllerApi, PlaceControllerApi, ProfileControllerApi, RoleControllerApi, TaskControllerApi } from "@shared/api/generated"
+import { TokenContextData } from "@shared/lib/token"
 import type { AxiosResponse } from 'axios';
-import { AuthControllerApi, Configuration, ConfigurationParameters, EventControllerApi, NotificationControllerApi, ProfileControllerApi, RoleControllerApi, TaskControllerApi, TestControllerApi } from "./generated";
 
-const configurationParameters: ConfigurationParameters = {
-  basePath: (window as any).ENV_BACKEND_API_URL,
-  accessToken: () => getTokenContextData().accessToken ?? "",
-}
-
-export const configuration = new Configuration(configurationParameters);
+type setTokenContextFunc = ((context: TokenContextData) => void);
 
 class Api {
   auth: AuthControllerApi
   event: EventControllerApi
   notification: NotificationControllerApi
+  participants: ParticipantsControllerApi
+  place: PlaceControllerApi
   profile: ProfileControllerApi
   role: RoleControllerApi
   task: TaskControllerApi
-  test: TestControllerApi
 
-  constructor(configuration: Configuration) {
+  _tokenContext?: TokenContextData
+  _setTokenContext: setTokenContextFunc
+
+  constructor(configuration: Configuration, setTokenContextData: setTokenContextFunc, tokenContext?: TokenContextData) {
     this.auth = new AuthControllerApi(configuration);
     this.event = new EventControllerApi(configuration);
     this.notification = new NotificationControllerApi(configuration);
+    this.participants = new ParticipantsControllerApi(configuration);
+    this.place = new PlaceControllerApi(configuration);
     this.profile = new ProfileControllerApi(configuration);
     this.role = new RoleControllerApi(configuration);
     this.task = new TaskControllerApi(configuration);
-    this.test = new TestControllerApi(configuration);
+
+    this._tokenContext = tokenContext;
+    this._setTokenContext = setTokenContextData;
+  }
+
+  isLoggedIn(): boolean {
+    return this._tokenContext?.accessToken != null && this._tokenContext?.accessToken != "";
   }
 
   // NOTE: token invalid => reset token context
@@ -33,7 +40,7 @@ class Api {
     return func()
       .catch(async (e) => {
         if (e.response != undefined && e.response.status == 401) {
-          setTokenContextData(new TokenContextData());
+          this._setTokenContext(new TokenContextData());
         }
         throw e;
       });
@@ -78,5 +85,5 @@ class Api {
   */
 }
 
-// export Global API
-export const api = new Api(configuration);
+export { Api }
+export type { setTokenContextFunc }

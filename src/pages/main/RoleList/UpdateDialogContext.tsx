@@ -9,8 +9,8 @@ import TextArea from "@widgets/main/TextArea";
 
 import styles from './index.module.css'
 import { privilegeToText, dropdownOptionToText, dropdownOptions } from "./common";
-import { useEffect, useState } from "react";
-import { api } from "@shared/api";
+import { useContext, useEffect, useState } from "react";
+import ApiContext from "@features/api-context";
 
 type UpdateProps = {
   privileges: PrivilegeModel[]
@@ -20,6 +20,7 @@ type UpdateProps = {
 }
 
 const UpdateDialogContent = (props: UpdateProps) => {
+  const { api } = useContext(ApiContext);
   const [name, setName] = useState(props.role.name ?? '');
   const [description, setDescription] = useState(props.role.description ?? '');
   const [type, setType] = useState(props.role.type ?? RoleModelType.SYSTEM);

@@ -7,7 +7,6 @@ import Search from '@widgets/main/Search';
 import Button from '@widgets/main/Button';
 import RoleList, { RoleElement, createRoleElementList, roleElementListGetElements } from '@widgets/main/RoleList';
 import { RoleModel, fromRoleModel } from '@entities/role';
-import { PrivilegeModel } from '@entities/privilege';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { useContext, useEffect, useRef, useState } from 'react';
 import Dialog from '@widgets/main/Dialog';
@@ -16,13 +15,14 @@ import { appendClassName } from '@shared/util';
 import styles from './index.module.css'
 import Fade from '@widgets/main/Fade';
 import { RoutePaths } from '@shared/config/routes';
-import { PrivilegeContext, PrivilegeData } from '@features/PrivilegeProvider';
 import { hasAnyPrivilege } from '@features/privileges';
 import { PrivilegeNames } from '@shared/config/privileges';
-import { api } from '@shared/api';
 import { toRoleModel } from '@entities/role';
 import CreateDialogContent from './CreateDialogContent';
 import UpdateDialogContent from './UpdateDialogContext';
+import PrivilegeContext from '@features/privilege-context';
+import { PrivilegeData } from '@entities/privilege-context';
+import ApiContext from '@features/api-context';
 
 class ContextMenuData {
   clientX: number;
@@ -78,6 +78,7 @@ const privilegeOthers = {
 
 function RoleListPage() {
   const { privilegeContext } = useContext(PrivilegeContext);
+  const { api } = useContext(ApiContext);
 
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
@@ -154,7 +155,7 @@ function RoleListPage() {
     console.log(v);
   }
 
-  const _createRole = (e: MouseEvent) => {
+  const _createRole = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Создание роли', DialogSelected.CREATE));
     e.stopPropagation();
   }

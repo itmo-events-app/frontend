@@ -12,11 +12,12 @@ import EventActivitiesPage from "@pages/main/EventData";
 import TaskListPage from "@pages/main/TaskList";
 import NotificationListPage from "@pages/main/NotificationListPage";
 import ProfilePage from "@pages/main/ProfilePage";
-import Authenticated from "@features/Authenticated";
-import Authorized from "@features/Authorized";
 import { anyPrivilege } from "@features/privileges";
 import { PrivilegeNames } from "@shared/config/privileges";
-import { PrivilegeData } from "@features/PrivilegeProvider";
+import Authenticated from "@widgets/Authenticated";
+import Authorized from "@widgets/Authorized";
+import { PrivilegeData } from "@entities/privilege-context";
+import UserListPage from "@pages/main/UserList";
 
 const routes: Record<AppRoutes, RouteProps> = {
   [AppRoutes.ROOT]: {
@@ -45,7 +46,9 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
-    element: <AvailableEventsPage />,
+    element: <Authenticated>
+      <AvailableEventsPage />
+    </Authenticated>,
   },
   [AppRoutes.EVENT_CREATION]: {
     path: RoutePaths.createEvent,
@@ -79,7 +82,7 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,
-    element: <>User List</>,
+    element: <UserListPage />,
   },
   [AppRoutes.NOTIFICATIONS]: {
     path: RoutePaths.notifications,
