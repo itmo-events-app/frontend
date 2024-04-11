@@ -153,8 +153,8 @@ function RoleListPage() {
     setCmData(new ContextMenuData());
   }
 
-  const _onSearchChange = (v: string) => {
-    setSearch(v);
+  const _onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
   }
 
   const _onSearchSearch = (v: string) => {
