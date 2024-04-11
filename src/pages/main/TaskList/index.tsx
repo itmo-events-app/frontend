@@ -9,7 +9,7 @@ import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { RoutePaths } from "@shared/config/routes";
 import { FC, useContext, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { taskService } from "../../../service/task-service.ts";
+import { taskService } from "@features/task-service.ts";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale/ru";
 import { hasAnyPrivilege } from "@features/privileges.ts";
