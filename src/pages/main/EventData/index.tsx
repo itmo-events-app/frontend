@@ -22,7 +22,7 @@ import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
-import { PrivilegeResponseNameEnum } from "@shared/api/generated";
+import { PrivilegeResponse, PrivilegeResponseNameEnum } from "@shared/api/generated";
 
 class EventInfo {
   regDates: string
@@ -277,9 +277,12 @@ function EventActivitiesPage() {
   useEffect(() => {
     api.withReauth(() => api.profile.getUserEventPrivileges(EVENT_ID))
       .then((response) => {
-        const list: (PrivilegeResponseNameEnum | undefined)[] = response.data.map(privilege => {
-          return privilege.name;
+        const list: PrivilegeData[] = response.data
+        .filter((response): response is PrivilegeResponse => Boolean(response))
+        .map(privilege => {
+          return PrivilegeResponseNameEnum[privilege.name];
         });
+
         setEventPrivileges(list);
       })
       .catch((error) => {
@@ -297,7 +300,7 @@ function EventActivitiesPage() {
     new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)
   ]));
 
-  const tasksVisible: boolean = hasAnyPrivilege(new Set(eventPrivileges) new Set([
+  const tasksVisible: boolean = hasAnyPrivilege(new Set(eventPrivileges), new Set([
     new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)
   ]));
 
