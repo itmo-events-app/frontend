@@ -322,6 +322,14 @@ function EventActivitiesPage() {
   pageTabs.push(new PageTab("Задачи"));
   //}
 
+  const _brandLogoClick = () => {
+    console.log('brand logo!')
+  }
+
+  const _editActivities = () => {
+    console.log('editing activities')
+  }
+
   const _editOrgs = () => {
     console.log('editing orgs')
   }
@@ -402,6 +410,9 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
+        {/*<div className={styles.button_container}>*/}
+        {/*  <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>*/}
+        {/*</div>*/}
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
