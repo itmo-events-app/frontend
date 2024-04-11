@@ -16,14 +16,12 @@ import { appendClassName } from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
-import { RoleElement } from "@widgets/main/RoleList";
 import CreateDialogContent from "./CreateDialogContext.tsx";
 import { Gantt, Task } from 'gantt-task-react';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
-import * as string_decoder from "node:string_decoder";
 
 class EventInfo {
   regDates: string
@@ -102,12 +100,13 @@ class Person {
   role?: string
 
   constructor(
+    id: string,
     name: string,
     surname: string,
     email: string,
     role: string
   ) {
-    this.id = uid();
+    this.id = id;
     this.name = name;
     this.surname = surname;
     this.email = email;
@@ -247,8 +246,6 @@ function EventActivitiesPage() {
   }, []);
 
   const { privilegeContext } = useContext(PrivilegeContext);
-
-  console.log(privilegeContext.systemPrivileges);
 
   const activitiesVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
     new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)
@@ -581,7 +578,7 @@ function EventActivitiesPage() {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
           const list = response.data.map(user => {
-            return new Person(user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
+            return new Person("" + user.id, user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
           })
           setOrgs(list);
         })
@@ -594,16 +591,16 @@ function EventActivitiesPage() {
   const [participants, setParticipants] = useState([] as Person[]);
 
   useEffect(() => {
-    // api.withReauth(() => api.event. (EVENT_ID))
-    //   .then((response) => {
-    //     const list = response.data.map(user => {
-    //       return new Person(user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
-    //     })
-    //     setOrgs(list);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error.response.data);
-    //   })
+    api.withReauth(() => api.participants.getParticipants(EVENT_ID))
+      .then((response) => {
+        const list = response.data.map(user => {
+          return new Person("" + user.id, user.name ?? "", "", user.email ?? "", "");
+        })
+        setParticipants(list);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      })
   }, []);
 
   function _createTasksTable() {
