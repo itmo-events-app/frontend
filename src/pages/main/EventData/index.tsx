@@ -92,12 +92,12 @@ class Activity {
   }
 }
 
-class Person {
+class OrgPerson {
   id: string
   name: string
   surname: string
   email: string
-  role?: string
+  role: string
 
   constructor(
     id: string,
@@ -111,6 +111,28 @@ class Person {
     this.surname = surname;
     this.email = email;
     this.role = role;
+  }
+}
+
+class Person {
+  id: string
+  name: string
+  email: string
+  info: string
+  visited: boolean
+
+  constructor(
+    id: string,
+    name: string,
+    email: string,
+    info: string,
+    visited: boolean
+  ) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.info = info;
+    this.visited = visited;
   }
 }
 
@@ -496,29 +518,31 @@ function EventActivitiesPage() {
     )
   }
 
-  function createPersonRow(person: Person, showRole: boolean) {
-    if (!showRole) {
-      return (
-        <tr key={person.id}>
-          <td>{person.surname + " " + person.name}</td>
-          <td>{person.email}</td>
-        </tr>
-      )
-    } else {
-      return (
-        <tr key={person.id}>
-          <td>{person.role}</td>
-          <td>{person.surname + " " + person.name}</td>
-          <td>{person.email}</td>
-        </tr>
-      )
-    }
+  function createOrgPersonRow(person: OrgPerson) {
+    return (
+      <tr key={person.id}>
+        <td>{person.role}</td>
+        <td>{person.surname + " " + person.name}</td>
+        <td>{person.email}</td>
+      </tr>
+    )
   }
 
-  function createOrgsTable(persons: Person[], edit_func: any) {
+  function createPersonRow(person: Person) {
+    return (
+      <tr key={person.id}>
+        <td>{person.name}</td>
+        <td>{person.email}</td>
+        <td>{person.info}</td>
+        <td>{person.visited ? "Да" : "Нет"}</td>
+      </tr>
+    )
+  }
+
+  function createOrgsTable(persons: OrgPerson[], edit_func: any) {
     const items = [];
     for (const person of persons) {
-      items.push(createPersonRow(person, true));
+      items.push(createOrgPersonRow(person));
     }
     return (
       <>
@@ -546,7 +570,7 @@ function EventActivitiesPage() {
   function createParticipantsTable(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
-      items.push(createPersonRow(person, false));
+      items.push(createPersonRow(person));
     }
     return (
       <>
@@ -561,6 +585,8 @@ function EventActivitiesPage() {
           <tr>
             <th>Имя</th>
             <th>Email</th>
+            <th>Комментарий</th>
+            <th>Явка</th>
           </tr>
           </thead>
           <tbody>
@@ -571,14 +597,14 @@ function EventActivitiesPage() {
     )
   }
 
-  const [orgs, setOrgs] = useState([] as Person[]);
+  const [orgs, setOrgs] = useState([] as OrgPerson[]);
 
   useEffect(() => {
     if (orgsVisible) {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
           const list = response.data.map(user => {
-            return new Person("" + user.id, user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
+            return new OrgPerson("" + user.id, user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
           })
           setOrgs(list);
         })
@@ -594,7 +620,7 @@ function EventActivitiesPage() {
     api.withReauth(() => api.participants.getParticipants(EVENT_ID))
       .then((response) => {
         const list = response.data.map(user => {
-          return new Person("" + user.id, user.name ?? "", "", user.email ?? "", "");
+          return new Person("" + user.id, user.name ?? "",user.email ?? "", user.additionalInfo ?? "", user.visited ?? false);
         })
         setParticipants(list);
       })
