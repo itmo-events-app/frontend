@@ -4,6 +4,7 @@ api.ts
 api/auth-controller-api.ts
 api/event-controller-api.ts
 api/notification-controller-api.ts
+api/participants-controller-api.ts
 api/place-controller-api.ts
 api/profile-controller-api.ts
 api/role-controller-api.ts
@@ -22,6 +23,9 @@ model/index.ts
 model/login-request.ts
 model/notification-response.ts
 model/notification-settings-request.ts
+model/participant-presence-request.ts
+model/participant-response.ts
+model/participants-list-request.ts
 model/place-request.ts
 model/place-response.ts
 model/place-short-data-response.ts
