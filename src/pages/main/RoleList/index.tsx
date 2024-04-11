@@ -152,7 +152,10 @@ function RoleListPage() {
   }
 
   const _onSearch = (v: string) => {
-    console.log(v);
+    api.withReauth(() => api.role.searchByName(v))
+      .then(r => {
+        setRoles(createRoleElementList(r.data.map(role => toRoleModel(role))));
+      })
   }
 
   const _createRole = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
