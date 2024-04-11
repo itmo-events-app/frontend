@@ -46,7 +46,9 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
-    element: <AvailableEventsPage />,
+    element: <Authenticated>
+      <AvailableEventsPage />
+    </Authenticated>,
   },
   [AppRoutes.EVENT_CREATION]: {
     path: RoutePaths.createEvent,

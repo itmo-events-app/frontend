@@ -4,17 +4,20 @@ import AppRouter from "./AppRouter";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PrivilegeContextProvider from "@widgets/PrivilegeProvider";
+import ApiContextProvider from "@widgets/ApiProvider";
 
 const App = () => {
   const queryClient = new QueryClient();
 
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <PrivilegeContextProvider>
-          <AppRouter />
-        </PrivilegeContextProvider>
-      </QueryClientProvider>
+      <ApiContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <PrivilegeContextProvider>
+            <AppRouter />
+          </PrivilegeContextProvider>
+        </QueryClientProvider>
+      </ApiContextProvider>
     </BrowserRouter>
   );
 };

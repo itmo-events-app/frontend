@@ -6,19 +6,20 @@ import styles from './index.module.css';
 import Label from "@widgets/auth/InputLabel";
 import Link from "@widgets/auth/Link";
 import Error from "@widgets/auth/Error";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ITMO } from "@widgets/auth/ITMO";
 import { useNavigate } from "react-router-dom";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
-import { api } from "@shared/api";
 import { LoginRequest } from "@shared/api/generated";
 import { TokenContextData, setTokenContextData } from "@shared/lib/token";
+import ApiContext from "@features/api-context";
 
 const LOGIN_MAX_LENGTH = 128;
 const PASSWORD_MIN_LENGTH = 8;
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { api, setToken } = useContext(ApiContext);
 
   const [isError, setIsError] = useState(false);
   const [errorText, setErrorText] = useState('');
@@ -82,11 +83,17 @@ function LoginPage() {
       api.auth.login(request)
         .then(r => {
           const token = r.data;
-          setTokenContextData(new TokenContextData(token))
+          setToken(new TokenContextData(token))
+          console.log('token updated');
           navigate(RoutePaths.eventList);
         })
-        .catch(e => {
-          setErrorText(e.response.data);
+        .catch((e): any => {
+          const response = e.response.data;
+          if (typeof response === "string") {
+            setErrorText(response);
+          } else {
+            setErrorText(JSON.stringify(response));
+          }
           setIsError(true);
         })
     }

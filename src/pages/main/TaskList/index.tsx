@@ -17,9 +17,12 @@ import { PrivilegeNames } from "@shared/config/privileges.ts";
 import { TaskResponse } from "@shared/api/generated";
 import PrivilegeContext from "@features/privilege-context.ts";
 import { PrivilegeData } from "@entities/privilege-context.ts";
+import ApiContext from "@features/api-context";
+import { Api } from "@entities/api";
 
 type TaskTableProps = {
   tasks: TaskResponse[];
+  api: Api
 }
 
 const newTaskOptions: DropdownOption<string>[] = [
@@ -36,7 +39,7 @@ const statusTranslation: Record<string, string> = {
   "DONE": "Выполнено",
 };
 
-const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
+const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
   const { privilegeContext } = useContext(PrivilegeContext);
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
 
@@ -46,7 +49,7 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
 
   // для автоматического обновления статуса в бд
   const { mutate: updateTaskStatus } = useMutation({
-    mutationFn: taskService.updateTaskStatus,
+    mutationFn: taskService.updateTaskStatus(api),
     mutationKey: ["updateTaskStatus"],
   });
 
@@ -99,20 +102,21 @@ const TaskTable: FC<TaskTableProps> = ({ tasks }) => {
 
 
 function TaskListPage() {
+  const {api} = useContext(ApiContext);
 
   //todo: можно оптимизировать
   const { data: tasks = [] } = useQuery({
-    queryFn: taskService.getTasks,
+    queryFn: taskService.getTasks(api),
     queryKey: ["getTasks"],
   });
 
   const { data: filterEvents = [] } = useQuery({
-    queryFn: taskService.getEventsNames,
+    queryFn: taskService.getEventsNames(api),
     queryKey: ["getEventsNames"],
   });
 
   const { mutate: getFilteredTasksByEvent } = useMutation({
-    mutationFn: taskService.getEventTasks,
+    mutationFn: taskService.getEventTasks(api),
     mutationKey: ["getEventTasks"],
     onSuccess: (res) => {
       setFilteredTasks(res);
@@ -170,7 +174,7 @@ function TaskListPage() {
                 </Button>
               </form>
             </div>
-            <TaskTable tasks={filteredTasks} />
+            <TaskTable tasks={filteredTasks} api={api} />
           </Content>
         }
     />

@@ -1,5 +1,5 @@
 import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import styles from './index.module.css'
 
@@ -12,6 +12,7 @@ import Button from "@widgets/main/Button";
 import { privilegeToText, dropdownOptionToText, dropdownOptions } from "./common";
 import { RoleModel, RoleModelType } from "@entities/role";
 import { api } from "@shared/api";
+import ApiContext from "@features/api-context";
 
 // privileges are ignored
 type CreateProps = {
@@ -19,6 +20,7 @@ type CreateProps = {
 }
 
 const CreateDialogContent = (props: CreateProps) => {
+  const { api } = useContext(ApiContext);
   const [name, setName] = useState("")
   const [description, setDescription] = useState("");
   const [type, setType] = useState(RoleModelType.SYSTEM);

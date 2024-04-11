@@ -11,16 +11,16 @@ import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
 import Input from "@widgets/main/Input";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef, useCallback, memo } from "react";
+import { useEffect, useState, useRef, useCallback, memo, useContext } from "react";
 import { getImageUrl } from "@shared/lib/image.ts"
 import { ReactLogo } from "@shared/ui/icons";
-import { api } from "@shared/api";
 import Fade from '@widgets/main/Fade';
 import EventCreationPage from '../EventCreation';
 import Dialog from '@widgets/main/Dialog';
 import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ApiContext from '@features/api-context';
 
 const _displayModes: DropdownOption[] = [
   new DropdownOption("Показать списком"),
@@ -86,9 +86,10 @@ function getKeyByValue<T extends string>(enumObj: Record<string, T>, value: T): 
 const formatDate = (date) => {
   const selectedDate = new Date(date)
   return selectedDate.getFullYear() + "-"+ selectedDate.getMonth() +"-"+ selectedDate.getDate();
-}; 
+};
 
 function AvailableEventsPage() {
+  const {api} = useContext(ApiContext);
   const [events,setEvents] = useState([])
   const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
@@ -97,7 +98,7 @@ function AvailableEventsPage() {
   const getEventList = async () => {
     try {
       //todo: url, fix page logic
-      //registrationStartDate, registrationEndDate, eventAge not existed in swagger api api/events. page and size conflicted between local and api 
+      //registrationStartDate, registrationEndDate, eventAge not existed in swagger api api/events. page and size conflicted between local and api
       const url = buildApiUrl('http://localhost:9000/events',filters);
       const response = await api.event.getAllOrFilteredEvents();
         if (response.status === 200) {
@@ -258,7 +259,7 @@ function AvailableEventsPage() {
               <div className={styles.filter_group}>
                 <DatePicker
                   placeholderText="Начало регистрации"
-                  className={styles.filter_element} 
+                  className={styles.filter_element}
                   onChange={(date)=>_handleFilterChange(formatDate(date),"registrationStartDate")}
                   selected={filters.registrationStartDate}
                   dateFormat="yyyy-MM-dd"
@@ -266,7 +267,7 @@ function AvailableEventsPage() {
                 />
                 <DatePicker
                   placeholderText="Конец регистрации"
-                  className={styles.filter_element} 
+                  className={styles.filter_element}
                   onChange={(date)=>_handleFilterChange(formatDate(date),"registrationEndDate")}
                   selected={filters.registrationEndDate}
                   dateFormat="yyyy-MM-dd"
@@ -274,7 +275,7 @@ function AvailableEventsPage() {
                 />
                 <DatePicker
                   placeholderText="Начало проведения"
-                  className={styles.filter_element} 
+                  className={styles.filter_element}
                   onChange={(date)=>_handleFilterChange(formatDate(date),"startDate")}
                   selected={filters.startDate}
                   dateFormat="yyyy-MM-dd"
@@ -282,7 +283,7 @@ function AvailableEventsPage() {
                 />
                 <DatePicker
                   placeholderText="Конец проведения"
-                  className={styles.filter_element} 
+                  className={styles.filter_element}
                   onChange={(date)=>_handleFilterChange(formatDate(date),"endDate")}
                   selected={filters.endDate}
                   dateFormat="yyyy-MM-dd"
