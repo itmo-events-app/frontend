@@ -11,10 +11,17 @@ import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
 import Input from "@widgets/main/Input";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback, memo } from "react";
 import { getImageUrl } from "@shared/lib/image.ts"
 import { ReactLogo } from "@shared/ui/icons";
 import { api } from "@shared/api";
+import Fade from '@widgets/main/Fade';
+import EventCreationPage from '../EventCreation';
+import Dialog from '@widgets/main/Dialog';
+import { appendClassName } from "@shared/util.ts";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const _displayModes: DropdownOption[] = [
   new DropdownOption("Показать списком"),
   new DropdownOption("Показать на карте")
@@ -49,13 +56,50 @@ const eventStatusList = Object.values(EventStatusList);
 const eventFormatList = Object.values(EventFormatList);
 const eventAgeList = Object.values(EventAgeList);
 
+const initialFilters = {
+  title:'',
+  startDate: '',
+  registrationStartDate:'',
+  registrationEndDate:'',
+  endDate: '',
+  status: '',
+  format: '',
+  eventAge: '',
+  // page: 1,
+  // size: 15,
+};
+
+const buildApiUrl = (baseUrl: string, filters) => {
+  let url = baseUrl;
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== '') {
+      url += url.includes('?') ? `&${key}=${encodeURIComponent(value)}` : `?${key}=${encodeURIComponent(value)}`;
+    }
+  });
+  return url;
+};
+
+function getKeyByValue<T extends string>(enumObj: Record<string, T>, value: T): keyof typeof enumObj | undefined {
+  return Object.keys(enumObj).find(key => enumObj[key as keyof typeof enumObj] === value) as keyof typeof enumObj | undefined;
+}
+
+const formatDate = (date) => {
+  const selectedDate = new Date(date)
+  return selectedDate.getFullYear() + "-"+ selectedDate.getMonth() +"-"+ selectedDate.getDate();
+}; 
+
 function AvailableEventsPage() {
   const [events,setEvents] = useState([])
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);////
+  const [filters, setFilters] = useState(initialFilters);
+  const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
 
   const getEventList = async () => {
     try {
-     const response = await api.event.getAllOrFilteredEvents();
+      //todo: url, fix page logic
+      //registrationStartDate, registrationEndDate, eventAge not existed in swagger api api/events. page and size conflicted between local and api 
+      const url = buildApiUrl('http://localhost:9000/events',filters);
+      const response = await api.event.getAllOrFilteredEvents();
         if (response.status === 200) {
           const data = response.data;
           const pagesPromises = data.map(async (e) => {
@@ -76,8 +120,6 @@ function AvailableEventsPage() {
           const pages = await Promise.all(pagesPromises);
           setEvents(pages);
           setLoading(false);
-        } else {
-          console.error('Error fetching event list:', response.statusText);
         }
     } catch (error) {
       console.error('Error fetching event list:', error);
@@ -85,37 +127,66 @@ function AvailableEventsPage() {
   };
   useEffect(() => {
     getEventList();
-  }, []);
+  }, [filters]);
 
-
-  const _onSearch = () => {
-    console.log('searching')
+    //dialog
+  class DialogData {
+    heading: string | undefined;
+    visible: DialogSelected;
+    args: any;
+    constructor(
+      heading?: string,
+      visible: DialogSelected = DialogSelected.NONE,
+      args: any = {}
+    ) {
+      this.heading = heading;
+      this.visible = visible;
+      this.args = args;
+    }
+  }
+  const [dialogData, setDialogData] = useState(new DialogData());
+  const [roles, setRoles] = useState([] as RoleElement[]);
+  const dialogRef = useRef(null);
+  enum DialogSelected {
+    NONE,
+    CREATEEVENT = 1,
   }
 
-  const _onCreation = () => {
-    console.log('creating')
+  const _Dialog = () => {
+    let component = <></>
+    switch (dialogData.visible) {
+      case DialogSelected.CREATEEVENT:
+        component = <EventCreationPage contentOnly={true}
+          {...dialogData.args}
+        />;
+        break;
+    }
+    return (
+      <Dialog
+        className={appendClassName(styles.dialog,
+          (dialogData.visible ? styles.visible : styles.hidden))}
+        text={dialogData.heading}
+        ref={dialogRef}
+        onClose={_closeDialog}
+      >
+        {component}
+      </Dialog>
+    )
+  }
+
+  const _closeDialog = () => {
+    setDialogData(new DialogData());
+  }
+  //
+
+  const _onCreationPopUp = (e: MouseEvent) => {
+    setDialogData(new DialogData('Создание мероприятия', DialogSelected.CREATEEVENT));
+    e.stopPropagation();
   }
   const navigate = useNavigate();
   const _event = (id:number) => {
     navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID,id.toString()));
   }
-  const _events: any[] = [
-    new PageEntry(() => {
-      return _entryStub(1);
-    }),
-    new PageEntry(() => {
-      return _entryStub(2);
-    }),
-    new PageEntry(() => {
-      return _entryStub(3);
-    }),
-    new PageEntry(() => {
-      return _entryStub(4);
-    }),
-    new PageEntry(() => {
-      return _entryStub(5);
-    }),
-  ];
 
   function _entryStub(index: number, place: string, title: string) {
     const [imageUrl, setImageUrl] = useState('');
@@ -147,10 +218,16 @@ function AvailableEventsPage() {
     );
   }
 
-  const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
-  const [eventStatus, setEventStatus] = useState("");
-  const [eventFormat, setEventFormat] = useState("");
-  const [eventAge, setEventAge] = useState("");
+
+  //filters
+  const _handleFilterChange = (value, name) => {
+    console.log(value)
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
 
   return (
     <Layout
@@ -163,7 +240,7 @@ function AvailableEventsPage() {
           <div className={styles.events_page}>
             <div className={styles.horizontal_bar}>
               <div className={styles.search}>
-                <Search onSearch={_onSearch} placeholder="Поиск" />
+                <Search onSearch={(value)=>_handleFilterChange(value,"title")} placeholder="Поиск" />
               </div>
               <div className={styles.dropdown}>
                 <Dropdown
@@ -174,42 +251,70 @@ function AvailableEventsPage() {
                   toText={(input: string) => {return input}} />
               </div>
               <div className={styles.button}>
-                <Button onClick={_onCreation}>Создать</Button>
+                <Button onClick={_onCreationPopUp}>Создать</Button>
               </div>
             </div>
             <div className={styles.filters}>
               <div className={styles.filter_group}>
-                <Input value="" onChange={() => {}} className={styles.filter_element} placeholder="Начало регистрации" />
-                <Input value="" onChange={() => {}} className={styles.filter_element} placeholder="Конец регистрации" />
-                <Input value="" onChange={() => {}} className={styles.filter_element} placeholder="Начало проведения" />
-                <Input value="" onChange={() => {}} className={styles.filter_element} placeholder="Конец проведения" />
+                <DatePicker
+                  placeholderText="Начало регистрации"
+                  className={styles.filter_element} 
+                  onChange={(date)=>_handleFilterChange(formatDate(date),"registrationStartDate")}
+                  selected={filters.registrationStartDate}
+                  dateFormat="yyyy-MM-dd"
+                  popperPlacement="top-start"
+                />
+                <DatePicker
+                  placeholderText="Конец регистрации"
+                  className={styles.filter_element} 
+                  onChange={(date)=>_handleFilterChange(formatDate(date),"registrationEndDate")}
+                  selected={filters.registrationEndDate}
+                  dateFormat="yyyy-MM-dd"
+                  popperPlacement="top-start"
+                />
+                <DatePicker
+                  placeholderText="Начало проведения"
+                  className={styles.filter_element} 
+                  onChange={(date)=>_handleFilterChange(formatDate(date),"startDate")}
+                  selected={filters.startDate}
+                  dateFormat="yyyy-MM-dd"
+                  popperPlacement="top-start"
+                />
+                <DatePicker
+                  placeholderText="Конец проведения"
+                  className={styles.filter_element} 
+                  onChange={(date)=>_handleFilterChange(formatDate(date),"endDate")}
+                  selected={filters.endDate}
+                  dateFormat="yyyy-MM-dd"
+                  popperPlacement="top-start"
+                />
               </div>
               <div className={styles.filter_group}>
                 <div className={styles.dropdown}>
                   <Dropdown
                     placeholder="Статус"
                     items={eventStatusList}
-                    value={eventStatus}
-                    onChange={(status) => {setEventStatus(status)}}
-                    onClear={() => {setEventStatus("")}}
+                    value={EventStatusList[filters.status as keyof typeof EventStatusList]}
+                    onChange={(status) => _handleFilterChange(getKeyByValue(EventStatusList,status),"status")}
+                    onClear={() => _handleFilterChange("","status")}
                     toText={(input: string) => {return input}} />
                 </div>
                 <div className={styles.dropdown}>
                   <Dropdown
                     placeholder="Формат"
                     items={eventFormatList}
-                    value={eventFormat}
-                    onChange={(format) => {setEventFormat(format)}}
-                    onClear={() => {setEventFormat("")}}
+                    value={EventFormatList[filters.format as keyof typeof EventFormatList]}
+                    onChange={(format) => _handleFilterChange(getKeyByValue(EventFormatList,format),"format")}
+                    onClear={() => _handleFilterChange("","format")}
                     toText={(input: string) => {return input}} />
                 </div>
                 <div className={styles.dropdown}>
                   <Dropdown
                     placeholder="Возрастное ограничение"
                     items={eventAgeList}
-                    value={eventAge}
-                    onChange={(age) => {setEventAge(age)}}
-                    onClear={() => {setEventAge("")}}
+                    value={EventAgeList[filters.eventAge as keyof typeof EventAgeList]}
+                    onChange={(age) => _handleFilterChange(getKeyByValue(EventAgeList,age),"eventAge")}
+                    onClear={() => _handleFilterChange("","eventAge")}
                     toText={(input: string) => {return input}} />
                 </div>
               </div>
@@ -222,6 +327,11 @@ function AvailableEventsPage() {
               )}
             </div>
           </div>
+          <Fade
+              className={appendClassName(styles.fade,
+                (dialogData.visible) ? styles.visible : styles.hidden)}>
+              <_Dialog />
+          </Fade>
         </Content>
       }
     />
