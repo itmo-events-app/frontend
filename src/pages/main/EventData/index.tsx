@@ -272,16 +272,18 @@ function EventActivitiesPage() {
   }, []);
 
 
-  const [eventPrivileges, setEventPrivileges] = useState([] as PrivilegeData[]);
+  const [eventPrivileges, setEventPrivileges] = useState([] as PrivilegeNames[]);
 
   useEffect(() => {
     api.withReauth(() => api.profile.getUserEventPrivileges(EVENT_ID))
       .then((response) => {
-        const list: PrivilegeData[] = response.data
-        .filter((response): response is PrivilegeResponse => Boolean(response))
-        .map(privilege => {
-          return PrivilegeResponseNameEnum[privilege.name];
-        });
+        const list = [];
+
+        for (const res of response.data) {
+          if (res != undefined && res.name != undefined) {
+            list.push(PrivilegeNames[res.name]);
+          }
+        }
 
         setEventPrivileges(list);
       })
@@ -290,19 +292,9 @@ function EventActivitiesPage() {
       })
   }, []);
 
-  console.log(eventPrivileges);
-
-  const activitiesVisible: boolean = hasAnyPrivilege(new Set(eventPrivileges), new Set([
-    new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)
-  ]));
-
-  const orgsVisible: boolean = hasAnyPrivilege(new Set(eventPrivileges), new Set([
-    new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)
-  ]));
-
-  const tasksVisible: boolean = hasAnyPrivilege(new Set(eventPrivileges), new Set([
-    new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)
-  ]));
+  const activitiesVisible: boolean = PrivilegeNames.VIEW_EVENT_ACTIVITIES in eventPrivileges;
+  const orgsVisible: boolean = PrivilegeNames.VIEW_ORGANIZER_USERS in eventPrivileges;
+  const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in eventPrivileges;
 
   const pageTabs: PageTab[] = []
 
