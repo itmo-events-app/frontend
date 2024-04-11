@@ -500,6 +500,9 @@ function EventActivitiesPage() {
              <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
            </div>
          ) : (<></>)}
+        <div className={styles.button_container}>
+          <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
+        </div>
         {activitiesLoaded?(
           <div className={styles.data_list}>
             {items}
