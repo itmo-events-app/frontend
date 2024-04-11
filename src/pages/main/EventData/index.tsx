@@ -22,6 +22,7 @@ import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
+import { PrivilegeResponseNameEnum } from "@shared/api/generated";
 
 class EventInfo {
   regDates: string
@@ -204,21 +205,24 @@ function getTimeOnly(dateTimeString) {
   return timeOnly;
 }
 
-const full_url: string = window.location.href;
-const url_parts: string[] = full_url.split('/');
+const url_parts: string[] = window.location.href.split('/');
+const url_tail: string = url_parts[url_parts.length - 1];
 
-const EVENT_ID: number = +(url_parts[url_parts.length - 1].split('#')[0]);
+const EVENT_ID: number = (url_tail[url_tail.length - 1] == '#') ? +url_tail.split('#')[0] : +url_tail;
 
 function EventActivitiesPage() {
+
   const {api} = useContext(ApiContext);
+
   const { id } = useParams();
-  const [event,setEvent] = useState(null)
+  const [event, setEvent] = useState(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState("");
+
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const eventResponse = await api.event.getEventById(parseInt(id));
+        const eventResponse = await api.event.getEventById(parseInt(id ?? "0"));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = ""
@@ -267,17 +271,33 @@ function EventActivitiesPage() {
     setLoadingEvent(false);
   }, []);
 
-  const { privilegeContext } = useContext(PrivilegeContext);
 
-  const activitiesVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
+  const [eventPrivileges, setEventPrivileges] = useState([] as PrivilegeData[]);
+
+  useEffect(() => {
+    api.withReauth(() => api.profile.getUserEventPrivileges(EVENT_ID))
+      .then((response) => {
+        const list: (PrivilegeResponseNameEnum | undefined)[] = response.data.map(privilege => {
+          return privilege.name;
+        });
+        setEventPrivileges(list);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      })
+  }, []);
+
+  console.log(eventPrivileges);
+
+  const activitiesVisible: boolean = hasAnyPrivilege(new Set(eventPrivileges), new Set([
     new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)
   ]));
 
-  const orgsVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
+  const orgsVisible: boolean = hasAnyPrivilege(new Set(eventPrivileges), new Set([
     new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)
   ]));
 
-  const tasksVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
+  const tasksVisible: boolean = hasAnyPrivilege(new Set(eventPrivileges) new Set([
     new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)
   ]));
 
