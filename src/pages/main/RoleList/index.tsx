@@ -176,8 +176,8 @@ function RoleListPage() {
 
     const filteredItems = contextItems.filter(item => {
       switch (item.text) {
-        case 'Редактировать': return hasAnyPrivilege(mine, privilegeOthers.edit)
-        case 'Удалить': return hasAnyPrivilege(mine, privilegeOthers.delete)
+        case 'Редактировать': return hasAnyPrivilege(mine, privilegeOthers.edit) && role.isEditable
+        case 'Удалить': return hasAnyPrivilege(mine, privilegeOthers.delete) && role.isEditable
       }
     })
 
@@ -211,7 +211,8 @@ function RoleListPage() {
   const _createRoleFromModel = (role: RoleModel) => {
     const request = fromRoleModel(role);
     api.withReauth(() => api.role.createRole(request))
-      .then(_ => {
+      .then(res => {
+        const role = toRoleModel(res.data);
         const prevRoles = roleElementListGetElements(roles);
         setRoles(createRoleElementList([...prevRoles, role]));
         setDialogData(new DialogData());
@@ -221,12 +222,13 @@ function RoleListPage() {
   const _updateRoleFromModel = (prev: RoleModel, cur: RoleModel) => {
     const request = fromRoleModel(cur);
     api.withReauth(() => api.role.editRole(prev.id, request))
-      .then(_ => {
+      .then(res => {
+        const role = toRoleModel(res.data);
         const prevRoles = roleElementListGetElements(roles);
 
         setRoles(createRoleElementList(prevRoles.map(p => {
           if (p.id == prev.id) {
-            return cur;
+            return role;
           }
           return p;
         })));

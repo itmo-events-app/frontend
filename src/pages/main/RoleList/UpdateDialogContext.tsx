@@ -1,5 +1,5 @@
 import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
-import { RoleModel, RoleModelType } from "@entities/role";
+import { RoleModel, RoleModelType, fromRoleModelType } from "@entities/role";
 import Button from "@widgets/main/Button";
 import Dropdown from "@widgets/main/Dropdown";
 import Input from "@widgets/main/Input";
@@ -34,8 +34,10 @@ const UpdateDialogContent = (props: UpdateProps) => {
       return;
     }
 
+    const queryType = fromRoleModelType(type);
+
     if (type == RoleModelType.SYSTEM) {
-      api.withReauth(() => api.role.getSystemPrivileges())
+      api.withReauth(() => api.role.getAllPrivileges(queryType))
         .then((r) => {
           const privs = r.data.map(p => toPrivilegeModel(p));
           setPrivileges(createItemSelectionList(privs, _isItemSelected));
@@ -43,7 +45,7 @@ const UpdateDialogContent = (props: UpdateProps) => {
     }
 
     if (type == RoleModelType.EVENT) {
-      api.withReauth(() => api.role.getOrganizationalPrivileges())
+      api.withReauth(() => api.role.getAllPrivileges(queryType))
         .then((r) => {
           const privs = r.data.map(p => toPrivilegeModel(p));
           setPrivileges(createItemSelectionList(privs, _isItemSelected));

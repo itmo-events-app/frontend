@@ -10,8 +10,7 @@ import Dropdown from "@widgets/main/Dropdown";
 import InputCheckboxList, { ItemSelection, createItemSelectionList, itemSelectionGetSelected } from "@widgets/main/InputCheckboxList";
 import Button from "@widgets/main/Button";
 import { privilegeToText, dropdownOptionToText, dropdownOptions } from "./common";
-import { RoleModel, RoleModelType } from "@entities/role";
-import { api } from "@shared/api";
+import { RoleModel, RoleModelType, fromRoleModelType } from "@entities/role";
 import ApiContext from "@features/api-context";
 
 // privileges are ignored
@@ -34,8 +33,10 @@ const CreateDialogContent = (props: CreateProps) => {
       return;
     }
 
+    const queryType = fromRoleModelType(type);
+
     if (type == RoleModelType.SYSTEM) {
-      api.withReauth(() => api.role.getSystemPrivileges())
+      api.withReauth(() => api.role.getAllPrivileges(queryType))
         .then((r) => {
           const privs = r.data.map(p => toPrivilegeModel(p));
           setPrivileges(createItemSelectionList(privs));
@@ -43,7 +44,7 @@ const CreateDialogContent = (props: CreateProps) => {
     }
 
     if (type == RoleModelType.EVENT) {
-      api.withReauth(() => api.role.getOrganizationalPrivileges())
+      api.withReauth(() => api.role.getAllPrivileges(queryType))
         .then((r) => {
           const privs = r.data.map(p => toPrivilegeModel(p));
           setPrivileges(createItemSelectionList(privs));
