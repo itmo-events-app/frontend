@@ -19,7 +19,7 @@ const PASSWORD_MIN_LENGTH = 8;
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { api, setToken } = useContext(ApiContext);
+  const { api, setToken, resetToken } = useContext(ApiContext);
 
   const [isError, setIsError] = useState(false);
   const [errorText, setErrorText] = useState('');
@@ -31,6 +31,14 @@ function LoginPage() {
   const [passwordValue, setPasswordValue] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorText, setPasswordErrorText] = useState('');
+
+  // TODO: can remove when backend stops throwing 500 if token in header
+  useEffect(() => {
+    if (api.isLoggedIn()) {
+      resetToken();
+      console.log('token is resetted');
+    }
+  })
 
   const _forgotPassword = () => {
     navigate(RoutePaths.restore);
