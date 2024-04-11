@@ -19,6 +19,7 @@ import PrivilegeContext from "@features/privilege-context.ts";
 import { PrivilegeData } from "@entities/privilege-context.ts";
 import ApiContext from "@features/api-context";
 import { Api } from "@entities/api";
+import { useNavigate } from "react-router-dom";
 
 type TaskTableProps = {
   tasks: TaskResponse[];
@@ -47,11 +48,17 @@ const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
     new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
   ]));
 
-  // для автоматического обновления статуса в бд
+  // для автоматического обновления статуса задачи в бд
   const { mutate: updateTaskStatus } = useMutation({
     mutationFn: taskService.updateTaskStatus(api),
     mutationKey: ["updateTaskStatus"],
   });
+
+  const navigate = useNavigate();
+  const redirectToEvent = (id: number) => {
+    const path = `/events/${id}`;
+    navigate(path);
+  };
 
   return (
     <div className={styles.content}>
@@ -69,7 +76,7 @@ const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
         </thead>
         <tbody>
         {tasks.map(task => (
-          <tr key={task.id}>
+          <tr onClick={() => redirectToEvent(task.event!.eventId!)} key={task.id}>
             <td>{task.title}</td>
             <td>{task.description}</td>
             <td>
@@ -78,8 +85,8 @@ const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
             </td>
             <td>{task.assignee?.name + " " + task.assignee?.surname}
             </td>
-            <td>{task.event?.eventTitle}</td>
-            <td>{task.event?.activityTitle ? task.event.activityTitle : "-"}</td>
+            <td>{task.event!.eventTitle}</td>
+            <td>{task.event!.activityTitle ? task.event!.activityTitle : "-"}</td>
             <td className={styles.dropdown}>
               {canChangeTaskStatus ?
                 (<Dropdown placeholder={statusTranslation[task.taskStatus!]}
@@ -102,9 +109,8 @@ const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
 
 
 function TaskListPage() {
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
 
-  //todo: можно оптимизировать
   const { data: tasks = [] } = useQuery({
     queryFn: taskService.getTasks(api),
     queryKey: ["getTasks"],
@@ -126,7 +132,6 @@ function TaskListPage() {
   const [selectedEvent, setSelectedEvent] = useState<DropdownOption<string> | undefined>();
   const [filteredTasks, setFilteredTasks] = useState<TaskResponse[]>(tasks);
 
-  // use effect
   useEffect(() => {
     setFilteredTasks(tasks);
   }, [tasks]);
