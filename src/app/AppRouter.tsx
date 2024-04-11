@@ -21,6 +21,7 @@ import { AppRouteProps } from "@features/app-route-props";
 import { anyPrivilege } from "@features/privileges";
 import { PrivilegeData } from "@entities/privilege-context";
 import { PrivilegeNames } from "@shared/config/privileges";
+import PlaceDataPage from "@pages/main/PlaceData";
 
 // root urls with privileges
 const routes: Record<AppRoutes, AppRouteProps> = {
@@ -70,6 +71,10 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   },
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
+    authenticated: true
+  },
+  [AppRoutes.PLACE_DATA]: {
+    path: RoutePaths.placeData,
     authenticated: true
   },
   [AppRoutes.ROLE_LIST]: {
@@ -139,7 +144,10 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <TaskListPage />,
   },
   [AppRoutes.PLACE_LIST]: {
-    element: <>Place list</>,
+    element: <AvailablePlacesPage />,
+  },
+  [AppRoutes.PLACE_DATA]: {
+    element: <PlaceDataPage />,
   },
   [AppRoutes.ROLE_LIST]: {
     element: <RoleListPage />,
