@@ -31,6 +31,10 @@
 .filter_element {
   min-width: 197px;
   width: 197px;
+  border: 1px solid var(--itmo-colors-black);
+  border-radius: 10px;
+  padding: 10px 10px;
+  font-size: 16px;
 }
 
 .dropdown {
@@ -80,4 +84,30 @@
 
 .event_place {
   color: var(--itmo-colors-dark-gray);
+}
+/* dialog */
+.fade {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  padding-top: 30px;
+}
+.visible {
+  visibility: visible;
+}
+
+.hidden {
+  visibility: hidden;
+}
+.dialog {
+  margin-left: auto;
+  margin-right: auto;
+  max-height: calc(100% - 60px);
+  width: auto;
+  max-width: 960px;
+}
+/* header */
+.dialog > :first-child {
+  z-index: 10;
 }

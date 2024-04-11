@@ -43,7 +43,7 @@ export interface ParticipantResponse {
      * @type {string}
      * @memberof ParticipantResponse
      */
-    'additionalInf0'?: string;
+    'additionalInfo'?: string;
     /**
      * 
      * @type {boolean}

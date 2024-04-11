@@ -22,9 +22,13 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import { NotificationSettingsRequest } from '../model';
+// @ts-ignore
 import { PrivilegeResponse } from '../model';
 // @ts-ignore
-import { UserChangeEmailRequest } from '../model';
+import { ProfileResponse } from '../model';
+// @ts-ignore
+import { UserChangeLoginRequest } from '../model';
 // @ts-ignore
 import { UserChangeNameRequest } from '../model';
 // @ts-ignore
@@ -37,15 +41,15 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
     return {
         /**
          * 
-         * @summary Смена email пользователя
-         * @param {UserChangeEmailRequest} userChangeEmailRequest 
+         * @summary Смена логина пользователя
+         * @param {UserChangeLoginRequest} userChangeLoginRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        changeEmail: async (userChangeEmailRequest: UserChangeEmailRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userChangeEmailRequest' is not null or undefined
-            assertParamExists('changeEmail', 'userChangeEmailRequest', userChangeEmailRequest)
-            const localVarPath = `/api/profile/change-email`;
+        changeLogin: async (userChangeLoginRequest: UserChangeLoginRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'userChangeLoginRequest' is not null or undefined
+            assertParamExists('changeLogin', 'userChangeLoginRequest', userChangeLoginRequest)
+            const localVarPath = `/api/profile/login`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -57,6 +61,10 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -64,7 +72,7 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(userChangeEmailRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(userChangeLoginRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -81,7 +89,7 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
         changeName: async (userChangeNameRequest: UserChangeNameRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userChangeNameRequest' is not null or undefined
             assertParamExists('changeName', 'userChangeNameRequest', userChangeNameRequest)
-            const localVarPath = `/api/profile/change-name`;
+            const localVarPath = `/api/profile/name`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -92,6 +100,10 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -117,7 +129,7 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
         changePassword: async (userChangePasswordRequest: UserChangePasswordRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userChangePasswordRequest' is not null or undefined
             assertParamExists('changePassword', 'userChangePasswordRequest', userChangePasswordRequest)
-            const localVarPath = `/api/profile/change-password`;
+            const localVarPath = `/api/profile/password`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -128,6 +140,10 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -166,6 +182,44 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получение информации о текущем пользователе
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserInfo: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/profile/me`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -196,11 +250,55 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Обновление настроек уведомлений
+         * @param {NotificationSettingsRequest} notificationSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateNotifications: async (notificationSettingsRequest: NotificationSettingsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'notificationSettingsRequest' is not null or undefined
+            assertParamExists('updateNotifications', 'notificationSettingsRequest', notificationSettingsRequest)
+            const localVarPath = `/api/profile/notifications`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(notificationSettingsRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -219,15 +317,15 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Смена email пользователя
-         * @param {UserChangeEmailRequest} userChangeEmailRequest 
+         * @summary Смена логина пользователя
+         * @param {UserChangeLoginRequest} userChangeLoginRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async changeEmail(userChangeEmailRequest: UserChangeEmailRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.changeEmail(userChangeEmailRequest, options);
+        async changeLogin(userChangeLoginRequest: UserChangeLoginRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.changeLogin(userChangeLoginRequest, options);
             const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['ProfileControllerApi.changeEmail']?.[index]?.url;
+            const operationBasePath = operationServerMap['ProfileControllerApi.changeLogin']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -271,6 +369,18 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Получение информации о текущем пользователе
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getUserInfo(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProfileResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUserInfo(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ProfileControllerApi.getUserInfo']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Получение списка системных привилегий пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -279,6 +389,19 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUserSystemPrivileges(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProfileControllerApi.getUserSystemPrivileges']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Обновление настроек уведомлений
+         * @param {NotificationSettingsRequest} notificationSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateNotifications(notificationSettingsRequest: NotificationSettingsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateNotifications(notificationSettingsRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ProfileControllerApi.updateNotifications']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -293,13 +416,13 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
     return {
         /**
          * 
-         * @summary Смена email пользователя
-         * @param {UserChangeEmailRequest} userChangeEmailRequest 
+         * @summary Смена логина пользователя
+         * @param {UserChangeLoginRequest} userChangeLoginRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        changeEmail(userChangeEmailRequest: UserChangeEmailRequest, options?: any): AxiosPromise<void> {
-            return localVarFp.changeEmail(userChangeEmailRequest, options).then((request) => request(axios, basePath));
+        changeLogin(userChangeLoginRequest: UserChangeLoginRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.changeLogin(userChangeLoginRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -333,12 +456,31 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Получение информации о текущем пользователе
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserInfo(options?: any): AxiosPromise<ProfileResponse> {
+            return localVarFp.getUserInfo(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Получение списка системных привилегий пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getUserSystemPrivileges(options?: any): AxiosPromise<Array<PrivilegeResponse>> {
             return localVarFp.getUserSystemPrivileges(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Обновление настроек уведомлений
+         * @param {NotificationSettingsRequest} notificationSettingsRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateNotifications(notificationSettingsRequest: NotificationSettingsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.updateNotifications(notificationSettingsRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -352,14 +494,14 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
 export class ProfileControllerApi extends BaseAPI {
     /**
      * 
-     * @summary Смена email пользователя
-     * @param {UserChangeEmailRequest} userChangeEmailRequest 
+     * @summary Смена логина пользователя
+     * @param {UserChangeLoginRequest} userChangeLoginRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProfileControllerApi
      */
-    public changeEmail(userChangeEmailRequest: UserChangeEmailRequest, options?: AxiosRequestConfig) {
-        return ProfileControllerApiFp(this.configuration).changeEmail(userChangeEmailRequest, options).then((request) => request(this.axios, this.basePath));
+    public changeLogin(userChangeLoginRequest: UserChangeLoginRequest, options?: AxiosRequestConfig) {
+        return ProfileControllerApiFp(this.configuration).changeLogin(userChangeLoginRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -400,6 +542,17 @@ export class ProfileControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Получение информации о текущем пользователе
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProfileControllerApi
+     */
+    public getUserInfo(options?: AxiosRequestConfig) {
+        return ProfileControllerApiFp(this.configuration).getUserInfo(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Получение списка системных привилегий пользователя
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -407,6 +560,18 @@ export class ProfileControllerApi extends BaseAPI {
      */
     public getUserSystemPrivileges(options?: AxiosRequestConfig) {
         return ProfileControllerApiFp(this.configuration).getUserSystemPrivileges(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Обновление настроек уведомлений
+     * @param {NotificationSettingsRequest} notificationSettingsRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProfileControllerApi
+     */
+    public updateNotifications(notificationSettingsRequest: NotificationSettingsRequest, options?: AxiosRequestConfig) {
+        return ProfileControllerApiFp(this.configuration).updateNotifications(notificationSettingsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
