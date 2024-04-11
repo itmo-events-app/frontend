@@ -135,7 +135,7 @@ function TaskListPage() {
     if (tasks.at(0) !== undefined) {
       if (selectedEvent !== undefined) {
         getFilteredTasksByEvent({
-          id: Number(selectedEvent.value.split(" ")[1]),
+          id: Number(selectedEvent.id),
           userId: Number(tasks.at(0)!.assignee!.id),
         });
       } else {
@@ -159,7 +159,7 @@ function TaskListPage() {
                 <div className={styles.dropdown}>
                   <Dropdown value={selectedEvent} placeholder="Мероприятие"
                             items={filterEvents}
-                            toText={(item) => item.value.split(" ")[0]}
+                            toText={(item) => item.value}
                             onChange={setSelectedEvent}
                             onClear={() => {
                               setSelectedEvent(undefined);

@@ -9,8 +9,9 @@ class DropdownOption<T> {
 
   constructor(
     text: T,
+    id?: string
   ) {
-    this.id = uid();
+    this.id = id !== undefined ? id : uid();
     this.value = text;
   }
 }
