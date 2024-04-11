@@ -21,6 +21,8 @@ const PrivilegeContextProvider = (props: Props) => {
           const list = r.data.map(p => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames]));
           setPrivilegeContext(new PrivilegeContextData(new Set(list)));
         });
+    } else {
+      setPrivilegeContext(new PrivilegeContextData())
     }
   }, [api]);
 

@@ -1,6 +1,7 @@
 // Перечисление роутов
 export enum AppRoutes {
   ROOT = "root",
+  HOME = "home",
   REGISTER = "register",
   LOGIN = "login",
   RESTORE = "restore",
@@ -30,6 +31,7 @@ export enum RouteParams {
 export const RoutePaths: Record<AppRoutes, string> = {
   // Будем отрисовывать в зависимости от параметра.
   [AppRoutes.ROOT]: "/",
+  [AppRoutes.HOME]: "/home",
   [AppRoutes.REGISTER]: "/register",
   [AppRoutes.LOGIN]: "/login",
   [AppRoutes.RESTORE]: "/restore",
