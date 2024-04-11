@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import styles from './index.module.css';
 import BrandLogo from "@widgets/main/BrandLogo";
 import PageName from "@widgets/main/PageName";
@@ -10,19 +10,31 @@ import Layout from "@widgets/main/Layout";
 import { uid } from "uid";
 import Button from "@widgets/main/Button";
 import { appendClassName } from "@shared/util.ts";
-import { ArrowDown } from "@shared/ui/icons";
 import Search from "@widgets/main/Search";
 import Dialog from "@widgets/main/Dialog";
 import AssignDialogContent from "@pages/main/UserList/AssignDialogContent";
 import Fade from "@widgets/main/Fade";
+import {createRoleElementList, roleElementListGetElements} from "@widgets/main/RoleList";
+import {fromRoleModel, RoleModel, toRoleModel} from "@entities/role";
+import ApiContext from "@features/api-context";
+import {toUserModel, UserModel} from "@entities/user";
+import {PrivilegeData} from "@entities/privilege-context";
+import {PrivilegeNames} from "@shared/config/privileges";
+import {ContextMenuItem} from "@widgets/main/ContextMenu";
+
+enum DialogSelected {
+  NONE,
+  UPDATE,
+  DELETE
+}
 
 class DialogData {
   heading: string | undefined;
-  visible: boolean;
+  visible: DialogSelected;
   args: any;
   constructor(
     heading?: string,
-    visible: boolean = false,
+    visible: DialogSelected = DialogSelected.NONE,
     args: any = {}
   ) {
     this.heading = heading;
@@ -31,113 +43,68 @@ class DialogData {
   }
 }
 
-export class UserRole {
-  name: string;
-  description: string;
 
-  constructor(name: string, description: string) {
-    this.name = name;
-    this.description = description;
-  }
-}
+const privilegeOthers = {
+  create: new Set([
+    new PrivilegeData(PrivilegeNames.CREATE_ROLE)
+  ]),
+  edit: new Set([
+    new PrivilegeData(PrivilegeNames.EDIT_ROLE)
+  ]),
+  delete: new Set([
+    new PrivilegeData(PrivilegeNames.DELETE_ROLE)
+  ]),
 
-class User {
-  id: string;
-  name: string;
-  surname: string;
-  email: string;
-  roleName: string;
-
-  constructor(name: string, surname: string, email: string, roleName: string) {
-    this.id = uid();
-    this.name = name;
-    this.surname = surname;
-    this.email = email;
-    this.roleName = roleName;
-  }
-}
-
-const _userRoles: UserRole[] = [
-  new UserRole("ADMIN", "администратор"),
-  new UserRole("READER", "читатель"),
-  new UserRole("REDACTOR", "редактор"),
-]
-
-const _users: User[] = [
-  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", "читатель"),
-  new User("Илья", "Ильин", "ilya@itmo.ru", "читатель"),
-  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", "читатель"),
-  new User("Илья", "Ильин", "ilya@itmo.ru", "читатель"),
-  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
-  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", "читатель"),
-  new User("Илья", "Ильин", "ilya@itmo.ru", "читатель"),
-  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", "читатель"),
-  new User("Илья", "Ильин", "ilya@itmo.ru", "читатель"),
-  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
-];
-
-class UserEntry {
-  data: User;
-  expanded: boolean;
-
-  constructor(data: User, expanded: boolean) {
-    this.data = data;
-    this.expanded = expanded;
-  }
 }
 
 export default function UserListPage() {
-  const [users, setUsers] = useState(_users);
+  const { api } = useContext(ApiContext);
+  const [users, setUsers] = useState([] as UserModel[]);
+
   const [dialogData, setDialogData] = useState(new DialogData());
-  const [userEntries, setUserEntries] = useState(
-    users.map(u => new UserEntry(u, false))
-  );
 
+
+  // fill users on startup
   useEffect(() => {
-    setUserEntries(users.map(u => new UserEntry(u, false)));
-  }, [users]);
+    api.withReauth(() => api.profile.getAllUsers())
+      .then(r => {
+        const l = r.data.map(user => toUserModel(user))
+        setUsers(l);
+      })
+  }, [])
 
-  const _renderedUserEntries: any[] = userEntries.map(u => {
+  const _renderedUserEntries: any[] = users.map(u => {
     return new PageEntry(() => { return _renderUserEntry(u) });
   });
 
-  function _renderUserEntry(ue: UserEntry) {
+  function _renderUserEntry(ue: UserModel) {
     return (
       <div key={uid()} className={styles.user}>
         <div className={styles.user_entry}>
           <div className={styles.user_left}>
             <div className={styles.user_heading}>
               <div className={styles.user_name}>
-                {ue.data.name} {ue.data.surname}
+                {ue.name} {ue.surname}
               </div>
               <div className={styles.user_role}>
-                {ue.data.roleName}
+                {ue.role}
               </div>
             </div>
-            <div className={styles.user_email}>
-              {ue.data.email}
+            <div className={styles.user_login}>
+              {ue.loginType}: {ue.login}
             </div>
           </div>
           <div className={styles.user_right}>
-            {/*{Menu}*/}
-            {/*{Arrow}*/}
+            <div className={styles.read_button_container}>
+              <Button onClick={() => setDialogData(new DialogData('Назначение ролей',
+                                                    DialogSelected.UPDATE, { userId: ue.id }))}>
+                Назначить роль
+              </Button>
+            </div>
           </div>
         </div>
       </div>
     );
-  }
-
-  function _expandEntryClick(userEntry: UserEntry) {
-    setUserEntries(userEntries.map(ue => {
-      if (ue.data.id === userEntry.data.id) {
-        ue.expanded = !ue.expanded;
-      }
-      return ue;
-    }));
   }
 
   const _onSearch = () => {
@@ -148,11 +115,23 @@ export default function UserListPage() {
     setDialogData(new DialogData());
   }
 
+  const _assignRoleToUser = (userId: number, roleId: number) => {
+    //todo show error on null
+    alert(userId + " " + roleId)
+    if (roleId == null) return;
+    alert("here")
+    api.withReauth(() => api.role.assignSystemRole(userId, roleId))
+      .then(_ => {
+        // const prevRoles = roleElementListGetElements(roles);
+        // setRoles(createRoleElementList([...prevRoles, role]));
+        setDialogData(new DialogData());
+      })
+  }
+
   const _Dialog = () => {
     let component = <></>
     component = <AssignDialogContent
-      onDone={() => console.log("assign roles")}
-      roles={_userRoles}
+      onDone={_assignRoleToUser}
       {...dialogData.args}
     />
     return (

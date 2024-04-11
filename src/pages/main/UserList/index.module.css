@@ -79,12 +79,6 @@
   visibility: hidden;
 }
 
-/*.users {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  gap: 10px;*/
-/*}*/
-
 .user {
   border: 1px solid var(--itmo-colors-border);
   border-radius: 10px;
@@ -131,6 +125,10 @@
   border-radius: 3px;
 }
 
-.user_email {
+.user_login {
   font-size: 14px;
+}
+
+.red_button {
+  background-color: var(--itmo-colors-red);
 }
