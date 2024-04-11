@@ -248,6 +248,8 @@ function EventActivitiesPage() {
 
   const { privilegeContext } = useContext(PrivilegeContext);
 
+  console.log(privilegeContext.systemPrivileges);
+
   const activitiesVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
     new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)
   ]));
@@ -268,7 +270,7 @@ function EventActivitiesPage() {
     pageTabs.push(new PageTab("Активности"));
   }
 
-  if (!orgsVisible) {
+  if (orgsVisible) {
     pageTabs.push(new PageTab("Организаторы"));
   }
 
@@ -485,9 +487,6 @@ function EventActivitiesPage() {
              <Button className={styles.button} onClick={_addActivity}>Редактировать</Button>
            </div>
          ) : (<></>)}
-        {/*<div className={styles.button_container}>*/}
-        {/*  <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>*/}
-        {/*</div>*/}
         {activitiesLoaded?(
           <div className={styles.data_list}>
             {items}
@@ -547,7 +546,7 @@ function EventActivitiesPage() {
     )
   }
 
-  function _createPersonTableUsers(persons: Person[], edit_func: any) {
+  function createParticipantsTable(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
       items.push(createPersonRow(person, false));
@@ -578,7 +577,7 @@ function EventActivitiesPage() {
   const [orgs, setOrgs] = useState([] as Person[]);
 
   useEffect(() => {
-    if (!orgsVisible) {
+    if (orgsVisible) {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
           const list = response.data.map(user => {
@@ -592,10 +591,19 @@ function EventActivitiesPage() {
     }
   }, [orgsVisible]);
 
-  const [members, setMembers] = useState([] as Person[]);
+  const [participants, setParticipants] = useState([] as Person[]);
 
   useEffect(() => {
-    // ToDo fetch members
+    // api.withReauth(() => api.event. (EVENT_ID))
+    //   .then((response) => {
+    //     const list = response.data.map(user => {
+    //       return new Person(user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
+    //     })
+    //     setOrgs(list);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.response.data);
+    //   })
   }, []);
 
   function _createTasksTable() {
@@ -633,7 +641,7 @@ function EventActivitiesPage() {
               )}
               {selectedTab == "Активности" && _createActivityList(activities)}
               {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
-              {selectedTab == "Участники" && _createPersonTableUsers(members, _editParticipants)}
+              {selectedTab == "Участники" && createParticipantsTable(participants, _editParticipants)}
               {selectedTab == "Задачи" && "ToDo: Страница задач"}
             </div>
             <Fade
