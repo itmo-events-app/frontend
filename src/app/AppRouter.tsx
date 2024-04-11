@@ -23,6 +23,88 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.REGISTER]: {
     path: RoutePaths.register,
+<<<<<<< Updated upstream
+=======
+    authenticated: false
+  },
+  [AppRoutes.LOGIN]: {
+    path: RoutePaths.login,
+    authenticated: false
+  },
+  [AppRoutes.RESTORE]: {
+    path: RoutePaths.restore,
+    authenticated: false
+  },
+  [AppRoutes.PASSWORD]: {
+    path: RoutePaths.password,
+    authenticated: false
+  },
+  [AppRoutes.NOTIFY]: {
+    path: RoutePaths.notify,
+    authenticated: false
+  },
+  [AppRoutes.EVENT_LIST]: {
+    path: RoutePaths.eventList,
+    authenticated: true
+  },
+  [AppRoutes.EVENT_CREATION]: {
+    path: RoutePaths.createEvent,
+    authenticated: true
+  },
+  [AppRoutes.EVENT_DATA]: {
+    path: RoutePaths.eventData,
+    authenticated: true
+  },
+  [AppRoutes.TASK_LIST]: {
+    path: RoutePaths.taskList,
+    authenticated: true
+  },
+  [AppRoutes.PLACE_LIST]: {
+    path: RoutePaths.placeList,
+    authenticated: true
+  },
+
+  [AppRoutes.ROLE_LIST]: {
+    path: RoutePaths.roleList,
+    authenticated: true,
+    authorized: anyPrivilege(new Set([
+      new PrivilegeData(PrivilegeNames.CREATE_ROLE),
+      new PrivilegeData(PrivilegeNames.EDIT_ROLE),
+      new PrivilegeData(PrivilegeNames.DELETE_ROLE),
+    ])),
+  },
+  [AppRoutes.USER_LIST]: {
+    path: RoutePaths.userList,
+    authenticated: true
+  },
+  [AppRoutes.NOTIFICATIONS]: {
+    path: RoutePaths.notifications,
+    authenticated: true
+  },
+  [AppRoutes.PROFILE]: {
+    path: RoutePaths.profile,
+    authenticated: true
+  },
+  [AppRoutes.REQUEST_LIST]: {
+    path: RoutePaths.requestList,
+    authenticated: true
+  },
+  [AppRoutes.NOT_FOUND]: {
+    path: RoutePaths.notFound,
+    authenticated: true
+  },
+}
+
+// root elements
+const routeElements: Record<AppRoutes, AppRouteProps> = {
+  [AppRoutes.ROOT]: {
+    element: <Navigate to={RoutePaths.login} />,
+  },
+  [AppRoutes.HOME]: {
+    element: <HomeRedirectPage routes={routes} />,
+  },
+  [AppRoutes.REGISTER]: {
+>>>>>>> Stashed changes
     element: <RegisterPage />,
   },
   [AppRoutes.LOGIN]: {

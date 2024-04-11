@@ -17,6 +17,7 @@ export enum AppRoutes {
   NOTIFICATIONS = "notifications",
   PROFILE = "profile",
   REQUEST_LIST = "requestList",
+  PLACE_CREATION = "createPlace",
   NOT_FOUND = "notFound",
 }
 
