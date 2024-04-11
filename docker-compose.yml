@@ -7,4 +7,6 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    volumes: # mount config
+      - '${PWD}/public/config.js:/usr/share/nginx/html/config.js'
 
