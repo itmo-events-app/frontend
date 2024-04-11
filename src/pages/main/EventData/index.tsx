@@ -23,6 +23,7 @@ import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
+import * as string_decoder from "node:string_decoder";
 
 class EventInfo {
   regDates: string
@@ -182,7 +183,10 @@ function getTimeOnly(dateTimeString) {
   return timeOnly;
 }
 
-const EVENT_ID: number = 1;
+const full_url: string = window.location.href;
+const url_parts: string[] = full_url.split('/');
+
+const EVENT_ID: number = +(url_parts[url_parts.length - 1].split('#')[0]);
 
 function EventActivitiesPage() {
   const {api} = useContext(ApiContext);
@@ -264,7 +268,7 @@ function EventActivitiesPage() {
     pageTabs.push(new PageTab("Активности"));
   }
 
-  if (orgsVisible) {
+  if (!orgsVisible) {
     pageTabs.push(new PageTab("Организаторы"));
   }
 
@@ -574,7 +578,7 @@ function EventActivitiesPage() {
   const [orgs, setOrgs] = useState([] as Person[]);
 
   useEffect(() => {
-    if (orgsVisible) {
+    if (!orgsVisible) {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
           const list = response.data.map(user => {
