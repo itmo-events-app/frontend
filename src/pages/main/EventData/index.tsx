@@ -114,15 +114,6 @@ class Person {
   }
 }
 
-const _members: Person[] = [
-  new Person(
-    "Дарья Сергеевна",
-    "Курочкина",
-    "example@mail.ru",
-    "Организатор"
-  )
-]
-
 const tasks: Task[] = [
   {
     start: new Date(2024, 1, 1),
@@ -283,14 +274,6 @@ function EventActivitiesPage() {
     pageTabs.push(new PageTab("Задачи"));
   }
 
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
-
-  const _editActivities = () => {
-    console.log('editing activities')
-  }
-
   const _editOrgs = () => {
     console.log('editing orgs')
   }
@@ -369,9 +352,6 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
-        {/*<div className={styles.button_container}>*/}
-        {/*  <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>*/}
-        {/*</div>*/}
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
@@ -550,6 +530,7 @@ function EventActivitiesPage() {
         <table className={styles.table}>
           <thead>
           <tr>
+            <th>Роль</th>
             <th>Имя</th>
             <th>Email</th>
           </tr>
@@ -597,7 +578,7 @@ function EventActivitiesPage() {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
           const list = response.data.map(user => {
-            return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
+            return new Person(user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
           })
           setOrgs(list);
         })
@@ -606,6 +587,12 @@ function EventActivitiesPage() {
         })
     }
   }, [orgsVisible]);
+
+  const [members, setMembers] = useState([] as Person[]);
+
+  useEffect(() => {
+    // ToDo fetch members
+  }, []);
 
   function _createTasksTable() {
     return (
@@ -642,7 +629,7 @@ function EventActivitiesPage() {
               )}
               {selectedTab == "Активности" && _createActivityList(activities)}
               {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
-              {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
+              {selectedTab == "Участники" && _createPersonTableUsers(members, _editParticipants)}
               {selectedTab == "Задачи" && "ToDo: Страница задач"}
             </div>
             <Fade
