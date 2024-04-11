@@ -1,5 +1,5 @@
 import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
-import { RoleModel, RoleModelType, fromRoleModelType } from "@entities/role";
+import { RoleModel, RoleModelType, fromRoleModel, fromRoleModelType, toRoleModel } from "@entities/role";
 import Button from "@widgets/main/Button";
 import Dropdown from "@widgets/main/Dropdown";
 import Input from "@widgets/main/Input";
@@ -16,7 +16,7 @@ type UpdateProps = {
   privileges: PrivilegeModel[]
   setPrivileges: React.Dispatch<React.SetStateAction<PrivilegeModel[]>>,
   role: RoleModel,
-  onDone: (prev: RoleModel, cur: RoleModel) => void
+  callback: (prev: RoleModel, cur: RoleModel) => void
 }
 
 const UpdateDialogContent = (props: UpdateProps) => {
@@ -93,7 +93,12 @@ const UpdateDialogContent = (props: UpdateProps) => {
     }
 
     if (ok) {
-      props.onDone(props.role, role);
+      const request = fromRoleModel(role);
+      api.withReauth(() => api.role.editRole(role.id, request))
+        .then(res => {
+          const role = toRoleModel(res.data);
+          props.callback(props.role, role);
+        });
     }
   }
 

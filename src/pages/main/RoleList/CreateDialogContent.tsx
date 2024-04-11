@@ -10,12 +10,12 @@ import Dropdown from "@widgets/main/Dropdown";
 import InputCheckboxList, { ItemSelection, createItemSelectionList, itemSelectionGetSelected } from "@widgets/main/InputCheckboxList";
 import Button from "@widgets/main/Button";
 import { privilegeToText, dropdownOptionToText, dropdownOptions } from "./common";
-import { RoleModel, RoleModelType, fromRoleModelType } from "@entities/role";
+import { RoleModel, RoleModelType, fromRoleModel, fromRoleModelType, toRoleModel } from "@entities/role";
 import ApiContext from "@features/api-context";
 
 // privileges are ignored
 type CreateProps = {
-  onDone: (role: RoleModel) => void
+  callback: (role: RoleModel) => void
 }
 
 const CreateDialogContent = (props: CreateProps) => {
@@ -84,7 +84,12 @@ const CreateDialogContent = (props: CreateProps) => {
     }
 
     if (ok) {
-      props.onDone(role);
+      const request = fromRoleModel(role);
+      api.withReauth(() => api.role.createRole(request))
+        .then(res => {
+          const role = toRoleModel(res.data);
+          props.callback(role);
+        })
     }
   }
 

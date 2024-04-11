@@ -157,7 +157,7 @@ function RoleListPage() {
     setSearch(e.target.value);
   }
 
-  const _createRole = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const _openCreateDialog = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Создание роли', DialogSelected.CREATE));
     e.stopPropagation();
   }
@@ -171,7 +171,7 @@ function RoleListPage() {
       }),
       new ContextMenuItem('Удалить', () => {
         setCmData({ ...cmData, visible: false });
-        _deleteRoleFromModel(role);
+        _deleteRole(role);
       }),
     ]
 
@@ -195,39 +195,27 @@ function RoleListPage() {
       })
   }
 
-  const _createRoleFromModel = (role: RoleModel) => {
-    const request = fromRoleModel(role);
-    api.withReauth(() => api.role.createRole(request))
-      .then(res => {
-        const role = toRoleModel(res.data);
-        const prevRoles = roleElementListGetElements(roles);
-        setRoles(createRoleElementList([...prevRoles, role]));
-        setDialogData(new DialogData());
-      })
+  const _createRoleCallback = (role: RoleModel) => {
+    const prevRoles = roleElementListGetElements(roles);
+    setRoles(createRoleElementList([...prevRoles, role]));
+    setDialogData(new DialogData());
   }
 
-  const _updateRoleFromModel = (prev: RoleModel, cur: RoleModel) => {
-    const request = fromRoleModel(cur);
-    api.withReauth(() => api.role.editRole(prev.id, request))
-      .then(res => {
-        const role = toRoleModel(res.data);
-        const prevRoles = roleElementListGetElements(roles);
+  const _updateRoleCallback = (prev: RoleModel, cur: RoleModel) => {
+    const prevRoles = roleElementListGetElements(roles);
 
-        setRoles(createRoleElementList(prevRoles.map(p => {
-          if (p.id == prev.id) {
-            return role;
-          }
-          return p;
-        })));
-
-        setDialogData(new DialogData());
-      })
+    setRoles(createRoleElementList(prevRoles.map(p => {
+      if (p.id == prev.id) {
+        return cur;
+      }
+      return p;
+    })))
+    setDialogData(new DialogData());
   }
 
-  const _deleteRoleFromModel = (cur: RoleModel) => {
-    const request = fromRoleModel(cur);
+  const _deleteRole = (cur: RoleModel) => {
     api.withReauth(() => api.role.deleteRole(cur.id))
-      .then(res => {
+      .then(_ => {
         const prevRoles = roleElementListGetElements(roles);
         setRoles(createRoleElementList(prevRoles.filter(r => r.id !== cur.id)));
       })
@@ -239,7 +227,7 @@ function RoleListPage() {
         <div className={styles.top}>
           <Search value={search} onChange={_onSearchChange} onSearch={_onSearchSearch} placeholder="Поиск роли" />
           {hasAnyPrivilege(privilegeContext.systemPrivileges, privilegeOthers.create)
-            ? <Button onClick={_createRole} className={styles.create_button}>Создать роль</Button>
+            ? <Button onClick={_openCreateDialog} className={styles.create_button}>Создать роль</Button>
             : <></>}
         </div>
         <RoleList roles={roles} setRoles={setRoles} onMenuClick={menuVisible ? _onMenuClick : undefined} />
@@ -261,13 +249,13 @@ function RoleListPage() {
     switch (dialogData.visible) {
       case DialogSelected.CREATE:
         component = <CreateDialogContent
-          onDone={_createRoleFromModel}
+          callback={_createRoleCallback}
           {...dialogData.args}
         />
         break;
       case DialogSelected.UPDATE:
         component = <UpdateDialogContent
-          onDone={_updateRoleFromModel}
+          callback={_updateRoleCallback}
           {...dialogData.args}
         />;
         break;
