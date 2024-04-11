@@ -6,7 +6,7 @@ const BrandLogo = () => {
   const navigate = useNavigate();
 
   function _toHome() {
-    navigate(RoutePaths.eventList);
+    navigate(RoutePaths.home);
   }
 
   return (<_BrandLogo onClick={_toHome} />);
