@@ -1,15 +1,16 @@
 import { RoutePaths } from "@shared/config/routes";
 import { Navigate } from "react-router-dom";
-import { getTokenContextData } from "@shared/lib/token";
+import { useContext } from "react";
+import ApiContext from "@features/api-context";
 
 type Props = {
   children: any,
 }
 
 const Authenticated = (props: Props) => {
-  const tokenContext = getTokenContextData();
+  const {api} = useContext(ApiContext);
 
-  const isAuthenticated = tokenContext.accessToken != null && tokenContext.accessToken != "";
+  const isAuthenticated = api.isLoggedIn();
 
   function _Content() {
     if (isAuthenticated) {

@@ -17,12 +17,12 @@ import Fade from '@widgets/main/Fade';
 import { RoutePaths } from '@shared/config/routes';
 import { hasAnyPrivilege } from '@features/privileges';
 import { PrivilegeNames } from '@shared/config/privileges';
-import { api } from '@shared/api';
 import { toRoleModel } from '@entities/role';
 import CreateDialogContent from './CreateDialogContent';
 import UpdateDialogContent from './UpdateDialogContext';
 import PrivilegeContext from '@features/privilege-context';
 import { PrivilegeData } from '@entities/privilege-context';
+import ApiContext from '@features/api-context';
 
 class ContextMenuData {
   clientX: number;
@@ -78,6 +78,7 @@ const privilegeOthers = {
 
 function RoleListPage() {
   const { privilegeContext } = useContext(PrivilegeContext);
+  const { api } = useContext(ApiContext);
 
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
@@ -154,7 +155,7 @@ function RoleListPage() {
     console.log(v);
   }
 
-  const _createRole = (e: MouseEvent) => {
+  const _createRole = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Создание роли', DialogSelected.CREATE));
     e.stopPropagation();
   }

@@ -9,7 +9,6 @@ import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
-import { api } from "@shared/api";
 import {hasAnyPrivilege} from "@features/privileges.ts";
 import {PrivilegeNames} from "@shared/config/privileges.ts";
 import { useParams } from "react-router-dom";
@@ -22,6 +21,7 @@ import { Gantt, Task } from 'gantt-task-react';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
+import ApiContext from '@features/api-context.ts';
 
 class EventInfo {
   regDates: string
@@ -232,6 +232,7 @@ const edit_privilege: boolean = false;
 const EVENT_ID: number = 1;
 
 function EventActivitiesPage() {
+  const {api} = useContext(ApiContext);
   const { id } = useParams();
   const [event,setEvent] = useState(null)
   const [loadingEvent, setLoadingEvent] = useState(true);
