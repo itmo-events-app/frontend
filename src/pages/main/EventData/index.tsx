@@ -16,6 +16,7 @@ import { appendClassName } from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
+import { RoleElement } from "@widgets/main/RoleList";
 import CreateDialogContent from "./CreateDialogContext.tsx";
 import { Gantt, Task } from 'gantt-task-react';
 import { PrivilegeData } from '@entities/privilege-context.ts';
@@ -68,14 +69,17 @@ class Activity {
   description: string
   date: string
   time: string
-
+  endDate: string
+  endTime: string
   constructor(
     activityName: string,
     place: string,
     room: string,
     description: string,
     date: string,
-    time: string
+    time: string,
+    endDate: string,
+    endTime: string
   ) {
     this.id = uid();
     this.name = activityName;
@@ -84,6 +88,8 @@ class Activity {
     this.description = description;
     this.date = date;
     this.time = time;
+    this.endDate = endDate;
+    this.endTime = endTime;
   }
 }
 
@@ -107,63 +113,6 @@ class Person {
     this.role = role;
   }
 }
-
-const _activities: Activity[] = [
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00"),
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00"),
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00"),
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00"),
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00"),
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00"),
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00"),
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00"),
-  new Activity("Самый красивый колос",
-    "Кронверкский пр. 49",
-    "Ауд. 1265",
-    "ПОКАЖИ СВОЙ КОЛОС ИЛИ КОЛОСОК?",
-    "11.06.2024",
-    "15:30 - 17:00")
-]
 
 const _members: Person[] = [
   new Person(
@@ -228,6 +177,19 @@ const tasks: Task[] = [
 ];
 
 const edit_privilege: boolean = false;
+function readDate(dateTime: string){
+  const date = new Date(dateTime);
+  const formattedDate = date.toISOString().split('T')[0];
+  return formattedDate
+}
+function getTimeOnly(dateTimeString) {
+  const dateTime = new Date(dateTimeString);
+  const hours = dateTime.getHours();
+  const minutes = dateTime.getMinutes();
+  const seconds = dateTime.getSeconds();
+  const timeOnly = `${hours}:${minutes}:${seconds}`;
+  return timeOnly;
+}
 
 const EVENT_ID: number = 1;
 
@@ -238,11 +200,6 @@ function EventActivitiesPage() {
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState("");
   useEffect(() => {
-    function readDate(dateTime: string){
-      const date = new Date(dateTime);
-      const formattedDate = date.toISOString().split('T')[0];
-      return formattedDate
-    }
     const getEvent = async () => {
       try {
         const eventResponse = await api.event.getEventById(parseInt(id));
@@ -412,11 +369,9 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
-        {/*{*/}
-        {/*  <div className={styles.button_container}>*/}
-        {/*    <Button onClick={_updateEvent} className={styles.create_button}>Редактировать</Button>*/}
-        {/*  </div>*/}
-        {/*}*/}
+        {/*<div className={styles.button_container}>*/}
+        {/*  <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>*/}
+        {/*</div>*/}
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
@@ -469,6 +424,39 @@ function EventActivitiesPage() {
     );
   }
 
+  const [activities, setActivities] = useState([]);
+  const [activitiesLoaded, setActivitiesLoaded] = useState(false);
+  const getActivities =async () => {
+    const response = await api.event.getAllOrFilteredEvents(undefined,undefined,id);
+    if(response.status==200){
+      const activities = response.data.map(async a=>{
+
+        const placeResponse = await fetch('/api/places/' + a.placeId, {
+          method: 'GET'
+        })
+        let place = "";
+        let room = ""
+        if (placeResponse.status == 200) {
+          const data = await placeResponse.json();
+          place = data.address;
+          room = data.room;
+        } else {
+          console.log(response.status);
+        }
+        return new Activity(a.title,place,room,a.shortDescription,readDate(a.startDate),getTimeOnly(a.startDate),readDate(a.endDate),getTimeOnly(a.endDate));
+      });
+      const activitiesPromise = await Promise.all(activities);
+      setActivities(activitiesPromise);
+      setActivitiesLoaded(true);
+      console.log(activitiesPromise);
+    }else{
+      console.log(response.status);
+    }
+  }
+  useEffect( () => {
+    getActivities();
+
+  }, []);
   function _createActivity(activity: Activity) {
     return (
       <div key={activity.id} className={styles.activity_container}>
@@ -480,10 +468,23 @@ function EventActivitiesPage() {
           </div>
           <div className={styles.info_block}>{activity.description}</div>
         </div>
-        <div className={styles.activity_time_column}>
-          <div className={styles.activity_time}>{activity.date}</div>
-          <div className={styles.activity_time}>{activity.time}</div>
-        </div>
+          {activity.endDate=='' || activity.endDate==activity.date?
+            (
+              <div className={styles.activity_time_column}>
+                <div className={styles.activity_time}>{activity.date}</div>
+                <div className={styles.activity_time}>{activity.time} - {activity.endTime}</div>
+              </div>
+            ):(
+              <div className={styles.activity_time_column}>
+                <div>
+                  {activity.date} {activity.time}
+                </div>
+                <div>
+                  {activity.endDate} {activity.endTime}
+                </div>
+              </div>
+              )
+          }
       </div>
     )
   }
@@ -503,9 +504,14 @@ function EventActivitiesPage() {
         {/*<div className={styles.button_container}>*/}
         {/*  <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>*/}
         {/*</div>*/}
-        <div className={styles.data_list}>
-          {items}
-        </div>
+        {activitiesLoaded?(
+          <div className={styles.data_list}>
+            {items}
+          </div>)
+          :
+          (
+            <div/>
+          )}
       </>
     )
   }
@@ -634,7 +640,7 @@ function EventActivitiesPage() {
               ) : (
                 selectedTab == "Описание" && _createInfoPage(event)
               )}
-              {selectedTab == "Активности" && _createActivityList(_activities)}
+              {selectedTab == "Активности" && _createActivityList(activities)}
               {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
               {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
               {selectedTab == "Задачи" && "ToDo: Страница задач"}
