@@ -1,10 +1,10 @@
-import { RoutePaths } from "@shared/config/routes";
 import { Navigate } from "react-router-dom";
 import { useContext } from "react";
 import ApiContext from "@features/api-context";
 
 type Props = {
   children: any,
+  rejectNavigateTo: string,
 }
 
 const Authenticated = (props: Props) => {
@@ -16,7 +16,7 @@ const Authenticated = (props: Props) => {
     if (isAuthenticated) {
       return props.children;
     }
-    return <Navigate to={RoutePaths.login} replace />
+    return <Navigate to={props.rejectNavigateTo} replace />
   }
 
   return _Content();

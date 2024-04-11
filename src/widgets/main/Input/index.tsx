@@ -7,10 +7,26 @@ type Props = {
   type?: React.HTMLInputTypeAttribute,
   placeholder?: string,
   className?: string,
+  errorText?: string,
 }
 
 function Input(props: Props) {
-  return <input type={props.type} placeholder={props.placeholder} className={appendClassName(styles.input, props.className)} value={props.value} onChange={props.onChange} />
+  const error = props.errorText != undefined && props.errorText != '';
+  const visibilityStyle = error ? styles.visible : styles.hidden;
+  const inputErrorStyle = error ? styles.input_error : undefined;
+  const errorText = props.errorText;
+
+  return (
+    <div className={appendClassName(styles.root, props.className)}>
+      <input
+        type={props.type}
+        placeholder={props.placeholder}
+        className={appendClassName(styles.input, inputErrorStyle)}
+        onChange={props.onChange} value={props.value}
+      />
+      <p className={appendClassName(styles.helper_error, visibilityStyle)}>{errorText}</p>
+    </div>
+  )
 }
 
 export default Input

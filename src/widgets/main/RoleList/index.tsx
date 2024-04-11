@@ -57,7 +57,7 @@ function RoleList(props: Props) {
         className={appendClassName(styles.icon_expand, (role.expanded ? styles.expanded : null))} />
       : <></>;
 
-    const menuVisible = props.onMenuClick != null;
+    const menuVisible = props.onMenuClick != null && role.entry.isEditable;
     const Menu = menuVisible
       ? <MenuVertical onClick={(e) => props.onMenuClick!(role.entry, e)} className={styles.icon_dots} />
       : <div></div>;

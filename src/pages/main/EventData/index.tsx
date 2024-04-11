@@ -432,7 +432,6 @@ function EventActivitiesPage() {
     const response = await api.event.getAllOrFilteredEvents(undefined,undefined,id);
     if(response.status==200){
       const activities = response.data.map(async a=>{
-
         const placeResponse = await api.place.placeGet(parseInt(a.placeId));
         let place = "";
         let room = ""
@@ -500,9 +499,9 @@ function EventActivitiesPage() {
              <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
            </div>
          ) : (<></>)}
-        <div className={styles.button_container}>
-          <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-        </div>
+        {/*<div className={styles.button_container}>*/}
+        {/*  <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>*/}
+        {/*</div>*/}
         {activitiesLoaded?(
           <div className={styles.data_list}>
             {items}

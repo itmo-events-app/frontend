@@ -37,7 +37,7 @@ export const taskService = {
         (value, index, self) =>
           self.findIndex((el) => el.eventName === value.eventName) === index,
       );
-      return uniqueData.map((el) => new DropdownOption<string>(el.eventName + " " + el.eventId));
+      return uniqueData.map((el) => new DropdownOption<string>(el.eventName!, el.eventId!.toString()));
     }
   },
 
