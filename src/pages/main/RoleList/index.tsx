@@ -157,13 +157,6 @@ function RoleListPage() {
     setSearch(e.target.value);
   }
 
-  const _onSearchSearch = (v: string) => {
-    api.withReauth(() => api.role.searchByName(v))
-      .then(r => {
-        setRoles(createRoleElementList(r.data.map(role => toRoleModel(role))));
-      })
-  }
-
   const _createRole = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Создание роли', DialogSelected.CREATE));
     e.stopPropagation();
@@ -178,6 +171,7 @@ function RoleListPage() {
       }),
       new ContextMenuItem('Удалить', () => {
         setCmData({ ...cmData, visible: false });
+        _deleteRoleFromModel(role);
       }),
     ]
 
@@ -194,27 +188,11 @@ function RoleListPage() {
     setCmData(new ContextMenuData(e.clientX, e.clientY, true, filteredItems));
   }
 
-  const _RolesContent = () => {
-    return (
-      <Content className={styles.content}>
-        <div className={styles.top}>
-          <Search value={search} onChange={_onSearchChange} onSearch={_onSearchSearch} placeholder="Поиск роли" />
-          {hasAnyPrivilege(privilegeContext.systemPrivileges, privilegeOthers.create)
-            ? <Button onClick={_createRole} className={styles.create_button}>Создать роль</Button>
-            : <></>}
-        </div>
-        <RoleList roles={roles} setRoles={setRoles} onMenuClick={menuVisible ? _onMenuClick : undefined} />
-      </Content>
-    )
-  }
-
-  const _ContextMenu = () => {
-    return <ContextMenu
-      items={cmData.items}
-      className={appendClassName(styles.context_menu,
-        (cmData.visible ? styles.visible : styles.hidden))}
-      ref={cmRef}
-    />;
+  const _onSearchSearch = (v: string) => {
+    api.withReauth(() => api.role.searchByName(v))
+      .then(r => {
+        setRoles(createRoleElementList(r.data.map(role => toRoleModel(role))));
+      })
   }
 
   const _createRoleFromModel = (role: RoleModel) => {
@@ -244,6 +222,38 @@ function RoleListPage() {
 
         setDialogData(new DialogData());
       })
+  }
+
+  const _deleteRoleFromModel = (cur: RoleModel) => {
+    const request = fromRoleModel(cur);
+    api.withReauth(() => api.role.deleteRole(cur.id))
+      .then(res => {
+        const prevRoles = roleElementListGetElements(roles);
+        setRoles(createRoleElementList(prevRoles.filter(r => r.id !== cur.id)));
+      })
+  }
+
+  const _RolesContent = () => {
+    return (
+      <Content className={styles.content}>
+        <div className={styles.top}>
+          <Search value={search} onChange={_onSearchChange} onSearch={_onSearchSearch} placeholder="Поиск роли" />
+          {hasAnyPrivilege(privilegeContext.systemPrivileges, privilegeOthers.create)
+            ? <Button onClick={_createRole} className={styles.create_button}>Создать роль</Button>
+            : <></>}
+        </div>
+        <RoleList roles={roles} setRoles={setRoles} onMenuClick={menuVisible ? _onMenuClick : undefined} />
+      </Content>
+    )
+  }
+
+  const _ContextMenu = () => {
+    return <ContextMenu
+      items={cmData.items}
+      className={appendClassName(styles.context_menu,
+        (cmData.visible ? styles.visible : styles.hidden))}
+      ref={cmRef}
+    />;
   }
 
   const _Dialog = () => {
