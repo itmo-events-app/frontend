@@ -46,14 +46,14 @@ class User {
   name: string;
   surname: string;
   email: string;
-  roles: UserRole[];
+  roleName: string;
 
-  constructor(name: string, surname: string, email: string, roles: UserRole[]) {
+  constructor(name: string, surname: string, email: string, roleName: string) {
     this.id = uid();
     this.name = name;
     this.surname = surname;
     this.email = email;
-    this.roles = roles;
+    this.roleName = roleName;
   }
 }
 
@@ -64,21 +64,20 @@ const _userRoles: UserRole[] = [
 ]
 
 const _users: User[] = [
-  new User("Иван", "Иванов", "ivan@itmo.ru", _userRoles),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", _userRoles),
-  new User("Илья", "Ильин", "ilya@itmo.ru", _userRoles),
-  new User("Иван", "Иванов", "ivan@itmo.ru", _userRoles),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", _userRoles),
-  new User("Илья", "Ильин", "ilya@itmo.ru", _userRoles),
-  new User("Иван", "Иванов", "ivan@itmo.ru", _userRoles),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", _userRoles),
-  new User("Илья", "Ильин", "ilya@itmo.ru", _userRoles),
-  new User("Иван", "Иванов", "ivan@itmo.ru", _userRoles),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", _userRoles),
-  new User("Илья", "Ильин", "ilya@itmo.ru", _userRoles),
-  new User("Иван", "Иванов", "ivan@itmo.ru", _userRoles),
-  new User("Сергей", "Сергеев", "sergey@itmo.ru", _userRoles),
-  new User("Илья", "Ильин", "ilya@itmo.ru", _userRoles)
+  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
+  new User("Сергей", "Сергеев", "sergey@itmo.ru", "читатель"),
+  new User("Илья", "Ильин", "ilya@itmo.ru", "читатель"),
+  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
+  new User("Сергей", "Сергеев", "sergey@itmo.ru", "читатель"),
+  new User("Илья", "Ильин", "ilya@itmo.ru", "читатель"),
+  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
+  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
+  new User("Сергей", "Сергеев", "sergey@itmo.ru", "читатель"),
+  new User("Илья", "Ильин", "ilya@itmo.ru", "читатель"),
+  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
+  new User("Сергей", "Сергеев", "sergey@itmo.ru", "читатель"),
+  new User("Илья", "Ильин", "ilya@itmo.ru", "читатель"),
+  new User("Иван", "Иванов", "ivan@itmo.ru", "читатель"),
 ];
 
 class UserEntry {
@@ -108,48 +107,24 @@ export default function UserListPage() {
 
   function _renderUserEntry(ue: UserEntry) {
     return (
-      <div className={styles.user_entry} key={ue.data.id}>
-        <div className={styles.user_info}>
-          <span className={styles.user_text}>
-            {ue.data.name} {ue.data.surname}
-          </span>
-          <span className={styles.user_email}>
-            {ue.data.email}
-          </span>
-          <div>
-            {ue.expanded && (
-              <div className={styles.user_table}>
-                <table>
-                  <thead>
-                  <tr>
-                    <th>Роль</th>
-                    <th>Описание</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {ue.data.roles.map(role => (
-                    <tr key={role.name}>
-                      <td>{role.name}</td>
-                      <td>{role.description}</td>
-                    </tr>
-                  ))}
-                  </tbody>
-                </table>
+      <div key={uid()} className={styles.user}>
+        <div className={styles.user_entry}>
+          <div className={styles.user_left}>
+            <div className={styles.user_heading}>
+              <div className={styles.user_name}>
+                {ue.data.name} {ue.data.surname}
               </div>
-            )}
+              <div className={styles.user_role}>
+                {ue.data.roleName}
+              </div>
+            </div>
+            <div className={styles.user_email}>
+              {ue.data.email}
+            </div>
           </div>
-        </div>
-        <div className={styles.entry_side_container}>
-          <div className={styles.read_button_container}>
-            <Button onClick={() => setDialogData(new DialogData('Назначение ролей', true, { roles: ue.data.roles }))}>
-              Назначить роли
-            </Button>
-          </div>
-          <div className={styles.arrow_container}>
-            <ArrowDown
-              onClick={() => _expandEntryClick(ue)}
-              className={ue.expanded ? styles.arrow : appendClassName(styles.arrow, styles.arrow_up)}
-            />
+          <div className={styles.user_right}>
+            {/*{Menu}*/}
+            {/*{Arrow}*/}
           </div>
         </div>
       </div>
