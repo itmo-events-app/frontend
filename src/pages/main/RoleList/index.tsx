@@ -83,6 +83,8 @@ function RoleListPage() {
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
 
+  const [search, setSearch] = useState('');
+
   const cmRef = useRef(null);
   const dialogRef = useRef(null);
 
@@ -102,7 +104,7 @@ function RoleListPage() {
       current.style.left = `${cmData.clientX - (cmRef.current as any).offsetWidth}px`;
       current.style.top = `${cmData.clientY}px`;
     }
-  })
+  },)
 
   // close context menu when clicking outside
   useEffect(() => {
@@ -151,7 +153,11 @@ function RoleListPage() {
     setCmData(new ContextMenuData());
   }
 
-  const _onSearch = (v: string) => {
+  const _onSearchChange = (v: string) => {
+    setSearch(v);
+  }
+
+  const _onSearchSearch = (v: string) => {
     api.withReauth(() => api.role.searchByName(v))
       .then(r => {
         setRoles(createRoleElementList(r.data.map(role => toRoleModel(role))));
@@ -192,7 +198,7 @@ function RoleListPage() {
     return (
       <Content className={styles.content}>
         <div className={styles.top}>
-          <Search onSearch={_onSearch} placeholder="Поиск роли" />
+          <Search value={search} onChange={_onSearchChange} onSearch={_onSearchSearch} placeholder="Поиск роли" />
           {hasAnyPrivilege(privilegeContext.systemPrivileges, privilegeOthers.create)
             ? <Button onClick={_createRole} className={styles.create_button}>Создать роль</Button>
             : <></>}
@@ -274,7 +280,7 @@ function RoleListPage() {
       topLeft={<BrandLogo />}
       topRight={<PageName text="Список ролей" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.roleList} />}
-      bottomRight={<_RolesContent />}
+      bottomRight={_RolesContent()}
     >
       <_ContextMenu />
       <Fade
