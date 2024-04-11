@@ -153,7 +153,9 @@ const UpdateDialogContent = (props: UpdateProps) => {
           />
         </div>
       </div>
-      <Button>Редактировать</Button>
+      <Button onClick={()=>{
+        console.log("test");
+      }}>Редактировать</Button>
     </div>
   );
 }

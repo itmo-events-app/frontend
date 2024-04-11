@@ -9,11 +9,11 @@ import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Button from "@widgets/main/Button";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
-import Input from "@widgets/main/Input";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef, useCallback, memo, useContext } from "react";
 import { getImageUrl } from "@shared/lib/image.ts"
 import { ReactLogo } from "@shared/ui/icons";
+import { api } from "@shared/api";
 import Fade from '@widgets/main/Fade';
 import EventCreationPage from '../EventCreation';
 import Dialog from '@widgets/main/Dialog';
@@ -121,6 +121,8 @@ function AvailableEventsPage() {
           const pages = await Promise.all(pagesPromises);
           setEvents(pages);
           setLoading(false);
+        } else {
+          console.error('Error fetching event list:', response.statusText);
         }
     } catch (error) {
       console.error('Error fetching event list:', error);
