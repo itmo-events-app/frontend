@@ -4,80 +4,159 @@ import Input from "@widgets/main/Input";
 import InputLabel from "@widgets/main/InputLabel";
 import TextArea from "@widgets/main/TextArea";
 import DatePicker from "react-datepicker";
-import styles from './index.module.css'
-import { useState } from "react";
+import styles from './index.module.css';
+import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import ApiContext from '@features/api-context.ts';
+import { AddActivityFormatEnum, AddActivityStatusEnum, GetAllOrFilteredEventsStatusEnum } from "@shared/api/generated";
+import * as events from "events";
 
 type UpdateProps = {
   role: RoleModel,
   onDone: (prev: RoleModel, cur: RoleModel) => void
 }
 
-const CreateDialogContent = (props: UpdateProps) => {
-  const[startDate, setStartDate] = useState('');
-  const[endDate, setEndDate] = useState('');
+const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
+  const[startDate, setStartDate] = useState(new Date());
+  const[endDate, setEndDate] = useState(new Date());
   const[title, setTitle] = useState('');
   const[shortDescription, setShortDescription] = useState('');
   const[fullDescription, setFullDescription] = useState('');
-  const[format, setFormat] = useState('');
-  const[status, setStatus] = useState('');
-  const[registrationStart, setRegistrationStart] = useState('');
-  const[registrationEnd, setRegistrationEnd] = useState('');
-  const[participantLimit, setParticipantLimit] = useState('');
-  const[participantHighestAge,setParticipantHighestAge] = useState('');
-  const[participantLowestAge,setParticipantLowestAge] = useState('');
-  const[preparingStart, setPreparingStart] = useState('');
-  const[preparingEnd, setPreparingEnd] = useState('');
-  const[place, setPlace] = useState('');
+  const[format, setFormat] = useState(AddActivityFormatEnum.Offline);
+  const[status, setStatus] = useState(AddActivityStatusEnum.Published);
+  const[registrationStart, setRegistrationStart] = useState(new Date());
+  const[registrationEnd, setRegistrationEnd] = useState(new Date());
+  const[participantLimit, setParticipantLimit] = useState(1);
+  const[participantHighestAge,setParticipantHighestAge] = useState(1);
+  const[participantLowestAge,setParticipantLowestAge] = useState(1);
+  const[preparingStart, setPreparingStart] = useState(new Date());
+  const[preparingEnd, setPreparingEnd] = useState(new Date());
+  const[place, setPlace] = useState(1);
+  const[placeList, setPlaceList] = useState([]);
+  const[placesLoaded, setPlacesLoaded] = useState(false);
 
+  const [image, setImage] = useState(null);
+  const {api} = useContext(ApiContext);
+  const getPlaces = async () => {
+    const placesResponse = await api.place.getAllOrFilteredPlaces()
+    if (placesResponse.status == 200) {
+      const placesData = placesResponse.data;
+      setPlaceList(placeList.concat(placesData));
+      setPlacesLoaded(true);
+    } else {
+      console.log(placesResponse.status);
+    }
+  }
+
+  useEffect( ()=> {
+      getPlaces();
+    }
+    , []);
+  function convertToLocaleDateTime(date: Date){
+    const isoDateTime = date.toISOString();
+    return isoDateTime.slice(0, -1);
+  }
+
+  async function handleSubmit() {
+    const startDateString = convertToLocaleDateTime(startDate);
+    const endDateString = convertToLocaleDateTime(endDate);
+    const registrationStartString = convertToLocaleDateTime(registrationStart);
+    const registrationEndString = convertToLocaleDateTime(registrationEnd);
+    const preparingStartString = convertToLocaleDateTime(preparingStart);
+    const preparingEndString = convertToLocaleDateTime(preparingEnd);
+    const result = await api.event.addActivity(
+      place,
+      startDateString,
+      endDateString,
+      title,
+      shortDescription,
+      fullDescription,
+      format,
+      status,
+      registrationStartString,
+      registrationEndString,
+      participantLimit,
+      participantLowestAge,
+      participantHighestAge,
+      preparingStartString,
+      preparingEndString,
+      image,
+      eventId
+    )
+    if(result.status!=201){
+      console.log(result.status);
+    }else{
+      onSubmit();
+    }
+  }
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           <InputLabel value="Название" />
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Input value={title}
+                 onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Краткое описание" />
-          <TextArea value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} />
+          <TextArea
+            value={shortDescription}
+            onChange={(e) => {
+              setShortDescription(e.target.value)
+            }}/>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Полное описание" />
-          <TextArea value={fullDescription} onChange={(e) => setFullDescription(e.target.value)} />
+          <TextArea value={fullDescription}
+                    onChange={(e) => setFullDescription(e.target.value)}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальное количество участников" />
-          <TextArea value={participantLimit} onChange={(e) => setParticipantLimit(e.target.value)} />
+          <Input
+            value={participantLimit}
+            onChange={(e) => setParticipantLimit(e.target.value)}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
-          <TextArea value={participantHighestAge} onChange={(e) => setParticipantHighestAge(e.target.value)} />
+          <Input value={participantHighestAge} onChange={(e) => setParticipantHighestAge(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
-          <TextArea value={participantLowestAge} onChange={(e) => setParticipantLowestAge(e.target.value)} />
+          <Input value={participantLowestAge} onChange={(e) => setParticipantLowestAge(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Формат" />
           <select value={format} onChange={(e) => setFormat(e.target.value)}>
-            <option value="OFFLINE">Offline</option>
-            <option value="ONLINE">Online</option>
-            <option value="HYBRID">Hybrid</option>
+            {
+              Object.entries(AddActivityFormatEnum).map(([k,v])=>{
+                return <option value={k}>{v}</option>
+              })
+            }
           </select>
         </div>
         <div className={styles.dialog_item}>
-          <InputLabel value="Место" onChange={(e) => setPlace(e.target.value)}/>
-          <select value={place}>
-            <option value="1">ITMO</option>
+          <InputLabel value="Место"/>
+          <select value={place} onChange={(e) => setPlace(e.target.value)}>
+            {
+              placesLoaded?(
+                placeList.map(p=>{
+                  return <option value={p.id}>{p.address}</option>
+                })
+              ):( <option value=""></option>)
+            }
           </select>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Состояние" onChange={(e) => setStatus(e.target.value)}/>
           <select value={status}>
-            <option value="DRAFT">Draft</option>
-            <option value="PUBLISHED">Published</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="CANCELED">Canceled</option>
+            {
+              Object.entries(AddActivityStatusEnum).map(([k,v])=>{
+                return <option value={k}>{v}</option>
+            })
+            }
           </select>
         </div>
 
@@ -133,7 +212,10 @@ const CreateDialogContent = (props: UpdateProps) => {
           <InputLabel value="Время начала подготовки" />
           <DatePicker
             selected={preparingStart}
-            onChange={(date) => setPreparingStart(date)}
+            onChange={(date) => {
+              setPreparingStart(date);
+              console.log(date.toISOString());
+            }}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
@@ -153,8 +235,16 @@ const CreateDialogContent = (props: UpdateProps) => {
             popperPlacement="top-start"
           />
         </div>
+        <div className={styles.dialog_item}>
+          <InputLabel value="Картинка" />
+          <input type="file" onChange={(e)=>{
+            const file = e.target.files[0]
+            setImage(file);
+          }} />
+          {image && <p>Selected file: {image.name}</p>}
+        </div>
       </div>
-      <Button>Создать</Button>
+      <Button onClick={handleSubmit}>Создать</Button>
     </div>
   );
 }
