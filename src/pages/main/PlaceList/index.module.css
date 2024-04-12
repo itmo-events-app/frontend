@@ -59,3 +59,48 @@
 .place_address {
   color: var(--itmo-colors-dark-gray);
 }
+
+/* Styles for screens smaller than 768px */
+@media screen and (max-width: 767px) {
+  .search {
+     width: 100%;
+   }
+  .place_entry {
+     flex-direction: column;
+     gap: 10px;
+   }
+  .place_icon {
+     width: 75px;
+     height: 75px;
+   }
+ }
+ 
+ /* Styles for screens larger than or equal to 768px */
+ @media screen and (min-width: 768px) {
+  .search {
+     width: 705px;
+   }
+  .place_entry {
+     flex-direction: row;
+     gap: 50px;
+   }
+  .place_icon {
+     width: 75px;
+     height: 75px;
+   }
+ }
+ 
+ /* Styles for screens larger than or equal to 1024px */
+ @media screen and (min-width: 1024px) {
+  .search {
+     width: 705px;
+   }
+  .place_entry {
+     flex-direction: row;
+     gap: 50px;
+   }
+  .place_icon {
+     width: 75px;
+     height: 75px;
+   }
+ }

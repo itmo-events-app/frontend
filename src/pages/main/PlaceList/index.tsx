@@ -23,7 +23,7 @@ function PlaceListPage() {
     console.log('creating')
   }
   const navigate = useNavigate();
-  const _event = () => {
+  const _place = () => {
     navigate(RoutePaths.placeData);
   }
   const _places: any[] = [
@@ -64,7 +64,7 @@ function PlaceListPage() {
 
   function _entryStub(index: number) {
     return (
-      <a key={index} onClick={_event} className={styles.place_entry}>
+      <a key={index} onClick={_place} className={styles.place_entry}>
         <Home className={styles.place_icon} />
         <div className={styles.place_info_column}>
           <div className={styles.place_name}>
@@ -86,7 +86,6 @@ function PlaceListPage() {
       bottomRight=
       {
         <Content>
-          
           <div className={styles.places_page}>
             <div className={styles.top_bar}>
               <div className={styles.search}>
@@ -99,8 +98,8 @@ function PlaceListPage() {
                 <Button onClick={_onCreation}>Создать</Button>
               </div>
             </div>
-            <div className={styles.place_list_container}>
-            PagedList page={1} page_size={5} page_step={5} items={_places} />
+            <div className={styles.place_list_container}
+              PagedList page={1} page_size={5} page_step={5} items={_places} />
             </div>
           </div>
         </Content>
