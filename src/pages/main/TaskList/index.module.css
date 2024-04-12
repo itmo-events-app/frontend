@@ -31,3 +31,32 @@
     border: 1px solid var(--itmo-colors-gray);
     padding: 10px 20px;
 }
+
+.popup__wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 4px solid var(--itmo-colors-dark-gray);
+  padding: 30px;
+  max-width: 80%;
+  border-radius: 40px;
+}
+
+.popupContent {
+  margin-bottom: 10px;
+  text-align: justify;
+}
+
+.popupContentBold {
+  margin-bottom: 10px;
+  text-align: justify;
+  font-weight: bold;
+  font-size: larger;
+}
+
+.popupButton {
+  margin-top: 30px;
+  text-align: center;
+}
