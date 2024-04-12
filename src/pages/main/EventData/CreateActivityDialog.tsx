@@ -16,7 +16,7 @@ type UpdateProps = {
   onDone: (prev: RoleModel, cur: RoleModel) => void
 }
 
-const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
+const CreateActivityDialog = ({props: UpdateProps,parentId, onSubmit}) => {
   const[startDate, setStartDate] = useState(new Date());
   const[endDate, setEndDate] = useState(new Date());
   const[title, setTitle] = useState('');
@@ -81,7 +81,7 @@ const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
       preparingStartString,
       preparingEndString,
       image,
-      eventId
+      parentId
     )
     if(result.status!=201){
       console.log(result.status);
@@ -214,7 +214,6 @@ const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
             selected={preparingStart}
             onChange={(date) => {
               setPreparingStart(date);
-              console.log(date.toISOString());
             }}
             showTimeSelect
             timeFormat="HH:mm"
@@ -249,4 +248,4 @@ const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
   );
 }
 
-export default CreateDialogContent;
+export default CreateActivityDialog;
