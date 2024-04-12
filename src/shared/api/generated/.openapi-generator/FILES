@@ -43,3 +43,4 @@ model/user-change-password-request.ts
 model/user-info-response.ts
 model/user-role-response.ts
 model/user-short-data-response.ts
+model/user-system-role-response.ts

@@ -7,7 +7,7 @@ import SideBar from "@widgets/main/SideBar";
 import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { RoutePaths } from "@shared/config/routes";
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, MouseEvent, useContext, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { taskService } from "@features/task-service.ts";
 import { format } from "date-fns";
@@ -20,6 +20,7 @@ import { PrivilegeData } from "@entities/privilege-context.ts";
 import ApiContext from "@features/api-context";
 import { Api } from "@entities/api";
 import { useNavigate } from "react-router-dom";
+import Popup from "reactjs-popup";
 
 type TaskTableProps = {
   tasks: TaskResponse[];
@@ -76,16 +77,55 @@ const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
         </thead>
         <tbody>
         {tasks.map(task => (
-          <tr onClick={() => redirectToEvent(task.event!.eventId!)} key={task.id}>
+          <tr key={task.id}>
             <td>{task.title}</td>
-            <td>{task.description}</td>
+            <td>
+              <Popup trigger={<div>
+                {task.description!.slice(0, 20)}
+                {task.description!.length! > 20 && <span>...</span>}
+              </div>}
+                     modal nested>
+                {
+                  (close: ((event: MouseEvent<HTMLButtonElement, MouseEvent>) => void) | undefined) => (
+                    <div className={styles.popup__wrapper}>
+                      <div className={styles.popupContentBold}>
+                        {"Описание задачи:"}<br /><br />
+                      </div>
+                      <div className={styles.popupContent}>
+                        {task.description!}
+                      </div>
+                      <div className={styles.popupButton}>
+                        <Button onClick={close}>
+                          Скрыть
+                        </Button>
+                      </div>
+                    </div>
+                  )
+                }
+              </Popup>
+
+              {/*{showFullText ? (*/}
+              {/*  <Popup>*/}
+              {/*    {task.description}*/}
+              {/*    <Button onClick={togglePopup}>Скрыть</Button>*/}
+              {/*  </Popup>*/}
+              {/*) : (*/}
+              {/*  <div>*/}
+              {/*    {task.description!.slice(0,20)}*/}
+              {/*    {task.description!.length! > 20 && <span>...</span>}*/}
+              {/*  </div>*/}
+              {/*)}*/}
+
+            </td>
             <td>
               {format(task.deadline!, "H:mm")} <br />
               {format(task.deadline!, "do MMMM, yyyy", { locale: ru })}
             </td>
             <td>{task.assignee?.name + " " + task.assignee?.surname}
             </td>
-            <td>{task.event!.eventTitle}</td>
+            <td>
+              <Button onClick={() => redirectToEvent(task.event!.eventId!)}>{task.event!.eventTitle}</Button>
+            </td>
             <td>{task.event!.activityTitle ? task.event!.activityTitle : "-"}</td>
             <td className={styles.dropdown}>
               {canChangeTaskStatus ?

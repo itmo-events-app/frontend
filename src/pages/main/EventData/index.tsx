@@ -23,6 +23,7 @@ import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
+import { PrivilegeResponse, PrivilegeResponseNameEnum } from "@shared/api/generated";
 
 class EventInfo {
   regDates: string
@@ -93,20 +94,21 @@ class Activity {
   }
 }
 
-class Person {
+class OrgPerson {
   id: string
   name: string
   surname: string
   email: string
-  role?: string
+  role: string
 
   constructor(
+    id: string,
     name: string,
     surname: string,
     email: string,
     role: string
   ) {
-    this.id = uid();
+    this.id = id;
     this.name = name;
     this.surname = surname;
     this.email = email;
@@ -114,14 +116,27 @@ class Person {
   }
 }
 
-const _members: Person[] = [
-  new Person(
-    "Дарья Сергеевна",
-    "Курочкина",
-    "example@mail.ru",
-    "Организатор"
-  )
-]
+class Person {
+  id: string
+  name: string
+  email: string
+  info: string
+  visited: boolean
+
+  constructor(
+    id: string,
+    name: string,
+    email: string,
+    info: string,
+    visited: boolean
+  ) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.info = info;
+    this.visited = visited;
+  }
+}
 
 const tasks: Task[] = [
   {
@@ -191,19 +206,25 @@ function getTimeOnly(dateTimeString) {
   return timeOnly;
 }
 
-const EVENT_ID: number = 1;
+const url_parts: string[] = window.location.href.split('/');
+const url_tail: string = url_parts[url_parts.length - 1];
+
+const EVENT_ID: number = (url_tail[url_tail.length - 1] == '#') ? +url_tail.split('#')[0] : +url_tail;
 
 function EventActivitiesPage() {
+
   const {api} = useContext(ApiContext);
+
   const { id } = useParams();
-  const [event,setEvent] = useState(null)
+  const [event, setEvent] = useState(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState("");
   const[eventResponse, setEventResponse] = useState({});
+
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const eventResponse = await api.event.getEventById(parseInt(id));
+        const eventResponse = await api.event.getEventById(parseInt(id ?? "0"));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = ""
@@ -253,19 +274,30 @@ function EventActivitiesPage() {
     setLoadingEvent(false);
   }, []);
 
-  const { privilegeContext } = useContext(PrivilegeContext);
 
-  const activitiesVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
-    new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)
-  ]));
+  const [eventPrivileges, setEventPrivileges] = useState([] as PrivilegeNames[]);
 
-  const orgsVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
-    new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)
-  ]));
+  useEffect(() => {
+    api.withReauth(() => api.profile.getUserEventPrivileges(EVENT_ID))
+      .then((response) => {
+        const list = [];
 
-  const tasksVisible: boolean = hasAnyPrivilege(privilegeContext._eventPrivileges.get(EVENT_ID), new Set([
-    new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)
-  ]));
+        for (const res of response.data) {
+          if (res != undefined && res.name != undefined) {
+            list.push(PrivilegeNames[res.name]);
+          }
+        }
+
+        setEventPrivileges(list);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      })
+  }, []);
+
+  const activitiesVisible: boolean = PrivilegeNames.VIEW_EVENT_ACTIVITIES in eventPrivileges;
+  const orgsVisible: boolean = PrivilegeNames.VIEW_ORGANIZER_USERS in eventPrivileges;
+  const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in eventPrivileges;
 
   const pageTabs: PageTab[] = []
 
@@ -284,14 +316,6 @@ function EventActivitiesPage() {
 
   if (tasksVisible) {
     pageTabs.push(new PageTab("Задачи"));
-  }
-
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
-
-  const _editActivities = () => {
-    console.log('editing activities')
   }
 
   const _editOrgs = () => {
@@ -519,29 +543,31 @@ function EventActivitiesPage() {
     )
   }
 
-  function createPersonRow(person: Person, showRole: boolean) {
-    if (!showRole) {
-      return (
-        <tr key={person.id}>
-          <td>{person.surname + " " + person.name}</td>
-          <td>{person.email}</td>
-        </tr>
-      )
-    } else {
-      return (
-        <tr key={person.id}>
-          <td>{person.role}</td>
-          <td>{person.surname + " " + person.name}</td>
-          <td>{person.email}</td>
-        </tr>
-      )
-    }
+  function createOrgPersonRow(person: OrgPerson) {
+    return (
+      <tr key={person.id}>
+        <td>{person.role}</td>
+        <td>{person.surname + " " + person.name}</td>
+        <td>{person.email}</td>
+      </tr>
+    )
   }
 
-  function createOrgsTable(persons: Person[], edit_func: any) {
+  function createPersonRow(person: Person) {
+    return (
+      <tr key={person.id}>
+        <td>{person.name}</td>
+        <td>{person.email}</td>
+        <td>{person.info}</td>
+        <td>{person.visited ? "Да" : "Нет"}</td>
+      </tr>
+    )
+  }
+
+  function createOrgsTable(persons: OrgPerson[], edit_func: any) {
     const items = [];
     for (const person of persons) {
-      items.push(createPersonRow(person, true));
+      items.push(createOrgPersonRow(person));
     }
     return (
       <>
@@ -553,6 +579,7 @@ function EventActivitiesPage() {
         <table className={styles.table}>
           <thead>
           <tr>
+            <th>Роль</th>
             <th>Имя</th>
             <th>Email</th>
           </tr>
@@ -565,10 +592,10 @@ function EventActivitiesPage() {
     )
   }
 
-  function _createPersonTableUsers(persons: Person[], edit_func: any) {
+  function createParticipantsTable(persons: Person[], edit_func: any) {
     const items = []
     for (const person of persons) {
-      items.push(createPersonRow(person, false));
+      items.push(createPersonRow(person));
     }
     return (
       <>
@@ -583,6 +610,8 @@ function EventActivitiesPage() {
           <tr>
             <th>Имя</th>
             <th>Email</th>
+            <th>Комментарий</th>
+            <th>Явка</th>
           </tr>
           </thead>
           <tbody>
@@ -593,14 +622,14 @@ function EventActivitiesPage() {
     )
   }
 
-  const [orgs, setOrgs] = useState([] as Person[]);
+  const [orgs, setOrgs] = useState([] as OrgPerson[]);
 
   useEffect(() => {
     if (orgsVisible) {
       api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
           const list = response.data.map(user => {
-            return new Person(user.name ?? "", user.surname ?? "", user.login ?? "");
+            return new OrgPerson("" + user.id, user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
           })
           setOrgs(list);
         })
@@ -609,6 +638,21 @@ function EventActivitiesPage() {
         })
     }
   }, [orgsVisible]);
+
+  const [participants, setParticipants] = useState([] as Person[]);
+
+  useEffect(() => {
+    api.withReauth(() => api.participants.getParticipants(EVENT_ID))
+      .then((response) => {
+        const list = response.data.map(user => {
+          return new Person("" + user.id, user.name ?? "",user.email ?? "", user.additionalInfo ?? "", user.visited ?? false);
+        })
+        setParticipants(list);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      })
+  }, []);
 
   function _createTasksTable() {
     return (
@@ -645,7 +689,7 @@ function EventActivitiesPage() {
               )}
               {selectedTab == "Активности" && _createActivityList(activities)}
               {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
-              {selectedTab == "Участники" && _createPersonTableUsers(_members, _editParticipants)}
+              {selectedTab == "Участники" && createParticipantsTable(participants, _editParticipants)}
               {selectedTab == "Задачи" && "ToDo: Страница задач"}
             </div>
             <Fade

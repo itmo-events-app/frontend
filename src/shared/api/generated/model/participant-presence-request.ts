@@ -25,12 +25,12 @@ export interface ParticipantPresenceRequest {
      * @type {number}
      * @memberof ParticipantPresenceRequest
      */
-    'participantId'?: number;
+    'participantId': number;
     /**
      * 
      * @type {boolean}
      * @memberof ParticipantPresenceRequest
      */
-    'isVisited'?: boolean;
+    'isVisited': boolean;
 }
 

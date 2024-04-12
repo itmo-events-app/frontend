@@ -33,6 +33,8 @@ import { UserChangeLoginRequest } from '../model';
 import { UserChangeNameRequest } from '../model';
 // @ts-ignore
 import { UserChangePasswordRequest } from '../model';
+// @ts-ignore
+import { UserSystemRoleResponse } from '../model';
 /**
  * ProfileControllerApi - axios parameter creator
  * @export
@@ -153,6 +155,40 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(userChangePasswordRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получение списка пользователей в системе
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllUsers: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/profile/all-system-users`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -356,6 +392,18 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Получение списка пользователей в системе
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllUsers(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UserSystemRoleResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllUsers(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ProfileControllerApi.getAllUsers']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Получение списка всех привилегий пользователя в данном мероприятии
          * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
@@ -446,6 +494,15 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Получение списка пользователей в системе
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllUsers(options?: any): AxiosPromise<Array<UserSystemRoleResponse>> {
+            return localVarFp.getAllUsers(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Получение списка всех привилегий пользователя в данном мероприятии
          * @param {number} id ID мероприятия
          * @param {*} [options] Override http request option.
@@ -526,6 +583,17 @@ export class ProfileControllerApi extends BaseAPI {
      */
     public changePassword(userChangePasswordRequest: UserChangePasswordRequest, options?: AxiosRequestConfig) {
         return ProfileControllerApiFp(this.configuration).changePassword(userChangePasswordRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получение списка пользователей в системе
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProfileControllerApi
+     */
+    public getAllUsers(options?: AxiosRequestConfig) {
+        return ProfileControllerApiFp(this.configuration).getAllUsers(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
