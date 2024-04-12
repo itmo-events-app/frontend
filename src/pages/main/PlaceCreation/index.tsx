@@ -52,7 +52,7 @@ function PlaceCreationPage() {
         <div className={styles.place_form_item}>
           <InputLabel value={"Дополнительная информация"} />
           <TextArea placeholder="Время работы: Пн-Сб 9:00 - 20:00                Официальная одежда: требуется"
-                        className={styles.place_textArea} maxLength={500}/>
+                        className={styles.place_textArea} />
         </div>
         <div className={styles.place_form_item}>
           <InputLabel value={"Фото"} />
