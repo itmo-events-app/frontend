@@ -23,8 +23,6 @@ const routes: Record<AppRoutes, RouteProps> = {
   },
   [AppRoutes.REGISTER]: {
     path: RoutePaths.register,
-<<<<<<< Updated upstream
-=======
     authenticated: false
   },
   [AppRoutes.LOGIN]: {
@@ -104,7 +102,6 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <HomeRedirectPage routes={routes} />,
   },
   [AppRoutes.REGISTER]: {
->>>>>>> Stashed changes
     element: <RegisterPage />,
   },
   [AppRoutes.LOGIN]: {
