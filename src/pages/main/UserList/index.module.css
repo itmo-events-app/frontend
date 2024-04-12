@@ -63,6 +63,11 @@
   font-size: 16px;
 }
 
+.dialog_text {
+  font-size: large;
+  text-align: center;
+}
+
 .fade {
   position: fixed;
   top: 0;
@@ -129,6 +134,13 @@
   font-size: 14px;
 }
 
-.red_button {
-  background-color: var(--itmo-colors-red);
+.context_menu {
+  position: fixed;
+  z-index: 10;
+}
+
+.icon_dots {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
 }
