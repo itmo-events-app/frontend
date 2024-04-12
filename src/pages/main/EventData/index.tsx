@@ -16,7 +16,8 @@ import { appendClassName } from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
-import CreateDialogContent from "./CreateDialogContext.tsx";
+import { RoleElement } from "@widgets/main/RoleList";
+import CreateActivityDialog from "./CreateActivityDialog.tsx";
 import { Gantt, Task } from 'gantt-task-react';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
@@ -218,6 +219,7 @@ function EventActivitiesPage() {
   const [event, setEvent] = useState(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState("");
+  const[eventResponse, setEventResponse] = useState({});
 
   useEffect(() => {
     const getEvent = async () => {
@@ -247,6 +249,7 @@ function EventActivitiesPage() {
                     data.fullDescription
                   );
                   setEvent(info);
+                  setEventResponse(data);
                 });
               } else {
                 console.log(placeResponse.status);
@@ -349,12 +352,14 @@ function EventActivitiesPage() {
     switch (dialogData.visible) {
       case DialogSelected.UPDATE:
         component = <UpdateDialogContent
-          {...dialogData.args}
+          {...dialogData.args}  eventId={parseInt(id)} eventInfo={eventResponse} onSubmit={()=>{
+          _closeDialog();
+        }}
         />;
         break;
       case DialogSelected.CREATEACTIVITY:
-        component = <CreateDialogContent
-          {...dialogData.args} eventId={parseInt(id)} onSubmit={()=>{
+        component = <CreateActivityDialog
+          {...dialogData.args} parentId={parseInt(id)} onSubmit={()=>{
             _closeDialog();
         }}
         />;
@@ -384,7 +389,6 @@ function EventActivitiesPage() {
     e.stopPropagation();
   }
   function _createInfoPage(eventInfo: EventInfo) {
-
     return (
       <div className={styles.root}>
         <div className={styles.image_box}>
@@ -395,6 +399,9 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
+        {/*<div className={styles.button_container}>*/}
+        {/*  <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>*/}
+        {/*</div>*/}
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
@@ -414,7 +421,11 @@ function EventActivitiesPage() {
             <tbody>
               <tr>
                 <td>Сроки регистрации</td>
-                <td>{eventInfo.regDates}</td>
+                <td>
+                  <div>
+                    {eventInfo.regDates}
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Сроки проведения</td>
@@ -490,8 +501,8 @@ function EventActivitiesPage() {
           {activity.endDate=='' || activity.endDate==activity.date?
             (
               <div className={styles.activity_time_column}>
-                <div className={styles.activity_time}>{activity.date}</div>
-                <div className={styles.activity_time}>{activity.time} - {activity.endTime}</div>
+                <div>{activity.date}</div>
+                <div>{activity.time} - {activity.endTime}</div>
               </div>
             ):(
               <div className={styles.activity_time_column}>
@@ -520,6 +531,9 @@ function EventActivitiesPage() {
              <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
            </div>
          ) : (<></>)}
+        {/*<div className={styles.button_container}>*/}
+        {/*  <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>*/}
+        {/*</div>*/}
         {activitiesLoaded?(
           <div className={styles.data_list}>
             {items}

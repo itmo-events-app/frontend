@@ -9,14 +9,13 @@ import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context.ts';
 import { AddActivityFormatEnum, AddActivityStatusEnum, GetAllOrFilteredEventsStatusEnum } from "@shared/api/generated";
-import * as events from "events";
 
 type UpdateProps = {
   role: RoleModel,
   onDone: (prev: RoleModel, cur: RoleModel) => void
 }
 
-const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
+const CreateActivityDialog = ({props: UpdateProps,parentId, onSubmit}) => {
   const[startDate, setStartDate] = useState(new Date());
   const[endDate, setEndDate] = useState(new Date());
   const[title, setTitle] = useState('');
@@ -81,7 +80,7 @@ const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
       preparingStartString,
       preparingEndString,
       image,
-      eventId
+      parentId
     )
     if(result.status!=201){
       console.log(result.status);
@@ -214,7 +213,6 @@ const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
             selected={preparingStart}
             onChange={(date) => {
               setPreparingStart(date);
-              console.log(date.toISOString());
             }}
             showTimeSelect
             timeFormat="HH:mm"
@@ -249,4 +247,4 @@ const CreateDialogContent = ({props: UpdateProps,eventId, onSubmit}) => {
   );
 }
 
-export default CreateDialogContent;
+export default CreateActivityDialog;
