@@ -108,8 +108,12 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
     const result = await api.event.updateEvent(
       eventId,
       eventRequest
-    )
-    console.log("Result is: "+result.statusText);
+    );
+    if(result.status==200){
+      onSubmit();
+    }else{
+      console.log(result.status);
+    }
   }
   function convertToLocaleDateTime(date: Date){
     const isoDateTime = date.toISOString();

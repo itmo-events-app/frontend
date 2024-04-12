@@ -306,7 +306,6 @@ function EventActivitiesPage() {
   if (activitiesVisible) {
     pageTabs.push(new PageTab("Активности"));
   }
-  pageTabs.push(new PageTab("Активности"));
 
   if (orgsVisible) {
     pageTabs.push(new PageTab("Организаторы"));
@@ -400,9 +399,9 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
-        {<div className={styles.button_container}>
-          <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
-        </div>}
+        {/*<div className={styles.button_container}>*/}
+        {/*  <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>*/}
+        {/*</div>*/}
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
@@ -422,7 +421,11 @@ function EventActivitiesPage() {
             <tbody>
               <tr>
                 <td>Сроки регистрации</td>
-                <td>{eventInfo.regDates}</td>
+                <td>
+                  <div>
+                    {eventInfo.regDates}
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Сроки проведения</td>
@@ -528,9 +531,9 @@ function EventActivitiesPage() {
              <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
            </div>
          ) : (<></>)}
-        <div className={styles.button_container}>
-          <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-        </div>
+        {/*<div className={styles.button_container}>*/}
+        {/*  <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>*/}
+        {/*</div>*/}
         {activitiesLoaded?(
           <div className={styles.data_list}>
             {items}

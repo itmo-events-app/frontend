@@ -9,7 +9,6 @@ import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context.ts';
 import { AddActivityFormatEnum, AddActivityStatusEnum, GetAllOrFilteredEventsStatusEnum } from "@shared/api/generated";
-import * as events from "events";
 
 type UpdateProps = {
   role: RoleModel,
