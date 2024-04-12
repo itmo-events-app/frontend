@@ -209,4 +209,6 @@
   gap: 20px;
   padding: 0px 10px;
 }
-
+.inputEmpty {
+  border: 1px solid red;
+}

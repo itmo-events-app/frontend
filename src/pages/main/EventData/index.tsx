@@ -354,7 +354,9 @@ function EventActivitiesPage() {
         break;
       case DialogSelected.CREATEACTIVITY:
         component = <CreateDialogContent
-          {...dialogData.args}
+          {...dialogData.args} eventId={parseInt(id)} onSubmit={()=>{
+            _closeDialog();
+        }}
         />;
     }
     return (
@@ -450,14 +452,11 @@ function EventActivitiesPage() {
     const response = await api.event.getAllOrFilteredEvents(undefined,undefined,id);
     if(response.status==200){
       const activities = response.data.map(async a=>{
-
-        const placeResponse = await fetch('/api/places/' + a.placeId, {
-          method: 'GET'
-        })
+        const placeResponse = await api.place.placeGet(parseInt(a.placeId));
         let place = "";
         let room = ""
         if (placeResponse.status == 200) {
-          const data = await placeResponse.json();
+          const data = placeResponse.data;
           place = data.address;
           room = data.room;
         } else {
@@ -468,7 +467,6 @@ function EventActivitiesPage() {
       const activitiesPromise = await Promise.all(activities);
       setActivities(activitiesPromise);
       setActivitiesLoaded(true);
-      console.log(activitiesPromise);
     }else{
       console.log(response.status);
     }
@@ -518,7 +516,7 @@ function EventActivitiesPage() {
       <>
         {edit_privilege ? (
            <div className={styles.button_container}>
-             <Button className={styles.button} onClick={_addActivity}>Редактировать</Button>
+             <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
            </div>
          ) : (<></>)}
         {activitiesLoaded?(

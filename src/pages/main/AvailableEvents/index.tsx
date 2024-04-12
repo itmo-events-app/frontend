@@ -105,11 +105,10 @@ function AvailableEventsPage() {
           const data = response.data;
           const pagesPromises = data.map(async (e) => {
             let address = ''
-            const response = await fetch('/api/places/' + e.placeId, {
-              method: 'GET'
-            })
+            const response = await api.place.placeGet(parseInt(e.placeId));
+            console.log(response);
             if (response.status == 200) {
-              const place = await response.json();
+              const place = response.data;
               address = place.address;
             } else {
               console.log(response.status);
