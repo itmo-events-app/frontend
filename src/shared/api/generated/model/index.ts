@@ -25,3 +25,4 @@ export * from './user-change-password-request';
 export * from './user-info-response';
 export * from './user-role-response';
 export * from './user-short-data-response';
+export * from './user-system-role-response';
