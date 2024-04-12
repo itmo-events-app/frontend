@@ -21,6 +21,7 @@ import { AppRouteProps } from "@features/app-route-props";
 import { anyPrivilege } from "@features/privileges";
 import { PrivilegeData } from "@entities/privilege-context";
 import { PrivilegeNames } from "@shared/config/privileges";
+import PlaceListPage from "@pages/main/PlaceList";
 import PlaceDataPage from "@pages/main/PlaceData";
 
 // root urls with privileges
@@ -167,6 +168,7 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.NOT_FOUND]: {
     element: <>404 not found</>,
   },
+
 };
 
 export default function AppRouter() {
