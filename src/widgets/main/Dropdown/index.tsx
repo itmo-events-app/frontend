@@ -24,9 +24,12 @@ type Props<T> = {
   className?: string,
   items: T[],
   toText: (e: T) => string,
+  readonly?: boolean
 }
 
 function Dropdown<T>(props: Props<T>) {
+  const readonly = props.readonly ?? false;
+
   const [open, setOpen] = useState(false);
 
   const clearable = props.onClear != null;
@@ -118,7 +121,7 @@ function Dropdown<T>(props: Props<T>) {
   }
 
   return (
-    <div className={styles.dropdown} onClick={() => setOpen(!open)}>
+    <div className={appendClassName(styles.dropdown, readonly ? styles.readonly : undefined)} onClick={() => setOpen(!open)}>
       <div className={open ? styles.dropdown_border_open : styles.dropdown_border}>
         <div className={styles.dropdown_item_container}>
           {(props.value == null || props.value == "") ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(new DropdownOption(props.value))}
