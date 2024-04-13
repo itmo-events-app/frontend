@@ -20,17 +20,35 @@ const PrivilegeContextProvider = (props: Props) => {
         .then(r => {
           const privileges = r.data!.privileges!.map(p => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames]));
           const orgRoles = r.data!.hasOrganizerRolesResponse ?? false;
-          setPrivilegeContext(new PrivilegeContextData(new Set(privileges), undefined, orgRoles));
+          updateSystemPrivileges(new Set(privileges), orgRoles);
         });
     } else {
-      setPrivilegeContext(new PrivilegeContextData())
+      resetPrivilegeContext();
     }
   }, [api]);
 
+  function resetPrivilegeContext() {
+    setPrivilegeContext(new PrivilegeContextData());
+  }
+
+  function updateSystemPrivileges(e: Set<PrivilegeData>, hasOrgRoles: boolean) {
+    setPrivilegeContext(new PrivilegeContextData(e, undefined, hasOrgRoles));
+  }
+
+  function updateEventPrivileges(id: number, e: Set<PrivilegeData>) {
+    privilegeContext.eventPrivileges.set(id, e);
+    setPrivilegeContext(new PrivilegeContextData(
+      privilegeContext.systemPrivileges,
+      privilegeContext.eventPrivileges,
+      privilegeContext.hasOrganizerRoles,
+    ));
+  }
 
   const contextValue: PrivilegeContextValue = {
     privilegeContext,
-    setPrivilegeContext,
+    resetPrivilegeContext,
+    updateSystemPrivileges,
+    updateEventPrivileges
   };
 
   return (
