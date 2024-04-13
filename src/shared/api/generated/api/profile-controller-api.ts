@@ -26,6 +26,8 @@ import { NotificationSettingsRequest } from '../model';
 // @ts-ignore
 import { PrivilegeResponse } from '../model';
 // @ts-ignore
+import { PrivilegeWithHasOrganizerRolesResponse } from '../model';
+// @ts-ignore
 import { ProfileResponse } from '../model';
 // @ts-ignore
 import { UserChangeLoginRequest } from '../model';
@@ -433,7 +435,7 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getUserSystemPrivileges(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PrivilegeResponse>>> {
+        async getUserSystemPrivileges(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PrivilegeWithHasOrganizerRolesResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUserSystemPrivileges(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProfileControllerApi.getUserSystemPrivileges']?.[index]?.url;
@@ -526,7 +528,7 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getUserSystemPrivileges(options?: any): AxiosPromise<Array<PrivilegeResponse>> {
+        getUserSystemPrivileges(options?: any): AxiosPromise<PrivilegeWithHasOrganizerRolesResponse> {
             return localVarFp.getUserSystemPrivileges(options).then((request) => request(axios, basePath));
         },
         /**

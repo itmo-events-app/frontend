@@ -12,6 +12,7 @@ export * from './place-request';
 export * from './place-response';
 export * from './place-short-data-response';
 export * from './privilege-response';
+export * from './privilege-with-has-organizer-roles-response';
 export * from './profile-response';
 export * from './registration-request-for-admin';
 export * from './registration-user-request';
