@@ -32,7 +32,7 @@ jobs:
         if: always()
         run: npm run build.nolint
 
-      - name: Build & Push Docker Image
+      - name: Build runner & Push Docker Image
         if: always()
         uses: niqzart/ffs-devops/docker-build@main
         with:
