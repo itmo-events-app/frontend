@@ -23,6 +23,12 @@ function PlaceDataPage() {
     queryKey: ["getPlace"],
   });
 
+  const formatTranslation: Record<string, string> = {
+    "ONLINE": "Онлайн",
+    "OFFLINE": "Офлайн",
+    "HYBRID": "Гибрид"
+  };
+
   return (
     <Layout
       topLeft={<BrandLogo />}
@@ -44,7 +50,7 @@ function PlaceDataPage() {
               </div>
               <div className={styles.place_column}>
                 <div className={styles.data}>{foundPlace?.address ?? ""}</div>
-                <div className={styles.data}>{foundPlace?.format}</div>
+                <div className={styles.data}>{formatTranslation[foundPlace?.format!]}</div>
                 <div className={styles.data}>{foundPlace?.room}</div>
                 <div className={styles.data}>{`${foundPlace?.latitude ?? 0}, ${foundPlace?.longitude ?? 0}`}</div>
               </div>

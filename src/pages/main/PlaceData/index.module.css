@@ -42,3 +42,7 @@
 .data {
 
 }
+
+.empty_field_msg {
+  color: var(--itmo-colors-red);
+}

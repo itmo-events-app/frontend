@@ -11,32 +11,45 @@ import Search from "@widgets/main/Search";
 import Button from "@widgets/main/Button";
 import Content from "@widgets/main/Content";
 import Input from "@widgets/main/Input";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Label from "@widgets/auth/InputLabel";
 import { useContext, useState } from "react";
 import Dialog from "@widgets/main/Dialog";
-import InputCheckbox from "@features/InputCheckbox";
 import { useQuery } from "@tanstack/react-query";
 import { placeService } from "@features/place-service.ts";
 import ApiContext from "@features/api-context.ts";
-import { PlaceResponse } from "@shared/api/generated";
+import { PlaceRequestFormatEnum, PlaceResponse } from "@shared/api/generated";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 
-
-const _test_places: DropdownOption<string>[] = [
-  new DropdownOption("Ломоносова, 9"),
-  new DropdownOption("Кронверкский, 49"),
-];
 
 const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
-
-  const [isFormatOnline, setIsIsFormatOnline] = useState(false);
+  const { api } = useContext(ApiContext);
+  const placeFormat: DropdownOption<string>[] = [
+    new DropdownOption("Онлайн"),
+    new DropdownOption("Офлайн"),
+    new DropdownOption("Гибрид")
+  ];
+  const formatEnum: Record<string, PlaceRequestFormatEnum> = {
+    "Онлайн": PlaceRequestFormatEnum.Online,
+    "Офлайн": PlaceRequestFormatEnum.Offline,
+    "Гибрид": PlaceRequestFormatEnum.Hybrid
+  };
+  const [format, setFormat] = useState<DropdownOption<string>>(placeFormat[1]);
   const [placeName, setPlaceName] = useState("");
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [address, setAddress] = useState("");
+  const [showEmptyFieldsMessage, setShowEmptyFieldsMessage] = useState(false);
 
-  const _createPlace = () => {
-    console.log("creating place!");
+  const createPlace = () => {
+    if (!placeName || !address || !roomName || !description) {
+      setShowEmptyFieldsMessage(true);
+      return
+    }
+    placeService.createPlace(api, placeName, address, formatEnum[format.value], roomName, description, latitude, longitude);
     onClose();
+    location.reload()
   };
 
   return (
@@ -51,12 +64,18 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
             </div>
             <div className={styles.place_form_item}>
               <Label value="Адрес" />
-              <Dropdown items={_test_places} placeholder="Выберите адрес" toText={(item) => item.value} />
+              <Input type="text" placeholder={"Адрес"} value={address}
+                     onChange={(event) => setAddress(event.target.value)} />
             </div>
             <div className={styles.place_form_item}>
               <Label value="Формат" />
-              <InputCheckbox item={{ selected: isFormatOnline, value: "Зум" }}
-                             onChange={({ selected }) => setIsIsFormatOnline(selected)} />
+              <Dropdown items={placeFormat}
+                        toText={(item) => item.value}
+                        value={format}
+                        onChange={(sel) => {
+                          setFormat(sel);
+                        }}
+              />
             </div>
             <div className={styles.place_form_item}>
               <Label value="Аудитория" />
@@ -68,8 +87,21 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               <Input type="text" placeholder={"Описание"} value={description}
                      onChange={(event) => setDescription(event.target.value)} />
             </div>
+            <div className={styles.place_form_item}>
+              <Label value="Долгота" />
+              <Input type="number" placeholder={"Долгота"} value={String(latitude)}
+                     onChange={(event) => {
+                       setLatitude(Number(event.target.value));
+                     }} step={0.01} min={-180} max={180} />
+            </div>
+            <div className={styles.place_form_item}>
+              <Label value="Широта" />
+              <Input type="number" placeholder={"Широта"} value={String(longitude)}
+                     onChange={(event) => setLongitude(Number(event.target.value))} step={0.01} min={-90} max={90} />
+            </div>
             <div className={styles.place_form_button}>
-              <Button onClick={_createPlace}>Создать</Button>
+              <Button onClick={createPlace}>Создать</Button>
+              {showEmptyFieldsMessage && <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>}
             </div>
           </div>
         </div>
@@ -96,12 +128,12 @@ function AvailablePlacesPage() {
   const closeModal = () => {
     setModalOpen(false);
   };
+
   const _onSearch = () => {
     console.log("searching");
   };
+
   const _onCreation = () => {
-    console.log("creating");
-    // navigate(RoutePaths.createPlace);
     openModal();
   };
 
@@ -110,11 +142,11 @@ function AvailablePlacesPage() {
     navigate(`${id}`);
   };
 
-  const _places: any[] = foundPlaces.map((place: PlaceResponse) => {
-      return new PageEntry(() => {
-        return _entryStub(place.id, place.name, place.address);
-      })
-  })
+  const _places: PageEntry[] = foundPlaces.map((place: PlaceResponse) => {
+    return new PageEntry(() => {
+      return _entryStub(place.id, place.name, place.address);
+    });
+  });
 
   function _entryStub(index?: number, name?: string, address?: string) {
     return (
