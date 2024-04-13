@@ -662,7 +662,7 @@ function EventActivitiesPage() {
         console.log(error.response.data);
       })
   }, []);
-  let locc = "cz";
+  const locc = "cz";
   function _createTasksTable() {
     return (
       <div className={styles.tasks}>

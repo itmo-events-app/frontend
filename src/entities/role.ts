@@ -23,7 +23,7 @@ class RoleModel {
     this._isEditable = isEditable;
   }
 
-  get id() { return this._id };
+  get id() { return this._id }
   get name() { return this._name; }
   get description() { return this._description; }
   get privileges() { return this._privileges; }

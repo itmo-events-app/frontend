@@ -11,7 +11,7 @@ class PrivilegeModel {
     this._description = description;
   }
 
-  get id() { return this._id };
+  get id() { return this._id }
   get name() { return this._name; }
   get description() { return this._description; }
 }
