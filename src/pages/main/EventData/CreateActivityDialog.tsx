@@ -81,7 +81,7 @@ const CreateActivityDialog = ({props: UpdateProps,parentId, onSubmit}) => {
       preparingEndString,
       image,
       parentId
-    )
+    );
     if(result.status!=201){
       console.log(result.status);
     }else{
