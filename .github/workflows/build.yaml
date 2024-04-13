@@ -23,17 +23,26 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
+        id: install
         run: npm install
 
-      - name: Lint
-        run: npm run lint
+      - name: 'Lint: eslint'
+        id: eslint
+        if: steps.install.outcome == 'success'
+        run: npm run eslint
+
+      - name: 'Lint: tsc'
+        id: tsc
+        if: steps.install.outcome == 'success'
+        run: npm run tsc
 
       - name: Build
-        if: always()
+        id: build
+        if: steps.install.outcome == 'success'
         run: npm run build.nolint
 
       - name: Build runner & Push Docker Image
-        if: always()
+        if: steps.build.outcome == 'success'
         uses: niqzart/ffs-devops/docker-build@main
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
