@@ -31,7 +31,7 @@ services:
       - '9001:9001'
 
   frontend:
-    image: events-app-frontend:latest
+    # image: zubrailx/itmo-events-app-frontend:latest
     build: .
     ports:
       - "5573:80"
