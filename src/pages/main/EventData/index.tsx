@@ -327,14 +327,6 @@ function EventActivitiesPage() {
   pageTabs.push(new PageTab("Задачи"));
   //}
 
-  const _editOrgs = () => {
-    console.log('editing orgs')
-  }
-
-  const _editParticipants = () => {
-    console.log('editing participants')
-  }
-
   class DialogData {
     heading: string | undefined;
     visible: DialogSelected;
@@ -416,7 +408,6 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
-
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
