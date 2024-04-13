@@ -111,6 +111,10 @@ class OrgPerson {
     this.email = email;
     this.role = role;
   }
+
+  public equals(obj: any): boolean {
+    return obj && typeof obj === 'object' && obj.id === this.id;
+  }
 }
 
 class Person {
@@ -573,11 +577,41 @@ function EventActivitiesPage() {
     )
   }
 
-  function createOrgsTable(persons: OrgPerson[], edit_func: any) {
+  function _groupRoles(entries: OrgPerson[]) {
+    const users: Map<string, OrgPerson> = new Map<string, OrgPerson>([]);
+
+    for (const user of entries) {
+      users.set(user.id, user);
+    }
+
+    const userRoles: Map<string, string[]> = new Map<string, string[]>([]);
+
+    for (const user of entries) {
+      const roles: string[] = userRoles.get(user.id) ?? [];
+
+      roles.push(user.role);
+      userRoles.set(user.id, roles);
+    }
+
+    const orgList: OrgPerson[] = [] as OrgPerson[];
+
+    userRoles.forEach((value: string[], key: string) => {
+      const org: OrgPerson = users.get(key) ?? new OrgPerson("", "", "", "", "");
+      orgList.push(new OrgPerson(org.id, org.name, org.surname, org.email, value.join(", ")));
+    });
+
+    return orgList;
+  }
+
+  function createOrgsTable(persons: OrgPerson[]) {
+    const processedPersons: OrgPerson[] = _groupRoles(persons);
+
     const items = [];
-    for (const person of persons) {
+
+    for (const person of processedPersons) {
       items.push(createOrgPersonRow(person));
     }
+
     return (
       <>
         {edit_privilege ? (
@@ -641,22 +675,7 @@ function EventActivitiesPage() {
             return new OrgPerson("" + user.id, user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
           });
 
-          const userRoles: Map<OrgPerson, string[]> = {} as Map<OrgPerson, string[]>;
-
-          for (const user of list) {
-            const roles: string[] = userRoles.get(user) ?? [];
-
-            roles.push(user.role);
-            userRoles.set(user, roles);
-          }
-
-          const orgList: OrgPerson[] = [] as OrgPerson[];
-
-          userRoles.forEach((value: string[], key: OrgPerson) => {
-            orgList.push(new OrgPerson(key.id, key.name, key.surname, key.email, value.join(", ")));
-          });
-
-          setOrgs(orgList);
+          setOrgs(list);
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -731,8 +750,8 @@ function EventActivitiesPage() {
               selectedTab == "Описание" && _createInfoPage(event)
             )}
             {selectedTab == "Активности" && _createActivityList(activities)}
-            {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
-            {selectedTab == "Участники" && createParticipantsTable(participants, _editParticipants)}
+            {selectedTab == "Организаторы" && createOrgsTable(orgs)}
+            {selectedTab == "Участники" && createParticipantsTable(participants, () => {})}
             {selectedTab == "Задачи" && _createTasksTable()}
           </div>
           <Fade
