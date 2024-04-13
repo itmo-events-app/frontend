@@ -1,14 +1,10 @@
 import { RoleModel } from "@entities/role";
 import Button from "@widgets/main/Button";
-import Input from "@widgets/main/Input";
 import InputLabel from "@widgets/main/InputLabel";
-import TextArea from "@widgets/main/TextArea";
-import DatePicker from "react-datepicker";
 import styles from './index.module.css';
 import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context.ts';
-import * as events from "events";
 
 
 type UpdateProps = {
