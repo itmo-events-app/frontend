@@ -21,10 +21,6 @@ import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
-const _displayModes: DropdownOption[] = [
-  new DropdownOption("Показать списком"),
-  new DropdownOption("Показать на карте")
-]
 
 enum DisplayModes {
   LIST = "Показать списком",

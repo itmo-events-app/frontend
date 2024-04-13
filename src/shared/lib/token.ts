@@ -22,7 +22,7 @@ class TokenContextData {
 function getTokenContextData() {
   const data = localStorage.getItem(LocalStorageKeys.TOKEN);
   if (data != null) {
-    const obj: Object = JSON.parse(data);
+    const obj: object = JSON.parse(data);
     return plainToInstance(TokenContextData, obj);
   }
   return new TokenContextData();

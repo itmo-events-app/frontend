@@ -3,7 +3,7 @@ import { RoleModel, RoleModelType, fromRoleModel, fromRoleModelType, toRoleModel
 import Button from "@widgets/main/Button";
 import Dropdown from "@widgets/main/Dropdown";
 import Input from "@widgets/main/Input";
-import InputCheckboxList, { ItemSelection, createItemSelectionList, itemSelectionGetSelected } from "@widgets/main/InputCheckboxList";
+import InputCheckboxList, { ItemSelection } from "@widgets/main/InputCheckboxList";
 import InputLabel from "@widgets/main/InputLabel";
 import TextArea from "@widgets/main/TextArea";
 
@@ -11,6 +11,7 @@ import styles from './index.module.css'
 import { privilegeToText, dropdownOptionToText, dropdownOptions } from "./common";
 import { useContext, useEffect, useState } from "react";
 import ApiContext from "@features/api-context";
+import { createItemSelectionList, itemSelectionGetSelected } from "@widgets/main/InputCheckboxList/common";
 
 type UpdateProps = {
   privileges: PrivilegeModel[]
@@ -23,7 +24,7 @@ const UpdateDialogContent = (props: UpdateProps) => {
   const { api } = useContext(ApiContext);
   const [name, setName] = useState(props.role.name ?? '');
   const [description, setDescription] = useState(props.role.description ?? '');
-  const [type, setType] = useState(props.role.type ?? RoleModelType.SYSTEM);
+  const [type, _] = useState(props.role.type ?? RoleModelType.SYSTEM);
   const [privileges, setPrivileges] = useState(createItemSelectionList(props.role.privileges ?? []));
 
   const [nameError, setNameError] = useState('');
