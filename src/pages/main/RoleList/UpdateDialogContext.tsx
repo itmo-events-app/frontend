@@ -26,17 +26,11 @@ const UpdateDialogContent = (props: UpdateProps) => {
   const [type, setType] = useState(props.role.type ?? RoleModelType.SYSTEM);
   const [privileges, setPrivileges] = useState(createItemSelectionList(props.role.privileges ?? []));
 
-  const [prevType, setPrevType] = useState<RoleModelType | undefined>(undefined);
-
   const [nameError, setNameError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
 
   // NOTE: maybe cache privilege list results?
   useEffect(() => {
-    if (prevType == type) {
-      return;
-    }
-
     const queryType = fromRoleModelType(type);
 
     if (type == RoleModelType.SYSTEM) {
@@ -55,7 +49,6 @@ const UpdateDialogContent = (props: UpdateProps) => {
         })
     }
 
-    setPrevType(type);
   }, [type]);
 
   // select privileges that were on previous role
@@ -125,9 +118,7 @@ const UpdateDialogContent = (props: UpdateProps) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
-          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} value={type} onChange={
-            (e) => setType(e)
-          }
+          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} value={type} readonly
           />
         </div>
         <div className={styles.dialog_item}>

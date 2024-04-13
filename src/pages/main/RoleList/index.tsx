@@ -6,7 +6,7 @@ import SideBar from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
 import Button from '@widgets/main/Button';
 import RoleList, { RoleElement, createRoleElementList, roleElementListGetElements } from '@widgets/main/RoleList';
-import { RoleModel, fromRoleModel } from '@entities/role';
+import { RoleModel } from '@entities/role';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { useContext, useEffect, useRef, useState } from 'react';
 import Dialog from '@widgets/main/Dialog';
