@@ -405,7 +405,7 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Получение списка мероприятий пользователя по роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -538,6 +538,40 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             assertParamExists('getRoleById', 'id', id)
             const localVarPath = `/api/roles/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получение списка системных ролей
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSystemRoles: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/roles/system`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -908,7 +942,7 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Получение списка мероприятий пользователя по роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -956,6 +990,18 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getRoleById(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['RoleControllerApi.getRoleById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Получение списка системных ролей
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSystemRoles(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RoleResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSystemRoles(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['RoleControllerApi.getSystemRoles']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -1135,7 +1181,7 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Получение списка мероприятий пользователя по роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1172,6 +1218,15 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
          */
         getRoleById(id: number, options?: any): AxiosPromise<RoleResponse> {
             return localVarFp.getRoleById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получение списка системных ролей
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSystemRoles(options?: any): AxiosPromise<Array<RoleResponse>> {
+            return localVarFp.getSystemRoles(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1353,7 +1408,7 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Получение списка мероприятий пользователя по роли
-     * @param {number} id 
+     * @param {number} id ID роли
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
@@ -1397,6 +1452,17 @@ export class RoleControllerApi extends BaseAPI {
      */
     public getRoleById(id: number, options?: AxiosRequestConfig) {
         return RoleControllerApiFp(this.configuration).getRoleById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получение списка системных ролей
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RoleControllerApi
+     */
+    public getSystemRoles(options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).getSystemRoles(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
