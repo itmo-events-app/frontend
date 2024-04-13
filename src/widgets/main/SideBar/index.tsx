@@ -38,7 +38,7 @@ const SideBar = (props: Props) => {
     new SideBarTabE(
       new SideBarTab('Мероприятия', RoutePaths.eventList, <Menu />),
       anyPrivilege(new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS_AND_ACTIVITIES),
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
       ]))
     ),
     new SideBarTabE(
