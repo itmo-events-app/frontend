@@ -201,8 +201,8 @@ const tasks: Task[] = [
 ];
 //ff9933
 
-const edit_privilege: boolean = false;
-const add_organizer_privilege: boolean = false;
+const edit_privilege: boolean = true;
+const add_organizer_privilege: boolean = true;
 
 function readDate(dateTime: string) {
   const date = new Date(dateTime);
