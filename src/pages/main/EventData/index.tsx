@@ -1,4 +1,4 @@
-import {uid} from 'uid'
+import { uid } from 'uid'
 import { useContext, useEffect, useRef, useState } from "react";
 import styles from './index.module.css'
 import BrandLogo from '@widgets/main/BrandLogo';
@@ -9,20 +9,21 @@ import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
-import {hasAnyPrivilege} from "@features/privileges.ts";
-import {PrivilegeNames} from "@shared/config/privileges.ts";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
 import { useParams } from "react-router-dom";
 import { appendClassName } from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateDialogContent from "./CreateDialogContext.tsx";
-import { Gantt, Task } from 'gantt-task-react';
+import { Gantt, Task, DisplayOption } from 'gantt-task-react';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
 import { PrivilegeResponse, PrivilegeResponseNameEnum } from "@shared/api/generated";
+import "gantt-task-react/dist/index.css";
 
 class EventInfo {
   regDates: string
@@ -149,7 +150,6 @@ const tasks: Task[] = [
     styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
     project: "sdsd",
     hideChildren: false,
-    displayOrder: 1,
   },
   {
     start: new Date(2024, 1, 3),
@@ -159,7 +159,7 @@ const tasks: Task[] = [
     type: 'task',
     progress: 100,
     isDisabled: false,
-    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
+    styles: { progressColor: '#663333', progressSelectedColor: '#663333' },
     project: "sdsd",
   },
   {
@@ -172,8 +172,6 @@ const tasks: Task[] = [
     isDisabled: false,
     styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
     project: "sdsd",
-    dependencies: ["Task 0"],
-    displayOrder: 2,
   },
   {
     start: new Date(2024, 1, 11),
@@ -185,13 +183,23 @@ const tasks: Task[] = [
     isDisabled: false,
     styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
     project: "sdsd",
-    dependencies: ["Task 3"],
-    displayOrder: 3,
+  },
+  {
+    start: new Date(2024, 1, 3),
+    end: new Date(2024, 1, 9),
+    name: 'Подготовить подарки',
+    id: 'Task 4',
+    type: 'task',
+    progress: 100,
+    isDisabled: false,
+    styles: { progressColor: '#ff9933', progressSelectedColor: '#ff9933' },
+    project: "sdsd",
   },
 ];
+//ff9933
 
 const edit_privilege: boolean = false;
-function readDate(dateTime: string){
+function readDate(dateTime: string) {
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
   return formattedDate
@@ -212,7 +220,7 @@ const EVENT_ID: number = (url_tail[url_tail.length - 1] == '#') ? +url_tail.spli
 
 function EventActivitiesPage() {
 
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
 
   const { id } = useParams();
   const [event, setEvent] = useState(null);
@@ -226,8 +234,8 @@ function EventActivitiesPage() {
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = ""
-          await fetch('/api/places/'+data.placeId,{
-            method:'GET'
+          await fetch('/api/places/' + data.placeId, {
+            method: 'GET'
           }).then(
             placeResponse => {
               if (placeResponse.status == 200) {
@@ -237,7 +245,7 @@ function EventActivitiesPage() {
                   const info = new EventInfo(
                     readDate(data.registrationStart) + " - " + readDate(data.registrationEnd),
                     readDate(data.preparingStart) + " - " + readDate(data.preparingEnd),
-                    readDate(data.startDate) +" - "+readDate(data.endDate),
+                    readDate(data.startDate) + " - " + readDate(data.endDate),
                     data.participantLimit,
                     placeAddress,
                     data.format,
@@ -261,10 +269,10 @@ function EventActivitiesPage() {
       }
     };
     getEvent();
-    getImageUrl(id).then(url=>{
-      if(url==''){
+    getImageUrl(id).then(url => {
+      if (url == '') {
         setEventImageUrl("http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg");
-      }else{
+      } else {
         setEventImageUrl(url);
       }
     })
@@ -310,9 +318,9 @@ function EventActivitiesPage() {
 
   pageTabs.push(new PageTab("Участники"));
 
-  if (tasksVisible) {
-    pageTabs.push(new PageTab("Задачи"));
-  }
+  // if (tasksVisible) {
+  pageTabs.push(new PageTab("Задачи"));
+  //}
 
   const _editOrgs = () => {
     console.log('editing orgs')
@@ -354,9 +362,9 @@ function EventActivitiesPage() {
         break;
       case DialogSelected.CREATEACTIVITY:
         component = <CreateDialogContent
-          {...dialogData.args} eventId={parseInt(id)} onSubmit={()=>{
+          {...dialogData.args} eventId={parseInt(id)} onSubmit={() => {
             _closeDialog();
-        }}
+          }}
         />;
     }
     return (
@@ -387,7 +395,7 @@ function EventActivitiesPage() {
     return (
       <div className={styles.root}>
         <div className={styles.image_box}>
-          {<img className={styles.image} src= {eventImageUrl} alt="Event image" />}
+          {<img className={styles.image} src={eventImageUrl} alt="Event image" />}
         </div>
         {edit_privilege ? (
           <div className={styles.button_container}>
@@ -448,10 +456,10 @@ function EventActivitiesPage() {
 
   const [activities, setActivities] = useState([]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
-  const getActivities =async () => {
-    const response = await api.event.getAllOrFilteredEvents(undefined,undefined,id);
-    if(response.status==200){
-      const activities = response.data.map(async a=>{
+  const getActivities = async () => {
+    const response = await api.event.getAllOrFilteredEvents(undefined, undefined, id);
+    if (response.status == 200) {
+      const activities = response.data.map(async a => {
         const placeResponse = await api.place.placeGet(parseInt(a.placeId));
         let place = "";
         let room = ""
@@ -462,16 +470,16 @@ function EventActivitiesPage() {
         } else {
           console.log(response.status);
         }
-        return new Activity(a.title,place,room,a.shortDescription,readDate(a.startDate),getTimeOnly(a.startDate),readDate(a.endDate),getTimeOnly(a.endDate));
+        return new Activity(a.title, place, room, a.shortDescription, readDate(a.startDate), getTimeOnly(a.startDate), readDate(a.endDate), getTimeOnly(a.endDate));
       });
       const activitiesPromise = await Promise.all(activities);
       setActivities(activitiesPromise);
       setActivitiesLoaded(true);
-    }else{
+    } else {
       console.log(response.status);
     }
   }
-  useEffect( () => {
+  useEffect(() => {
     getActivities();
 
   }, []);
@@ -486,23 +494,23 @@ function EventActivitiesPage() {
           </div>
           <div className={styles.info_block}>{activity.description}</div>
         </div>
-          {activity.endDate=='' || activity.endDate==activity.date?
-            (
-              <div className={styles.activity_time_column}>
-                <div className={styles.activity_time}>{activity.date}</div>
-                <div className={styles.activity_time}>{activity.time} - {activity.endTime}</div>
+        {activity.endDate == '' || activity.endDate == activity.date ?
+          (
+            <div className={styles.activity_time_column}>
+              <div className={styles.activity_time}>{activity.date}</div>
+              <div className={styles.activity_time}>{activity.time} - {activity.endTime}</div>
+            </div>
+          ) : (
+            <div className={styles.activity_time_column}>
+              <div>
+                {activity.date} {activity.time}
               </div>
-            ):(
-              <div className={styles.activity_time_column}>
-                <div>
-                  {activity.date} {activity.time}
-                </div>
-                <div>
-                  {activity.endDate} {activity.endTime}
-                </div>
+              <div>
+                {activity.endDate} {activity.endTime}
               </div>
-              )
-          }
+            </div>
+          )
+        }
       </div>
     )
   }
@@ -515,17 +523,17 @@ function EventActivitiesPage() {
     return (
       <>
         {edit_privilege ? (
-           <div className={styles.button_container}>
-             <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-           </div>
-         ) : (<></>)}
-        {activitiesLoaded?(
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
+          </div>
+        ) : (<></>)}
+        {activitiesLoaded ? (
           <div className={styles.data_list}>
             {items}
           </div>)
           :
           (
-            <div/>
+            <div />
           )}
       </>
     )
@@ -566,14 +574,14 @@ function EventActivitiesPage() {
         ) : <></>}
         <table className={styles.table}>
           <thead>
-          <tr>
-            <th>Роль</th>
-            <th>Имя</th>
-            <th>Email</th>
-          </tr>
+            <tr>
+              <th>Роль</th>
+              <th>Имя</th>
+              <th>Email</th>
+            </tr>
           </thead>
           <tbody>
-          {items}
+            {items}
           </tbody>
         </table>
       </>
@@ -595,15 +603,15 @@ function EventActivitiesPage() {
         ) : <></>}
         <table className={styles.table}>
           <thead>
-          <tr>
-            <th>Имя</th>
-            <th>Email</th>
-            <th>Комментарий</th>
-            <th>Явка</th>
-          </tr>
+            <tr>
+              <th>Имя</th>
+              <th>Email</th>
+              <th>Комментарий</th>
+              <th>Явка</th>
+            </tr>
           </thead>
           <tbody>
-          {items}
+            {items}
           </tbody>
         </table>
       </>
@@ -633,7 +641,7 @@ function EventActivitiesPage() {
     api.withReauth(() => api.participants.getParticipants(EVENT_ID))
       .then((response) => {
         const list = response.data.map(user => {
-          return new Person("" + user.id, user.name ?? "",user.email ?? "", user.additionalInfo ?? "", user.visited ?? false);
+          return new Person("" + user.id, user.name ?? "", user.email ?? "", user.additionalInfo ?? "", user.visited ?? false);
         })
         setParticipants(list);
       })
@@ -641,10 +649,26 @@ function EventActivitiesPage() {
         console.log(error.response.data);
       })
   }, []);
-
+  let locc = "cz";
   function _createTasksTable() {
     return (
-      <Gantt tasks={tasks} />
+      <div className={styles.tasks}>
+        <Gantt tasks={tasks} listCellWidth={""} locale={locc} />
+        <div className={styles.tasks__people}>
+          <div className={styles.tasks__human}>
+            <span style={{ background: "#0069FF" }}></span>
+            Иванов Иван
+          </div>
+          <div className={styles.tasks__human}>
+            <span style={{ background: "#663333" }}></span>
+            Алексеев Алексей
+          </div>
+          <div className={styles.tasks__human}>
+            <span style={{ background: "#ff9933" }}></span>
+            Петров Пётр
+          </div>
+        </div>
+      </div >
     )
   }
 
@@ -667,26 +691,26 @@ function EventActivitiesPage() {
       }
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight=
-        {
-          <Content>
-            <div className={styles.content}>
-              {event==null || loadingEvent ? (
-                <p></p>
-              ) : (
-                selectedTab == "Описание" && _createInfoPage(event)
-              )}
-              {selectedTab == "Активности" && _createActivityList(activities)}
-              {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
-              {selectedTab == "Участники" && createParticipantsTable(participants, _editParticipants)}
-              {selectedTab == "Задачи" && "ToDo: Страница задач"}
-            </div>
-            <Fade
-              className={appendClassName(styles.fade,
-                (dialogData.visible) ? styles.visible : styles.hidden)}>
-              <_Dialog />
-            </Fade>
-          </Content>
-        }
+      {
+        <Content>
+          <div className={styles.content}>
+            {event == null || loadingEvent ? (
+              <p></p>
+            ) : (
+              selectedTab == "Описание" && _createInfoPage(event)
+            )}
+            {selectedTab == "Активности" && _createActivityList(activities)}
+            {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
+            {selectedTab == "Участники" && createParticipantsTable(participants, _editParticipants)}
+            {selectedTab == "Задачи" && _createTasksTable()}
+          </div>
+          <Fade
+            className={appendClassName(styles.fade,
+              (dialogData.visible) ? styles.visible : styles.hidden)}>
+            <_Dialog />
+          </Fade>
+        </Content>
+      }
     />
   );
 }
