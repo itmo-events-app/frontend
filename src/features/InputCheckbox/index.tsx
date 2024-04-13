@@ -1,15 +1,6 @@
 import { appendClassName } from "@shared/util";
 import styles from "./index.module.css";
-
-class ItemSelection<T> {
-  selected: boolean;
-  value: T;
-
-  constructor(value: T, selected: boolean = false) {
-    this.value = value;
-    this.selected = selected;
-  }
-}
+import { ItemSelection } from "./common";
 
 type Props<T> = {
   item: ItemSelection<T>,
@@ -24,12 +15,12 @@ export function InputCheckbox<T>(props: Props<T>) {
   return (
     <label className={styles.label}>
       <input type="checkbox"
-             checked={props.item.selected}
-             onChange={(e) => {
-               props.onChange(props.item);
-               e.stopPropagation();
-             }}
-             className={appendClassName(styles.checkbox, props.className)}
+        checked={props.item.selected}
+        onChange={(e) => {
+          props.onChange(props.item);
+          e.stopPropagation();
+        }}
+        className={appendClassName(styles.checkbox, props.className)}
       />
       <span>{toText(props.item.value)}</span>
     </label>
@@ -37,4 +28,4 @@ export function InputCheckbox<T>(props: Props<T>) {
 }
 
 export default InputCheckbox;
-export { ItemSelection };
+export { ItemSelection }

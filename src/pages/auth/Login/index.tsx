@@ -9,9 +9,9 @@ import Error from "@widgets/auth/Error";
 import { useContext, useEffect, useState } from "react";
 import { ITMO } from "@widgets/auth/ITMO";
 import { useNavigate } from "react-router-dom";
-import { RouteParams, RoutePaths } from "@shared/config/routes";
+import { RoutePaths } from "@shared/config/routes";
 import { LoginRequest } from "@shared/api/generated";
-import { TokenContextData, setTokenContextData } from "@shared/lib/token";
+import { TokenContextData } from "@shared/lib/token";
 import ApiContext from "@features/api-context";
 
 const LOGIN_MAX_LENGTH = 128;

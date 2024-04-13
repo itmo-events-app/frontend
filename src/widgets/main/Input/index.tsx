@@ -1,32 +1,29 @@
-import { appendClassName } from '@shared/util'
-import styles from './index.module.css'
+import { appendClassName } from "@shared/util";
+import styles from "./index.module.css";
+import React, { FC, HTMLProps } from "react";
 
-type Props = {
+export type InputProps = {
   value: string,
-  onChange: React.ChangeEventHandler<HTMLInputElement>,
-  type?: React.HTMLInputTypeAttribute,
   placeholder?: string,
   className?: string,
   errorText?: string,
-}
+  onChange?: React.ChangeEventHandler<HTMLInputElement>,
+} & Omit<HTMLProps<HTMLInputElement>, "onChange">;
 
-function Input(props: Props) {
-  const error = props.errorText != undefined && props.errorText != '';
+const Input: FC<InputProps> = ({ errorText, className, ...rest }) => {
+  const error = errorText != undefined && errorText != "";
   const visibilityStyle = error ? styles.visible : styles.hidden;
   const inputErrorStyle = error ? styles.input_error : undefined;
-  const errorText = props.errorText;
 
   return (
-    <div className={appendClassName(styles.root, props.className)}>
+    <div className={appendClassName(styles.root, className)}>
       <input
-        type={props.type}
-        placeholder={props.placeholder}
         className={appendClassName(styles.input, inputErrorStyle)}
-        onChange={props.onChange} value={props.value}
+        {...rest}
       />
-      <p className={appendClassName(styles.helper_error, visibilityStyle)}>{errorText}</p>
+      {errorText && <p className={appendClassName(styles.helper_error, visibilityStyle)}>{errorText}</p>}
     </div>
-  )
-}
+  );
+};
 
-export default Input
+export default Input;
