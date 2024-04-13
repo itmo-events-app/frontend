@@ -13,24 +13,27 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { PrivilegeResponse } from './privilege-response';
 
 /**
  * 
  * @export
- * @interface ParticipantPresenceRequest
+ * @interface PrivilegeWithHasOrganizerRolesResponse
  */
-export interface ParticipantPresenceRequest {
+export interface PrivilegeWithHasOrganizerRolesResponse {
     /**
      * 
-     * @type {number}
-     * @memberof ParticipantPresenceRequest
+     * @type {Array<PrivilegeResponse>}
+     * @memberof PrivilegeWithHasOrganizerRolesResponse
      */
-    'participantId': number;
+    'privileges'?: Array<PrivilegeResponse>;
     /**
      * 
      * @type {boolean}
-     * @memberof ParticipantPresenceRequest
+     * @memberof PrivilegeWithHasOrganizerRolesResponse
      */
-    'isVisited': boolean;
+    'hasOrganizerRolesResponse'?: boolean;
 }
 

@@ -5,24 +5,35 @@ import { ArrowDown, MenuVertical } from '@shared/ui/icons'
 import { appendClassName } from '@shared/util'
 import { PrivilegeModel } from '@entities/privilege'
 
-class RoleElement {
+class RoleRadioElement {
   entry: RoleModel;
   expanded: boolean;
+  selected: boolean
 
-  constructor(entry: RoleModel, expanded: boolean = false) {
+  constructor(entry: RoleModel, expanded: boolean = false, selected: boolean = false) {
     this.entry = entry;
     this.expanded = expanded;
+    this.selected = selected;
   }
 }
 
 type Props = {
-  roles: RoleElement[],
-  setRoles: React.Dispatch<React.SetStateAction<RoleElement[]>>,
-  onMenuClick?: (role: RoleModel, e: React.MouseEvent) => void,
+  roles: RoleRadioElement[],
+  setRoles: React.Dispatch<React.SetStateAction<RoleRadioElement[]>>
 }
 
-function RoleList(props: Props) {
-  function _expand(tab: RoleElement) {
+function RoleListRadio(props: Props) {
+  function _select(tab: RoleRadioElement) {
+    return () => {
+      const updateSelection = props.roles.map(role => ({
+        ...role,
+        selected: role === tab ? !role.selected : false
+      }));
+      props.setRoles(updateSelection);
+    }
+  }
+
+  function _expand(tab: RoleRadioElement) {
     return () => {
       tab.expanded = !tab.expanded;
       props.setRoles([...props.roles]);
@@ -50,23 +61,17 @@ function RoleList(props: Props) {
     return res;
   }
 
-  function _createRole(role: RoleElement) {
+  function _createRole(role: RoleRadioElement) {
     const hasPrivileges = role.entry.privileges != null && role.entry.privileges.length > 0;
     const Arrow = hasPrivileges
       ? <ArrowDown
         className={appendClassName(styles.icon_expand, (role.expanded ? styles.expanded : null))} />
       : <></>;
 
-    const menuVisible = props.onMenuClick != null && role.entry.isEditable;
-    const Menu = menuVisible
-      ? <MenuVertical onClick={(e) => props.onMenuClick!(role.entry, e)} className={styles.icon_dots} />
-      : <div></div>;
-
-
     return (
-      <div key={uid()} className={styles.role}>
-        <div className={styles.role_entry} onClick={_expand(role)}>
-          <div className={styles.role_left}>
+      <div key={uid()} className={appendClassName(role.selected ? styles.selected_role : styles.role)}>
+        <div className={styles.role_entry}>
+          <div className={styles.role_left} onClick={_select(role)}>
             <div className={styles.role_heading}>
               <div className={styles.role_name}>
                 {role.entry.name}
@@ -79,8 +84,7 @@ function RoleList(props: Props) {
               {role.entry.description}
             </div>
           </div>
-          <div className={styles.role_right}>
-            {Menu}
+          <div className={styles.role_right} onClick={_expand(role)}>
             {Arrow}
           </div>
         </div>
@@ -95,7 +99,7 @@ function RoleList(props: Props) {
     )
   }
 
-  function _createRoleList(roles: RoleElement[]) {
+  function _createRoleList(roles: RoleRadioElement[]) {
     const res = []
     for (const role of roles) {
       res.push(_createRole(role));
@@ -110,14 +114,15 @@ function RoleList(props: Props) {
   )
 }
 
-function createRoleElementList(roles: RoleModel[]) {
-  return roles.map(r => new RoleElement(r, false));
+function createRoleRadioElementList(roles: RoleModel[]) {
+  return roles.map(r => new RoleRadioElement(r, false));
 }
 
-function roleElementListGetElements(roleList: RoleElement[]) {
-  return roleList.map(r => r.entry);
+function getSelectedRoleId(roles: RoleRadioElement[]) {
+  const selectedRole = roles.find(role => role.selected);
+  return selectedRole ? selectedRole.entry.id : null;
 }
 
-export default RoleList;
-export { RoleElement, createRoleElementList, roleElementListGetElements }
+export default RoleListRadio;
+export { RoleRadioElement, createRoleRadioElementList, getSelectedRoleId }
 

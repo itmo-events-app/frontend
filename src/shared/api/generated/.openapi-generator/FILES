@@ -30,6 +30,7 @@ model/place-request.ts
 model/place-response.ts
 model/place-short-data-response.ts
 model/privilege-response.ts
+model/privilege-with-has-organizer-roles-response.ts
 model/profile-response.ts
 model/registration-request-for-admin.ts
 model/registration-user-request.ts
@@ -43,3 +44,4 @@ model/user-change-password-request.ts
 model/user-info-response.ts
 model/user-role-response.ts
 model/user-short-data-response.ts
+model/user-system-role-response.ts

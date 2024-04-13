@@ -35,6 +35,7 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
     return {
         /**
          * 
+         * @summary Изменения поля visited у участника мероприятия
          * @param {number} id 
          * @param {ParticipantPresenceRequest} participantPresenceRequest 
          * @param {*} [options] Override http request option.
@@ -78,6 +79,7 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
         },
         /**
          * 
+         * @summary Получение списка участников мероприятия
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -115,6 +117,7 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
         },
         /**
          * 
+         * @summary Экспорт списка участников мероприятия
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -122,7 +125,7 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
         getParticipantsXlsxFile: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getParticipantsXlsxFile', 'id', id)
-            const localVarPath = `/api/events/{id}/participants/xlsxExport`
+            const localVarPath = `/api/events/{id}/participants/file`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -152,6 +155,7 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
         },
         /**
          * 
+         * @summary Импорт списка участников мероприятия
          * @param {number} id 
          * @param {ParticipantsListRequest} participantsListRequest 
          * @param {*} [options] Override http request option.
@@ -205,6 +209,7 @@ export const ParticipantsControllerApiFp = function(configuration?: Configuratio
     return {
         /**
          * 
+         * @summary Изменения поля visited у участника мероприятия
          * @param {number} id 
          * @param {ParticipantPresenceRequest} participantPresenceRequest 
          * @param {*} [options] Override http request option.
@@ -218,11 +223,12 @@ export const ParticipantsControllerApiFp = function(configuration?: Configuratio
         },
         /**
          * 
+         * @summary Получение списка участников мероприятия
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getParticipants(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ParticipantResponse>>> {
+        async getParticipants(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ParticipantResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getParticipants(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParticipantsControllerApi.getParticipants']?.[index]?.url;
@@ -230,6 +236,7 @@ export const ParticipantsControllerApiFp = function(configuration?: Configuratio
         },
         /**
          * 
+         * @summary Экспорт списка участников мероприятия
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -242,12 +249,13 @@ export const ParticipantsControllerApiFp = function(configuration?: Configuratio
         },
         /**
          * 
+         * @summary Импорт списка участников мероприятия
          * @param {number} id 
          * @param {ParticipantsListRequest} participantsListRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async setPartisipantsList(id: number, participantsListRequest: ParticipantsListRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ParticipantResponse>>> {
+        async setPartisipantsList(id: number, participantsListRequest: ParticipantsListRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ParticipantResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.setPartisipantsList(id, participantsListRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParticipantsControllerApi.setPartisipantsList']?.[index]?.url;
@@ -265,6 +273,7 @@ export const ParticipantsControllerApiFactory = function (configuration?: Config
     return {
         /**
          * 
+         * @summary Изменения поля visited у участника мероприятия
          * @param {number} id 
          * @param {ParticipantPresenceRequest} participantPresenceRequest 
          * @param {*} [options] Override http request option.
@@ -275,15 +284,17 @@ export const ParticipantsControllerApiFactory = function (configuration?: Config
         },
         /**
          * 
+         * @summary Получение списка участников мероприятия
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getParticipants(id: number, options?: any): AxiosPromise<Array<ParticipantResponse>> {
+        getParticipants(id: number, options?: any): AxiosPromise<ParticipantResponse> {
             return localVarFp.getParticipants(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
+         * @summary Экспорт списка участников мероприятия
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -293,12 +304,13 @@ export const ParticipantsControllerApiFactory = function (configuration?: Config
         },
         /**
          * 
+         * @summary Импорт списка участников мероприятия
          * @param {number} id 
          * @param {ParticipantsListRequest} participantsListRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setPartisipantsList(id: number, participantsListRequest: ParticipantsListRequest, options?: any): AxiosPromise<Array<ParticipantResponse>> {
+        setPartisipantsList(id: number, participantsListRequest: ParticipantsListRequest, options?: any): AxiosPromise<ParticipantResponse> {
             return localVarFp.setPartisipantsList(id, participantsListRequest, options).then((request) => request(axios, basePath));
         },
     };
@@ -313,6 +325,7 @@ export const ParticipantsControllerApiFactory = function (configuration?: Config
 export class ParticipantsControllerApi extends BaseAPI {
     /**
      * 
+     * @summary Изменения поля visited у участника мероприятия
      * @param {number} id 
      * @param {ParticipantPresenceRequest} participantPresenceRequest 
      * @param {*} [options] Override http request option.
@@ -325,6 +338,7 @@ export class ParticipantsControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Получение списка участников мероприятия
      * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -336,6 +350,7 @@ export class ParticipantsControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Экспорт списка участников мероприятия
      * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -347,6 +362,7 @@ export class ParticipantsControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Импорт списка участников мероприятия
      * @param {number} id 
      * @param {ParticipantsListRequest} participantsListRequest 
      * @param {*} [options] Override http request option.

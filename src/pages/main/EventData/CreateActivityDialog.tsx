@@ -4,65 +4,36 @@ import Input from "@widgets/main/Input";
 import InputLabel from "@widgets/main/InputLabel";
 import TextArea from "@widgets/main/TextArea";
 import DatePicker from "react-datepicker";
-import styles from './index.module.css'
+import styles from './index.module.css';
 import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  AddActivityFormatEnum,
-  AddActivityStatusEnum,
-  EventRequest,
-  GetAllOrFilteredEventsStatusEnum,
-} from "@shared/api/generated";
-import ApiContext from "@features/api-context.ts";
+import ApiContext from '@features/api-context.ts';
+import { AddActivityFormatEnum, AddActivityStatusEnum, GetAllOrFilteredEventsStatusEnum } from "@shared/api/generated";
 
 type UpdateProps = {
   role: RoleModel,
   onDone: (prev: RoleModel, cur: RoleModel) => void
 }
-function getAddActivityFormatEnum(value: string): AddActivityFormatEnum | undefined {
-  for (const key in AddActivityFormatEnum) {
-    if (AddActivityFormatEnum[key] === value) {
-      return AddActivityFormatEnum[key];
-    }
-  }
-  return undefined;
-}
 
-function getAddActivityStatusEnum(value: string): AddActivityStatusEnum | undefined {
-  for (const key in AddActivityStatusEnum) {
-    if (AddActivityStatusEnum[key] === value) {
-      return AddActivityStatusEnum[key];
-    }
-  }
-  return undefined;
-}
-
-function getGetAllOrFilteredEventsStatusEnum(value: string): GetAllOrFilteredEventsStatusEnum | undefined {
-  for (const key in GetAllOrFilteredEventsStatusEnum) {
-    if (GetAllOrFilteredEventsStatusEnum[key] === value) {
-      return GetAllOrFilteredEventsStatusEnum[key];
-    }
-  }
-  return undefined;
-}
-const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) => {
-  const[startDate, setStartDate] = useState(new Date(eventInfo.startDate));
-  const[endDate, setEndDate] = useState(new Date(eventInfo.endDate));
-  const[title, setTitle] = useState(eventInfo.title);
-  const[shortDescription, setShortDescription] = useState(eventInfo.shortDescription);
-  const[fullDescription, setFullDescription] = useState(eventInfo.fullDescription);
-  const[format, setFormat] = useState(getAddActivityFormatEnum(eventInfo.format));
-  const[status, setStatus] = useState(getAddActivityStatusEnum(eventInfo.status));
-  const[registrationStart, setRegistrationStart] = useState(new Date(eventInfo.registrationStart));
-  const[registrationEnd, setRegistrationEnd] = useState(new Date(eventInfo.registrationEnd));
-  const[participantLimit, setParticipantLimit] = useState(parseInt(eventInfo.participantLimit));
-  const[participantHighestAge,setParticipantHighestAge] = useState(parseInt(eventInfo.participantAgeHighest));
-  const[participantLowestAge,setParticipantLowestAge] = useState(parseInt(eventInfo.participantAgeLowest));
-  const[preparingStart, setPreparingStart] = useState(new Date(eventInfo.preparingStart));
-  const[preparingEnd, setPreparingEnd] = useState(new Date(eventInfo.preparingEnd));
+const CreateActivityDialog = ({props: UpdateProps,parentId, onSubmit}) => {
+  const[startDate, setStartDate] = useState(new Date());
+  const[endDate, setEndDate] = useState(new Date());
+  const[title, setTitle] = useState('');
+  const[shortDescription, setShortDescription] = useState('');
+  const[fullDescription, setFullDescription] = useState('');
+  const[format, setFormat] = useState(AddActivityFormatEnum.Offline);
+  const[status, setStatus] = useState(AddActivityStatusEnum.Published);
+  const[registrationStart, setRegistrationStart] = useState(new Date());
+  const[registrationEnd, setRegistrationEnd] = useState(new Date());
+  const[participantLimit, setParticipantLimit] = useState(1);
+  const[participantHighestAge,setParticipantHighestAge] = useState(1);
+  const[participantLowestAge,setParticipantLowestAge] = useState(1);
+  const[preparingStart, setPreparingStart] = useState(new Date());
+  const[preparingEnd, setPreparingEnd] = useState(new Date());
   const[place, setPlace] = useState(1);
   const[placeList, setPlaceList] = useState([]);
   const[placesLoaded, setPlacesLoaded] = useState(false);
+
   const [image, setImage] = useState(null);
   const {api} = useContext(ApiContext);
   const getPlaces = async () => {
@@ -75,9 +46,16 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
       console.log(placesResponse.status);
     }
   }
-  useEffect(() => {
-    getPlaces();
-  }, []);
+
+  useEffect( ()=> {
+      getPlaces();
+    }
+    , []);
+  function convertToLocaleDateTime(date: Date){
+    const isoDateTime = date.toISOString();
+    return isoDateTime.slice(0, -1);
+  }
+
   async function handleSubmit() {
     const startDateString = convertToLocaleDateTime(startDate);
     const endDateString = convertToLocaleDateTime(endDate);
@@ -85,39 +63,30 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
     const registrationEndString = convertToLocaleDateTime(registrationEnd);
     const preparingStartString = convertToLocaleDateTime(preparingStart);
     const preparingEndString = convertToLocaleDateTime(preparingEnd);
-    console.log(image);
-    const eventRequest: EventRequest = {
-      placeId: place,
-      startDate: startDateString,
-      endDate: endDateString,
-      title: title,
-      shortDescription: shortDescription,
-      fullDescription: fullDescription,
-      format: format,
-      status: status,
-      registrationStart: registrationStartString,
-      registrationEnd: registrationEndString,
-      participantLimit: participantLimit,
-      participantAgeLowest: participantLowestAge,
-      participantAgeHighest: participantHighestAge,
-      preparingStart: preparingStartString,
-      preparingEnd: preparingEndString,
-      image: image,
-    }
-    console.log(eventRequest);
-    const result = await api.event.updateEvent(
-      eventId,
-      eventRequest
-    );
-    if(result.status==200){
-      onSubmit();
-    }else{
+    const result = await api.event.addActivity(
+      place,
+      startDateString,
+      endDateString,
+      title,
+      shortDescription,
+      fullDescription,
+      format,
+      status,
+      registrationStartString,
+      registrationEndString,
+      participantLimit,
+      participantLowestAge,
+      participantHighestAge,
+      preparingStartString,
+      preparingEndString,
+      image,
+      parentId
+    )
+    if(result.status!=201){
       console.log(result.status);
+    }else{
+      onSubmit();
     }
-  }
-  function convertToLocaleDateTime(date: Date){
-    const isoDateTime = date.toISOString();
-    return isoDateTime.slice(0, -1);
   }
   return (
     <div className={styles.dialog_content}>
@@ -146,16 +115,16 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
           <InputLabel value="Максимальное количество участников" />
           <Input
             value={participantLimit}
-            onChange={(e) => setParticipantLimit(parseInt(e.target.value))}
+            onChange={(e) => setParticipantLimit(e.target.value)}
           />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
-          <Input value={participantHighestAge} onChange={(e) => setParticipantHighestAge(parseInt(e.target.value))} />
+          <Input value={participantHighestAge} onChange={(e) => setParticipantHighestAge(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
-          <Input value={participantLowestAge} onChange={(e) => setParticipantLowestAge(parseInt(e.target.value))} />
+          <Input value={participantLowestAge} onChange={(e) => setParticipantLowestAge(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Формат" />
@@ -169,7 +138,7 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Место"/>
-          <select value={place} onChange={(e) => setPlace(parseInt(e.target.value))}>
+          <select value={place} onChange={(e) => setPlace(e.target.value)}>
             {
               placesLoaded?(
                 placeList.map(p=>{
@@ -185,7 +154,7 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
             {
               Object.entries(AddActivityStatusEnum).map(([k,v])=>{
                 return <option value={k}>{v}</option>
-              })
+            })
             }
           </select>
         </div>
@@ -273,9 +242,9 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
           {image && <p>Selected file: {image.name}</p>}
         </div>
       </div>
-      <Button onClick={handleSubmit}>Редактировать</Button>
+      <Button onClick={handleSubmit}>Создать</Button>
     </div>
   );
 }
 
-export default UpdateDialogContent;
+export default CreateActivityDialog;

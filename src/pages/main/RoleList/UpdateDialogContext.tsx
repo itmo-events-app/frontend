@@ -1,5 +1,5 @@
 import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
-import { RoleModel, RoleModelType } from "@entities/role";
+import { RoleModel, RoleModelType, fromRoleModel, fromRoleModelType, toRoleModel } from "@entities/role";
 import Button from "@widgets/main/Button";
 import Dropdown from "@widgets/main/Dropdown";
 import Input from "@widgets/main/Input";
@@ -16,7 +16,7 @@ type UpdateProps = {
   privileges: PrivilegeModel[]
   setPrivileges: React.Dispatch<React.SetStateAction<PrivilegeModel[]>>,
   role: RoleModel,
-  onDone: (prev: RoleModel, cur: RoleModel) => void
+  callback: (prev: RoleModel, cur: RoleModel) => void
 }
 
 const UpdateDialogContent = (props: UpdateProps) => {
@@ -26,16 +26,15 @@ const UpdateDialogContent = (props: UpdateProps) => {
   const [type, setType] = useState(props.role.type ?? RoleModelType.SYSTEM);
   const [privileges, setPrivileges] = useState(createItemSelectionList(props.role.privileges ?? []));
 
-  const [prevType, setPrevType] = useState<RoleModelType | undefined>(undefined);
+  const [nameError, setNameError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
 
   // NOTE: maybe cache privilege list results?
   useEffect(() => {
-    if (prevType == type) {
-      return;
-    }
+    const queryType = fromRoleModelType(type);
 
     if (type == RoleModelType.SYSTEM) {
-      api.withReauth(() => api.role.getSystemPrivileges())
+      api.withReauth(() => api.role.getAllPrivileges(queryType))
         .then((r) => {
           const privs = r.data.map(p => toPrivilegeModel(p));
           setPrivileges(createItemSelectionList(privs, _isItemSelected));
@@ -43,14 +42,13 @@ const UpdateDialogContent = (props: UpdateProps) => {
     }
 
     if (type == RoleModelType.EVENT) {
-      api.withReauth(() => api.role.getOrganizationalPrivileges())
+      api.withReauth(() => api.role.getAllPrivileges(queryType))
         .then((r) => {
           const privs = r.data.map(p => toPrivilegeModel(p));
           setPrivileges(createItemSelectionList(privs, _isItemSelected));
         })
     }
 
-    setPrevType(type);
   }, [type]);
 
   // select privileges that were on previous role
@@ -61,7 +59,14 @@ const UpdateDialogContent = (props: UpdateProps) => {
     return false;
   }
 
+  const _onPrivilegeChange = (e: ItemSelection<PrivilegeModel>) => {
+    e.selected = !e.selected;
+    setPrivileges([...privileges]);
+  }
+
   const _onDoneWrapper = () => {
+    let ok = true;
+
     const role = new RoleModel(
       props.role.id,
       name,
@@ -69,12 +74,35 @@ const UpdateDialogContent = (props: UpdateProps) => {
       itemSelectionGetSelected(privileges),
       description,
     )
-    props.onDone(props.role, role);
+
+    if (role.name == "") {
+      setNameError('Имя роли не должно быть пустым');
+      ok = false;
+    }
+
+    if (role.description == "") {
+      setDescriptionError('Описание не должно быть пустым');
+      ok = false;
+    }
+
+    if (ok) {
+      const request = fromRoleModel(role);
+      api.withReauth(() => api.role.editRole(role.id, request))
+        .then(res => {
+          const role = toRoleModel(res.data);
+          props.callback(props.role, role);
+        });
+    }
   }
 
-  const _onPrivilegeChange = (e: ItemSelection<PrivilegeModel>) => {
-    e.selected = !e.selected;
-    setPrivileges([...privileges]);
+  const _nameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    setNameError('');
+  }
+
+  const _descriptionOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+    setDescriptionError('');
   }
 
   return (
@@ -82,17 +110,15 @@ const UpdateDialogContent = (props: UpdateProps) => {
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           <InputLabel value="Название роли" />
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <Input value={name} onChange={_nameOnChange} errorText={nameError} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Описание" />
-          <TextArea value={description} onChange={(e) => setDescription(e.target.value)} />
+          <TextArea value={description} onChange={_descriptionOnChange} errorText={descriptionError} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
-          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} value={type} onChange={
-            (e) => setType(e)
-          }
+          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} value={type} readonly
           />
         </div>
         <div className={styles.dialog_item}>
