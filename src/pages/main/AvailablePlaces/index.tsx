@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "@shared/config/routes.ts";
-import styles from './index.module.css';
-import { Home } from '@shared/ui/icons';
+import styles from "./index.module.css";
+import { Home } from "@shared/ui/icons";
 import Layout from "@widgets/main/Layout";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import BrandLogo from "@widgets/main/BrandLogo";
@@ -9,66 +9,77 @@ import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
 import Search from "@widgets/main/Search";
 import Button from "@widgets/main/Button";
-import Content from '@widgets/main/Content';
+import Content from "@widgets/main/Content";
 import Input from "@widgets/main/Input";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Label from "@widgets/auth/InputLabel";
-import InputCheckbox from "@widgets/main/InputCheckbox";
 import { useState } from "react";
 import Dialog from "@widgets/main/Dialog";
+import InputCheckbox from "@features/InputCheckbox";
 
 
-const _test_places: DropdownOption[] = [
+const _test_places: DropdownOption<string>[] = [
   new DropdownOption("Ломоносова, 9"),
   new DropdownOption("Кронверкский, 49"),
-]
+];
 
-const CreatePlaceDialog = ({onClose}: { onClose: () => void }) => {
+const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
 
-  const [format, setFormat] = useState(false);
+  const [isFormatOnline, setIsIsFormatOnline] = useState(false);
+  const [placeName, setPlaceName] = useState("");
+  const [roomName, setRoomName] = useState("");
+  const [description, setDescription] = useState("");
+
   const _createPlace = () => {
-    console.log('creating place!');
+    console.log("creating place!");
     onClose();
-  }
+  };
 
   return (
-      <div className={styles.dialog} onClick={onClose}>
-          <Dialog className={styles.dialog_content} text={"Создание площадки"}>
-            <div onClick={e => e.stopPropagation()}>
-              <div className={styles.place_form}>
-                <div className={styles.place_form_item}>
-                  <Label value="Название" />
-                  <Input type="text"/>
-                </div>
-                <div className={styles.place_form_item}>
-                  <Label value="Адрес" />
-                  <Dropdown  items={_test_places} placeholder="Выберите адрес" />
-                </div>
-                <div className={styles.place_form_item}>
-                  <Label value="Формат" />
-                  <InputCheckbox  checked={format} onChange={(e) => setFormat(e.target.checked)} text={"Зум"}/>
-                </div>
-                <div className={styles.place_form_item}>
-                  <Label value="Аудитория" />
-                  <Input type="text"/>
-                </div>
-                <div className={styles.place_form_item}>
-                  <Label value="Описание" />
-                  <Input type="text"/>
-                </div>
-                <div className={styles.place_form_button}>
-                  <Button onClick={_createPlace}>Создать</Button>
-                </div>
-              </div>
+    <div className={styles.dialog} onClick={onClose}>
+      <Dialog className={styles.dialog_content} text={"Создание площадки"}>
+        <div onClick={e => e.stopPropagation()}>
+          <div className={styles.place_form}>
+            <div className={styles.place_form_item}>
+              <Label value="Название" />
+              <Input type="text" placeholder={"Название"} value={placeName}
+                     onChange={(event) => setPlaceName(event.target.value)} />
             </div>
-          </Dialog>
+            <div className={styles.place_form_item}>
+              <Label value="Адрес" />
+              <Dropdown items={_test_places} placeholder="Выберите адрес" toText={(item) => item.value} />
+            </div>
+            <div className={styles.place_form_item}>
+              <Label value="Формат" />
+              <InputCheckbox item={{ selected: isFormatOnline, value: "Зум" }}
+                             onChange={({ selected }) => setIsIsFormatOnline(selected)} />
+            </div>
+            <div className={styles.place_form_item}>
+              <Label value="Аудитория" />
+              <Input type="text" placeholder={"Аудитория"} value={roomName}
+                     onChange={(event) => setRoomName(event.target.value)} />
+            </div>
+            <div className={styles.place_form_item}>
+              <Label value="Описание площадки" />
+              <Input type="text" placeholder={"Описание"} value={description}
+                     onChange={(event) => setDescription(event.target.value)} />
+            </div>
+            <div className={styles.place_form_button}>
+              <Button onClick={_createPlace}>Создать</Button>
+            </div>
+          </div>
+        </div>
+      </Dialog>
 
-      </div>
+    </div>
   );
-}
+};
+
 function AvailablePlacesPage() {
 
   const [isModalOpen, setModalOpen] = useState(false);
+  const [searchName, setSearchName] = useState("");
+
 
   const openModal = () => {
     setModalOpen(true);
@@ -77,27 +88,29 @@ function AvailablePlacesPage() {
   const closeModal = () => {
     setModalOpen(false);
   };
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
   const _onSearch = () => {
-    console.log('searching')
-  }
+    console.log("searching");
+  };
   const _onCreation = () => {
-    console.log('creating')
+    console.log("creating");
     // navigate(RoutePaths.createPlace);
     openModal();
-  }
+  };
 
   const navigate = useNavigate();
   const _event = () => {
     navigate(RoutePaths.placeData);
-  }
+  };
 
   const _places: any[] = [
-    new PageEntry(() => {return _entryStub(1, "Ломо", "Ломо, 9")}),
-    new PageEntry(() => {return _entryStub(1, "Кронва", "Кронва, 49")})
-  ]
+    new PageEntry(() => {
+      return _entryStub(1, "Ломо", "Ломо, 9");
+    }),
+    new PageEntry(() => {
+      return _entryStub(1, "Кронва", "Кронва, 49");
+    }),
+  ];
+
   function _entryStub(index: number, name: string, address: string) {
     return (
       <a key={index} onClick={_event} className={styles.place_entry}>
@@ -117,15 +130,17 @@ function AvailablePlacesPage() {
   return (
     <>
       <Layout
-        topLeft={<BrandLogo onClick={_brandLogoClick} />}
+        topLeft={<BrandLogo />}
         topRight={<PageName text="Площадки" />}
         bottomLeft={<SideBar currentPageURL={RoutePaths.placeList} />}
-        bottomRight= {
+        bottomRight={
           <Content>
             <div className={styles.places_page}>
               <div className={styles.horizontal_bar}>
                 <div className={styles.search}>
-                  <Search onSearch={_onSearch} placeholder="Поиск" />
+                  <Search onSearch={_onSearch} placeholder="Поиск" value={searchName} onChange={(event) => {
+                    setSearchName(event.target.value);
+                  }} />
                 </div>
                 <div className={styles.button}>
                   <Button onClick={_onCreation}>Создать</Button>
@@ -138,7 +153,7 @@ function AvailablePlacesPage() {
           </Content>
         }
       />
-      {isModalOpen && <CreatePlaceDialog onClose={closeModal}/>}
+      {isModalOpen && <CreatePlaceDialog onClose={closeModal} />}
     </>
   );
 }

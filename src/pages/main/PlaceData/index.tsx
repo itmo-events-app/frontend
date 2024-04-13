@@ -41,12 +41,9 @@ const _placeInfo: PlaceInfo = new PlaceInfo(
 );
 
 function PlaceDataPage() {
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
   return (
     <Layout
-      topLeft={<BrandLogo onClick={_brandLogoClick} />}
+      topLeft={<BrandLogo/>}
       topRight={
         <div className={styles.header}>
           <PageName text={_placeInfo.placeName}/>
