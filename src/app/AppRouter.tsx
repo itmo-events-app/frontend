@@ -75,10 +75,6 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     path: RoutePaths.placeList,
     authenticated: true
   },
-  [AppRoutes.PLACE_DATA]: {
-    path: RoutePaths.placeData,
-    element: <PlaceDataPage />,
-  },
   [AppRoutes.PLACE_CREATION]: {
     path: RoutePaths.createPlace,
   },
@@ -156,6 +152,9 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
   },
   [AppRoutes.PLACE_DATA]: {
     element: <PlaceDataPage />,
+  },
+  [AppRoutes.PLACE_CREATION]: {
+    element: <PlaceCreationPage />,
   },
   [AppRoutes.ROLE_LIST]: {
     element: <RoleListPage />,
