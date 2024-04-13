@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build || echo 'TODO: add tsc && before executing vite build to enable checks'",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "eslint": "eslint . --ext ts,tsx --max-warnings 0",
+    "eslint.fix": "eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "tsc": "tsc",
+    "lint": "npm run eslint && npm run tsc",
+    "build": "npm run lint && vite build",
+    "build.nolint": "vite build",
     "preview": "vite preview",
     "format": "npx prettier src/. --write",
     "generate-api": "openapi-generator-cli generate"
@@ -33,6 +37,7 @@
   "devDependencies": {
     "@types/jquery": "^3.5.29",
     "@types/react": "^18.2.65",
+    "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.2.21",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",

@@ -7,7 +7,7 @@ class PrivilegeData {
     this._name = name;
   }
 
-  get name() { return this._name };
+  get name() { return this._name }
 }
 
 // NOTE: undefined - hasn't been loaded, empty - no privileges

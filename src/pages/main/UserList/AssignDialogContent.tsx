@@ -1,67 +1,49 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 
 import styles from './index.module.css'
-
 import Button from "@widgets/main/Button";
-import { UserRole } from "@pages/main/UserList/index";
-import InputCheckboxList, {
-  createItemSelectionList,
-  ItemSelection,
-} from "@widgets/main/InputCheckboxList";
+import {toRoleModel} from "@entities/role";
+import ApiContext from "@features/api-context";
+import RoleListRadio, {
+  createRoleRadioElementList,
+  getSelectedRoleId,
+  RoleRadioElement
+} from "@widgets/main/RoleListRadio";
 
-// privileges are ignored
-type CreateProps = {
-  onDone: (userRole: UserRole) => void
+type AssignProps = {
+  userId: number,
+  onDone: (userId: number, roleId: number | null) => void
 }
 
-const AssignDialogContent = (props: CreateProps) => {
-  const [roles, setRoles] = useState(createItemSelectionList([] as UserRole[]));
-
-  const _onRoleChange = (e: ItemSelection<UserRole[]>) => {
-    e.selected = !e.selected;
-    setRoles([...roles]);
-  }
+const AssignDialogContent = (props: AssignProps) => {
+  const { api } = useContext(ApiContext);
+  const [roles, setRoles] = useState([] as RoleRadioElement[]);
 
   const _onDoneWrapper = () => {
-    console.log("save user roles")
+    props.onDone(props.userId, getSelectedRoleId(roles))
   }
 
-  const exampleRoles: UserRole[] = [
-    new UserRole("ADMIN", "администратор"),
-    new UserRole("READER", "читатель"),
-    new UserRole("REDACTOR", "редактор"),
-    new UserRole("ADMIN", "администратор"),
-    new UserRole("READER", "читатель"),
-    new UserRole("REDACTOR", "редактор"),
-    new UserRole("ADMIN", "администратор"),
-    new UserRole("READER", "читатель"),
-    new UserRole("REDACTOR", "редактор")
-  ]
-
-  // useEffect(() => {
-  //   setRoles(createItemSelectionList(exampleRoles))
-  // })
+  // load roles on dialog open
+  useEffect(() => {
+    api.withReauth(() => api.role.getSystemRoles())
+      .then(r => {
+        const l = createRoleRadioElementList(r.data.map(role => toRoleModel(role)))
+        setRoles(l);
+      })
+  }, [])
 
 
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
-          {/*<InputLabel value="" />*/}
-          <InputCheckboxList
-            items={roles}
-            toText={userRoleToText}
-            onChange={_onRoleChange}
-          />
+          <RoleListRadio roles={roles} setRoles={setRoles}  />
         </div>
       </div>
-      <Button onClick={_onDoneWrapper}>Сохранить изменения</Button>
+      //todo make button non-clickable if nothing selected
+      <Button onClick={_onDoneWrapper}>Назначить роль</Button>
     </div>
   );
-}
-
-function userRoleToText(item: UserRole){
-  return item.name + " - " + item.description;
 }
 
 export default AssignDialogContent;

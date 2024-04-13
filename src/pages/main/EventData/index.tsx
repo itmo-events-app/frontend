@@ -25,6 +25,7 @@ import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
 import { PrivilegeResponse, PrivilegeResponseNameEnum } from "@shared/api/generated";
+import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
 
 class EventInfo {
@@ -326,14 +327,6 @@ function EventActivitiesPage() {
   pageTabs.push(new PageTab("Задачи"));
   //}
 
-  const _editOrgs = () => {
-    console.log('editing orgs')
-  }
-
-  const _editParticipants = () => {
-    console.log('editing participants')
-  }
-
   class DialogData {
     heading: string | undefined;
     visible: DialogSelected;
@@ -353,7 +346,8 @@ function EventActivitiesPage() {
   enum DialogSelected {
     NONE,
     UPDATE,
-    CREATEACTIVITY = 2
+    CREATEACTIVITY = 2,
+    ADDORGANIZER = 3,
   }
 
   const _Dialog = () => {
@@ -371,6 +365,12 @@ function EventActivitiesPage() {
           {...dialogData.args} parentId={parseInt(id)} onSubmit={()=>{
             _closeDialog();
           }}
+        />;
+      case DialogSelected.ADDORGANIZER:
+        component = <AddOrganizerDialog
+          {...dialogData.args} parentId={parseInt(id)} onSubmit={()=>{
+          _closeDialog();
+        }}
         />;
     }
     return (
@@ -549,7 +549,10 @@ function EventActivitiesPage() {
       </>
     )
   }
-
+  const _addOrganizer = (e: MouseEvent) => {
+    setDialogData(new DialogData('Создать активность', DialogSelected.ADDORGANIZER));
+    e.stopPropagation();
+  }
   function createOrgPersonRow(person: OrgPerson) {
     return (
       <tr key={person.id}>
@@ -580,7 +583,7 @@ function EventActivitiesPage() {
       <>
         {edit_privilege ? (
           <div className={styles.button_container}>
-            <Button className={styles.button} onClick={edit_func}>Редактировать</Button>
+            <Button className={styles.button} onClick={_addOrganizer}>Добавить</Button>
           </div>
         ) : <></>}
         <table className={styles.table}>
@@ -660,7 +663,7 @@ function EventActivitiesPage() {
         console.log(error.response.data);
       })
   }, []);
-  let locc = "cz";
+  const locc = "cz";
   function _createTasksTable() {
     return (
       <div className={styles.tasks}>
