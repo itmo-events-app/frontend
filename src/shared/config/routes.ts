@@ -43,7 +43,7 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.EVENT_CREATION]: "/events/create",
   [AppRoutes.EVENT_DATA]: "/events/"+ RouteParams.EVENT_ID,
   [AppRoutes.PLACE_LIST]: "/places",
-  [AppRoutes.PLACE_DATA]: "/p",
+  [AppRoutes.PLACE_DATA]: "/places/place",
   [AppRoutes.PLACE_CREATION]: "/places/create",
   [AppRoutes.ROLE_LIST]: "/roles",
   [AppRoutes.USER_LIST]: "/users",
