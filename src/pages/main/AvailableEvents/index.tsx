@@ -20,6 +20,7 @@ import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
+
 import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
 
 enum DisplayModes {

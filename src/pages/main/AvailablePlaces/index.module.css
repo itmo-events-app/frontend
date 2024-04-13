@@ -99,6 +99,10 @@
   margin: 0.5rem;
 }
 
+.emptyFieldsMessage {
+  color: var(--itmo-colors-red);
+}
+
 .place_form_button {
   display: flex;
   gap: 10px;

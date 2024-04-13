@@ -45,6 +45,10 @@ class PrivilegeContextData {
   get hasOrganizerRoles() {
     return this._hasOrganizerRoles;
   }
+
+  get eventPrivileges() {
+    return this._eventPrivileges;
+  }
 }
 
 export { PrivilegeData, PrivilegeContextData }

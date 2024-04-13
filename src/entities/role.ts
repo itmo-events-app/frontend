@@ -1,4 +1,4 @@
-import { GetAllPrivilegesTypeEnum, RoleRequest, RoleResponse, RoleResponseTypeEnum } from "@shared/api/generated";
+import { GetAllPrivilegesTypeEnum, RoleRequest, RoleResponse } from "@shared/api/generated";
 import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
 
 enum RoleModelType {

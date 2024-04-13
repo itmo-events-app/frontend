@@ -7,11 +7,12 @@ import InputLabel from "@widgets/main/InputLabel";
 import TextArea from "@widgets/main/TextArea";
 import Input from "@widgets/main/Input";
 import Dropdown from "@widgets/main/Dropdown";
-import InputCheckboxList, { ItemSelection, createItemSelectionList, itemSelectionGetSelected } from "@widgets/main/InputCheckboxList";
+import InputCheckboxList, { ItemSelection } from "@widgets/main/InputCheckboxList";
 import Button from "@widgets/main/Button";
 import { privilegeToText, dropdownOptionToText, dropdownOptions } from "./common";
 import { RoleModel, RoleModelType, fromRoleModel, fromRoleModelType, toRoleModel } from "@entities/role";
 import ApiContext from "@features/api-context";
+import { createItemSelectionList, itemSelectionGetSelected } from "@widgets/main/InputCheckboxList/common";
 
 // privileges are ignored
 type CreateProps = {
