@@ -22,6 +22,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
 
 import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
+import { da } from 'date-fns/locale';
 
 enum DisplayModes {
   LIST = "Показать списком",
@@ -32,39 +33,36 @@ const displayModes = Object.values(DisplayModes);
 const eventStatusList = Object.values(GetAllOrFilteredEventsStatusEnum);
 const eventFormatList = Object.values(GetAllOrFilteredEventsFormatEnum);
 
-type filterType = {
+type FilterType = {
   page: number,
   size: number,
   title: string,
-  startDate: string,
+  startDate: string, //either isostring or blank
   endDate: string,
   status: GetAllOrFilteredEventsStatusEnum | undefined,
-  format: GetAllOrFilteredEventsFormatEnum | undefined
+  format: GetAllOrFilteredEventsFormatEnum | undefined,
+  [key: string]: number | string | GetAllOrFilteredEventsStatusEnum | GetAllOrFilteredEventsFormatEnum | undefined;
 }
 
-const initialFilters : filterType = {
+
+const initialFilters : FilterType = {
   page: 0,
   size: 15,
-  title:'',
-  startDate: '',
-  endDate: '',
+  title: "",
+  startDate: "",
+  endDate: "",
   status: undefined,
   format: undefined
 };
 
 function getEnumValueFromString<T>(enumObject: T, value: string): T[keyof T] | undefined {
     for (const key in enumObject) {
-        if (enumObject[key] === value) {
-            return enumObject[key];
-        }
+      if (enumObject[key] === value) {
+          return enumObject[key];
+      }
     }
     return undefined;
 }
-
-const formatDate = (date) => {
-  const selectedDate = new Date(date)
-  return selectedDate.getFullYear() + "-"+ selectedDate.getMonth() +"-"+ selectedDate.getDate();
-};
 
 const isBlank = (str: string): boolean => {
   return str.trim().length === 0;
@@ -76,7 +74,6 @@ function AvailableEventsPage() {
   const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
-
   const getEventList = async () => {
     try {
       const response = await api.event.getAllOrFilteredEvents(
@@ -84,15 +81,16 @@ function AvailableEventsPage() {
         filters.size,
         undefined, //parentId
         !isBlank(filters.title)?filters.title:undefined,
-        !isBlank(filters.startDate)?new Date(filters.startDate).toISOString():undefined,
-        !isBlank(filters.endDate)?new Date(filters.endDate).toISOString():undefined,
+        !isBlank(filters.startDate)?filters.startDate:undefined,
+        !isBlank(filters.endDate)?filters.endDate:undefined,
         filters.status,
         filters.format
       );
       if (response.status === 200) {
-        console.log(response);
-        const data = response.data;
-        const pagesPromises = data.map(async (e) => {
+        const {total, items} = response.data;
+        console.log('total: '+total);
+      
+        const pagesPromises = items.map(async (e) => {
           let address = 'null';
           if (e.placeId !== undefined) {
             const response = await api.place.placeGet(parseInt(e.placeId));
@@ -214,11 +212,13 @@ function AvailableEventsPage() {
 
 
   //filters
-  const _handleFilterChange = (value, name) => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      [name]: value,
-    }));
+  const _handleFilterChange = (value, name: string) => {
+    if (filters[name] !== value) {
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        [name]: value,
+      }));
+    }
   };
 
 
@@ -252,18 +252,20 @@ function AvailableEventsPage() {
                 <DatePicker
                   placeholderText="Начало проведения"
                   className={styles.filter_element}
-                  onChange={(date)=>_handleFilterChange(formatDate(date),"startDate")}
-                  selected={filters.startDate}
+                  onChange={(date)=>_handleFilterChange(date?date.toISOString():"","startDate")}
+                  selected={!isBlank(filters.startDate)?new Date(filters.startDate):null}
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
+                  enableTabLoop={false}
                 />
                 <DatePicker
                   placeholderText="Конец проведения"
                   className={styles.filter_element}
-                  onChange={(date)=>_handleFilterChange(formatDate(date),"endDate")}
-                  selected={filters.endDate}
+                  onChange={(date)=>_handleFilterChange(date?date.toISOString():"","endDate")}
+                  selected={!isBlank(filters.endDate)?new Date(filters.endDate):null}
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
+                  enableTabLoop={false}
                 />
                 <div className={styles.dropdownfilter}>
                   <Dropdown
@@ -278,7 +280,7 @@ function AvailableEventsPage() {
                   <Dropdown
                     placeholder="Формат"
                     items={eventFormatList}
-                    value={GetAllOrFilteredEventsFormatEnum[filters.format as keyof typeof GetAllOrFilteredEventsFormatEnum]}
+                    value={filters.format!==undefined?filters.format:""}
                     onChange={(format) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsFormatEnum,format),"format")}
                     onClear={() => _handleFilterChange("","format")}
                     toText={(input: string) => {return input}} />
