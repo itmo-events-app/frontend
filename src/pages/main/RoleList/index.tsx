@@ -5,7 +5,7 @@ import Content from '@widgets/main/Content';
 import SideBar from '@widgets/main/SideBar';
 import Search from '@widgets/main/Search';
 import Button from '@widgets/main/Button';
-import RoleList, { RoleElement, createRoleElementList, roleElementListGetElements } from '@widgets/main/RoleList';
+import RoleList, { RoleElement } from '@widgets/main/RoleList';
 import { RoleModel } from '@entities/role';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -23,6 +23,7 @@ import UpdateDialogContent from './UpdateDialogContext';
 import PrivilegeContext from '@features/privilege-context';
 import { PrivilegeData } from '@entities/privilege-context';
 import ApiContext from '@features/api-context';
+import { createRoleElementList, roleElementListGetElements } from '@widgets/main/RoleList/common';
 
 class ContextMenuData {
   clientX: number;
