@@ -28,21 +28,21 @@ jobs:
 
       - name: 'Lint: eslint'
         id: eslint
-        if: steps.install.outcome == 'success'
+        if: ${{ steps.install.outcome == 'success' }}
         run: npm run eslint
 
       - name: 'Lint: tsc'
         id: tsc
-        if: steps.install.outcome == 'success'
+        if: ${{ steps.install.outcome == 'success' }}
         run: npm run tsc
 
       - name: Build
         id: build
-        if: steps.install.outcome == 'success'
+        if: ${{ steps.install.outcome == 'success' }}
         run: npm run build.nolint
 
       - name: Build runner & Push Docker Image
-        if: steps.build.outcome == 'success'
+        if: ${{ steps.build.outcome == 'success' }}
         uses: niqzart/ffs-devops/docker-build@main
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
