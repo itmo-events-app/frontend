@@ -37,4 +37,4 @@ jobs:
           repository: event-app-${{ github.event.repository.name }}
           tag: ${{ github.ref_name == 'main' && 'latest' || needs.namer.outputs.tag }}
           base-tag: latest
-          dockerfile: "./dockerfile-runner"
+          dockerfile: "./dockerfile"
