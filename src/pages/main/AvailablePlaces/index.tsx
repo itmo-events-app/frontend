@@ -13,9 +13,13 @@ import Content from "@widgets/main/Content";
 import Input from "@widgets/main/Input";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Label from "@widgets/auth/InputLabel";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Dialog from "@widgets/main/Dialog";
 import InputCheckbox from "@features/InputCheckbox";
+import { useQuery } from "@tanstack/react-query";
+import { placeService } from "@features/place-service.ts";
+import ApiContext from "@features/api-context.ts";
+import { PlaceResponse } from "@shared/api/generated";
 
 
 const _test_places: DropdownOption<string>[] = [
@@ -76,10 +80,14 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
 };
 
 function AvailablePlacesPage() {
+  const { api } = useContext(ApiContext);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [searchName, setSearchName] = useState("");
-
+  const { data: foundPlaces = [] } = useQuery({
+    queryFn: placeService.getPlaces(api),
+    queryKey: ["getPlaces"],
+  });
 
   const openModal = () => {
     setModalOpen(true);
@@ -98,22 +106,19 @@ function AvailablePlacesPage() {
   };
 
   const navigate = useNavigate();
-  const _event = () => {
-    navigate(RoutePaths.placeData);
+  const _event = (id: number) => {
+    navigate(`${id}`);
   };
 
-  const _places: any[] = [
-    new PageEntry(() => {
-      return _entryStub(1, "Ломо", "Ломо, 9");
-    }),
-    new PageEntry(() => {
-      return _entryStub(1, "Кронва", "Кронва, 49");
-    }),
-  ];
+  const _places: any[] = foundPlaces.map((place: PlaceResponse) => {
+      return new PageEntry(() => {
+        return _entryStub(place.id, place.name, place.address);
+      })
+  })
 
-  function _entryStub(index: number, name: string, address: string) {
+  function _entryStub(index?: number, name?: string, address?: string) {
     return (
-      <a key={index} onClick={_event} className={styles.place_entry}>
+      <a key={index} onClick={() => _event(index ?? 0)} className={styles.place_entry}>
         <Home className={styles.place_icon} />
         <div className={styles.place_info_column}>
           <div className={styles.place_name}>
