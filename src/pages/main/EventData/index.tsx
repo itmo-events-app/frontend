@@ -24,6 +24,7 @@ import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
 import { PrivilegeResponse, PrivilegeResponseNameEnum } from "@shared/api/generated";
+import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 
 class EventInfo {
   regDates: string
@@ -191,7 +192,7 @@ const tasks: Task[] = [
   },
 ];
 
-const edit_privilege: boolean = false;
+const edit_privilege: boolean = true;
 function readDate(dateTime: string){
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
@@ -310,6 +311,7 @@ function EventActivitiesPage() {
   if (orgsVisible) {
     pageTabs.push(new PageTab("Организаторы"));
   }
+  pageTabs.push(new PageTab("Организаторы"));
 
   pageTabs.push(new PageTab("Участники"));
 
@@ -344,7 +346,8 @@ function EventActivitiesPage() {
   enum DialogSelected {
     NONE,
     UPDATE,
-    CREATEACTIVITY = 2
+    CREATEACTIVITY = 2,
+    ADDORGANIZER = 3,
   }
 
   const _Dialog = () => {
@@ -361,6 +364,12 @@ function EventActivitiesPage() {
         component = <CreateActivityDialog
           {...dialogData.args} parentId={parseInt(id)} onSubmit={()=>{
             _closeDialog();
+        }}
+        />;
+      case DialogSelected.ADDORGANIZER:
+        component = <AddOrganizerDialog
+          {...dialogData.args} parentId={parseInt(id)} onSubmit={()=>{
+          _closeDialog();
         }}
         />;
     }
@@ -545,7 +554,10 @@ function EventActivitiesPage() {
       </>
     )
   }
-
+  const _addOrganizer = (e: MouseEvent) => {
+    setDialogData(new DialogData('Создать активность', DialogSelected.ADDORGANIZER));
+    e.stopPropagation();
+  }
   function createOrgPersonRow(person: OrgPerson) {
     return (
       <tr key={person.id}>
@@ -576,7 +588,7 @@ function EventActivitiesPage() {
       <>
         {edit_privilege ? (
           <div className={styles.button_container}>
-            <Button className={styles.button} onClick={edit_func}>Редактировать</Button>
+            <Button className={styles.button} onClick={_addOrganizer}>Добавить</Button>
           </div>
         ) : <></>}
         <table className={styles.table}>
