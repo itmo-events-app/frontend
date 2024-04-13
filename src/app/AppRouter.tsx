@@ -1,5 +1,5 @@
 import { AppRoutes, RoutePaths } from "@shared/config/routes";
-import { Route, Routes, RouteProps, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import LoginPage from "@pages/auth/Login";
 import RegisterPage from "@pages/auth/Register";
 import RestorePage from "@pages/auth/Restore";
@@ -7,6 +7,7 @@ import PasswordPage from "@pages/auth/Password";
 import NotifyPage from "@pages/auth/Notification";
 import RoleListPage from "@pages/main/RoleList";
 import AvailableEventsPage from "@pages/main/AvailableEvents";
+import AvailablePlacesPage from "@pages/main/AvailablePlaces";
 import EventCreationPage from "@pages/main/EventCreation";
 import EventActivitiesPage from "@pages/main/EventData";
 import TaskListPage from "@pages/main/TaskList";
@@ -14,85 +15,179 @@ import NotificationListPage from "@pages/main/NotificationListPage";
 import ProfilePage from "@pages/main/ProfilePage";
 import Authorized from "@features/Authorized";
 import PlaceListPage from "@pages/main/PlaceList";
+import Authenticated from "@widgets/Authenticated";
+import Authorized from "@widgets/Authorized";
+import UserListPage from "@pages/main/UserList";
+import HomeRedirectPage from "@pages/main/HomeRedirectPage";
+import { AppRouteProps } from "@features/app-route-props";
+import { anyPrivilege } from "@features/privileges";
+import { PrivilegeData } from "@entities/privilege-context";
+import { PrivilegeNames } from "@shared/config/privileges";
+import PlaceListPage from "@pages/main/PlaceList";
+import PlaceDataPage from "@pages/main/PlaceData";
 
-const routes: Record<AppRoutes, RouteProps> = {
+// root urls with privileges
+const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.ROOT]: {
     path: RoutePaths.root,
-    element: <Navigate to={RoutePaths.login} />,
+    authenticated: false,
+  },
+  [AppRoutes.HOME]: {
+    path: RoutePaths.home,
+    authenticated: false
   },
   [AppRoutes.REGISTER]: {
     path: RoutePaths.register,
-    element: <RegisterPage />,
+    authenticated: false
   },
   [AppRoutes.LOGIN]: {
     path: RoutePaths.login,
-    element: <LoginPage />,
+    authenticated: false
   },
   [AppRoutes.RESTORE]: {
     path: RoutePaths.restore,
-    element: <RestorePage />,
+    authenticated: false
   },
   [AppRoutes.PASSWORD]: {
     path: RoutePaths.password,
-    element: <PasswordPage />,
+    authenticated: false
   },
   [AppRoutes.NOTIFY]: {
     path: RoutePaths.notify,
-    element: <NotifyPage />,
+    authenticated: false
   },
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
-    element: <AvailableEventsPage />,
-    // element: <Authorized><AvailableEventsPage /></Authorized>,
+    authenticated: true
   },
   [AppRoutes.EVENT_CREATION]: {
     path: RoutePaths.createEvent,
-    element: <EventCreationPage />,
+    authenticated: true
   },
   [AppRoutes.EVENT_DATA]: {
     path: RoutePaths.eventData,
-    element: <EventActivitiesPage />,
+    authenticated: true
   },
   [AppRoutes.TASK_LIST]: {
     path: RoutePaths.taskList,
-    element: <TaskListPage />,
+    authenticated: true
   },
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
-    element: <PlaceListPage />,
+    authenticated: true
+  },
+  [AppRoutes.PLACE_DATA]: {
+    path: RoutePaths.placeData,
+    authenticated: true
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
-    element: <RoleListPage />,
+    authenticated: true,
+    authorized: anyPrivilege(new Set([
+      new PrivilegeData(PrivilegeNames.CREATE_ROLE),
+      new PrivilegeData(PrivilegeNames.EDIT_ROLE),
+      new PrivilegeData(PrivilegeNames.DELETE_ROLE),
+    ])),
   },
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,
-    element: <>User List</>,
+    authenticated: true
   },
   [AppRoutes.NOTIFICATIONS]: {
     path: RoutePaths.notifications,
-    element: <NotificationListPage />,
+    authenticated: true
   },
   [AppRoutes.PROFILE]: {
     path: RoutePaths.profile,
-    element: <ProfilePage />,
+    authenticated: true
   },
   [AppRoutes.REQUEST_LIST]: {
     path: RoutePaths.requestList,
-    element: <>Request List</>,
+    authenticated: true
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,
+    authenticated: true
+  },
+}
+
+// root elements
+const routeElements: Record<AppRoutes, AppRouteProps> = {
+  [AppRoutes.ROOT]: {
+    element: <Navigate to={RoutePaths.login} />,
+  },
+  [AppRoutes.HOME]: {
+    element: <HomeRedirectPage routes={routes} />,
+  },
+  [AppRoutes.REGISTER]: {
+    element: <RegisterPage />,
+  },
+  [AppRoutes.LOGIN]: {
+    element: <LoginPage />,
+  },
+  [AppRoutes.RESTORE]: {
+    element: <RestorePage />,
+  },
+  [AppRoutes.PASSWORD]: {
+    element: <PasswordPage />,
+  },
+  [AppRoutes.NOTIFY]: {
+    element: <NotifyPage />,
+  },
+  [AppRoutes.EVENT_LIST]: {
+    element: <AvailableEventsPage />,
+  },
+  [AppRoutes.EVENT_CREATION]: {
+    element: <EventCreationPage />,
+  },
+  [AppRoutes.EVENT_DATA]: {
+    element: <EventActivitiesPage />,
+  },
+  [AppRoutes.TASK_LIST]: {
+    element: <TaskListPage />,
+  },
+  [AppRoutes.PLACE_LIST]: {
+    element: <AvailablePlacesPage />,
+  },
+  [AppRoutes.PLACE_DATA]: {
+    element: <PlaceDataPage />,
+  },
+  [AppRoutes.ROLE_LIST]: {
+    element: <RoleListPage />,
+  },
+  [AppRoutes.USER_LIST]: {
+    element: <UserListPage />,
+  },
+  [AppRoutes.NOTIFICATIONS]: {
+    element: <NotificationListPage />,
+  },
+  [AppRoutes.PROFILE]: {
+    element: <ProfilePage />,
+  },
+  [AppRoutes.REQUEST_LIST]: {
+    element: <>Request List</>,
+  },
+  [AppRoutes.NOT_FOUND]: {
     element: <>404 not found</>,
   },
+
 };
 
 export default function AppRouter() {
+  const merged = Object.values(AppRoutes).map(k => ({ ...(routes[k]), ...(routeElements[k]) } as AppRouteProps));
+
   return (
     <Routes>
-      {Object.values(routes).map(({ path, element }) => (
-        <Route key={path} path={path} element={element} />
-      ))}
+      {merged.map(({ path, element, authenticated, authorized }: AppRouteProps) => {
+        let e = element;
+        if (authorized) {
+          e = <Authorized whenAllowed={authorized} rejectNavigateTo={RoutePaths.home}>{e}</Authorized>
+        }
+        if (authenticated) {
+          e = <Authenticated rejectNavigateTo={RoutePaths.login}>{e}</Authenticated>
+        }
+        return <Route key={path} path={path} element={e} />;
+      })}
     </Routes>
   );
 }

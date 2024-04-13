@@ -43,6 +43,12 @@ export interface UserRoleResponse {
      * @type {string}
      * @memberof UserRoleResponse
      */
+    'login'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserRoleResponse
+     */
     'roleName'?: string;
 }
 

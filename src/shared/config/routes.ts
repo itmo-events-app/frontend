@@ -1,6 +1,7 @@
 // Перечисление роутов
 export enum AppRoutes {
   ROOT = "root",
+  HOME = "home",
   REGISTER = "register",
   LOGIN = "login",
   RESTORE = "restore",
@@ -10,6 +11,7 @@ export enum AppRoutes {
   EVENT_DATA = "eventData",
   EVENT_LIST = "eventList",
   PLACE_LIST = "placeList",
+  PLACE_DATA = "placeData",
   ROLE_LIST = "roleList",
   USER_LIST = "userList",
   TASK_LIST = "taskList",
@@ -24,11 +26,13 @@ export enum AppRoutes {
 export enum RouteParams {
   PLACE_ID = ":place_id",
   USERNAME = ":username",
+  EVENT_ID = ":id"
 }
 
 export const RoutePaths: Record<AppRoutes, string> = {
   // Будем отрисовывать в зависимости от параметра.
   [AppRoutes.ROOT]: "/",
+  [AppRoutes.HOME]: "/home",
   [AppRoutes.REGISTER]: "/register",
   [AppRoutes.LOGIN]: "/login",
   [AppRoutes.RESTORE]: "/restore",
@@ -36,8 +40,9 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.PASSWORD]: "/password",
   [AppRoutes.EVENT_LIST]: "/events",
   [AppRoutes.EVENT_CREATION]: "/events/create",
-  [AppRoutes.EVENT_DATA]: "/events/event",
+  [AppRoutes.EVENT_DATA]: "/events/"+ RouteParams.EVENT_ID,
   [AppRoutes.PLACE_LIST]: "/places",
+  [AppRoutes.PLACE_DATA]: "/places/place",
   [AppRoutes.ROLE_LIST]: "/roles",
   [AppRoutes.USER_LIST]: "/users",
   [AppRoutes.TASK_LIST]: "/tasks",

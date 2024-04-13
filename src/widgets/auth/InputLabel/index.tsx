@@ -1,11 +1,14 @@
+import { appendClassName } from '@shared/util';
 import styles from './index.module.css'
 
 type Props = {
   value: string;
+  error?: boolean
 }
 
 function Label(props: Props) {
-  return <span className={styles.label}>{props.value}</span>
+  const errorClass = props.error ? styles.error : undefined;
+  return <span className={appendClassName(styles.label, errorClass)}>{props.value}</span>
 }
 
 export default Label;

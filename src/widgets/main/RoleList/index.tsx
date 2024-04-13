@@ -1,16 +1,11 @@
 import { uid } from 'uid'
 import styles from './index.module.css'
-import { PrivilegeModel, RoleModel } from '@entities/Role'
+import { RoleModel } from '@entities/role'
 import { ArrowDown, MenuVertical } from '@shared/ui/icons'
-import { useState } from 'react'
 import { appendClassName } from '@shared/util'
+import { PrivilegeModel } from '@entities/privilege'
 
-type Props = {
-  roles: RoleModel[],
-  onMenuClick?: (role: RoleModel, e: React.MouseEvent) => void,
-}
-
-class Role {
+class RoleElement {
   entry: RoleModel;
   expanded: boolean;
 
@@ -20,14 +15,17 @@ class Role {
   }
 }
 
+type Props = {
+  roles: RoleElement[],
+  setRoles: React.Dispatch<React.SetStateAction<RoleElement[]>>,
+  onMenuClick?: (role: RoleModel, e: React.MouseEvent) => void,
+}
 
 function RoleList(props: Props) {
-  const [roles, setRoles] = useState(props.roles.map(r => new Role(r)));
-
-  function _expand(tab: Role) {
+  function _expand(tab: RoleElement) {
     return () => {
       tab.expanded = !tab.expanded;
-      setRoles([...roles]);
+      props.setRoles([...props.roles]);
     }
   }
 
@@ -52,14 +50,14 @@ function RoleList(props: Props) {
     return res;
   }
 
-  function _createRole(role: Role) {
-    const hasPrivileges = role.entry.privileges.length > 0;
+  function _createRole(role: RoleElement) {
+    const hasPrivileges = role.entry.privileges != null && role.entry.privileges.length > 0;
     const Arrow = hasPrivileges
       ? <ArrowDown
         className={appendClassName(styles.icon_expand, (role.expanded ? styles.expanded : null))} />
       : <></>;
 
-    const menuVisible = props.onMenuClick != null;
+    const menuVisible = props.onMenuClick != null && role.entry.isEditable;
     const Menu = menuVisible
       ? <MenuVertical onClick={(e) => props.onMenuClick!(role.entry, e)} className={styles.icon_dots} />
       : <div></div>;
@@ -74,7 +72,7 @@ function RoleList(props: Props) {
                 {role.entry.name}
               </div>
               <div className={styles.role_type}>
-                {role.entry.isGlobal ? 'Системная' : 'Организационная'}
+                {role.entry.type}
               </div>
             </div>
             <div className={styles.role_description}>
@@ -89,7 +87,7 @@ function RoleList(props: Props) {
         {
           (role.expanded && hasPrivileges) ?
             <div className={styles.privileges}>
-              {_createPrivilegeList(role.entry.privileges)}
+              {_createPrivilegeList(role.entry.privileges ?? [])}
             </div>
             : <></>
         }
@@ -97,7 +95,7 @@ function RoleList(props: Props) {
     )
   }
 
-  function _createRoleList(roles: Role[]) {
+  function _createRoleList(roles: RoleElement[]) {
     const res = []
     for (const role of roles) {
       res.push(_createRole(role));
@@ -107,10 +105,11 @@ function RoleList(props: Props) {
 
   return (
     <div className={styles.roles}>
-      {_createRoleList(roles)}
+      {_createRoleList(props.roles)}
     </div>
   )
 }
 
 export default RoleList;
+export { RoleElement }
 

@@ -12,27 +12,7 @@ import { RoutePaths } from '@shared/config/routes';
 import { useNavigate } from "react-router-dom";
 
 
-const _tabs: SideBarTab[] = [
-  new SideBarTab('Мероприятия', <Menu />, [
-    new SideBarTab('Доступные'),
-    new SideBarTab('Участия'),
-    new SideBarTab('Организуемые'),
-    new SideBarTab('Создание'),
-  ]),
-  new SideBarTab('Площадки', <Home />, [
-    new SideBarTab('Доступные',undefined, [], true),
-    new SideBarTab('Создание'),
-  ],true, true),
-  new SideBarTab('Уведомления', <Noted />),
-  new SideBarTab('Профиль', <Users />),
-
-]
-
 function PlaceListPage() {
-
-  const _brandLogoClick = () => {
-    console.log('brand logo!')
-  }
 
   const _onSearch = () => {
     console.log('searching')
@@ -43,15 +23,51 @@ function PlaceListPage() {
   }
   const navigate = useNavigate();
   const _place = () => {
-    navigate(RoutePaths.placeList);
+    navigate(RoutePaths.placeData);
   }
+  const _places: any[] = [
+    new PageEntry(() => { return _entryStub(1) }),
+    new PageEntry(() => { return _entryStub(2) }),
+    new PageEntry(() => { return _entryStub(3) }),
+    new PageEntry(() => { return _entryStub(4) }),
+    new PageEntry(() => { return _entryStub(5) }),
+    new PageEntry(() => { return _entryStub(6) }),
+    new PageEntry(() => { return _entryStub(7) }),
+    new PageEntry(() => { return _entryStub(8) }),
+    new PageEntry(() => { return _entryStub(9) }),
+    new PageEntry(() => { return _entryStub(10) }),
+    new PageEntry(() => { return _entryStub(11) }),
+    new PageEntry(() => { return _entryStub(12) }),
+    new PageEntry(() => { return _entryStub(13) }),
+    new PageEntry(() => { return _entryStub(14) }),
+    new PageEntry(() => { return _entryStub(15) }),
+    new PageEntry(() => { return _entryStub(16) }),
+    new PageEntry(() => { return _entryStub(17) }),
+    new PageEntry(() => { return _entryStub(18) }),
+    new PageEntry(() => { return _entryStub(19) }),
+    new PageEntry(() => { return _entryStub(20) }),
+    new PageEntry(() => { return _entryStub(21) }),
+    new PageEntry(() => { return _entryStub(22) }),
+    new PageEntry(() => { return _entryStub(23) }),
+    new PageEntry(() => { return _entryStub(24) }),
+    new PageEntry(() => { return _entryStub(25) }),
+    new PageEntry(() => { return _entryStub(26) }),
+    new PageEntry(() => { return _entryStub(27) }),
+    new PageEntry(() => { return _entryStub(28) }),
+    new PageEntry(() => { return _entryStub(29) }),
+    new PageEntry(() => { return _entryStub(30) }),
+    new PageEntry(() => { return _entryStub(31) }),
+    new PageEntry(() => { return _entryStub(32) }),
+    new PageEntry(() => { return _entryStub(33) })
+  ]
+
   function _entryStub(index: number) {
     return (
       <a key={index} onClick={_place} className={styles.place_entry}>
         <Home className={styles.place_icon} />
         <div className={styles.place_info_column}>
           <div className={styles.place_name}>
-            {"Корпус гривицова"}
+            {"Корпус " + index}
           </div>
           <div className={styles.place_address}>
             Гривицова переулок 14-16
@@ -61,27 +77,11 @@ function PlaceListPage() {
     );
   }
 
-  const _places: any[] = [
-    new PageEntry(() => {return _entryStub(1)}),
-    new PageEntry(() => {return _entryStub(2)}),
-    new PageEntry(() => {return _entryStub(3)}),
-    new PageEntry(() => {return _entryStub(4)}),
-    new PageEntry(() => {return _entryStub(5)}),
-    new PageEntry(() => {return _entryStub(6)}),
-    new PageEntry(() => {return _entryStub(7)}),
-    new PageEntry(() => {return _entryStub(8)}),
-    new PageEntry(() => {return _entryStub(9)}),
-    new PageEntry(() => {return _entryStub(10)}),
-    new PageEntry(() => {return _entryStub(11)}),
-    new PageEntry(() => {return _entryStub(12)})
-
-  ]
-
   return (
     <Layout
-      topLeft={<BrandLogo onClick={_brandLogoClick} />}
+      topLeft={<BrandLogo />}
       topRight={<PageName text="Площадки" />}
-      bottomLeft={<SideBar tabs={_tabs} />}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.placeList} />}
       bottomRight=
       {
         <Content>
@@ -97,12 +97,13 @@ function PlaceListPage() {
                 <Button onClick={_onCreation}>Создать</Button>
               </div>
             </div>
-            <div className={styles.place_list_container}>
-              <PagedList page={1} page_size={4} items={_places} />
+            <div className={styles.place_list_container}
+              PagedList page={1} page_size={5} page_step={5} items={_places} />
             </div>
           </div>
         </Content>
       }
+  
     />
   );
 }

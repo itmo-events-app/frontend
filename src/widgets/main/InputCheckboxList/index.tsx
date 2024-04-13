@@ -1,39 +1,22 @@
-import { useState } from 'react';
+import InputCheckbox, { ItemSelection } from '@features/InputCheckbox';
 import styles from './index.module.css';
 import { uid } from 'uid';
-import InputCheckbox from '../InputCheckbox';
 
 type Props<T> = {
-  items: T[],
-  displayName: (v: any) => string,
+  items: ItemSelection<T>[],
+  onChange: (e: ItemSelection<T>) => void,
+  toText: (v: any) => string,
 }
-
-class ItemSelection<T> {
-  uid: string;
-  selected: boolean;
-  value: T
-  constructor(value: T, selected: boolean = false) {
-    this.uid = uid();
-    this.value = value;
-    this.selected = selected;
-  }
-}
-
 
 function CheckboxList<T>(props: Props<T>) {
-  const [items, setItems] = useState(props.items.map(v => new ItemSelection(v)));
-
-  function _checkboxOnChange(item: ItemSelection<T>) {
-    return function(e: any) {
-      item.selected = e.target.checked;
-      setItems([...items]);
-    }
-  }
-
   const _ItemSelection = (item: ItemSelection<T>) => {
     return (
-      <div className={styles.item} key={item.uid}>
-        <InputCheckbox checked={item.selected} text={props.displayName(item.value)} onChange={_checkboxOnChange(item)} />
+      <div className={styles.item} key={uid()}>
+        <InputCheckbox
+          item={item}
+          onChange={props.onChange}
+          toText={props.toText}
+        />
       </div>
 
     )
@@ -49,10 +32,19 @@ function CheckboxList<T>(props: Props<T>) {
 
   return (
     <div className={styles.list}>
-      {_ItemSelectionList(items)}
+      {_ItemSelectionList(props.items)}
     </div>
   )
 
 }
 
+function createItemSelectionList<T>(roles: T[], selected: (item: T) => boolean = (() => false)) {
+  return roles.map(r => new ItemSelection(r, selected(r)));
+}
+
+function itemSelectionGetSelected<T>(items: ItemSelection<T>[]) {
+  return items.filter(item => item.selected).map(item => item.value);
+}
+
 export default CheckboxList
+export { createItemSelectionList, itemSelectionGetSelected, ItemSelection }

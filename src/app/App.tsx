@@ -2,20 +2,22 @@ import { BrowserRouter } from "react-router-dom";
 
 import AppRouter from "./AppRouter";
 import "./App.css";
-import { TokenContextProvider } from "@features/TokenProvider";
-import {PrivilegeContextProvider } from "@features/PrivilegeProvider";
-import { userAdministrator, userHelper, userOrganizer, userReader } from "./privileges";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import PrivilegeContextProvider from "@widgets/PrivilegeProvider";
+import ApiContextProvider from "@widgets/ApiProvider";
 
 const App = () => {
-  const privilegeContext = userAdministrator;
+  const queryClient = new QueryClient();
 
   return (
     <BrowserRouter>
-      <TokenContextProvider>
-        <PrivilegeContextProvider context={privilegeContext}>
-          <AppRouter />
-        </PrivilegeContextProvider>
-      </TokenContextProvider>
+      <ApiContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <PrivilegeContextProvider>
+            <AppRouter />
+          </PrivilegeContextProvider>
+        </QueryClientProvider>
+      </ApiContextProvider>
     </BrowserRouter>
   );
 };

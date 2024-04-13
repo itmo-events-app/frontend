@@ -1,21 +1,11 @@
 import styles from './index.module.css'
-import { useState } from 'react'
 import { ArrowDown } from '@shared/ui/icons'
-import { appendClassName, sharedStart } from '@shared/util'
-import { useNavigate } from "react-router-dom"
-import { PrivilegeContextData, PrivilegeData } from '@features/PrivilegeProvider'
-
-type IsVisibleFunc = (x: Set<PrivilegeData>) => boolean;
-
-function isVisibleFuncTrue(_: Set<PrivilegeData>) {
-  return true;
-}
+import { appendClassName } from '@shared/util'
 
 class SideBarTab {
   text: string;
   url: string;
   icon?: any;
-  _isVisible: IsVisibleFunc;
   _children: SideBarTab[];
   _selected: boolean;
   _expanded: boolean;
@@ -24,7 +14,6 @@ class SideBarTab {
     text: string,
     url: string,
     icon?: any,
-    isVisible: IsVisibleFunc = isVisibleFuncTrue,
     children: SideBarTab[] = [],
     selected: boolean = false,
     expanded: boolean = false,
@@ -32,7 +21,6 @@ class SideBarTab {
     this.text = text;
     this.icon = icon;
     this.url = url;
-    this._isVisible = isVisible;
     this._children = children;
     this._selected = selected;
     this._expanded = expanded;
@@ -43,34 +31,21 @@ class SideBarTab {
   public get expanded() { return this._expanded; }
   public set selected(value: boolean) { this._selected = value; }
   public set expanded(value: boolean) { this._expanded = value; }
-  public get isVisible() { return this._isVisible; }
+
+  public isExpandable() {
+    return this.expanded && this.children.length > 0;
+  }
 }
 
 type Props = {
   tabs: SideBarTab[],
-  currentPageURL: string,
-  privilegeContext?: PrivilegeContextData
+  onClick: (tab: SideBarTab) => void
 }
 
 function SideBar(props: Props) {
-  const privilegeContext = props.privilegeContext ?? new PrivilegeContextData();
-
-  const [tabs, setTabs] = useState(props.tabs);
-
-  const navigate = useNavigate();
-
-  function _tabExpandable(tab: SideBarTab) {
-    return tab.expanded && tab.children.length > 0;
-  }
-
-  function _tabExpandOrRedirect(tab: SideBarTab) {
+  function _tabOnClick(tab: SideBarTab) {
     return () => {
-      if (_tabExpandable(tab)) {
-        tab.expanded = !tab.expanded;
-        setTabs([...tabs]); // NOTE: force object recreation
-      } else {
-        navigate(tab.url);
-      }
+      props.onClick(tab);
     }
   }
 
@@ -85,12 +60,12 @@ function SideBar(props: Props) {
       <div key={tab.url} className={styles.tab}>
         <div
           className={appendClassName(styles.tab_entry, (tab.selected ? styles.selected : null))}
-          onClick={_tabExpandOrRedirect(tab)}>
+          onClick={_tabOnClick(tab)}>
           {entryIcon}
           {entryText}
           {entryArrow}
         </div>
-        {_tabExpandable(tab) ?
+        {tab.isExpandable() ?
           <div className={styles.tab_children}>
             {_createTabList(tab.children)}
           </div>
@@ -108,21 +83,9 @@ function SideBar(props: Props) {
     return elements;
   }
 
-  function _processSelected(tabs: SideBarTab[], url: string) {
-    return tabs.map(tab => {
-      const selected = sharedStart([tab.url, url]) === tab.url;
-      tab.selected = selected;
-      return tab;
-    })
-  }
-
-  function _filterVisible(tabs: SideBarTab[]) {
-    return tabs.filter(tab => tab.isVisible(privilegeContext.systemPrivileges));
-  }
-
   return (
     <div className={styles.sidebar}>
-      {_createTabList(_processSelected(_filterVisible(tabs), props.currentPageURL))}
+      {_createTabList(props.tabs)}
     </div>
   )
 }

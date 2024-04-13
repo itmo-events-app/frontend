@@ -22,6 +22,8 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import { EventResponse } from '../model';
+// @ts-ignore
 import { PrivilegeResponse } from '../model';
 // @ts-ignore
 import { RoleRequest } from '../model';
@@ -36,8 +38,8 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Назначение пользователю роли Помощник
-         * @param {number} userId 
-         * @param {number} eventId 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -60,6 +62,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -74,22 +80,23 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Назначение пользователю организационной роли
-         * @param {number} userId 
-         * @param {number} eventId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        assignOrganizationalRole: async (userId: number, eventId: number, body: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        assignOrganizationalRole: async (userId: number, eventId: number, roleId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userId' is not null or undefined
             assertParamExists('assignOrganizationalRole', 'userId', userId)
             // verify required parameter 'eventId' is not null or undefined
             assertParamExists('assignOrganizationalRole', 'eventId', eventId)
-            // verify required parameter 'body' is not null or undefined
-            assertParamExists('assignOrganizationalRole', 'body', body)
-            const localVarPath = `/api/roles/organizational/{userId}/{eventId}`
+            // verify required parameter 'roleId' is not null or undefined
+            assertParamExists('assignOrganizationalRole', 'roleId', roleId)
+            const localVarPath = `/api/roles/organizational/{userId}/{eventId}/{roleId}`
                 .replace(`{${"userId"}}`, encodeURIComponent(String(userId)))
-                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)))
+                .replace(`{${"roleId"}}`, encodeURIComponent(String(roleId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -101,14 +108,15 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -118,8 +126,8 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Назначение пользователю роли Организатор
-         * @param {number} userId 
-         * @param {number} eventId 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -142,6 +150,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -156,18 +168,19 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Назначение пользователю системной роли
-         * @param {number} userId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        assignSystemRole: async (userId: number, body: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        assignSystemRole: async (userId: number, roleId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userId' is not null or undefined
             assertParamExists('assignSystemRole', 'userId', userId)
-            // verify required parameter 'body' is not null or undefined
-            assertParamExists('assignSystemRole', 'body', body)
-            const localVarPath = `/api/roles/system/{userId}`
-                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+            // verify required parameter 'roleId' is not null or undefined
+            assertParamExists('assignSystemRole', 'roleId', roleId)
+            const localVarPath = `/api/roles/system/{userId}/{roleId}`
+                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)))
+                .replace(`{${"roleId"}}`, encodeURIComponent(String(roleId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -179,14 +192,15 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -215,6 +229,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -232,7 +250,7 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Удаление роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -252,6 +270,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -266,7 +288,7 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Редактирование роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {RoleRequest} roleRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -289,6 +311,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -305,11 +331,12 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @summary Получение списка всех привилегий
+         * @summary Получение списка привилегий
+         * @param {GetAllPrivilegesTypeEnum} [type] Тип привилегии
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllPrivileges: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllPrivileges: async (type?: GetAllPrivilegesTypeEnum, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/roles/privileges`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -321,6 +348,14 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (type !== undefined) {
+                localVarQueryParameter['type'] = type;
+            }
 
 
     
@@ -352,6 +387,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -365,12 +404,16 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @summary Получение списка организационных привилегий
+         * @summary Получение списка мероприятий пользователя по роли
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationalPrivileges: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/roles/organizational-privileges`;
+        getEventsByRole: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getEventsByRole', 'id', id)
+            const localVarPath = `/api/roles/{id}/events`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -382,6 +425,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -395,11 +442,59 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @summary Получение организационных ролей
+         * @summary Получение организационной роли по id
+         * @param {number} roleId ID роли
+         * @param {number} eventId ID меропрятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationalRoles: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getOrganizationalRoleById: async (roleId: number, eventId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'roleId' is not null or undefined
+            assertParamExists('getOrganizationalRoleById', 'roleId', roleId)
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('getOrganizationalRoleById', 'eventId', eventId)
+            const localVarPath = `/api/roles/organizational/{roleId}`
+                .replace(`{${"roleId"}}`, encodeURIComponent(String(roleId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (eventId !== undefined) {
+                localVarQueryParameter['eventId'] = eventId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получение списка организационных ролей
+         * @param {number} eventId ID меропрятия
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOrganizationalRoles: async (eventId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('getOrganizationalRoles', 'eventId', eventId)
             const localVarPath = `/api/roles/organizational`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -411,6 +506,14 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (eventId !== undefined) {
+                localVarQueryParameter['eventId'] = eventId;
+            }
 
 
     
@@ -426,7 +529,7 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Получение роли по id
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -446,6 +549,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -459,12 +566,12 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @summary Получение списка системных привилегий
+         * @summary Получение списка системных ролей
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getSystemPrivileges: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/roles/system-privileges`;
+        getSystemRoles: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/roles/system`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -475,6 +582,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -514,6 +625,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -528,22 +643,23 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Лишение пользователя организационной роли
-         * @param {number} userId 
-         * @param {number} eventId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        revokeOrganizationalRole: async (userId: number, eventId: number, body: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        revokeOrganizationalRole: async (userId: number, eventId: number, roleId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userId' is not null or undefined
             assertParamExists('revokeOrganizationalRole', 'userId', userId)
             // verify required parameter 'eventId' is not null or undefined
             assertParamExists('revokeOrganizationalRole', 'eventId', eventId)
-            // verify required parameter 'body' is not null or undefined
-            assertParamExists('revokeOrganizationalRole', 'body', body)
-            const localVarPath = `/api/roles/organizational/{userId}/{eventId}`
+            // verify required parameter 'roleId' is not null or undefined
+            assertParamExists('revokeOrganizationalRole', 'roleId', roleId)
+            const localVarPath = `/api/roles/organizational/{userId}/{eventId}/{roleId}`
                 .replace(`{${"userId"}}`, encodeURIComponent(String(userId)))
-                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)))
+                .replace(`{${"roleId"}}`, encodeURIComponent(String(roleId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -555,14 +671,15 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -596,6 +713,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -610,7 +731,7 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Лишение пользователя системной роли
-         * @param {number} userId 
+         * @param {number} userId ID пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -630,6 +751,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -644,7 +769,7 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
         /**
          * 
          * @summary Поиск ролей по совпадению в названии
-         * @param {string} name 
+         * @param {string} name Имя роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -662,6 +787,10 @@ export const RoleControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
             if (name !== undefined) {
                 localVarQueryParameter['name'] = name;
@@ -691,8 +820,8 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Назначение пользователю роли Помощник
-         * @param {number} userId 
-         * @param {number} eventId 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -705,14 +834,14 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Назначение пользователю организационной роли
-         * @param {number} userId 
-         * @param {number} eventId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async assignOrganizationalRole(userId: number, eventId: number, body: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.assignOrganizationalRole(userId, eventId, body, options);
+        async assignOrganizationalRole(userId: number, eventId: number, roleId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.assignOrganizationalRole(userId, eventId, roleId, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['RoleControllerApi.assignOrganizationalRole']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -720,8 +849,8 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Назначение пользователю роли Организатор
-         * @param {number} userId 
-         * @param {number} eventId 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -734,13 +863,13 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Назначение пользователю системной роли
-         * @param {number} userId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async assignSystemRole(userId: number, body: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.assignSystemRole(userId, body, options);
+        async assignSystemRole(userId: number, roleId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.assignSystemRole(userId, roleId, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['RoleControllerApi.assignSystemRole']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -761,7 +890,7 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Удаление роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -774,7 +903,7 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Редактирование роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {RoleRequest} roleRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -787,12 +916,13 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Получение списка всех привилегий
+         * @summary Получение списка привилегий
+         * @param {GetAllPrivilegesTypeEnum} [type] Тип привилегии
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllPrivileges(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PrivilegeResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllPrivileges(options);
+        async getAllPrivileges(type?: GetAllPrivilegesTypeEnum, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PrivilegeResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllPrivileges(type, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['RoleControllerApi.getAllPrivileges']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -811,24 +941,40 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Получение списка организационных привилегий
+         * @summary Получение списка мероприятий пользователя по роли
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getOrganizationalPrivileges(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PrivilegeResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationalPrivileges(options);
+        async getEventsByRole(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<EventResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getEventsByRole(id, options);
             const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['RoleControllerApi.getOrganizationalPrivileges']?.[index]?.url;
+            const operationBasePath = operationServerMap['RoleControllerApi.getEventsByRole']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
          * 
-         * @summary Получение организационных ролей
+         * @summary Получение организационной роли по id
+         * @param {number} roleId ID роли
+         * @param {number} eventId ID меропрятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getOrganizationalRoles(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RoleResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationalRoles(options);
+        async getOrganizationalRoleById(roleId: number, eventId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RoleResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationalRoleById(roleId, eventId, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['RoleControllerApi.getOrganizationalRoleById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Получение списка организационных ролей
+         * @param {number} eventId ID меропрятия
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getOrganizationalRoles(eventId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RoleResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationalRoles(eventId, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['RoleControllerApi.getOrganizationalRoles']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -836,7 +982,7 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Получение роли по id
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -848,14 +994,14 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Получение списка системных привилегий
+         * @summary Получение списка системных ролей
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getSystemPrivileges(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PrivilegeResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getSystemPrivileges(options);
+        async getSystemRoles(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RoleResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSystemRoles(options);
             const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['RoleControllerApi.getSystemPrivileges']?.[index]?.url;
+            const operationBasePath = operationServerMap['RoleControllerApi.getSystemRoles']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -875,14 +1021,14 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Лишение пользователя организационной роли
-         * @param {number} userId 
-         * @param {number} eventId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async revokeOrganizationalRole(userId: number, eventId: number, body: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.revokeOrganizationalRole(userId, eventId, body, options);
+        async revokeOrganizationalRole(userId: number, eventId: number, roleId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.revokeOrganizationalRole(userId, eventId, roleId, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['RoleControllerApi.revokeOrganizationalRole']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -904,7 +1050,7 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Лишение пользователя системной роли
-         * @param {number} userId 
+         * @param {number} userId ID пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -917,7 +1063,7 @@ export const RoleControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Поиск ролей по совпадению в названии
-         * @param {string} name 
+         * @param {string} name Имя роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -940,8 +1086,8 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Назначение пользователю роли Помощник
-         * @param {number} userId 
-         * @param {number} eventId 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -951,20 +1097,20 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Назначение пользователю организационной роли
-         * @param {number} userId 
-         * @param {number} eventId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        assignOrganizationalRole(userId: number, eventId: number, body: number, options?: any): AxiosPromise<void> {
-            return localVarFp.assignOrganizationalRole(userId, eventId, body, options).then((request) => request(axios, basePath));
+        assignOrganizationalRole(userId: number, eventId: number, roleId: number, options?: any): AxiosPromise<void> {
+            return localVarFp.assignOrganizationalRole(userId, eventId, roleId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Назначение пользователю роли Организатор
-         * @param {number} userId 
-         * @param {number} eventId 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -974,13 +1120,13 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Назначение пользователю системной роли
-         * @param {number} userId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        assignSystemRole(userId: number, body: number, options?: any): AxiosPromise<void> {
-            return localVarFp.assignSystemRole(userId, body, options).then((request) => request(axios, basePath));
+        assignSystemRole(userId: number, roleId: number, options?: any): AxiosPromise<void> {
+            return localVarFp.assignSystemRole(userId, roleId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -995,7 +1141,7 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Удаление роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1005,7 +1151,7 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Редактирование роли
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {RoleRequest} roleRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1015,12 +1161,13 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @summary Получение списка всех привилегий
+         * @summary Получение списка привилегий
+         * @param {GetAllPrivilegesTypeEnum} [type] Тип привилегии
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllPrivileges(options?: any): AxiosPromise<Array<PrivilegeResponse>> {
-            return localVarFp.getAllPrivileges(options).then((request) => request(axios, basePath));
+        getAllPrivileges(type?: GetAllPrivilegesTypeEnum, options?: any): AxiosPromise<Array<PrivilegeResponse>> {
+            return localVarFp.getAllPrivileges(type, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1033,26 +1180,39 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @summary Получение списка организационных привилегий
+         * @summary Получение списка мероприятий пользователя по роли
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationalPrivileges(options?: any): AxiosPromise<Array<PrivilegeResponse>> {
-            return localVarFp.getOrganizationalPrivileges(options).then((request) => request(axios, basePath));
+        getEventsByRole(id: number, options?: any): AxiosPromise<Array<EventResponse>> {
+            return localVarFp.getEventsByRole(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary Получение организационных ролей
+         * @summary Получение организационной роли по id
+         * @param {number} roleId ID роли
+         * @param {number} eventId ID меропрятия
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationalRoles(options?: any): AxiosPromise<Array<RoleResponse>> {
-            return localVarFp.getOrganizationalRoles(options).then((request) => request(axios, basePath));
+        getOrganizationalRoleById(roleId: number, eventId: number, options?: any): AxiosPromise<RoleResponse> {
+            return localVarFp.getOrganizationalRoleById(roleId, eventId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получение списка организационных ролей
+         * @param {number} eventId ID меропрятия
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOrganizationalRoles(eventId: number, options?: any): AxiosPromise<Array<RoleResponse>> {
+            return localVarFp.getOrganizationalRoles(eventId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Получение роли по id
-         * @param {number} id 
+         * @param {number} id ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1061,12 +1221,12 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @summary Получение списка системных привилегий
+         * @summary Получение списка системных ролей
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getSystemPrivileges(options?: any): AxiosPromise<Array<PrivilegeResponse>> {
-            return localVarFp.getSystemPrivileges(options).then((request) => request(axios, basePath));
+        getSystemRoles(options?: any): AxiosPromise<Array<RoleResponse>> {
+            return localVarFp.getSystemRoles(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1082,14 +1242,14 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Лишение пользователя организационной роли
-         * @param {number} userId 
-         * @param {number} eventId 
-         * @param {number} body 
+         * @param {number} userId ID пользователя
+         * @param {number} eventId ID мероприятия
+         * @param {number} roleId ID роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        revokeOrganizationalRole(userId: number, eventId: number, body: number, options?: any): AxiosPromise<void> {
-            return localVarFp.revokeOrganizationalRole(userId, eventId, body, options).then((request) => request(axios, basePath));
+        revokeOrganizationalRole(userId: number, eventId: number, roleId: number, options?: any): AxiosPromise<void> {
+            return localVarFp.revokeOrganizationalRole(userId, eventId, roleId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1105,7 +1265,7 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Лишение пользователя системной роли
-         * @param {number} userId 
+         * @param {number} userId ID пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1115,7 +1275,7 @@ export const RoleControllerApiFactory = function (configuration?: Configuration,
         /**
          * 
          * @summary Поиск ролей по совпадению в названии
-         * @param {string} name 
+         * @param {string} name Имя роли
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1135,8 +1295,8 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Назначение пользователю роли Помощник
-     * @param {number} userId 
-     * @param {number} eventId 
+     * @param {number} userId ID пользователя
+     * @param {number} eventId ID мероприятия
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
@@ -1148,22 +1308,22 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Назначение пользователю организационной роли
-     * @param {number} userId 
-     * @param {number} eventId 
-     * @param {number} body 
+     * @param {number} userId ID пользователя
+     * @param {number} eventId ID мероприятия
+     * @param {number} roleId ID роли
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
      */
-    public assignOrganizationalRole(userId: number, eventId: number, body: number, options?: AxiosRequestConfig) {
-        return RoleControllerApiFp(this.configuration).assignOrganizationalRole(userId, eventId, body, options).then((request) => request(this.axios, this.basePath));
+    public assignOrganizationalRole(userId: number, eventId: number, roleId: number, options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).assignOrganizationalRole(userId, eventId, roleId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Назначение пользователю роли Организатор
-     * @param {number} userId 
-     * @param {number} eventId 
+     * @param {number} userId ID пользователя
+     * @param {number} eventId ID мероприятия
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
@@ -1175,14 +1335,14 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Назначение пользователю системной роли
-     * @param {number} userId 
-     * @param {number} body 
+     * @param {number} userId ID пользователя
+     * @param {number} roleId ID роли
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
      */
-    public assignSystemRole(userId: number, body: number, options?: AxiosRequestConfig) {
-        return RoleControllerApiFp(this.configuration).assignSystemRole(userId, body, options).then((request) => request(this.axios, this.basePath));
+    public assignSystemRole(userId: number, roleId: number, options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).assignSystemRole(userId, roleId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1200,7 +1360,7 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Удаление роли
-     * @param {number} id 
+     * @param {number} id ID роли
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
@@ -1212,7 +1372,7 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Редактирование роли
-     * @param {number} id 
+     * @param {number} id ID роли
      * @param {RoleRequest} roleRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -1224,13 +1384,14 @@ export class RoleControllerApi extends BaseAPI {
 
     /**
      * 
-     * @summary Получение списка всех привилегий
+     * @summary Получение списка привилегий
+     * @param {GetAllPrivilegesTypeEnum} [type] Тип привилегии
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
      */
-    public getAllPrivileges(options?: AxiosRequestConfig) {
-        return RoleControllerApiFp(this.configuration).getAllPrivileges(options).then((request) => request(this.axios, this.basePath));
+    public getAllPrivileges(type?: GetAllPrivilegesTypeEnum, options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).getAllPrivileges(type, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1246,30 +1407,45 @@ export class RoleControllerApi extends BaseAPI {
 
     /**
      * 
-     * @summary Получение списка организационных привилегий
+     * @summary Получение списка мероприятий пользователя по роли
+     * @param {number} id ID роли
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
      */
-    public getOrganizationalPrivileges(options?: AxiosRequestConfig) {
-        return RoleControllerApiFp(this.configuration).getOrganizationalPrivileges(options).then((request) => request(this.axios, this.basePath));
+    public getEventsByRole(id: number, options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).getEventsByRole(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @summary Получение организационных ролей
+     * @summary Получение организационной роли по id
+     * @param {number} roleId ID роли
+     * @param {number} eventId ID меропрятия
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
      */
-    public getOrganizationalRoles(options?: AxiosRequestConfig) {
-        return RoleControllerApiFp(this.configuration).getOrganizationalRoles(options).then((request) => request(this.axios, this.basePath));
+    public getOrganizationalRoleById(roleId: number, eventId: number, options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).getOrganizationalRoleById(roleId, eventId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получение списка организационных ролей
+     * @param {number} eventId ID меропрятия
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RoleControllerApi
+     */
+    public getOrganizationalRoles(eventId: number, options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).getOrganizationalRoles(eventId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Получение роли по id
-     * @param {number} id 
+     * @param {number} id ID роли
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
@@ -1280,13 +1456,13 @@ export class RoleControllerApi extends BaseAPI {
 
     /**
      * 
-     * @summary Получение списка системных привилегий
+     * @summary Получение списка системных ролей
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
      */
-    public getSystemPrivileges(options?: AxiosRequestConfig) {
-        return RoleControllerApiFp(this.configuration).getSystemPrivileges(options).then((request) => request(this.axios, this.basePath));
+    public getSystemRoles(options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).getSystemRoles(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1305,15 +1481,15 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Лишение пользователя организационной роли
-     * @param {number} userId 
-     * @param {number} eventId 
-     * @param {number} body 
+     * @param {number} userId ID пользователя
+     * @param {number} eventId ID мероприятия
+     * @param {number} roleId ID роли
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
      */
-    public revokeOrganizationalRole(userId: number, eventId: number, body: number, options?: AxiosRequestConfig) {
-        return RoleControllerApiFp(this.configuration).revokeOrganizationalRole(userId, eventId, body, options).then((request) => request(this.axios, this.basePath));
+    public revokeOrganizationalRole(userId: number, eventId: number, roleId: number, options?: AxiosRequestConfig) {
+        return RoleControllerApiFp(this.configuration).revokeOrganizationalRole(userId, eventId, roleId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1332,7 +1508,7 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Лишение пользователя системной роли
-     * @param {number} userId 
+     * @param {number} userId ID пользователя
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
@@ -1344,7 +1520,7 @@ export class RoleControllerApi extends BaseAPI {
     /**
      * 
      * @summary Поиск ролей по совпадению в названии
-     * @param {string} name 
+     * @param {string} name Имя роли
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RoleControllerApi
@@ -1354,3 +1530,11 @@ export class RoleControllerApi extends BaseAPI {
     }
 }
 
+/**
+ * @export
+ */
+export const GetAllPrivilegesTypeEnum = {
+    System: 'SYSTEM',
+    Event: 'EVENT'
+} as const;
+export type GetAllPrivilegesTypeEnum = typeof GetAllPrivilegesTypeEnum[keyof typeof GetAllPrivilegesTypeEnum];

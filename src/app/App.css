@@ -7,8 +7,8 @@
   --itmo-colors-blue-80: rgba(1, 83, 200, 0.8);
   --itmo-colors-blue: rgba(1, 83, 200, 1);
   --itmo-colors-red: #FF3F35;
-  --itmo-colors-gray: #DDDDDD;
-  --itmo-colors-dark-gray: #808080;
+  --itmo-colors-gray: #aca9a9;
+  --itmo-colors-dark-gray: #6c6868;
   --itmo-colors-gray-2: #F0F0F0;
   --itmo-colors-blue-selected: #0069FF;
   --itmo-filter-blue-selected: invert(26%) sepia(91%) saturate(4012%) hue-rotate(210deg) brightness(104%) contrast(106%);
