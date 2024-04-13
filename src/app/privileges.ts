@@ -15,7 +15,7 @@ const administrator = new PrivilegeContextData(new Set([
   new PrivilegeData(PrivilegeNames.REJECT_REGISTRATION_REQUEST),
   new PrivilegeData(PrivilegeNames.MODIFY_PROFILE_DATA),
   new PrivilegeData(PrivilegeNames.VIEW_OTHER_USERS_PROFILE),
-  new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS_AND_ACTIVITIES),
+  new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
   new PrivilegeData(PrivilegeNames.SEARCH_EVENTS_AND_ACTIVITIES),
   new PrivilegeData(PrivilegeNames.CREATE_EVENT),
   new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
@@ -36,7 +36,7 @@ readerEvent.set(1, new Set([
 ]))
 const reader = new PrivilegeContextData(new Set([
   new PrivilegeData(PrivilegeNames.MODIFY_PROFILE_DATA),
-  new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS_AND_ACTIVITIES),
+  new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
   new PrivilegeData(PrivilegeNames.SEARCH_EVENTS_AND_ACTIVITIES),
   new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
   new PrivilegeData(PrivilegeNames.VIEW_ROUTE_BETWEEN_ROOMS),
@@ -70,7 +70,7 @@ organizerEvent.set(1, new Set([
 ]))
 const organizer = new PrivilegeContextData(new Set([
   new PrivilegeData(PrivilegeNames.MODIFY_PROFILE_DATA),
-  new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS_AND_ACTIVITIES),
+  new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
   new PrivilegeData(PrivilegeNames.SEARCH_EVENTS_AND_ACTIVITIES),
   new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
   new PrivilegeData(PrivilegeNames.VIEW_ROUTE_BETWEEN_ROOMS),
@@ -90,7 +90,7 @@ helperEvent.set(1, new Set([
 ]))
 const helper = new PrivilegeContextData(new Set([
   new PrivilegeData(PrivilegeNames.MODIFY_PROFILE_DATA),
-  new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS_AND_ACTIVITIES),
+  new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
   new PrivilegeData(PrivilegeNames.SEARCH_EVENTS_AND_ACTIVITIES),
   new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
   new PrivilegeData(PrivilegeNames.VIEW_ROUTE_BETWEEN_ROOMS),
