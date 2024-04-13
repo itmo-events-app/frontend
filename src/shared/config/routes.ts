@@ -40,14 +40,14 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.PASSWORD]: "/password",
   [AppRoutes.EVENT_LIST]: "/events",
   [AppRoutes.EVENT_CREATION]: "/events/create",
-  [AppRoutes.EVENT_DATA]: "/events/"+ RouteParams.EVENT_ID,
+  [AppRoutes.EVENT_DATA]: "/events/" + RouteParams.EVENT_ID,
   [AppRoutes.PLACE_LIST]: "/places",
-  [AppRoutes.PLACE_DATA]: "/places/place",
+  [AppRoutes.PLACE_DATA]: "/places/" + RouteParams.PLACE_ID,
   [AppRoutes.ROLE_LIST]: "/roles",
   [AppRoutes.USER_LIST]: "/users",
   [AppRoutes.TASK_LIST]: "/tasks",
   [AppRoutes.NOTIFICATIONS]: "/notifications",
   [AppRoutes.PROFILE]: "/profile",
   [AppRoutes.REQUEST_LIST]: "/requests",
-  [AppRoutes.NOT_FOUND]: "*"
+  [AppRoutes.NOT_FOUND]: "*",
 };

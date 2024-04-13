@@ -1,52 +1,34 @@
 import BrandLogo from "@widgets/main/BrandLogo";
 import Layout from "@widgets/main/Layout";
 import PageName from "@widgets/main/PageName";
-import styles from './index.module.css';
+import styles from "./index.module.css";
 import SideBar from "@widgets/main/SideBar";
 import { RoutePaths } from "@shared/config/routes.ts";
 import Content from "@widgets/main/Content";
+import { useContext } from "react";
+import ApiContext from "@features/api-context.ts";
+import { useQuery } from "@tanstack/react-query";
+import { placeService } from "@features/place-service.ts";
+import { useParams } from "react-router-dom";
 
-
-class PlaceInfo {
-  placeName: string
-  address: string
-  format: string
-  room: string
-  coordinates: string
-  description: string
-  constructor(
-    placeName: string,
-    address: string,
-    format: string,
-    room: string,
-    coordinates: string,
-    description: string,
-  ) {
-    this.placeName = placeName;
-    this.address = address;
-    this.format = format;
-    this.room = room;
-    this.coordinates = coordinates;
-    this.description = description;
-  }
-}
-
-const _placeInfo: PlaceInfo = new PlaceInfo(
-  "Площадка корпус ИТМО Ломоносова",
-  "улица Ломоносова, д. 9",
-  "очный",
-  "ауд. 3210",
-  "59.927209, 30.338281",
-  "корпус для крутышек",
-);
 
 function PlaceDataPage() {
+  const { api } = useContext(ApiContext);
+
+  const { place_id: placeId } = useParams();
+
+  const { data: foundPlace } = useQuery({
+    queryFn: () => placeService.getPlace(api, Number(placeId)),
+    enabled: placeId !== undefined,
+    queryKey: ["getPlace"],
+  });
+
   return (
     <Layout
-      topLeft={<BrandLogo/>}
+      topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={_placeInfo.placeName}/>
+          <PageName text={String(foundPlace?.name)} />
         </div>
       }
       bottomLeft={<SideBar currentPageURL={RoutePaths.placeData} />}
@@ -61,15 +43,15 @@ function PlaceDataPage() {
                 <div className={styles.label}>Координаты:</div>
               </div>
               <div className={styles.place_column}>
-                <div className={styles.data}>{_placeInfo.address}</div>
-                <div className={styles.data}>{_placeInfo.format}</div>
-                <div className={styles.data}>{_placeInfo.room}</div>
-                <div className={styles.data}>{_placeInfo.coordinates}</div>
+                <div className={styles.data}>{foundPlace?.address ?? ""}</div>
+                <div className={styles.data}>{foundPlace?.format}</div>
+                <div className={styles.data}>{foundPlace?.room}</div>
+                <div className={styles.data}>{`${foundPlace?.latitude ?? 0}, ${foundPlace?.longitude ?? 0}`}</div>
               </div>
             </div>
             <div className={styles.place_description}>
               <div className={styles.label}>Описание:</div>
-              <div className={styles.data}>{_placeInfo.description}</div>
+              <div className={styles.data}>{foundPlace?.description}</div>
             </div>
           </div>
         </Content>
