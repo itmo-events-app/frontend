@@ -14,13 +14,16 @@ class PrivilegeData {
 class PrivilegeContextData {
   _systemPrivileges?: Set<PrivilegeData>;
   _eventPrivileges: Map<number, Set<PrivilegeData>>;
+  _hasOrganizerRoles: boolean
 
   constructor(
     systemPrivileges: Set<PrivilegeData> | undefined = undefined,
-    eventPrivileges: Map<number, Set<PrivilegeData>> = new Map()
+    eventPrivileges: Map<number, Set<PrivilegeData>> = new Map(),
+    hasOrganizerRoles: boolean = false,
   ) {
     this._systemPrivileges = systemPrivileges;
     this._eventPrivileges = eventPrivileges;
+    this._hasOrganizerRoles = hasOrganizerRoles;
   }
 
   isSystemPrivilegesLoaded() {
@@ -37,6 +40,10 @@ class PrivilegeContextData {
 
   getPrivilegesForEvent(id: number) {
     return this._eventPrivileges.get(id);
+  }
+
+  get hasOrganizerRoles() {
+    return this._hasOrganizerRoles;
   }
 }
 
