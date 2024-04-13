@@ -8,7 +8,7 @@ type Props = {
 }
 
 const Authenticated = (props: Props) => {
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
 
   const isAuthenticated = api.isLoggedIn();
 

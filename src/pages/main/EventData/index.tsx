@@ -320,7 +320,6 @@ function EventActivitiesPage() {
   // if (tasksVisible) {
   pageTabs.push(new PageTab("Задачи"));
   //}
-
   const _editOrgs = () => {
     console.log('editing orgs')
   }
@@ -328,7 +327,6 @@ function EventActivitiesPage() {
   const _editParticipants = () => {
     console.log('editing participants')
   }
-
   class DialogData {
     heading: string | undefined;
     visible: DialogSelected;
@@ -667,7 +665,7 @@ function EventActivitiesPage() {
         console.log(error.response.data);
       })
   }, []);
-  let locc = "cz";
+  const locc = "cz";
   function _createTasksTable() {
     return (
       <div className={styles.tasks}>

@@ -104,18 +104,6 @@ const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
                 }
               </Popup>
 
-              {/*{showFullText ? (*/}
-              {/*  <Popup>*/}
-              {/*    {task.description}*/}
-              {/*    <Button onClick={togglePopup}>Скрыть</Button>*/}
-              {/*  </Popup>*/}
-              {/*) : (*/}
-              {/*  <div>*/}
-              {/*    {task.description!.slice(0,20)}*/}
-              {/*    {task.description!.length! > 20 && <span>...</span>}*/}
-              {/*  </div>*/}
-              {/*)}*/}
-
             </td>
             <td>
               {format(task.deadline!, "H:mm")} <br />

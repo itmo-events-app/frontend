@@ -8,7 +8,7 @@ import styles from './index.module.css';
 import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context.ts';
-import Dropdown from "@widgets/main/Dropdown";
+
 
 type UpdateProps = {
   role: RoleModel,
