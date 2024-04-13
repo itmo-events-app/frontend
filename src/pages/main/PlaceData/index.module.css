@@ -36,8 +36,13 @@
 }
 
 .label {
+  font-weight: bold;
 }
 
 .data {
 
+}
+
+.empty_field_msg {
+  color: var(--itmo-colors-red);
 }
