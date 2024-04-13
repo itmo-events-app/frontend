@@ -10,10 +10,9 @@ import Button from "@widgets/main/Button";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef, useCallback, memo, useContext } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { getImageUrl } from "@shared/lib/image.ts"
 import { ReactLogo } from "@shared/ui/icons";
-import { api } from "@shared/api";
 import Fade from '@widgets/main/Fade';
 import EventCreationPage from '../EventCreation';
 import Dialog from '@widgets/main/Dialog';
@@ -21,72 +20,54 @@ import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
-const _displayModes: DropdownOption[] = [
-  new DropdownOption("Показать списком"),
-  new DropdownOption("Показать на карте")
-]
+import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
 
 enum DisplayModes {
   LIST = "Показать списком",
   MAP = "Показать на карте",
 }
 
-enum EventStatusList {
-  DRAFT = "Черновик",
-  ACTIVE = "Активное",
-  FINISHED = "Проведенное",
-  CANCELLED = "Отмененное"
-}
-
-
-enum EventFormatList {
-  OFFLINE = "Очный",
-  ONLINE = "Онлайн",
-  COMBINED = "Смешанный"
-}
-
-enum EventAgeList {
-  FIRST = "12+",
-  SECOND = "16+",
-  THIRD = "18+"
-}
-
 const displayModes = Object.values(DisplayModes);
-const eventStatusList = Object.values(EventStatusList);
-const eventFormatList = Object.values(EventFormatList);
-const eventAgeList = Object.values(EventAgeList);
+const eventStatusList = Object.values(GetAllOrFilteredEventsStatusEnum);
+const eventFormatList = Object.values(GetAllOrFilteredEventsFormatEnum);
 
-const initialFilters = {
+type filterType = {
+  page: number,
+  size: number,
+  title: string,
+  startDate: string,
+  endDate: string,
+  status: GetAllOrFilteredEventsStatusEnum | undefined,
+  format: GetAllOrFilteredEventsFormatEnum | undefined
+}
+
+const initialFilters : filterType = {
+  page: 0,
+  size: 15,
   title:'',
   startDate: '',
-  registrationStartDate:'',
-  registrationEndDate:'',
   endDate: '',
-  status: '',
-  format: '',
-  eventAge: '',
-  // page: 1,
-  // size: 15,
+  status: undefined,
+  format: undefined
 };
 
-const buildApiUrl = (baseUrl: string, filters) => {
-  let url = baseUrl;
-  Object.entries(filters).forEach(([key, value]) => {
-    if (value !== '') {
-      url += url.includes('?') ? `&${key}=${encodeURIComponent(value)}` : `?${key}=${encodeURIComponent(value)}`;
+function getEnumValueFromString<T>(enumObject: T, value: string): T[keyof T] | undefined {
+    for (const key in enumObject) {
+        if (enumObject[key] === value) {
+            return enumObject[key];
+        }
     }
-  });
-  return url;
-};
-
-function getKeyByValue<T extends string>(enumObj: Record<string, T>, value: T): keyof typeof enumObj | undefined {
-  return Object.keys(enumObj).find(key => enumObj[key as keyof typeof enumObj] === value) as keyof typeof enumObj | undefined;
+    return undefined;
 }
 
 const formatDate = (date) => {
   const selectedDate = new Date(date)
   return selectedDate.getFullYear() + "-"+ selectedDate.getMonth() +"-"+ selectedDate.getDate();
 };
+
+const isBlank = (str: string): boolean => {
+  return str.trim().length === 0;
+}
 
 function AvailableEventsPage() {
   const {api} = useContext(ApiContext);
@@ -97,32 +78,40 @@ function AvailableEventsPage() {
 
   const getEventList = async () => {
     try {
-      //todo: url, fix page logic
-      //registrationStartDate, registrationEndDate, eventAge not existed in swagger api api/events. page and size conflicted between local and api
-      const url = buildApiUrl('http://localhost:9000/events',filters);
-      const response = await api.event.getAllOrFilteredEvents();
-        if (response.status === 200) {
-          const data = response.data;
-          const pagesPromises = data.map(async (e) => {
-            let address = ''
+      const response = await api.event.getAllOrFilteredEvents(
+        filters.page,
+        filters.size,
+        undefined, //parentId
+        !isBlank(filters.title)?filters.title:undefined,
+        !isBlank(filters.startDate)?new Date(filters.startDate).toISOString():undefined,
+        !isBlank(filters.endDate)?new Date(filters.endDate).toISOString():undefined,
+        filters.status,
+        filters.format
+      );
+      if (response.status === 200) {
+        console.log(response);
+        const data = response.data;
+        const pagesPromises = data.map(async (e) => {
+          let address = 'null';
+          if (e.placeId !== undefined) {
             const response = await api.place.placeGet(parseInt(e.placeId));
-            console.log(response);
             if (response.status == 200) {
               const place = response.data;
               address = place.address;
             } else {
               console.log(response.status);
             }
-            return new PageEntry(() => {
-              return _entryStub(parseInt(e.id), address, e.title)
-            });
+          }
+          return new PageEntry(() => {
+            return _entryStub(parseInt(e.id), address, (e.title!==undefined)?e.title:'null')
           });
-          const pages = await Promise.all(pagesPromises);
-          setEvents(pages);
-          setLoading(false);
-        } else {
-          console.error('Error fetching event list:', response.statusText);
-        }
+        });
+        const pages = await Promise.all(pagesPromises);
+        setEvents(pages);
+        setLoading(false);
+      } else {
+        console.error('Error fetching event list:', response.statusText);
+      }
     } catch (error) {
       console.error('Error fetching event list:', error);
     }
@@ -158,7 +147,9 @@ function AvailableEventsPage() {
     let component = <></>
     switch (dialogData.visible) {
       case DialogSelected.CREATEEVENT:
-        component = <EventCreationPage contentOnly={true}
+        component = <EventCreationPage contentOnly={true} onSubmit={()=>{
+          _closeDialog();
+          getEventList()}} 
           {...dialogData.args}
         />;
         break;
@@ -223,7 +214,6 @@ function AvailableEventsPage() {
 
   //filters
   const _handleFilterChange = (value, name) => {
-    console.log(value)
     setFilters(prevFilters => ({
       ...prevFilters,
       [name]: value,
@@ -259,22 +249,6 @@ function AvailableEventsPage() {
             <div className={styles.filters}>
               <div className={styles.filter_group}>
                 <DatePicker
-                  placeholderText="Начало регистрации"
-                  className={styles.filter_element}
-                  onChange={(date)=>_handleFilterChange(formatDate(date),"registrationStartDate")}
-                  selected={filters.registrationStartDate}
-                  dateFormat="yyyy-MM-dd"
-                  popperPlacement="top-start"
-                />
-                <DatePicker
-                  placeholderText="Конец регистрации"
-                  className={styles.filter_element}
-                  onChange={(date)=>_handleFilterChange(formatDate(date),"registrationEndDate")}
-                  selected={filters.registrationEndDate}
-                  dateFormat="yyyy-MM-dd"
-                  popperPlacement="top-start"
-                />
-                <DatePicker
                   placeholderText="Начало проведения"
                   className={styles.filter_element}
                   onChange={(date)=>_handleFilterChange(formatDate(date),"startDate")}
@@ -290,33 +264,22 @@ function AvailableEventsPage() {
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
                 />
-              </div>
-              <div className={styles.filter_group}>
-                <div className={styles.dropdown}>
+                <div className={styles.dropdownfilter}>
                   <Dropdown
                     placeholder="Статус"
                     items={eventStatusList}
-                    value={EventStatusList[filters.status as keyof typeof EventStatusList]}
-                    onChange={(status) => _handleFilterChange(getKeyByValue(EventStatusList,status),"status")}
+                    value={filters.status!==undefined?filters.status:""}
+                    onChange={(status) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsStatusEnum,status),"status")}
                     onClear={() => _handleFilterChange("","status")}
                     toText={(input: string) => {return input}} />
                 </div>
-                <div className={styles.dropdown}>
+                <div className={styles.dropdownfilter}>
                   <Dropdown
                     placeholder="Формат"
                     items={eventFormatList}
-                    value={EventFormatList[filters.format as keyof typeof EventFormatList]}
-                    onChange={(format) => _handleFilterChange(getKeyByValue(EventFormatList,format),"format")}
+                    value={GetAllOrFilteredEventsFormatEnum[filters.format as keyof typeof GetAllOrFilteredEventsFormatEnum]}
+                    onChange={(format) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsFormatEnum,format),"format")}
                     onClear={() => _handleFilterChange("","format")}
-                    toText={(input: string) => {return input}} />
-                </div>
-                <div className={styles.dropdown}>
-                  <Dropdown
-                    placeholder="Возрастное ограничение"
-                    items={eventAgeList}
-                    value={EventAgeList[filters.eventAge as keyof typeof EventAgeList]}
-                    onChange={(age) => _handleFilterChange(getKeyByValue(EventAgeList,age),"eventAge")}
-                    onClear={() => _handleFilterChange("","eventAge")}
                     toText={(input: string) => {return input}} />
                 </div>
               </div>

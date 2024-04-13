@@ -7,6 +7,8 @@ import SideBar from '@widgets/main/SideBar';
 import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { useState, useContext } from "react";
+import ApiContext from '@features/api-context';
 import { RoutePaths } from '@shared/config/routes';
 
 const _test_orgs: DropdownOption[] = [
@@ -16,21 +18,42 @@ const _test_orgs: DropdownOption[] = [
   new DropdownOption("[107589] Лебедев Леонид Петрович")
 ]
 
-function EventCreationPage({ contentOnly = false}) {
-  const _createEvent = () => {
-    console.log('creating event! hello');
+
+function EventCreationPage({contentOnly = false, onSubmit}) {
+  const [inputValue, setInputValue] = useState('');
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
+  const {api} = useContext(ApiContext);
+
+  const  _createEvent = async() => {
+    if (inputValue.trim().length === 0) return; //blank?
+    try {
+      const response = await api.event.addEventByOrganizer({
+        'userId':1,//todo: userid
+        'title':inputValue
+      });
+      if (response.status === 201) {
+        console.log(response);
+        if (contentOnly) onSubmit();
+      } else {
+        console.error('Error creating event:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error creating event:', error);
+    }
   }
   const content = (
     <Content>
           <div className={styles.event_form}>
             <div className={styles.event_form_item}>
-              <Input type="text" placeholder="Введите название мероприятия" />
+              <Input type="text" placeholder="Введите название мероприятия" value={inputValue} onChange={handleChange}/>
             </div>
-            <div className={styles.event_form_item}>
+            {/* <div className={styles.event_form_item}>
               <Dropdown placeholder="Выберите главного организатора" items={_test_orgs} />
-            </div>
+            </div> */}
             <div className={styles.event_form_button}>
-              <Button onClick={_createEvent()}>Создать</Button>
+              <Button onClick={_createEvent}>Создать</Button>
             </div>
           </div>
         </Content>
