@@ -32,7 +32,7 @@ const PrivilegeContextProvider = (props: Props) => {
   }
 
   function updateSystemPrivileges(e: Set<PrivilegeData>, hasOrgRoles: boolean) {
-    setPrivilegeContext(new PrivilegeContextData(e, undefined, hasOrgRoles));
+    setPrivilegeContext(new PrivilegeContextData(e, privilegeContext.eventPrivileges, hasOrgRoles));
   }
 
   function updateEventPrivileges(id: number, e: Set<PrivilegeData>) {
