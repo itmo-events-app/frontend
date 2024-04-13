@@ -18,8 +18,9 @@ const PrivilegeContextProvider = (props: Props) => {
     if (api.isLoggedIn()) {
       api.withReauth(() => api.profile.getUserSystemPrivileges())
         .then(r => {
-          const list = r.data.map(p => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames]));
-          setPrivilegeContext(new PrivilegeContextData(new Set(list)));
+          const privileges = r.data!.privileges!.map(p => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames]));
+          const orgRoles = r.data!.hasOrganizerRolesResponse ?? false;
+          setPrivilegeContext(new PrivilegeContextData(new Set(privileges), undefined, orgRoles));
         });
     } else {
       setPrivilegeContext(new PrivilegeContextData())
