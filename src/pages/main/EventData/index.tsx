@@ -355,6 +355,9 @@ function EventActivitiesPage() {
     }
   }, eventTasks);
 
+  const [activitiesVisible, setActivitiesVisible] = useState(false);
+  const [orgsVisible, setOrgsVisible] = useState(false);
+
   function _getPrivileges(id: number): Set<PrivilegeData> {
     if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
       return privilegeContext.getPrivilegesForEvent(id)!;
@@ -364,10 +367,13 @@ function EventActivitiesPage() {
     return new Set();
   }
 
-  const eventPrivileges = id != null ? _getPrivileges(parseInt(id)) : new Set<PrivilegeData>();
-
-  const activitiesVisible: boolean = hasAnyPrivilege(eventPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)]));
-  const orgsVisible: boolean = hasAnyPrivilege(eventPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)]));
+  useEffect(() => {
+    if (id) {
+      const privileges = _getPrivileges(parseInt(id));
+      setActivitiesVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])));
+      setOrgsVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])));
+    }
+  }, [privilegeContext]);
 
   const pageTabs: PageTab[] = [];
 
