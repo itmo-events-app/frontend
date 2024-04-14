@@ -22,6 +22,7 @@ const EventCreationDialog: FC<EventCreationDialogProps> = ({ onCreateEvent }) =>
     eventService.createTask(api, name, Number(user!.id!)).then(() => {
       onCreateEvent?.();
     });
+    location.reload()
   };
 
   const { data: allUsers = [] } = useQuery({
