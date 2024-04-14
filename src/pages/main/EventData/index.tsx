@@ -394,7 +394,7 @@ function EventActivitiesPage() {
   pageTabs.push(new PageTab('Участники'));
 
   if (tasksVisible) {
-  pageTabs.push(new PageTab('Задачи'));
+    pageTabs.push(new PageTab('Задачи'));
   }
 
   class DialogData {

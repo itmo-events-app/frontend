@@ -51,6 +51,13 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
       } else {
         onSubmit();
       }
+    } else {
+      const result = await api.role.assignOrganizationalRole(userId!, eventId, roleId!);
+      if (result.status != 204) {
+        console.log(result.status);
+      } else {
+        onSubmit();
+      }
     }
   };
   return (
