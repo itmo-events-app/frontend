@@ -1,4 +1,4 @@
-async function checkImageExists(url:string) {
+async function checkImageExists(url: string) {
   try {
     const response = await fetch(url);
     return response.status === 200;
@@ -12,11 +12,11 @@ async function getImageUrl(prefix: string) {
 
   for (const type of types) {
     foundImageUrl = `http://localhost:9000/event-images/${prefix}.${type}`;
-    const found = await checkImageExists(foundImageUrl)
-    if(found){
-      return foundImageUrl
+    const found = await checkImageExists(foundImageUrl);
+    if (found) {
+      return foundImageUrl;
     }
   }
-  return ''
+  return '';
 }
-export {getImageUrl}
+export { getImageUrl };

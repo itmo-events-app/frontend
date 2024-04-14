@@ -22,6 +22,12 @@
 export interface RegistrationRequestForAdmin {
     /**
      * 
+     * @type {number}
+     * @memberof RegistrationRequestForAdmin
+     */
+    'id'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof RegistrationRequestForAdmin
      */
