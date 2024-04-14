@@ -128,7 +128,8 @@ export default function RequestListPage() {
       topRight={<PageName text="Заявки на регистрацию" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.requestList} />}
       bottomRight=
-      { (
+      {
+        (
           <Content>
             <PagedList page={1} page_size={5} page_step={5} items={_renderedRequestEntries} />
           </Content>
