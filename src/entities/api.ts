@@ -1,21 +1,31 @@
-import { AuthControllerApi, Configuration, EventControllerApi, NotificationControllerApi, ParticipantsControllerApi, PlaceControllerApi, ProfileControllerApi, RoleControllerApi, TaskControllerApi } from "@shared/api/generated"
-import { TokenContextData } from "@shared/lib/token"
+import {
+  AuthControllerApi,
+  Configuration,
+  EventControllerApi,
+  NotificationControllerApi,
+  ParticipantsControllerApi,
+  PlaceControllerApi,
+  ProfileControllerApi,
+  RoleControllerApi,
+  TaskControllerApi,
+} from '@shared/api/generated';
+import { TokenContextData } from '@shared/lib/token';
 import type { AxiosResponse } from 'axios';
 
-type setTokenContextFunc = ((context: TokenContextData) => void);
+type setTokenContextFunc = (context: TokenContextData) => void;
 
 class Api {
-  auth: AuthControllerApi
-  event: EventControllerApi
-  notification: NotificationControllerApi
-  participants: ParticipantsControllerApi
-  place: PlaceControllerApi
-  profile: ProfileControllerApi
-  role: RoleControllerApi
-  task: TaskControllerApi
+  auth: AuthControllerApi;
+  event: EventControllerApi;
+  notification: NotificationControllerApi;
+  participants: ParticipantsControllerApi;
+  place: PlaceControllerApi;
+  profile: ProfileControllerApi;
+  role: RoleControllerApi;
+  task: TaskControllerApi;
 
-  _tokenContext?: TokenContextData
-  _setTokenContext: setTokenContextFunc
+  _tokenContext?: TokenContextData;
+  _setTokenContext: setTokenContextFunc;
 
   constructor(configuration: Configuration, setTokenContextData: setTokenContextFunc, tokenContext?: TokenContextData) {
     this.auth = new AuthControllerApi(configuration);
@@ -32,18 +42,17 @@ class Api {
   }
 
   isLoggedIn(): boolean {
-    return this._tokenContext?.accessToken != null && this._tokenContext?.accessToken != "";
+    return this._tokenContext?.accessToken != null && this._tokenContext?.accessToken != '';
   }
 
   // NOTE: token invalid => reset token context
   async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
-    return func()
-      .catch(async (e) => {
-        if (e.response != undefined && e.response.status == 401) {
-          this._setTokenContext(new TokenContextData());
-        }
-        throw e;
-      });
+    return func().catch(async (e) => {
+      if (e.response != undefined && e.response.status == 401) {
+        this._setTokenContext(new TokenContextData());
+      }
+      throw e;
+    });
   }
 
   /* token invalid => use refreshToken to refresh context. Then if error during refresh => reset token context
@@ -85,5 +94,5 @@ class Api {
   */
 }
 
-export { Api }
-export type { setTokenContextFunc }
+export { Api };
+export type { setTokenContextFunc };

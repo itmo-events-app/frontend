@@ -11,13 +11,12 @@ import { useState, useContext } from "react";
 import ApiContext from '@features/api-context';
 import { RoutePaths } from '@shared/config/routes';
 
-const _test_orgs: DropdownOption[] = [
-  new DropdownOption("[408975] Григорьев Георгий Александрович"),
-  new DropdownOption("[621304] Ефимов Евгений Николаевич"),
-  new DropdownOption("[308820] Васильева Валентина Сергеевна"),
-  new DropdownOption("[107589] Лебедев Леонид Петрович")
-]
-
+const _test_orgs = [
+  new DropdownOption('[408975] Григорьев Георгий Александрович'),
+  new DropdownOption('[621304] Ефимов Евгений Николаевич'),
+  new DropdownOption('[308820] Васильева Валентина Сергеевна'),
+  new DropdownOption('[107589] Лебедев Леонид Петрович'),
+];
 
 function EventCreationPage({contentOnly = false, onSubmit}) {
   const [inputValue, setInputValue] = useState('');
@@ -60,15 +59,16 @@ function EventCreationPage({contentOnly = false, onSubmit}) {
   );  
   return (
     <>
-      {contentOnly 
-        ? content 
-        : <Layout
+      {contentOnly ? (
+        content
+      ) : (
+        <Layout
           topLeft={<BrandLogo />}
           topRight={<PageName text="Создание мероприятия" />}
           bottomLeft={<SideBar currentPageURL={RoutePaths.createEvent} />}
           bottomRight={content}
         />
-      }
+      )}
     </>
   );
 }

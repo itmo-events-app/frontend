@@ -1,16 +1,16 @@
-import { appendClassName } from '@shared/util'
-import styles from './index.module.css'
+import { appendClassName } from '@shared/util';
+import styles from './index.module.css';
 import ReactTextareaAutosize from 'react-textarea-autosize';
 
 type Props = {
-  type?: React.HTMLInputTypeAttribute,
-  value: string,
-  onChange: React.ChangeEventHandler<HTMLTextAreaElement>,
-  placeholder?: string,
-  className?: string,
-  minRows?: number,
-  errorText?: string,
-}
+  type?: React.HTMLInputTypeAttribute;
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLTextAreaElement>;
+  placeholder?: string;
+  className?: string;
+  minRows?: number;
+  errorText?: string;
+};
 
 function TextArea(props: Props) {
   const error = props.errorText != undefined && props.errorText != '';
@@ -29,7 +29,7 @@ function TextArea(props: Props) {
       />
       <p className={appendClassName(styles.helper_error, visibilityStyle)}>{errorText}</p>
     </div>
-  )
+  );
 }
 
-export default TextArea
+export default TextArea;

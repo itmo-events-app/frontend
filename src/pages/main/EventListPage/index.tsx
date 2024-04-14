@@ -108,7 +108,7 @@ const isBlank = (str: string): boolean => {
   return str.trim().length === 0;
 }
 
-function AvailableEventsPage() {
+function EventListPage() {
   const {api} = useContext(ApiContext);
   const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
@@ -324,4 +324,4 @@ function AvailableEventsPage() {
   );
 }
 
-export default AvailableEventsPage;
+export default EventListPage;

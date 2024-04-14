@@ -1,16 +1,16 @@
-@import url("@shared/ui/fonts/fontFaces.css") layer(base);
+@import url('@shared/ui/fonts/fontFaces.css') layer(base);
 
 :root {
-  --itmo-colors-white: #FFFFFF;
+  --itmo-colors-white: #ffffff;
   --itmo-colors-black: #000000;
   --itmo-colors-blue-10: rgba(1, 83, 200, 0.1);
   --itmo-colors-blue-80: rgba(1, 83, 200, 0.8);
   --itmo-colors-blue: rgba(1, 83, 200, 1);
-  --itmo-colors-red: #FF3F35;
+  --itmo-colors-red: #ff3f35;
   --itmo-colors-gray: #aca9a9;
   --itmo-colors-dark-gray: #6c6868;
-  --itmo-colors-gray-2: #F0F0F0;
-  --itmo-colors-blue-selected: #0069FF;
+  --itmo-colors-gray-2: #f0f0f0;
+  --itmo-colors-blue-selected: #0069ff;
   --itmo-filter-blue-selected: invert(26%) sepia(91%) saturate(4012%) hue-rotate(210deg) brightness(104%) contrast(106%);
 
   --itmo-colors-page-auth: var(--itmo-colors-gray-2);
@@ -20,7 +20,7 @@
 
   --itmo-box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.25);
 
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
 }
 
 html,
