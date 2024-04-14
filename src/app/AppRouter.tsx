@@ -8,7 +8,6 @@ import NotifyPage from '@pages/auth/Notification';
 import RoleListPage from '@pages/main/RoleList';
 import EventListPage from '@pages/main/EventListPage';
 import PlaceListPage from '@pages/main/PlaceListPage';
-import EventCreationPage from '@pages/main/EventCreation';
 import EventActivitiesPage from '@pages/main/EventData';
 import TaskListPage from '@pages/main/TaskList';
 import NotificationListPage from '@pages/main/NotificationListPage';
@@ -58,10 +57,6 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     path: RoutePaths.eventList,
     authenticated: true,
   },
-  [AppRoutes.EVENT_CREATION]: {
-    path: RoutePaths.createEvent,
-    authenticated: true,
-  },
   [AppRoutes.EVENT_DATA]: {
     path: RoutePaths.eventData,
     authenticated: true,
@@ -73,10 +68,20 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+      ])
+    ),
   },
   [AppRoutes.PLACE_DATA]: {
     path: RoutePaths.placeData,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+      ])
+    ),
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
@@ -136,9 +141,6 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
   },
   [AppRoutes.EVENT_LIST]: {
     element: <EventListPage />,
-  },
-  [AppRoutes.EVENT_CREATION]: {
-    element: <EventCreationPage />,
   },
   [AppRoutes.EVENT_DATA]: {
     element: <EventActivitiesPage />,

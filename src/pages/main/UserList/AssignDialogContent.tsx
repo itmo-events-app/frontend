@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 
-import styles from './index.module.css';
-import Button from '@widgets/main/Button';
-import { toRoleModel } from '@entities/role';
-import ApiContext from '@features/api-context';
-import RoleListRadio from '@widgets/main/RoleListRadio';
-import { RoleRadioElement, createRoleRadioElementList, getSelectedRoleId } from '@widgets/main/RoleListRadio/common';
+
+import styles from './index.module.css'
+import Button from "@widgets/main/Button";
+import { toRoleModel } from "@entities/role";
+import ApiContext from "@features/api-context";
+import RoleListRadio, { RoleRadioElement } from "@widgets/main/RoleListRadio";
+import { createRoleRadioElementList, getSelectedRoleId } from "@widgets/main/RoleListRadio/common";
+
 
 type AssignProps = {
   userId: number;
@@ -13,7 +15,7 @@ type AssignProps = {
 };
 
 const AssignDialogContent = (props: AssignProps) => {
-  const { api } = useContext(ApiContext);
+  const {api} = useContext(ApiContext);
   const [roles, setRoles] = useState([] as RoleRadioElement[]);
 
   const _onDoneWrapper = () => {
@@ -37,8 +39,9 @@ const AssignDialogContent = (props: AssignProps) => {
           <RoleListRadio roles={roles} setRoles={setRoles} />
         </div>
       </div>
-      //todo make button non-clickable if nothing selected
-      <Button onClick={_onDoneWrapper}>Назначить роль</Button>
+      {/*//todo make button disabled if none selected*/}
+      <Button onClick={_onDoneWrapper}
+              className={getSelectedRoleId === null ? styles.disabled_button : undefined}>Назначить роль</Button>
     </div>
   );
 };

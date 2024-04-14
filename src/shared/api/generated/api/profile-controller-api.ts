@@ -24,6 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, ope
 // @ts-ignore
 import { NotificationSettingsRequest } from '../model';
 // @ts-ignore
+import { PaginatedResponseUserSystemRoleResponse } from '../model';
+// @ts-ignore
 import { PrivilegeResponse } from '../model';
 // @ts-ignore
 import { PrivilegeWithHasOrganizerRolesResponse } from '../model';
@@ -35,8 +37,6 @@ import { UserChangeLoginRequest } from '../model';
 import { UserChangeNameRequest } from '../model';
 // @ts-ignore
 import { UserChangePasswordRequest } from '../model';
-// @ts-ignore
-import { UserSystemRoleResponse } from '../model';
 /**
  * ProfileControllerApi - axios parameter creator
  * @export
@@ -166,10 +166,13 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
         /**
          * 
          * @summary Получение списка пользователей в системе
+         * @param {string} [searchQuery] Строка для поиска по имени и фамилии
+         * @param {number} [page] Номер страницы, с которой начать показ пользователей
+         * @param {number} [size] Число пользователей на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllUsers: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllUsers: async (searchQuery?: string, page?: number, size?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/profile/all-system-users`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -185,6 +188,18 @@ export const ProfileControllerApiAxiosParamCreator = function (configuration?: C
             // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (searchQuery !== undefined) {
+                localVarQueryParameter['searchQuery'] = searchQuery;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
 
 
     
@@ -395,11 +410,14 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Получение списка пользователей в системе
+         * @param {string} [searchQuery] Строка для поиска по имени и фамилии
+         * @param {number} [page] Номер страницы, с которой начать показ пользователей
+         * @param {number} [size] Число пользователей на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllUsers(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UserSystemRoleResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllUsers(options);
+        async getAllUsers(searchQuery?: string, page?: number, size?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedResponseUserSystemRoleResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllUsers(searchQuery, page, size, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProfileControllerApi.getAllUsers']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -497,11 +515,14 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
         /**
          * 
          * @summary Получение списка пользователей в системе
+         * @param {string} [searchQuery] Строка для поиска по имени и фамилии
+         * @param {number} [page] Номер страницы, с которой начать показ пользователей
+         * @param {number} [size] Число пользователей на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllUsers(options?: any): AxiosPromise<Array<UserSystemRoleResponse>> {
-            return localVarFp.getAllUsers(options).then((request) => request(axios, basePath));
+        getAllUsers(searchQuery?: string, page?: number, size?: number, options?: any): AxiosPromise<PaginatedResponseUserSystemRoleResponse> {
+            return localVarFp.getAllUsers(searchQuery, page, size, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -590,12 +611,15 @@ export class ProfileControllerApi extends BaseAPI {
     /**
      * 
      * @summary Получение списка пользователей в системе
+     * @param {string} [searchQuery] Строка для поиска по имени и фамилии
+     * @param {number} [page] Номер страницы, с которой начать показ пользователей
+     * @param {number} [size] Число пользователей на странице
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProfileControllerApi
      */
-    public getAllUsers(options?: AxiosRequestConfig) {
-        return ProfileControllerApiFp(this.configuration).getAllUsers(options).then((request) => request(this.axios, this.basePath));
+    public getAllUsers(searchQuery?: string, page?: number, size?: number, options?: AxiosRequestConfig) {
+        return ProfileControllerApiFp(this.configuration).getAllUsers(searchQuery, page, size, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
