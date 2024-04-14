@@ -546,7 +546,7 @@ function EventActivitiesPage() {
   const getActivities = async () => {
     const response = await api.event.getAllOrFilteredEvents(undefined, undefined, parseInt(id!));
     if (response.status == 200) {
-      const items = (response.data ?? []) as EventResponse[];
+      const items = (response.data.items ?? []) as EventResponse[];
       const activities = items.map(async (a) => {
         const placeResponse = await api.place.placeGet(a.placeId!);
         let place = '';
