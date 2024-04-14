@@ -8,7 +8,7 @@ on:
 
 jobs:
   namer:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
 
       outputs:
         tag: ${{ steps.name.outputs.tag }}
