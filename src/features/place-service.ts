@@ -8,11 +8,26 @@ export const placeService = {
     return response.data;
   },
 
+  deletePlace: async (api: Api, id: number) => {
+    const response = await api
+      .withReauth(() => api.place.placeDelete(id));
+    return response.data;
+  },
+
   getPlaces: (api: Api) => {
     return async (): Promise<PlaceResponse[]> => {
       const response = await api
         .withReauth(() => api.place.getAllOrFilteredPlaces());
       return response.data;
+    };
+  },
+
+  getFilteredPlaces: (api: Api) => {
+    return async ({ name }: { name: string }): Promise<PlaceResponse[]> => {
+      return Promise.resolve(api
+        .withReauth(() => api.place.getAllOrFilteredPlaces(undefined, undefined, name))
+        .then((response) => response.data),
+      );
     };
   },
 

@@ -12,9 +12,9 @@ import Button from "@widgets/main/Button";
 import Content from "@widgets/main/Content";
 import Input from "@widgets/main/Input";
 import Label from "@widgets/auth/InputLabel";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Dialog from "@widgets/main/Dialog";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { placeService } from "@features/place-service.ts";
 import ApiContext from "@features/api-context.ts";
 import { PlaceRequestFormatEnum, PlaceResponse } from "@shared/api/generated";
@@ -121,15 +121,29 @@ function PlaceListPage() {
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
 
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
-  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
-  const [id, setId] = useState<number>(0);
-
-  const [searchName, setSearchName] = useState("");
-  const { data: foundPlaces = [] } = useQuery({
+  const { data: allPlaces = [] } = useQuery({
     queryFn: placeService.getPlaces(api),
     queryKey: ["getPlaces"],
   });
+
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [id, setId] = useState<number>(0);
+  const [searchName, setSearchName] = useState("");
+
+  const [filteredPlaces, setFilteredPlaces] = useState<PlaceResponse[]>(allPlaces);
+
+  const { mutate: getFilteredPlaces  } = useMutation({
+    mutationFn: placeService.getFilteredPlaces(api),
+    mutationKey: ["getFilteredPlaces"],
+    onSuccess: (res) => {
+      setFilteredPlaces(res);
+    }
+  });
+
+  useEffect(() => {
+    setFilteredPlaces(allPlaces);
+  }, [allPlaces]);
 
   const openModalCreate = () => {
     setCreateModalOpen(true);
@@ -148,7 +162,9 @@ function PlaceListPage() {
   };
 
   const _onSearch = () => {
-    console.log("searching");
+    if (searchName !== "") {
+      getFilteredPlaces({name: searchName});
+    } else setFilteredPlaces(allPlaces);
   };
 
   const _onCreation = () => {
@@ -161,7 +177,8 @@ function PlaceListPage() {
   };
 
   const _onDelete = (id: number) => {
-    setId(id)
+    placeService.deletePlace(api, id);
+    location.reload();
   };
 
   const navigate = useNavigate();
@@ -169,7 +186,7 @@ function PlaceListPage() {
     navigate(`${id}`);
   };
 
-  const _places: PageEntry[] = foundPlaces.map((place: PlaceResponse) => {
+  const _places: PageEntry[] = filteredPlaces.map((place: PlaceResponse) => {
     return new PageEntry(() => {
       return _entryStub(place.id, place.name, place.address);
     });
