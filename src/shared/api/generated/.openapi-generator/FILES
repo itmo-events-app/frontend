@@ -22,6 +22,7 @@ model/event-short-data-response.ts
 model/file-data-response.ts
 model/index.ts
 model/login-request.ts
+model/notification-page-response.ts
 model/notification-response.ts
 model/notification-settings-request.ts
 model/paginated-response-user-system-role-response.ts

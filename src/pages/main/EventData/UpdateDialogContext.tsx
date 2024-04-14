@@ -87,7 +87,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     const registrationEndString = convertToLocaleDateTime(registrationEnd);
     const preparingStartString = convertToLocaleDateTime(preparingStart);
     const preparingEndString = convertToLocaleDateTime(preparingEnd);
-    console.log(image);
     const eventRequest: EventRequest = {
       placeId: place,
       startDate: startDateString!,
@@ -110,6 +109,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     const result = await api.event.updateEvent(eventId, eventRequest);
     if (result.status == 200) {
       onSubmit();
+      window.location.reload();
     } else {
       console.log(result.status);
     }
