@@ -5,7 +5,7 @@ import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
 import SideBar from '@widgets/main/SideBar';
 import Search from "@widgets/main/Search";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import Dropdown from "@widgets/main/Dropdown";
 import Button from "@widgets/main/Button";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,6 @@ import ApiContext from '@features/api-context';
 import Pagination, { PageEntry } from '@widgets/main/PagedList/pagination';
 
 import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
-import { da } from 'date-fns/locale';
 
 enum DisplayModes {
   LIST = "Показать списком",
@@ -187,7 +186,7 @@ function EventListPage() {
     }
   }
   const [dialogData, setDialogData] = useState(new DialogData());
-  const [roles, setRoles] = useState([] as RoleElement[]);
+  //const [roles, setRoles] = useState([] as RoleElement[]);
   const dialogRef = useRef(null);
   enum DialogSelected {
     NONE,
