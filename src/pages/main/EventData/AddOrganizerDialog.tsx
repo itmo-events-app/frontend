@@ -23,6 +23,8 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
       setUserList(items ?? []);
       if (items != null && items.length > 0) {
         setUserId(items[0].id)
+      } else {
+        setUserId(undefined);
       }
       const eventRoles = getAllRoles.data.filter(r => r.type == "EVENT");
       setRoleList(eventRoles);
