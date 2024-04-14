@@ -244,9 +244,9 @@ function EventActivitiesPage() {
             }
           }
           const info = new EventInfo(
-            readDate(data.registrationStart) + ' - ' + readDate(data.registrationEnd),
-            readDate(data.preparingStart) + ' - ' + readDate(data.preparingEnd),
-            readDate(data.startDate) + ' - ' + readDate(data.endDate),
+            readDate(data.registrationStart??'') + ' - ' + readDate(data.registrationEnd??''),
+            readDate(data.preparingStart??'') + ' - ' + readDate(data.preparingEnd??''),
+            readDate(data.startDate??'') + ' - ' + readDate(data.endDate??''),
             String(data.participantLimit),
             placeAddress,
             data.format ?? '',
@@ -396,13 +396,7 @@ function EventActivitiesPage() {
   if (tasksVisible) {
   pageTabs.push(new PageTab('Задачи'));
   }
-  const _editOrgs = () => {
-    console.log('editing orgs')
-  }
 
-  const _editParticipants = () => {
-    console.log('editing participants')
-  }
   class DialogData {
     heading: string | undefined;
     visible: DialogSelected;
@@ -574,9 +568,9 @@ function EventActivitiesPage() {
           place,
           room,
           a.shortDescription ?? '',
-          readDate(a.startDate) ?? '',
+          readDate(a.startDate??'') ?? '',
           getTimeOnly(a.startDate ?? ''),
-          readDate(a.endDate) ?? '',
+          readDate(a.endDate??'') ?? '',
           getTimeOnly(a.endDate ?? '')
         );
       });
