@@ -116,7 +116,7 @@ function EventListPage() {
       const response = await api.event.getAllOrFilteredEvents();
       if (response.status === 200) {
         // TODO: don't cast types
-        const data = response.data as unknown as EventResponse[];
+        const data = response.data.items as unknown as EventResponse[];
         const pagesPromises = data.map(async (e) => {
           let address: string | undefined = '';
           if (e.placeId) {
