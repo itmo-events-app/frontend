@@ -139,7 +139,7 @@ class Person {
   }
 }
 
-const tasks: Task[] = [
+let tasks: Task[] = [
   {
     start: new Date(2024, 1, 1),
     end: new Date(2024, 1, 2),
@@ -232,6 +232,9 @@ function EventActivitiesPage() {
   const [eventImageUrl, setEventImageUrl] = useState("");
   const[eventResponse, setEventResponse] = useState({});
 
+  const [eventTasks, setEventTasks] = useState<TaskResponse[]>([]);
+  const [eventTasksPeople, setEventTasksPeople] = useState<peopleTasks[]>([]);
+
   useEffect(() => {
     const getEvent = async () => {
       try {
@@ -297,6 +300,69 @@ function EventActivitiesPage() {
         console.log(error.response.data);
       })
   });
+
+  useEffect(() => {
+    api.withReauth(() => api.task.taskListShowInEvent(EVENT_ID))
+      .then((response) => {
+
+        if (response.data != undefined) {
+          setEventTasks(response.data);
+
+        }
+
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      })
+  }, []);
+
+  interface peopleTasks {
+    name: string | undefined,
+    lastname: string | undefined,
+    color: string | undefined,
+  }
+  const colors: string[] = ["#663333", "#0069FF", "#ff9933", "#990066", "#006633", "#000000", "#666600", "#336666", "#000099", "#FF0033", "#CCCC00", "#CC6666"]
+  let peopleForTasks = new Map<number, peopleTasks>;
+  useEffect(() => {
+    tasks = [];
+    let persColor;
+    // peopleForTasks.set(1, {
+    //   name: "asd",
+    //   lastname: "asd",
+    //   color: "asd"
+    // });
+    for (let et of eventTasks) {
+      if (et.deadline != undefined && et.creationTime != undefined && et.title != undefined && et.id != undefined && et.assignee != undefined && et.assignee.id != undefined) {
+
+        console.log(peopleForTasks)
+        if (peopleForTasks.get(et.assignee.id)) {
+          persColor = peopleForTasks.get(et.assignee.id)?.color;
+        } else {
+          let stepColor = colors.shift();
+          peopleForTasks.set(et.assignee.id, {
+            name: et.assignee.name,
+            lastname: et.assignee.surname,
+            color: stepColor
+          })
+          persColor = stepColor
+        }
+        let newTask: Task = {
+          start: new Date(et.creationTime),
+          end: new Date(et.deadline),
+          name: et.title,
+          id: "" + et.id,
+          type: 'task',
+          progress: 100,
+          isDisabled: false,
+          styles: { progressColor: persColor, progressSelectedColor: persColor },
+          hideChildren: false,
+        }
+        tasks.push(newTask);
+        setEventTasksPeople(Array.from(peopleForTasks, ([number, peopleTasks]) => (peopleTasks)))
+      }
+    }
+  }, eventTasks);
+  console.log(eventTasksPeople);
 
   const activitiesVisible: boolean = PrivilegeNames.VIEW_EVENT_ACTIVITIES in eventPrivileges;
   const orgsVisible: boolean = PrivilegeNames.VIEW_ORGANIZER_USERS in eventPrivileges;
@@ -706,18 +772,12 @@ function EventActivitiesPage() {
       <div className={styles.tasks}>
         <Gantt tasks={tasks} listCellWidth={""} locale={locc} />
         <div className={styles.tasks__people}>
-          <div className={styles.tasks__human}>
-            <span style={{ background: "#0069FF" }}></span>
-            Иванов Иван
-          </div>
-          <div className={styles.tasks__human}>
-            <span style={{ background: "#663333" }}></span>
-            Алексеев Алексей
-          </div>
-          <div className={styles.tasks__human}>
-            <span style={{ background: "#ff9933" }}></span>
-            Петров Пётр
-          </div>
+        {eventTasksPeople.map(human =>
+            <div key={human.color} className={styles.tasks__human}>
+              <span style={{ background: human.color }}></span>
+              {human.name} {human.lastname}
+            </div>
+          )}
         </div>
       </div >
     )
