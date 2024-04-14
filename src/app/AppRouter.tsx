@@ -6,8 +6,8 @@ import RestorePage from "@pages/auth/Restore";
 import PasswordPage from "@pages/auth/Password";
 import NotifyPage from "@pages/auth/Notification";
 import RoleListPage from "@pages/main/RoleList";
-import AvailableEventsPage from "@pages/main/AvailableEvents";
-import AvailablePlacesPage from "@pages/main/AvailablePlaces";
+import EventListPage from "@pages/main/EventListPage";
+import PlaceListPage from "@pages/main/PlaceListPage";
 import EventCreationPage from "@pages/main/EventCreation";
 import EventActivitiesPage from "@pages/main/EventData";
 import TaskListPage from "@pages/main/TaskList";
@@ -133,7 +133,7 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <NotifyPage />,
   },
   [AppRoutes.EVENT_LIST]: {
-    element: <AvailableEventsPage />,
+    element: <EventListPage />,
   },
   [AppRoutes.EVENT_CREATION]: {
     element: <EventCreationPage />,
@@ -145,7 +145,7 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <TaskListPage />,
   },
   [AppRoutes.PLACE_LIST]: {
-    element: <AvailablePlacesPage />,
+    element: <PlaceListPage />,
   },
   [AppRoutes.PLACE_DATA]: {
     element: <PlaceDataPage />,

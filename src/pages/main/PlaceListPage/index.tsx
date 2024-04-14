@@ -111,7 +111,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-function AvailablePlacesPage() {
+function PlaceListPage() {
   const { api } = useContext(ApiContext);
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -195,4 +195,4 @@ function AvailablePlacesPage() {
   );
 }
 
-export default AvailablePlacesPage;
+export default PlaceListPage;

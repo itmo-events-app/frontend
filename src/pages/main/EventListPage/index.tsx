@@ -84,7 +84,7 @@ const formatDate = (date) => {
   return selectedDate.getFullYear() + "-"+ selectedDate.getMonth() +"-"+ selectedDate.getDate();
 };
 
-function AvailableEventsPage() {
+function EventListPage() {
   const {api} = useContext(ApiContext);
   const [events,setEvents] = useState([])
   const [loading, setLoading] = useState(true);////
@@ -336,4 +336,4 @@ function AvailableEventsPage() {
   );
 }
 
-export default AvailableEventsPage;
+export default EventListPage;
