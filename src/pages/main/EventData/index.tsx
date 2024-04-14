@@ -22,6 +22,9 @@ import ApiContext from '@features/api-context.ts';
 import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
 import 'gantt-task-react/dist/index.css';
 import { EventResponse, ParticipantResponse, TaskResponse } from '@shared/api/generated/index.ts';
+import PrivilegeContext from '@features/privilege-context.ts';
+import { PrivilegeData } from '@entities/privilege-context.ts';
+import { hasAnyPrivilege } from '@features/privileges.ts';
 
 class EventInfo {
   regDates: string;
@@ -215,6 +218,7 @@ const EVENT_ID: number = url_tail[url_tail.length - 1] == '#' ? +url_tail.split(
 
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
+  const { privilegeContext, updateEventPrivileges } = useContext(PrivilegeContext);
 
   const { id } = useParams();
   const [event, setEvent] = useState<EventInfo | undefined>(undefined);
@@ -270,27 +274,6 @@ function EventActivitiesPage() {
       }
     });
     setLoadingEvent(false);
-  });
-
-  const [eventPrivileges, setEventPrivileges] = useState([] as PrivilegeNames[]);
-
-  useEffect(() => {
-    api
-      .withReauth(() => api.profile.getUserEventPrivileges(EVENT_ID))
-      .then((response) => {
-        const list = [];
-
-        for (const res of response.data) {
-          if (res != undefined && res.name != undefined) {
-            list.push(PrivilegeNames[res.name]);
-          }
-        }
-
-        setEventPrivileges(list);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
   });
 
   useEffect(() => {
@@ -371,11 +354,26 @@ function EventActivitiesPage() {
       }
     }
   }, eventTasks);
-  console.log(eventTasksPeople);
 
-  const activitiesVisible: boolean = PrivilegeNames.VIEW_EVENT_ACTIVITIES in eventPrivileges;
-  const orgsVisible: boolean = PrivilegeNames.VIEW_ORGANIZER_USERS in eventPrivileges;
-  // const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in eventPrivileges;
+  const [activitiesVisible, setActivitiesVisible] = useState(false);
+  const [orgsVisible, setOrgsVisible] = useState(false);
+
+  function _getPrivileges(id: number): Set<PrivilegeData> {
+    if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
+      return privilegeContext.getPrivilegesForEvent(id)!;
+    } else {
+      updateEventPrivileges(id);
+    }
+    return new Set();
+  }
+
+  useEffect(() => {
+    if (id) {
+      const privileges = _getPrivileges(parseInt(id));
+      setActivitiesVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])));
+      setOrgsVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])));
+    }
+  }, [privilegeContext]);
 
   const pageTabs: PageTab[] = [];
 
