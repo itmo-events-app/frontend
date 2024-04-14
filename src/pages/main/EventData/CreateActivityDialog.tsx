@@ -59,6 +59,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
     const registrationEndString = convertToLocaleDateTime(registrationEnd);
     const preparingStartString = convertToLocaleDateTime(preparingStart);
     const preparingEndString = convertToLocaleDateTime(preparingEnd);
+    console.log(status);
     const result = await api.event.addActivity(
       place,
       startDateString!,
@@ -126,7 +127,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Формат" />
           <select value={format} onChange={(e) => setFormat(e.target.value as AddActivityFormatEnum)}>
             {Object.entries(AddActivityFormatEnum).map(([k, v]) => {
-              return <option value={k}>{v}</option>;
+              return <option value={v}>{k}</option>;
             })}
           </select>
         </div>
@@ -146,7 +147,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Состояние" />
           <select value={status} onChange={(e) => setStatus(e.target.value as AddActivityStatusEnum)}>
             {Object.entries(AddActivityStatusEnum).map(([k, v]) => {
-              return <option value={k}>{v}</option>;
+              return <option value={v}>{k}</option>;
             })}
           </select>
         </div>
