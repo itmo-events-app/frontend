@@ -6,7 +6,7 @@ import Content from '@widgets/main/Content';
 import SideBar from '@widgets/main/SideBar';
 import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { DropdownOption } from "@widgets/main/Dropdown";
 import { useState, useContext } from "react";
 import ApiContext from '@features/api-context';
 import { RoutePaths } from '@shared/config/routes';

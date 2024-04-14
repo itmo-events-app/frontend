@@ -7,7 +7,6 @@ import SideBar from '@widgets/main/SideBar';
 import Search from "@widgets/main/Search";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import Button from "@widgets/main/Button";
-import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef, useContext } from "react";
@@ -20,6 +19,7 @@ import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
+import Pagination, { PageEntry } from '@widgets/main/PagedList/pagination';
 
 import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
 import { da } from 'date-fns/locale';
@@ -55,6 +55,46 @@ const initialFilters : FilterType = {
   format: undefined
 };
 
+type PageItemStubProps = {
+  index: number,
+  title: string,
+  place: string,
+}
+const PageItemStub = (props: PageItemStubProps) => {
+  const [imageUrl, setImageUrl] = useState('');
+  useEffect(() => {
+    getImageUrl(props.index.toString()).then(url => {
+      setImageUrl(url);
+    });
+  }, []);
+  const navigate = useNavigate();
+  const _event = (id:number) => {
+    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID,id.toString()));
+  }
+  const _handleClick = () => {
+    _event(props.index);
+  };
+  return (
+    <a key={props.index} onClick={_handleClick} className={styles.event_entry}>
+      {imageUrl==''?(
+        <ReactLogo className={styles.event_icon}/>
+        ):(
+        <img src={imageUrl}
+             className={styles.event_icon}/>
+      )}
+      <div className={styles.event_info_column}>
+        <div className={styles.event_name}>
+          {"Event " + props.index + ": " + props.title}
+        </div>
+        <div className={styles.event_place}>
+          {props.place}
+        </div>
+      </div>
+    </a>
+  );
+}
+
+
 function getEnumValueFromString<T>(enumObject: T, value: string): T[keyof T] | undefined {
     for (const key in enumObject) {
       if (enumObject[key] === value) {
@@ -70,15 +110,19 @@ const isBlank = (str: string): boolean => {
 
 function AvailableEventsPage() {
   const {api} = useContext(ApiContext);
-  const [events,setEvents] = useState([])
   const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
-  const getEventList = async () => {
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentSize, setCurrentSize] = useState(15);
+  const [totalItem, setTotalItem] = useState(0);
+  const [itemList, setItemList] = useState<PageEntry[]>([]);
+  const getEventList = async (page: number = 1, size: number = 5) => {
     try {
       const response = await api.event.getAllOrFilteredEvents(
-        filters.page,
-        filters.size,
+        page-1,
+        size,
         undefined, //parentId
         !isBlank(filters.title)?filters.title:undefined,
         !isBlank(filters.startDate)?filters.startDate:undefined,
@@ -88,8 +132,7 @@ function AvailableEventsPage() {
       );
       if (response.status === 200) {
         const {total, items} = response.data;
-        console.log('total: '+total);
-      
+        console.log("total "+total+" item length "+items.length);
         const pagesPromises = items.map(async (e) => {
           let address = 'null';
           if (e.placeId !== undefined) {
@@ -98,15 +141,24 @@ function AvailableEventsPage() {
               const place = response.data;
               address = place.address;
             } else {
-              console.log(response.status);
+              console.error(response.status);
             }
           }
           return new PageEntry(() => {
-            return _entryStub(parseInt(e.id), address, (e.title!==undefined)?e.title:'null')
+            return (
+              <PageItemStub
+                key={parseInt(e.id)}
+                index={parseInt(e.id)}
+                title={(e.title!==undefined)?e.title:'null'}
+                place={address}
+              />);
           });
         });
         const pages = await Promise.all(pagesPromises);
-        setEvents(pages);
+        setCurrentPage(page);
+        setCurrentSize(size);
+        setTotalItem(total);
+        setItemList(pages);
         setLoading(false);
       } else {
         console.error('Error fetching event list:', response.statusText);
@@ -119,7 +171,7 @@ function AvailableEventsPage() {
     getEventList();
   }, [filters]);
 
-    //dialog
+  //dialog
   class DialogData {
     heading: string | undefined;
     visible: DialogSelected;
@@ -148,7 +200,7 @@ function AvailableEventsPage() {
       case DialogSelected.CREATEEVENT:
         component = <EventCreationPage contentOnly={true} onSubmit={()=>{
           _closeDialog();
-          getEventList()}} 
+          }} 
           {...dialogData.args}
         />;
         break;
@@ -175,45 +227,10 @@ function AvailableEventsPage() {
     setDialogData(new DialogData('Создание мероприятия', DialogSelected.CREATEEVENT));
     e.stopPropagation();
   }
-  const navigate = useNavigate();
-  const _event = (id:number) => {
-    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID,id.toString()));
-  }
-
-  function _entryStub(index: number, place: string, title: string) {
-    const [imageUrl, setImageUrl] = useState('');
-    useEffect(() => {
-      getImageUrl(index.toString()).then(url => {
-        setImageUrl(url);
-      });
-    }, []);
-    const handleClick = () => {
-      _event(index);
-    };
-    return (
-      <a key={index} onClick={handleClick} className={styles.event_entry}>
-        {imageUrl==''?(
-          <ReactLogo className={styles.event_icon}/>
-          ):(
-          <img src={imageUrl}
-               className={styles.event_icon}/>
-        )}
-        <div className={styles.event_info_column}>
-          <div className={styles.event_name}>
-            {"Event " + index + ": " + title}
-          </div>
-          <div className={styles.event_place}>
-            {place}
-          </div>
-        </div>
-      </a>
-    );
-  }
-
 
   //filters
   const _handleFilterChange = (value, name: string) => {
-    if (filters[name] !== value) {
+    if (value!==null && filters[name] !== value) {
       setFilters(prevFilters => ({
         ...prevFilters,
         [name]: value,
@@ -291,7 +308,8 @@ function AvailableEventsPage() {
               {loading ? (
                 <p>Loading...</p>
               ) : (
-                <PagedList page={1} page_size={5} page_step={5} items={events} />
+                //<PagedList page={1} page_size={5} page_step={5} items={events} />
+                <Pagination page={currentPage} size={currentSize} total={totalItem} onPageChange={(page,size)=>getEventList(page,size)} items={itemList}/>
               )}
             </div>
           </div>
