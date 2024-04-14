@@ -1,4 +1,3 @@
-import { RoleModel } from "@entities/role";
 import Button from "@widgets/main/Button";
 import Input from "@widgets/main/Input";
 import InputLabel from "@widgets/main/InputLabel";
@@ -11,14 +10,9 @@ import {
   AddActivityFormatEnum,
   AddActivityStatusEnum,
   EventRequest,
-  GetAllOrFilteredEventsStatusEnum,
 } from "@shared/api/generated";
 import ApiContext from "@features/api-context.ts";
 
-type UpdateProps = {
-  role: RoleModel,
-  onDone: (prev: RoleModel, cur: RoleModel) => void
-}
 function getAddActivityFormatEnum(value: string): AddActivityFormatEnum | undefined {
   for (const key in AddActivityFormatEnum) {
     if (AddActivityFormatEnum[key] === value) {
@@ -37,34 +31,34 @@ function getAddActivityStatusEnum(value: string): AddActivityStatusEnum | undefi
   return undefined;
 }
 
-function getGetAllOrFilteredEventsStatusEnum(value: string): GetAllOrFilteredEventsStatusEnum | undefined {
-  for (const key in GetAllOrFilteredEventsStatusEnum) {
-    if (GetAllOrFilteredEventsStatusEnum[key] === value) {
-      return GetAllOrFilteredEventsStatusEnum[key];
-    }
-  }
-  return undefined;
-}
-const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) => {
-  const[startDate, setStartDate] = useState(new Date(eventInfo.startDate));
-  const[endDate, setEndDate] = useState(new Date(eventInfo.endDate));
-  const[title, setTitle] = useState(eventInfo.title);
-  const[shortDescription, setShortDescription] = useState(eventInfo.shortDescription);
-  const[fullDescription, setFullDescription] = useState(eventInfo.fullDescription);
-  const[format, setFormat] = useState(getAddActivityFormatEnum(eventInfo.format));
-  const[status, setStatus] = useState(getAddActivityStatusEnum(eventInfo.status));
-  const[registrationStart, setRegistrationStart] = useState(new Date(eventInfo.registrationStart));
-  const[registrationEnd, setRegistrationEnd] = useState(new Date(eventInfo.registrationEnd));
-  const[participantLimit, setParticipantLimit] = useState(parseInt(eventInfo.participantLimit));
-  const[participantHighestAge,setParticipantHighestAge] = useState(parseInt(eventInfo.participantAgeHighest));
-  const[participantLowestAge,setParticipantLowestAge] = useState(parseInt(eventInfo.participantAgeLowest));
-  const[preparingStart, setPreparingStart] = useState(new Date(eventInfo.preparingStart));
-  const[preparingEnd, setPreparingEnd] = useState(new Date(eventInfo.preparingEnd));
-  const[place, setPlace] = useState(1);
-  const[placeList, setPlaceList] = useState([]);
-  const[placesLoaded, setPlacesLoaded] = useState(false);
+// function getGetAllOrFilteredEventsStatusEnum(value: string): GetAllOrFilteredEventsStatusEnum | undefined {
+//   for (const key in GetAllOrFilteredEventsStatusEnum) {
+//     if (GetAllOrFilteredEventsStatusEnum[key] === value) {
+//       return GetAllOrFilteredEventsStatusEnum[key];
+//     }
+//   }
+//   return undefined;
+// }
+const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }) => {
+  const [startDate, setStartDate] = useState(new Date(eventInfo.startDate));
+  const [endDate, setEndDate] = useState(new Date(eventInfo.endDate));
+  const [title, setTitle] = useState(eventInfo.title);
+  const [shortDescription, setShortDescription] = useState(eventInfo.shortDescription);
+  const [fullDescription, setFullDescription] = useState(eventInfo.fullDescription);
+  const [format, setFormat] = useState(getAddActivityFormatEnum(eventInfo.format));
+  const [status, setStatus] = useState(getAddActivityStatusEnum(eventInfo.status));
+  const [registrationStart, setRegistrationStart] = useState(new Date(eventInfo.registrationStart));
+  const [registrationEnd, setRegistrationEnd] = useState(new Date(eventInfo.registrationEnd));
+  const [participantLimit, setParticipantLimit] = useState(parseInt(eventInfo.participantLimit));
+  const [participantHighestAge, setParticipantHighestAge] = useState(parseInt(eventInfo.participantAgeHighest));
+  const [participantLowestAge, setParticipantLowestAge] = useState(parseInt(eventInfo.participantAgeLowest));
+  const [preparingStart, setPreparingStart] = useState(new Date(eventInfo.preparingStart));
+  const [preparingEnd, setPreparingEnd] = useState(new Date(eventInfo.preparingEnd));
+  const [place, setPlace] = useState(1);
+  const [placeList, setPlaceList] = useState([]);
+  const [placesLoaded, setPlacesLoaded] = useState(false);
   const [image, setImage] = useState(null);
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
   const getPlaces = async () => {
     const placesResponse = await api.place.getAllOrFilteredPlaces()
     if (placesResponse.status == 200) {
@@ -109,13 +103,13 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
       eventId,
       eventRequest
     );
-    if(result.status==200){
+    if (result.status == 200) {
       onSubmit();
-    }else{
+    } else {
       console.log(result.status);
     }
   }
-  function convertToLocaleDateTime(date: Date){
+  function convertToLocaleDateTime(date: Date) {
     const isoDateTime = date.toISOString();
     return isoDateTime.slice(0, -1);
   }
@@ -125,7 +119,7 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
         <div className={styles.dialog_item}>
           <InputLabel value="Название" />
           <Input value={title}
-                 onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </div>
         <div className={styles.dialog_item}>
@@ -134,12 +128,12 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
             value={shortDescription}
             onChange={(e) => {
               setShortDescription(e.target.value)
-            }}/>
+            }} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Полное описание" />
           <TextArea value={fullDescription}
-                    onChange={(e) => setFullDescription(e.target.value)}
+            onChange={(e) => setFullDescription(e.target.value)}
           />
         </div>
         <div className={styles.dialog_item}>
@@ -161,29 +155,29 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
           <InputLabel value="Формат" />
           <select value={format} onChange={(e) => setFormat(e.target.value)}>
             {
-              Object.entries(AddActivityFormatEnum).map(([k,v])=>{
+              Object.entries(AddActivityFormatEnum).map(([k, v]) => {
                 return <option value={k}>{v}</option>
               })
             }
           </select>
         </div>
         <div className={styles.dialog_item}>
-          <InputLabel value="Место"/>
+          <InputLabel value="Место" />
           <select value={place} onChange={(e) => setPlace(parseInt(e.target.value))}>
             {
-              placesLoaded?(
-                placeList.map(p=>{
+              placesLoaded ? (
+                placeList.map(p => {
                   return <option value={p.id}>{p.address}</option>
                 })
-              ):( <option value=""></option>)
+              ) : (<option value=""></option>)
             }
           </select>
         </div>
         <div className={styles.dialog_item}>
-          <InputLabel value="Состояние" onChange={(e) => setStatus(e.target.value)}/>
+          <InputLabel value="Состояние" onChange={(e) => setStatus(e.target.value)} />
           <select value={status}>
             {
-              Object.entries(AddActivityStatusEnum).map(([k,v])=>{
+              Object.entries(AddActivityStatusEnum).map(([k, v]) => {
                 return <option value={k}>{v}</option>
               })
             }
@@ -266,7 +260,7 @@ const UpdateDialogContent = ({props: UpdateProps,eventId, onSubmit, eventInfo}) 
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Картинка" />
-          <input type="file" onChange={(e)=>{
+          <input type="file" onChange={(e) => {
             const file = e.target.files[0]
             setImage(file);
           }} />

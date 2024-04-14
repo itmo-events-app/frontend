@@ -1,4 +1,3 @@
-import { RoleModel } from "@entities/role";
 import Button from "@widgets/main/Button";
 import InputLabel from "@widgets/main/InputLabel";
 import styles from './index.module.css';
@@ -6,28 +5,22 @@ import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context.ts';
 
-
-type UpdateProps = {
-  role: RoleModel,
-  onDone: (prev: RoleModel, cur: RoleModel) => void
-}
-
-const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
+const AddOrganizerDialog = ({ eventId, onSubmit }) => {
   const [userList, setUserList] = useState([]);
   const [userId, setUserId] = useState("");
   const [roleList, setRoleList] = useState([]);
   const [roleId, setRoleId] = useState("");
   const [roleName, setRoleName] = useState("");
-  const [loaded,setLoaded] = useState(false);
-  const {api} = useContext(ApiContext);
+  const [loaded, setLoaded] = useState(false);
+  const { api } = useContext(ApiContext);
 
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
     const getAllRoles = await api.role.getAllRoles();
-    if (getUsersResponse.status == 200 && getAllRoles.status==200) {
+    if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
       setUserList(getUsersResponse.data);
       setUserId(getUsersResponse.data[0].id)
-      const eventRoles = getAllRoles.data.filter(r=>r.type=="EVENT");
+      const eventRoles = getAllRoles.data.filter(r => r.type == "EVENT");
       setRoleList(eventRoles);
       setRoleId(eventRoles[0].id);
       setRoleName(eventRoles[0].name);
@@ -36,16 +29,16 @@ const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
       console.log(getUsersResponse.status);
     }
   }
-  useEffect( ()=> {
-      initDialog();
-      setLoaded(true);
-    }
+  useEffect(() => {
+    initDialog();
+    setLoaded(true);
+  }
     , []);
 
-  const handleAddOrganizer = async () =>{
+  const handleAddOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
-    if(roleName=="Организатор") {
+    if (roleName == "Организатор") {
       const result = await api.role.assignOrganizerRole(
         parseInt(userId),
         eventId,
@@ -55,7 +48,7 @@ const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
       } else {
         onSubmit();
       }
-    }else if(roleName=="Помощник"){
+    } else if (roleName == "Помощник") {
       const result = await api.role.assignAssistantRole(
         parseInt(userId),
         eventId,
@@ -70,33 +63,33 @@ const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_item}>
-        <InputLabel value="Пользователь"/>
+        <InputLabel value="Пользователь" />
         <select value={userId} onChange={(e) => setUserId(e.target.value)}>
           {
-            loaded?(
-              userList.map(u=>{
+            loaded ? (
+              userList.map(u => {
                 return <option value={u.id}>{u.name}</option>
               })
-            ):( <option value=""></option>)
+            ) : (<option value=""></option>)
           }
         </select>
-        <InputLabel value="Роль"/>
+        <InputLabel value="Роль" />
         <select value={roleId} onChange={(e) => {
           const roleIdString = e.target.value;
           console.log(roleIdString)
           setRoleId(roleIdString);
-          const foundRole = roleList.find(r=>r.id==parseInt(roleIdString));
-          if(foundRole!=undefined) {
+          const foundRole = roleList.find(r => r.id == parseInt(roleIdString));
+          if (foundRole != undefined) {
             setRoleName(foundRole.name);
           }
-          }
+        }
         }>
           {
-            loaded?(
-              roleList.map(r=>{
+            loaded ? (
+              roleList.map(r => {
                 return <option value={r.id}>{r.name}</option>
               })
-            ):( <option value=""></option>)
+            ) : (<option value=""></option>)
           }
         </select>
       </div>

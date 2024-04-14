@@ -81,7 +81,6 @@ export default function UserListPage() {
   const [users, setUsers] = useState([] as UserModel[]);
 
   const cmRef = useRef(null);
-  const dialogRef = useRef(null);
 
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());

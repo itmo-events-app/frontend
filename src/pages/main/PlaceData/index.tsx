@@ -50,7 +50,7 @@ function PlaceDataPage() {
               </div>
               <div className={styles.place_column}>
                 <div className={styles.data}>{foundPlace?.address ?? ""}</div>
-                <div className={styles.data}>{formatTranslation[foundPlace?.format!]}</div>
+                <div className={styles.data}>{foundPlace == undefined ? "Неопределен" : formatTranslation[foundPlace!.format!]}</div>
                 <div className={styles.data}>{foundPlace?.room}</div>
                 <div className={styles.data}>{`${foundPlace?.latitude ?? 0}, ${foundPlace?.longitude ?? 0}`}</div>
               </div>
