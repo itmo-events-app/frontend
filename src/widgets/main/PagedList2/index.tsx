@@ -1,6 +1,6 @@
 import { uid } from 'uid'
 import styles from './index.module.css'
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { ArrowLeft } from '@shared/ui/icons'
 import { ArrowRight } from '@shared/ui/icons'
 
@@ -26,7 +26,7 @@ type Props = {
   total_elements: number
 }
 
-function PagedListStupid(props: Props) {
+function PagedList2(props: Props) {
 
   const [page, setPage] = props.pageState;
   const [page_size, setPageSize] = props.pageSizeState;
@@ -131,7 +131,7 @@ function PagedListStupid(props: Props) {
         {page > 4 && _navPageText(" . . . ")}
         {page_indexes}
         {props.total_pages - page > 3 && _navPageText(" . . . ")}
-        {props.total_pages - page > 2 && _navPageNum(props.total_pages)}
+        {props.total_pages - page > 2 && _navPageNum(props.total_pages, false)}
       </div>
     );
   }
@@ -193,5 +193,5 @@ function PagedListStupid(props: Props) {
   )
 }
 
-export default PagedListStupid;
+export default PagedList2;
 export { PageEntry }

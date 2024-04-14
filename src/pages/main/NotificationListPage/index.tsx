@@ -1,18 +1,18 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from './index.module.css'
 import BrandLogo from "@widgets/main/BrandLogo";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
 import { RoutePaths } from "@shared/config/routes.ts";
 import Content from "@widgets/main/Content";
-import PagedList, { PageEntry } from "@widgets/main/PagedList";
+import { PageEntry } from "@widgets/main/PagedList";
 import Layout from "@widgets/main/Layout";
 import Button from "@widgets/main/Button";
 import { appendClassName, formatDateTime, truncateTextByWords } from "@shared/util.ts";
 import { ArrowDown } from "@shared/ui/icons";
-import { api } from "@shared/api";
 import { NotificationResponse } from "@shared/api/generated";
-import PagedListStupid from "@widgets/main/PagedListStupid";
+import PagedList2 from "@widgets/main/PagedList2";
+import ApiContext from "@features/api-context";
 
 
 class Notification {
@@ -62,6 +62,7 @@ class NotificationEntry {
 
 
 export default function NotificationListPage() {
+  const {api} = useContext(ApiContext);
   const [notifications, setNotifications] = useState<Notification[]>(new Array<Notification>())
   const [notificationEntries, setNotificationEntries] = useState<NotificationEntry[]>(new Array<NotificationEntry>())
 
@@ -71,11 +72,11 @@ export default function NotificationListPage() {
   const [totalElements, setTotalElements] = useState(1)
 
   useEffect(() => {
-    api.notification.getNotifications(page - 1, pageSize)
+    api.withReauth(() => api.notification.getNotifications(page - 1, pageSize))
       .then(result => {
-        setNotifications(result.data.content.map(notificationResponse => new Notification(notificationResponse)))
-        setTotalPages(result.data.totalPages)
-        setTotalElements(result.data.totalElements)
+        setNotifications(result.data.content!.map(notificationResponse => new Notification(notificationResponse)))
+        setTotalPages(result.data.totalPages!)
+        setTotalElements(result.data.totalElements!)
       })
       .catch(reason => {
         console.error("Невозможно получить уведомления:", reason.response.data)
@@ -174,7 +175,7 @@ export default function NotificationListPage() {
         bottomRight=
           {
             <Content>
-              <PagedListStupid
+              <PagedList2
                 pageState={[page, setPage]}
                 pageSizeState={[pageSize, setPageSize]}
                 page_step={5}
@@ -194,4 +195,4 @@ export default function NotificationListPage() {
       />
     </div>
   );
-};
+}

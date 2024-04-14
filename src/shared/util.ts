@@ -43,11 +43,11 @@ export function truncateTextByWords(text: string, wordLimit: number): string {
  *  - Date format: 'DD.MM.YYYY'
  *  - Time format: 'hh:mm'
  */
-export function formatDateTime(datetimeStr: string) {
+export function formatDateTime(datetimeStr: string): { date: string; time: string; } {
   const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
   const dateObj = new Date(datetimeStr);
-  const dateFormatter = new Intl.DateTimeFormat('de-DE', options);
-  let formattedString = dateFormatter.format(dateObj);
-  let [date, time] = formattedString.split(', ');
+  const dateFormatter = new Intl.DateTimeFormat('de-DE', options as any);
+  const formattedString = dateFormatter.format(dateObj);
+  const [date, time] = formattedString.split(', ');
   return { date, time };
 }
