@@ -117,7 +117,7 @@ export default function UserListPage() {
   function _fetchUsers() {
     api.withReauth(() => api.profile.getAllUsers(searchQuery, page, size))
       .then(r => {
-        const l = r.data.items.map(user => toUserModel(user))
+        const l = r.data.items.map((user: UserModel) => toUserModel(user))
         setUsers(l);
       });
   }
