@@ -7,6 +7,7 @@ import Button from "@widgets/auth/Button";
 import { useNavigate } from 'react-router-dom';
 import { NotifyState } from '../Notification';
 import { RoutePaths } from '@shared/config/routes';
+import { useState } from 'react';
 
 const label = 'Пожалуйста, укажите ваш Email. Вы получите письмо со ссылкой для создания нового пароля.';
 const msg = 'Заявка на восстановление отправлена. Вы получите письмо на ваш Email со ссылкой для создания нового пароля.'
@@ -14,6 +15,7 @@ const msg = 'Заявка на восстановление отправлена
 
 function RestorePage() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
 
   const _restore = () => {
     const state: NotifyState = {
@@ -29,7 +31,7 @@ function RestorePage() {
         <span className={styles.header}>Восстановление пароля</span>
         <div className={styles.form_item}>
           <Label value={label} />
-          <Input />
+          <Input value={email} onChange={(e) => setEmail(e.target.value)}/>
         </div>
         <Button onClick={_restore}>Восстановить пароль</Button>
       </Block>
