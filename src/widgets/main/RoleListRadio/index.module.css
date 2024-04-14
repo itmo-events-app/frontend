@@ -27,6 +27,7 @@
   padding: 10px;
   gap: 3px;
   cursor: pointer;
+  flex-grow: 1;
 }
 
 .role_right {
@@ -99,4 +100,3 @@
   display: table-cell;
   padding: 5px 10px;
 }
-

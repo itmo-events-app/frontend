@@ -1,31 +1,28 @@
-import { uid } from "uid";
-import styles from "./index.module.css";
-import React, { useState } from "react";
-import { appendClassName } from "@shared/util";
+import { uid } from 'uid';
+import styles from './index.module.css';
+import React, { useState } from 'react';
+import { appendClassName } from '@shared/util';
 
 class DropdownOption<T> {
   id: string;
   value: T;
 
-  constructor(
-    text: T,
-    id?: string
-  ) {
+  constructor(text: T, id?: string) {
     this.id = id !== undefined ? id : uid();
     this.value = text;
   }
 }
 
 type Props<T> = {
-  value?: T,
-  onChange?: (sel: T) => void,
-  onClear?: () => void,
-  placeholder?: string,
-  className?: string,
-  items: T[],
-  toText: (e: T) => string,
-  readonly?: boolean
-}
+  value?: T;
+  onChange?: (sel: T) => void;
+  onClear?: () => void;
+  placeholder?: string;
+  className?: string;
+  items: T[];
+  toText: (e: T) => string;
+  readonly?: boolean;
+};
 
 function Dropdown<T>(props: Props<T>) {
   const readonly = props.readonly ?? false;
@@ -33,7 +30,7 @@ function Dropdown<T>(props: Props<T>) {
   const [open, setOpen] = useState(false);
 
   const clearable = props.onClear != null;
-  const toText = props.toText ?? ((_) => "toText is undefined");
+  const toText = props.toText ?? ((_) => 'toText is undefined');
 
   // NOTE: onClear and onChange can lead to component rerendering (because of value change)
   // usage of stopPropagation is forced
@@ -46,7 +43,7 @@ function Dropdown<T>(props: Props<T>) {
   };
 
   function _onChange(v: T) {
-    return function(e: React.MouseEvent<HTMLDivElement>) {
+    return function (e: React.MouseEvent<HTMLDivElement>) {
       props.onChange?.(v);
       setOpen(false);
       e.stopPropagation();
@@ -55,10 +52,7 @@ function Dropdown<T>(props: Props<T>) {
 
   function _clearOption() {
     return (
-      <div
-        className={styles.dropdown_item_container}
-        onClick={onClear}
-      >
+      <div className={styles.dropdown_item_container} onClick={onClear}>
         Сброс выбора
       </div>
     );
@@ -66,11 +60,7 @@ function Dropdown<T>(props: Props<T>) {
 
   function _createUnselectedOption(option: DropdownOption<T>) {
     return (
-      <div
-        key={option.id}
-        className={styles.dropdown_item_container}
-        onClick={_onChange(option.value)}
-      >
+      <div key={option.id} className={styles.dropdown_item_container} onClick={_onChange(option.value)}>
         {toText(option.value)}
       </div>
     );
@@ -80,7 +70,7 @@ function Dropdown<T>(props: Props<T>) {
     return (
       <div
         key={option.id}
-        className={styles.dropdown_item_container + " " + styles.dropdown_item_container_selected}
+        className={styles.dropdown_item_container + ' ' + styles.dropdown_item_container_selected}
         onClick={_onChange(option.value)}
       >
         {toText(option.value)}
@@ -121,17 +111,26 @@ function Dropdown<T>(props: Props<T>) {
   }
 
   return (
-    <div className={appendClassName(styles.dropdown, readonly ? styles.readonly : undefined)} onClick={() => setOpen(!open)}>
+    <div
+      className={appendClassName(styles.dropdown, readonly ? styles.readonly : undefined)}
+      onClick={() => setOpen(!open)}
+    >
       <div className={open ? styles.dropdown_border_open : styles.dropdown_border}>
         <div className={styles.dropdown_item_container}>
-          {(props.value == null || props.value == "") ? _renderPlaceholder(props.placeholder) : _renderSelectedOption(new DropdownOption(props.value))}
+          {props.value == null || props.value == ''
+            ? _renderPlaceholder(props.placeholder)
+            : _renderSelectedOption(new DropdownOption(props.value))}
         </div>
       </div>
       <div
-        className={appendClassName(appendClassName(styles.option_list, open ? styles.visible : styles.hidden), props.className)}>
+        className={appendClassName(
+          appendClassName(styles.option_list, open ? styles.visible : styles.hidden),
+          props.className
+        )}
+      >
         <div className={styles.dropdown_list_border}>
           {clearable && _clearOption()}
-          {_createOptionList(props.items.map(e => new DropdownOption(e)))}
+          {_createOptionList(props.items.map((e) => new DropdownOption(e)))}
         </div>
       </div>
     </div>

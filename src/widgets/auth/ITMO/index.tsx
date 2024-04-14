@@ -1,8 +1,8 @@
-import { ITMOLogo as ITMOLogo} from "@shared/ui/icons"
+import { ITMOLogo as ITMOLogo } from '@shared/ui/icons';
 
 import styles from './index.module.css';
-import { useNavigate } from "react-router-dom";
-import { RoutePaths } from "@shared/config/routes";
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '@shared/config/routes';
 
 export function ITMO() {
   const navigate = useNavigate();
@@ -11,5 +11,5 @@ export function ITMO() {
     navigate(RoutePaths.login);
   }
 
-  return <ITMOLogo className={styles.logo} onClick={_redirectToLogin}/>
+  return <ITMOLogo className={styles.logo} onClick={_redirectToLogin} />;
 }

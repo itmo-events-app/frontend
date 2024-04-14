@@ -1,5 +1,5 @@
-import { Api } from "@entities/api.ts";
-import { PlaceRequest, PlaceRequestFormatEnum, PlaceResponse } from "@shared/api/generated";
+import { Api } from '@entities/api.ts';
+import { PlaceRequest, PlaceRequestFormatEnum, PlaceResponse } from '@shared/api/generated';
 
 export const placeService = {
   getPlace: async (api: Api, id: number) => {
@@ -8,11 +8,26 @@ export const placeService = {
     return response.data;
   },
 
+  deletePlace: async (api: Api, id: number) => {
+    const response = await api
+      .withReauth(() => api.place.placeDelete(id));
+    return response.data;
+  },
+
   getPlaces: (api: Api) => {
     return async (): Promise<PlaceResponse[]> => {
       const response = await api
         .withReauth(() => api.place.getAllOrFilteredPlaces());
       return response.data;
+    };
+  },
+
+  getFilteredPlaces: (api: Api) => {
+    return async ({ name }: { name: string }): Promise<PlaceResponse[]> => {
+      return Promise.resolve(api
+        .withReauth(() => api.place.getAllOrFilteredPlaces(undefined, undefined, name))
+        .then((response) => response.data),
+      );
     };
   },
 
@@ -28,5 +43,29 @@ export const placeService = {
     };
 
     api.withReauth(() => api.place.placeAdd(request));
+  },
+
+  updatePlace: ({ api, id, address, format, room, description, name, latitude, longitude }: {
+    api: Api;
+    id: number;
+    name: string;
+    address: string;
+    format: PlaceRequestFormatEnum;
+    room: string;
+    description: string;
+    latitude: number;
+    longitude: number
+  }) => {
+    const request: PlaceRequest = {
+      name,
+      address,
+      format,
+      room,
+      description,
+      latitude,
+      longitude,
+    };
+
+    return api.withReauth(() => api.place.placeEdit(id, request));
   },
 };

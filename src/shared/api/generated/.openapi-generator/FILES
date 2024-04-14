@@ -19,13 +19,15 @@ model/create-event-request.ts
 model/event-request.ts
 model/event-response.ts
 model/event-short-data-response.ts
+model/file-data-response.ts
 model/index.ts
 model/login-request.ts
 model/notification-response.ts
 model/notification-settings-request.ts
+model/paginated-response-user-system-role-response.ts
+model/paginated-response.ts
 model/participant-presence-request.ts
 model/participant-response.ts
-model/participants-list-request.ts
 model/place-request.ts
 model/place-response.ts
 model/place-short-data-response.ts
@@ -36,8 +38,10 @@ model/registration-request-for-admin.ts
 model/registration-user-request.ts
 model/role-request.ts
 model/role-response.ts
+model/set-partisipants-list-request.ts
 model/task-request.ts
 model/task-response.ts
+model/upload-files-request.ts
 model/user-change-login-request.ts
 model/user-change-name-request.ts
 model/user-change-password-request.ts
