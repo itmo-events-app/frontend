@@ -1,4 +1,3 @@
-import { RoleModel } from "@entities/role";
 import Button from "@widgets/main/Button";
 import InputLabel from "@widgets/main/InputLabel";
 import styles from './index.module.css';

@@ -393,9 +393,9 @@ function EventActivitiesPage() {
 
   pageTabs.push(new PageTab('Участники'));
 
-  // if (tasksVisible) {
+  if (tasksVisible) {
   pageTabs.push(new PageTab('Задачи'));
-  //}
+  }
   const _editOrgs = () => {
     console.log('editing orgs')
   }
