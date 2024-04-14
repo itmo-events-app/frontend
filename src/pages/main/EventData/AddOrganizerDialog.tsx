@@ -16,15 +16,6 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
   const [loaded, setLoaded] = useState(false);
   const { api } = useContext(ApiContext);
 
-const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
-  const [userList, setUserList] = useState([]);
-  const [userId, setUserId] = useState("");
-  const [roleList, setRoleList] = useState([]);
-  const [roleId, setRoleId] = useState("");
-  const [roleName, setRoleName] = useState("");
-  const [loaded,setLoaded] = useState(false);
-  const {api} = useContext(ApiContext);
-
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
     const getAllRoles = await api.role.getAllRoles();
