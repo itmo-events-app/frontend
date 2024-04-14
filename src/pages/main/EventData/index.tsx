@@ -22,9 +22,17 @@ import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
 import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
 import 'gantt-task-react/dist/index.css';
-import { EventResponse, ParticipantResponse, TaskResponse } from '@shared/api/generated/index.ts';
+import {
+  EventResponse,
+  ParticipantPresenceRequest,
+  ParticipantResponse,
+  SetPartisipantsListRequest,
+  TaskResponse
+} from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
+import Dropdown from "@widgets/main/Dropdown";
+import InputLabel from "@widgets/main/InputLabel";
 
 class EventInfo {
   regDates: string;
@@ -112,10 +120,6 @@ class OrgPerson {
     this.email = email;
     this.role = role;
   }
-
-  public equals(obj: any): boolean {
-    return obj && typeof obj === 'object' && obj.id === this.id;
-  }
 }
 
 class Person {
@@ -133,6 +137,31 @@ class Person {
     this.visited = visited;
   }
 }
+
+class PersonVisitResponse implements ParticipantPresenceRequest {
+  participantId: number;
+  isVisited: boolean;
+
+  constructor(participantId: number, isVisited: boolean) {
+    this.participantId = participantId;
+    this.isVisited = isVisited;
+  }
+}
+
+class ParticipantsListResponse implements SetPartisipantsListRequest {
+  participantsFile: File;
+
+  constructor(file: File) {
+    this.participantsFile = file;
+  }
+}
+
+enum VisitStatusList {
+  TRUE = 'Да',
+  FALSE = 'Нет'
+}
+
+const userVisitStatus = Object.values(VisitStatusList);
 
 let tasks: Task[] = [
   {
@@ -361,6 +390,9 @@ function EventActivitiesPage() {
 
   const [activitiesVisible, setActivitiesVisible] = useState(false);
   const [orgsVisible, setOrgsVisible] = useState(false);
+  const [modifyVisitStatus, setModifyVisitStatus] = useState(false);
+  const [exportParticipants, setExportParticipants] = useState(false);
+  const [importParticipants, setImportParticipants] = useState(false);
 
   function _getPrivileges(id: number): Set<PrivilegeData> {
     if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
@@ -376,6 +408,9 @@ function EventActivitiesPage() {
       const privileges = _getPrivileges(parseInt(id));
       setActivitiesVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])));
       setOrgsVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])));
+      setModifyVisitStatus(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])));
+      setExportParticipants(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])));
+      setImportParticipants(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])));
     }
   }, [privilegeContext]);
 
@@ -662,13 +697,39 @@ function EventActivitiesPage() {
     );
   }
 
+  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
+
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
         <td>{person.name}</td>
         <td>{person.email}</td>
         <td>{person.info}</td>
-        <td>{person.visited ? 'Да' : 'Нет'}</td>
+        {modifyVisitStatus ?
+          (
+            <td>
+              <Dropdown
+                placeholder="Явка"
+                items={userVisitStatus}
+                value={visitStatus.get(person.id)}
+                onChange={(status) => {
+                  setVisitStatus(visitStatus.set(person.id, status));
+                  api
+                    .withReauth(() => api.participants.changePresence(EVENT_ID,
+                      new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                }}
+                toText={(input: string) => {
+                  return input;
+                }}
+              />
+            </td>
+          ) : (
+            <td>{person.visited ? 'Да' : 'Нет'}</td>
+          )
+        }
       </tr>
     );
   }
@@ -733,25 +794,66 @@ function EventActivitiesPage() {
     );
   }
 
-  function createParticipantsTable(persons: Person[], edit_func: any) {
+  function export_xlsx() {
+    api
+      .withReauth(() => api.participants.getParticipantsXlsxFile(EVENT_ID))
+      // Yars: ToDo check if something is needed here
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function import_xlsx(file: File) {
+    api
+      .withReauth(() => api.participants.setPartisipantsList(EVENT_ID, new ParticipantsListResponse(file)))
+      // Yars: ToDo check if something is needed here
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function createParticipantsTable(persons: Person[]) {
     const items = [];
     for (const person of persons) {
       items.push(createPersonRow(person));
     }
     return (
       <>
-        {edit_privilege ? (
-          <div className={styles.button_container}>
-            <Button className={styles.buttonXlsx} onClick={edit_func}>
-              Выгрузить xlsx
-            </Button>
-            <Button className={styles.buttonXlsx} onClick={edit_func}>
-              Загрузить xlsx
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
+        {(exportParticipants || importParticipants) ?
+          (
+            <div className={styles.button_container}>
+              {exportParticipants ?
+                (
+                  <Button className={styles.buttonXlsx} onClick={export_xlsx}>
+                    Скачать xlsx
+                  </Button>
+                ) : (
+                  <></>
+                )
+              }
+              {importParticipants ?
+                (
+                  <>
+                    <InputLabel value="Загрузить xlsx" />
+                    <input
+                      type="file"
+                      onChange={(e) => {
+                        if (e.target.files) {
+                          const file = e.target.files[0];
+                          import_xlsx(file);
+                        }
+                      }}
+                    />
+                  </>
+                ) : (
+                <></>
+                )
+              }
+            </div>
+          ) : (
+            <></>
+          )
+        }
         <table className={styles.table}>
           <thead>
             <tr>
@@ -858,7 +960,7 @@ function EventActivitiesPage() {
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}
             {selectedTab == 'Организаторы' && createOrgsTable(orgs)}
-            {selectedTab == 'Участники' && createParticipantsTable(participants, () => { })}
+            {selectedTab == 'Участники' && createParticipantsTable(participants)}
             {selectedTab == 'Задачи' && _createTasksTable()}
           </div>
           <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>
