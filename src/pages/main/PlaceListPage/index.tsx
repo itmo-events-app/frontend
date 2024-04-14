@@ -19,6 +19,11 @@ import { placeService } from "@features/place-service.ts";
 import ApiContext from "@features/api-context.ts";
 import { PlaceRequestFormatEnum, PlaceResponse } from "@shared/api/generated";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeData } from "@entities/privilege-context.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
+import PrivilegeContext from "@features/privilege-context.ts";
+import UpdatePlaceDialog from "@pages/main/PlaceListPage/UpdatePlaceContext.tsx";
 
 
 const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
@@ -26,12 +31,12 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
   const placeFormat: DropdownOption<string>[] = [
     new DropdownOption("Онлайн"),
     new DropdownOption("Офлайн"),
-    new DropdownOption("Гибрид")
+    new DropdownOption("Гибрид"),
   ];
   const formatEnum: Record<string, PlaceRequestFormatEnum> = {
     "Онлайн": PlaceRequestFormatEnum.Online,
     "Офлайн": PlaceRequestFormatEnum.Offline,
-    "Гибрид": PlaceRequestFormatEnum.Hybrid
+    "Гибрид": PlaceRequestFormatEnum.Hybrid,
   };
   const [format, setFormat] = useState<DropdownOption<string>>(placeFormat[1]);
   const [placeName, setPlaceName] = useState("");
@@ -45,11 +50,11 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
   const createPlace = () => {
     if (!placeName || !address || !roomName || !description) {
       setShowEmptyFieldsMessage(true);
-      return
+      return;
     }
     placeService.createPlace(api, placeName, address, formatEnum[format.value], roomName, description, latitude, longitude);
     onClose();
-    location.reload()
+    location.reload();
   };
 
   return (
@@ -101,7 +106,8 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
             </div>
             <div className={styles.place_form_button}>
               <Button onClick={createPlace}>Создать</Button>
-              {showEmptyFieldsMessage && <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>}
+              {showEmptyFieldsMessage &&
+                <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>}
             </div>
           </div>
         </div>
@@ -113,20 +119,32 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
 
 function PlaceListPage() {
   const { api } = useContext(ApiContext);
+  const { privilegeContext } = useContext(PrivilegeContext);
 
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [id, setId] = useState<number>(0);
+
   const [searchName, setSearchName] = useState("");
   const { data: foundPlaces = [] } = useQuery({
     queryFn: placeService.getPlaces(api),
     queryKey: ["getPlaces"],
   });
 
-  const openModal = () => {
-    setModalOpen(true);
+  const openModalCreate = () => {
+    setCreateModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
+  const closeModalCreate = () => {
+    setCreateModalOpen(false);
+  };
+
+  const openModalUpdate = () => {
+    setUpdateModalOpen(true);
+  };
+
+  const closeModalUpdate = () => {
+    setUpdateModalOpen(false);
   };
 
   const _onSearch = () => {
@@ -134,7 +152,16 @@ function PlaceListPage() {
   };
 
   const _onCreation = () => {
-    openModal();
+    openModalCreate();
+  };
+
+  const _onUpdate = (id: number) => {
+    setId(id)
+    openModalUpdate();
+  };
+
+  const _onDelete = (id: number) => {
+    setId(id)
   };
 
   const navigate = useNavigate();
@@ -150,17 +177,40 @@ function PlaceListPage() {
 
   function _entryStub(index?: number, name?: string, address?: string) {
     return (
-      <a key={index} onClick={() => _event(index ?? 0)} className={styles.place_entry}>
-        <Home className={styles.place_icon} />
-        <div className={styles.place_info_column}>
-          <div className={styles.place_name}>
-            {name}
+      <div>
+        <a key={index} className={styles.place_entry}>
+          <Home className={styles.place_icon} onClick={() => _event(index ?? 0)} />
+          <div className={styles.place_info_column} onClick={() => _event(index ?? 0)}>
+            <div className={styles.place_name}>
+              {name}
+            </div>
+            <div className={styles.place_address}>
+              {address}
+            </div>
           </div>
-          <div className={styles.place_address}>
-            {address}
+          <div className={styles.place_buttons}>
+            {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+              new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
+            ])) ? <div className={styles.button}>
+                <Button onClick={() => _onUpdate(index!)}>Редактировать</Button>
+              </div>
+              : <></>}
+            {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+              new PrivilegeData(PrivilegeNames.DELETE_EVENT_VENUE),
+            ])) ? <div>
+                <Button className={styles.delete_button} onClick={() => _onDelete(index!)}>
+                  <svg className={styles.delete_button_svg} xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                       fill="none" viewBox="0 0 24 24"
+                       stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </Button>
+              </div>
+              : <></>}
           </div>
-        </div>
-      </a>
+        </a>
+      </div>
     );
   }
 
@@ -179,9 +229,12 @@ function PlaceListPage() {
                     setSearchName(event.target.value);
                   }} />
                 </div>
-                <div className={styles.button}>
-                  <Button onClick={_onCreation}>Создать</Button>
-                </div>
+                {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+                  new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
+                ])) ? <div className={styles.button}>
+                    <Button onClick={_onCreation}>Создать</Button>
+                  </div>
+                  : <></>}
               </div>
               <div className={styles.event_list_container}>
                 <PagedList page={1} page_size={5} page_step={5} items={_places} />
@@ -190,7 +243,8 @@ function PlaceListPage() {
           </Content>
         }
       />
-      {isModalOpen && <CreatePlaceDialog onClose={closeModal} />}
+      {isCreateModalOpen && <CreatePlaceDialog onClose={closeModalCreate} />}
+      {isUpdateModalOpen && <UpdatePlaceDialog onClose={closeModalUpdate} id={id} />}
     </>
   );
 }

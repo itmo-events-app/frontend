@@ -29,4 +29,28 @@ export const placeService = {
 
     api.withReauth(() => api.place.placeAdd(request));
   },
+
+  updatePlace: ({ api, id, address, format, room, description, name, latitude, longitude }: {
+    api: Api;
+    id: number;
+    name: string;
+    address: string;
+    format: PlaceRequestFormatEnum;
+    room: string;
+    description: string;
+    latitude: number;
+    longitude: number
+  }) => {
+    const request: PlaceRequest = {
+      name,
+      address,
+      format,
+      room,
+      description,
+      latitude,
+      longitude,
+    };
+
+    return api.withReauth(() => api.place.placeEdit(id, request));
+  },
 };
