@@ -8,16 +8,16 @@ export type Task = {
   place: Place;
   creationDate: string;
   deadline: string;
-}
+};
 
 export type Assignee = {
-  id: number,
-  name: string,
-  surname: string,
-}
+  id: number;
+  name: string;
+  surname: string;
+};
 
 export type Place = {
   id: number;
   name: string;
   address: string;
-}
+};

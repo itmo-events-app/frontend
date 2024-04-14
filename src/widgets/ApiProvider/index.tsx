@@ -1,15 +1,15 @@
-import { Api } from "@entities/api";
-import ApiContext, { ApiContextValue } from "@features/api-context";
-import { Configuration, ConfigurationParameters } from "@shared/api/generated";
-import { TokenContextData, getTokenContextData, setTokenContextData } from "@shared/lib/token";
-import { useState } from "react";
+import { Api } from '@entities/api';
+import ApiContext, { ApiContextValue } from '@features/api-context';
+import { Configuration, ConfigurationParameters } from '@shared/api/generated';
+import { TokenContextData, getTokenContextData, setTokenContextData } from '@shared/lib/token';
+import { useState } from 'react';
 
 type Props = {
-  children: any
-}
+  children: any;
+};
 
 const ApiContextProvider = (props: Props) => {
-  const [tokenContext, setTokenContext] = useState(getTokenContextData())
+  const [tokenContext, setTokenContext] = useState(getTokenContextData());
 
   function _setToken(context: TokenContextData) {
     setTokenContextData(context);
@@ -22,23 +22,18 @@ const ApiContextProvider = (props: Props) => {
 
   const configurationParameters: ConfigurationParameters = {
     basePath: (window as any).ENV_BACKEND_API_URL,
-    accessToken: () => tokenContext.accessToken ?? "",
-  }
+    accessToken: () => tokenContext.accessToken ?? '',
+  };
 
   const configuration = new Configuration(configurationParameters);
 
   const contextValue: ApiContextValue = {
     api: new Api(configuration, setTokenContext, tokenContext),
     setToken: _setToken,
-    resetToken: _resetToken
-  }
+    resetToken: _resetToken,
+  };
 
-  return (
-    <ApiContext.Provider value={contextValue}>
-      {props.children}
-    </ApiContext.Provider>
-  )
+  return <ApiContext.Provider value={contextValue}>{props.children}</ApiContext.Provider>;
+};
 
-}
-
-export default ApiContextProvider
+export default ApiContextProvider;

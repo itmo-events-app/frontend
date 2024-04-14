@@ -1,5 +1,5 @@
-import { PrivilegeModel } from "@entities/privilege";
-import { RoleModelType } from "@entities/role";
+import { PrivilegeModel } from '@entities/privilege';
+import { RoleModelType } from '@entities/role';
 
 const dropdownOptions = Object.values(RoleModelType);
 
@@ -8,6 +8,6 @@ function dropdownOptionToText(e: RoleModelType): string {
 }
 
 function privilegeToText(item: PrivilegeModel) {
-  return item.name + " - " + item.description;
+  return item.name + ' - ' + item.description;
 }
-export { dropdownOptions, dropdownOptionToText, privilegeToText }
+export { dropdownOptions, dropdownOptionToText, privilegeToText };

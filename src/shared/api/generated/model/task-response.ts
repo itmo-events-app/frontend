@@ -18,6 +18,9 @@
 import { EventShortDataResponse } from './event-short-data-response';
 // May contain unused imports in some cases
 // @ts-ignore
+import { FileDataResponse } from './file-data-response';
+// May contain unused imports in some cases
+// @ts-ignore
 import { PlaceShortDataResponse } from './place-short-data-response';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -89,6 +92,12 @@ export interface TaskResponse {
      * @memberof TaskResponse
      */
     'reminder'?: string;
+    /**
+     * 
+     * @type {Array<FileDataResponse>}
+     * @memberof TaskResponse
+     */
+    'fileData'?: Array<FileDataResponse>;
 }
 
 export const TaskResponseTaskStatusEnum = {
