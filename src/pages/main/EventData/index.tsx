@@ -21,6 +21,7 @@ import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
+import { EventResponse, ParticipantResponse } from '@shared/api/generated/index.ts';
 
 class EventInfo {
   regDates: string
@@ -208,7 +209,7 @@ function readDate(dateTime: string) {
   return formattedDate
 }
 
-function getTimeOnly(dateTimeString) {
+function getTimeOnly(dateTimeString: string) {
   const dateTime = new Date(dateTimeString);
   const hours = dateTime.getHours();
   const minutes = dateTime.getMinutes();
@@ -227,10 +228,10 @@ function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
 
   const { id } = useParams();
-  const [event, setEvent] = useState(null);
+  const [event, setEvent] = useState<EventInfo | undefined>(undefined);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState("");
-  const[eventResponse, setEventResponse] = useState({});
+  const [eventResponse, setEventResponse] = useState({});
 
   const [eventTasks, setEventTasks] = useState<TaskResponse[]>([]);
   const [eventTasksPeople, setEventTasksPeople] = useState<peopleTasks[]>([]);
@@ -242,24 +243,24 @@ function EventActivitiesPage() {
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = "";
-          const placeResponse = await api.place.placeGet(parseInt(data.placeId));
-          if(placeResponse.status==200){
-            placeAddress = placeResponse.data.address;
+          const placeResponse = await api.place.placeGet(data.placeId ?? 0);
+          if (placeResponse.status == 200) {
+            placeAddress = placeResponse.data.address ?? '';
             const info = new EventInfo(
-              readDate(data.registrationStart) + " - " + readDate(data.registrationEnd),
-              readDate(data.preparingStart) + " - " + readDate(data.preparingEnd),
-              readDate(data.startDate) + " - " + readDate(data.endDate),
-              data.participantLimit,
+              readDate(data.registrationStart ?? '') + " - " + readDate(data.registrationEnd ?? ''),
+              readDate(data.preparingStart ?? '') + " - " + readDate(data.preparingEnd ?? ''),
+              readDate(data.startDate ?? '') + " - " + readDate(data.endDate ?? ''),
+              String(data.participantLimit),
               placeAddress,
-              data.format,
-              data.status,
+              data.format ?? '',
+              data.status ?? '',
               data.participantAgeLowest + " - " + data.participantAgeHighest,
-              data.title,
-              data.fullDescription
+              data.title ?? '',
+              data.fullDescription ?? ''
             );
             setEvent(info);
             setEventResponse(data);
-          }else{
+          } else {
             console.log(placeResponse.status);
           }
         } else {
@@ -270,7 +271,7 @@ function EventActivitiesPage() {
       }
     };
     getEvent();
-    getImageUrl(id).then(url => {
+    getImageUrl(id!).then(url => {
       if (url == '') {
         setEventImageUrl("http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg");
       } else {
@@ -385,13 +386,7 @@ function EventActivitiesPage() {
   // if (tasksVisible) {
   pageTabs.push(new PageTab("Задачи"));
   //}
-  const _editOrgs = () => {
-    console.log('editing orgs')
-  }
 
-  const _editParticipants = () => {
-    console.log('editing participants')
-  }
   class DialogData {
     heading: string | undefined;
     visible: DialogSelected;
@@ -420,23 +415,23 @@ function EventActivitiesPage() {
     switch (dialogData.visible) {
       case DialogSelected.UPDATE:
         component = <UpdateDialogContent
-          {...dialogData.args}  eventId={parseInt(id)} eventInfo={eventResponse} onSubmit={()=>{
-          _closeDialog();
-        }}
+          {...dialogData.args} eventId={parseInt(id!)} eventInfo={eventResponse} onSubmit={() => {
+            _closeDialog();
+          }}
         />;
         break;
       case DialogSelected.CREATEACTIVITY:
         component = <CreateActivityDialog
-          {...dialogData.args} parentId={parseInt(id)} onSubmit={()=>{
+          {...dialogData.args} parentId={parseInt(id!)} onSubmit={() => {
             _closeDialog();
           }}
         />;
         break;
       case DialogSelected.ADDORGANIZER:
         component = <AddOrganizerDialog
-          {...dialogData.args} eventId={parseInt(id)} onSubmit={()=>{
-          _closeDialog();
-        }}
+          {...dialogData.args} eventId={parseInt(id!)} onSubmit={() => {
+            _closeDialog();
+          }}
         />;
         break;
     }
@@ -456,11 +451,11 @@ function EventActivitiesPage() {
   const _closeDialog = () => {
     setDialogData(new DialogData());
   }
-  const _updateEvent = (e: MouseEvent) => {
+  const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
     e.stopPropagation();
   }
-  const _addActivity = (e: MouseEvent) => {
+  const _addActivity = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Создать активность', DialogSelected.CREATEACTIVITY));
     e.stopPropagation();
   }
@@ -532,23 +527,33 @@ function EventActivitiesPage() {
     );
   }
 
-  const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState([] as Activity[]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
   const getActivities = async () => {
-    const response = await api.event.getAllOrFilteredEvents(undefined, undefined, id);
+    const response = await api.event.getAllOrFilteredEvents(undefined, undefined, parseInt(id!));
     if (response.status == 200) {
-      const activities = response.data.map(async a => {
-        const placeResponse = await api.place.placeGet(parseInt(a.placeId));
+      const items = (response.data.items ?? []) as EventResponse[];
+      const activities = items.map(async a => {
+        const placeResponse = await api.place.placeGet(a.placeId!);
         let place = "";
         let room = ""
         if (placeResponse.status == 200) {
           const data = placeResponse.data;
-          place = data.address;
-          room = data.room;
+          place = data.address ?? '';
+          room = data.room ?? '';
         } else {
           console.log(response.status);
         }
-        return new Activity(a.title, place, room, a.shortDescription, readDate(a.startDate), getTimeOnly(a.startDate), readDate(a.endDate), getTimeOnly(a.endDate));
+        return new Activity(
+          a.title ?? '',
+          place,
+          room,
+          a.shortDescription ?? '',
+          readDate(a.startDate ?? ''),
+          getTimeOnly(a.startDate ?? ''),
+          readDate(a.endDate ?? ''),
+          getTimeOnly(a.endDate ?? '')
+        );
       });
       const activitiesPromise = await Promise.all(activities);
       setActivities(activitiesPromise);
@@ -602,10 +607,10 @@ function EventActivitiesPage() {
     return (
       <>
         {edit_privilege ? (
-           <div className={styles.button_container}>
-             <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-           </div>
-         ) : (<></>)}
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
+          </div>
+        ) : (<></>)}
         {activitiesLoaded ? (
           <div className={styles.data_list}>
             {items}
@@ -618,7 +623,7 @@ function EventActivitiesPage() {
     )
   }
 
-  const _addOrganizer = (e: MouseEvent) => {
+  const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   }
@@ -755,7 +760,9 @@ function EventActivitiesPage() {
   useEffect(() => {
     api.withReauth(() => api.participants.getParticipants(EVENT_ID))
       .then((response) => {
-        const list = response.data.map(user => {
+        // TODO: don't cast types
+        const data = (response.data as unknown) as ParticipantResponse[];
+        const list = data.map(user => {
           return new Person("" + user.id, user.name ?? "", user.email ?? "", user.additionalInfo ?? "", user.visited ?? false);
         })
         setParticipants(list);
@@ -812,7 +819,7 @@ function EventActivitiesPage() {
             )}
             {selectedTab == "Активности" && _createActivityList(activities)}
             {selectedTab == "Организаторы" && createOrgsTable(orgs)}
-            {selectedTab == "Участники" && createParticipantsTable(participants, () => {})}
+            {selectedTab == "Участники" && createParticipantsTable(participants, () => { })}
             {selectedTab == "Задачи" && _createTasksTable()}
           </div>
           <Fade

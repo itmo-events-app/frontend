@@ -4,13 +4,14 @@ import styles from './index.module.css';
 import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context.ts';
+import { RoleResponse, UserSystemRoleResponse } from "@shared/api/generated";
 
-const AddOrganizerDialog = ({ eventId, onSubmit }) => {
-  const [userList, setUserList] = useState([]);
-  const [userId, setUserId] = useState("");
-  const [roleList, setRoleList] = useState([]);
-  const [roleId, setRoleId] = useState("");
-  const [roleName, setRoleName] = useState("");
+const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number, onSubmit: () => void }) => {
+  const [userList, setUserList] = useState([] as UserSystemRoleResponse[]);
+  const [userId, setUserId] = useState<number | undefined>(undefined);
+  const [roleList, setRoleList] = useState([] as RoleResponse[]);
+  const [roleId, setRoleId] = useState<number | undefined>(undefined);
+  const [roleName, setRoleName] = useState<string | undefined>("");
   const [loaded, setLoaded] = useState(false);
   const { api } = useContext(ApiContext);
 
@@ -25,7 +26,6 @@ const AddOrganizerDialog = ({ eventId, onSubmit }) => {
       setRoleId(eventRoles[0].id);
       setRoleName(eventRoles[0].name);
     } else {
-      console.log(getEventRoles.status);
       console.log(getUsersResponse.status);
     }
   }
@@ -40,7 +40,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }) => {
     console.log(userId);
     if (roleName == "Организатор") {
       const result = await api.role.assignOrganizerRole(
-        parseInt(userId),
+        userId!,
         eventId,
       );
       if (result.status != 204) {
@@ -50,7 +50,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }) => {
       }
     } else if (roleName == "Помощник") {
       const result = await api.role.assignAssistantRole(
-        parseInt(userId),
+        userId!,
         eventId,
       );
       if (result.status != 204) {
@@ -64,7 +64,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }) => {
     <div className={styles.dialog_content}>
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
-        <select value={userId} onChange={(e) => setUserId(e.target.value)}>
+        <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
           {
             loaded ? (
               userList.map(u => {
@@ -77,7 +77,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }) => {
         <select value={roleId} onChange={(e) => {
           const roleIdString = e.target.value;
           console.log(roleIdString)
-          setRoleId(roleIdString);
+          setRoleId(parseInt(roleIdString));
           const foundRole = roleList.find(r => r.id == parseInt(roleIdString));
           if (foundRole != undefined) {
             setRoleName(foundRole.name);

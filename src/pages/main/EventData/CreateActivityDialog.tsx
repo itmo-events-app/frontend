@@ -7,28 +7,28 @@ import styles from './index.module.css';
 import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context.ts';
-import { AddActivityFormatEnum, AddActivityStatusEnum } from "@shared/api/generated";
+import { AddActivityFormatEnum, AddActivityStatusEnum, PlaceResponse } from "@shared/api/generated";
 
-const CreateActivityDialog = ({ parentId, onSubmit }) => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number, onSubmit: () => void }) => {
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [title, setTitle] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [fullDescription, setFullDescription] = useState('');
-  const [format, setFormat] = useState(AddActivityFormatEnum.Offline);
-  const [status, setStatus] = useState(AddActivityStatusEnum.Published);
-  const [registrationStart, setRegistrationStart] = useState(new Date());
-  const [registrationEnd, setRegistrationEnd] = useState(new Date());
+  const [format, setFormat] = useState<AddActivityFormatEnum>(AddActivityFormatEnum.Offline);
+  const [status, setStatus] = useState<AddActivityStatusEnum>(AddActivityStatusEnum.Published);
+  const [registrationStart, setRegistrationStart] = useState<Date | null>(new Date());
+  const [registrationEnd, setRegistrationEnd] = useState<Date | null>(new Date());
   const [participantLimit, setParticipantLimit] = useState(1);
   const [participantHighestAge, setParticipantHighestAge] = useState(1);
   const [participantLowestAge, setParticipantLowestAge] = useState(1);
-  const [preparingStart, setPreparingStart] = useState(new Date());
-  const [preparingEnd, setPreparingEnd] = useState(new Date());
+  const [preparingStart, setPreparingStart] = useState<Date | null>(new Date());
+  const [preparingEnd, setPreparingEnd] = useState<Date | null>(new Date());
   const [place, setPlace] = useState(1);
-  const [placeList, setPlaceList] = useState([]);
+  const [placeList, setPlaceList] = useState([] as PlaceResponse[]);
   const [placesLoaded, setPlacesLoaded] = useState(false);
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<File | undefined>(undefined);
   const { api } = useContext(ApiContext);
   const getPlaces = async () => {
     const placesResponse = await api.place.getAllOrFilteredPlaces()
@@ -45,9 +45,12 @@ const CreateActivityDialog = ({ parentId, onSubmit }) => {
     getPlaces();
   }
     , []);
-  function convertToLocaleDateTime(date: Date) {
-    const isoDateTime = date.toISOString();
-    return isoDateTime.slice(0, -1);
+  function convertToLocaleDateTime(date: Date | null) {
+    if (date) {
+      const isoDateTime = date.toISOString();
+      return isoDateTime.slice(0, -1);
+    }
+    return null;
   }
 
   async function handleSubmit() {
@@ -59,21 +62,21 @@ const CreateActivityDialog = ({ parentId, onSubmit }) => {
     const preparingEndString = convertToLocaleDateTime(preparingEnd);
     const result = await api.event.addActivity(
       place,
-      startDateString,
-      endDateString,
+      startDateString!,
+      endDateString!,
       title,
       shortDescription,
       fullDescription,
       format,
       status,
-      registrationStartString,
-      registrationEndString,
+      registrationStartString!,
+      registrationEndString!,
       participantLimit,
       participantLowestAge,
       participantHighestAge,
-      preparingStartString,
-      preparingEndString,
-      image,
+      preparingStartString!,
+      preparingEndString!,
+      image!,
       parentId
     );
     if (result.status != 201) {
@@ -108,21 +111,21 @@ const CreateActivityDialog = ({ parentId, onSubmit }) => {
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальное количество участников" />
           <Input
-            value={participantLimit}
-            onChange={(e) => setParticipantLimit(e.target.value)}
+            value={String(participantLimit)}
+            onChange={(e) => setParticipantLimit(parseInt(e.target.value))}
           />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
-          <Input value={participantHighestAge} onChange={(e) => setParticipantHighestAge(e.target.value)} />
+          <Input value={String(participantHighestAge)} onChange={(e) => setParticipantHighestAge(parseInt(e.target.value))} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
-          <Input value={participantLowestAge} onChange={(e) => setParticipantLowestAge(e.target.value)} />
+          <Input value={String(participantLowestAge)} onChange={(e) => setParticipantLowestAge(parseInt(e.target.value))} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Формат" />
-          <select value={format} onChange={(e) => setFormat(e.target.value)}>
+          <select value={format} onChange={(e) => setFormat(e.target.value as AddActivityFormatEnum)}>
             {
               Object.entries(AddActivityFormatEnum).map(([k, v]) => {
                 return <option value={k}>{v}</option>
@@ -132,7 +135,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Место" />
-          <select value={place} onChange={(e) => setPlace(e.target.value)}>
+          <select value={place} onChange={(e) => setPlace(parseInt(e.target.value))}>
             {
               placesLoaded ? (
                 placeList.map(p => {
@@ -143,8 +146,8 @@ const CreateActivityDialog = ({ parentId, onSubmit }) => {
           </select>
         </div>
         <div className={styles.dialog_item}>
-          <InputLabel value="Состояние" onChange={(e) => setStatus(e.target.value)} />
-          <select value={status}>
+          <InputLabel value="Состояние" />
+          <select value={status} onChange={(e) => setStatus(e.target.value as AddActivityStatusEnum)}>
             {
               Object.entries(AddActivityStatusEnum).map(([k, v]) => {
                 return <option value={k}>{v}</option>
@@ -230,8 +233,10 @@ const CreateActivityDialog = ({ parentId, onSubmit }) => {
         <div className={styles.dialog_item}>
           <InputLabel value="Картинка" />
           <input type="file" onChange={(e) => {
-            const file = e.target.files[0]
-            setImage(file);
+            if (e.target.files) {
+              const file = e.target.files[0]
+              setImage(file);
+            }
           }} />
           {image && <p>Selected file: {image.name}</p>}
         </div>
