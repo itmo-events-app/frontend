@@ -33,8 +33,6 @@ const eventStatusList = Object.values(GetAllOrFilteredEventsStatusEnum);
 const eventFormatList = Object.values(GetAllOrFilteredEventsFormatEnum);
 
 type FilterType = {
-  page: number,
-  size: number,
   title: string,
   startDate: string, //either isostring or blank
   endDate: string,
@@ -45,8 +43,6 @@ type FilterType = {
 
 
 const initialFilters : FilterType = {
-  page: 0,
-  size: 15,
   title: "",
   startDate: "",
   endDate: "",
@@ -112,6 +108,7 @@ function EventListPage() {
   const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
+  const [searchValue, setSearchValue] = useState("");
   
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSize, setCurrentSize] = useState(15);
@@ -129,16 +126,22 @@ function EventListPage() {
         filters.status,
         filters.format
       );
+      interface EventType {
+        id: string,
+        placeId?: string,
+        title: string        
+      }
       if (response.status === 200) {
         const {total, items} = response.data;
-        console.log("total "+total+" item length "+items.length);
-        const pagesPromises = items.map(async (e) => {
-          let address = 'null';
+        if (total===undefined||items===undefined) throw new Error("Incomplete data received from the server");
+        const pagesPromises = items.map(async (value) => {
+          const e = value as EventType;
+          let address = "null";
           if (e.placeId !== undefined) {
             const response = await api.place.placeGet(parseInt(e.placeId));
             if (response.status == 200) {
               const place = response.data;
-              address = place.address;
+              address = place.address!==undefined?place.address:"null";
             } else {
               console.error(response.status);
             }
@@ -197,8 +200,9 @@ function EventListPage() {
     let component = <></>
     switch (dialogData.visible) {
       case DialogSelected.CREATEEVENT:
-        component = <EventCreationPage contentOnly={true} onSubmit={()=>{
+        component = <EventCreationPage onSubmit={()=>{
           _closeDialog();
+          getEventList(1,currentSize);
           }} 
           {...dialogData.args}
         />;
@@ -222,13 +226,13 @@ function EventListPage() {
   }
   //
 
-  const _onCreationPopUp = (e: MouseEvent) => {
+  const _onCreationPopUp = (e: React.MouseEvent<HTMLButtonElement>) => {
     setDialogData(new DialogData('Создание мероприятия', DialogSelected.CREATEEVENT));
     e.stopPropagation();
   }
 
   //filters
-  const _handleFilterChange = (value, name: string) => {
+  const _handleFilterChange = (value: string | GetAllOrFilteredEventsStatusEnum | GetAllOrFilteredEventsFormatEnum | undefined, name: string) => {
     if (value!==null && filters[name] !== value) {
       setFilters(prevFilters => ({
         ...prevFilters,
@@ -249,7 +253,7 @@ function EventListPage() {
           <div className={styles.events_page}>
             <div className={styles.horizontal_bar}>
               <div className={styles.search}>
-                <Search onSearch={(value)=>_handleFilterChange(value,"title")} placeholder="Поиск" />
+                <Search onSearch={(value)=>_handleFilterChange(value,"title")} placeholder="Поиск" onChange={(e) => setSearchValue(e.target.value)} value={searchValue}/>
               </div>
               <div className={styles.dropdown}>
                 <Dropdown

@@ -37,6 +37,13 @@
   color: var(--itmo-colors-dark-gray);
 }
 
+.current_page {
+  font-weight: bold;
+  color: black;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 .nav_info {
   display: flex;
   flex-flow: row nowrap;

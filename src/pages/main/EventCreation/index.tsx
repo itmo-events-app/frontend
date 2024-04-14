@@ -6,21 +6,20 @@ import Content from '@widgets/main/Content';
 import SideBar from '@widgets/main/SideBar';
 import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
-import { DropdownOption } from "@widgets/main/Dropdown";
-import { useState, useContext } from "react";
+import { useState, useContext, ChangeEvent } from "react";
 import ApiContext from '@features/api-context';
 import { RoutePaths } from '@shared/config/routes';
 
-const _test_orgs = [
-  new DropdownOption('[408975] Григорьев Георгий Александрович'),
-  new DropdownOption('[621304] Ефимов Евгений Николаевич'),
-  new DropdownOption('[308820] Васильева Валентина Сергеевна'),
-  new DropdownOption('[107589] Лебедев Леонид Петрович'),
-];
+// const _test_orgs = [
+//   new DropdownOption('[408975] Григорьев Георгий Александрович'),
+//   new DropdownOption('[621304] Ефимов Евгений Николаевич'),
+//   new DropdownOption('[308820] Васильева Валентина Сергеевна'),
+//   new DropdownOption('[107589] Лебедев Леонид Петрович'),
+// ];
 
-function EventCreationPage({contentOnly = false, onSubmit}) {
+function EventCreationPage({onSubmit = null} : {onSubmit: (() => void) | null}) {
   const [inputValue, setInputValue] = useState('');
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
   const {api} = useContext(ApiContext);
@@ -34,7 +33,7 @@ function EventCreationPage({contentOnly = false, onSubmit}) {
       });
       if (response.status === 201) {
         console.log(response);
-        if (contentOnly) onSubmit();
+        if (onSubmit) onSubmit();
       } else {
         console.error('Error creating event:', response.statusText);
       }
@@ -59,7 +58,7 @@ function EventCreationPage({contentOnly = false, onSubmit}) {
   );  
   return (
     <>
-      {contentOnly ? (
+      {onSubmit ? (
         content
       ) : (
         <Layout

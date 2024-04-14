@@ -9,6 +9,7 @@ type Props = {
     total: number,
     onPageChange: (page: number, size:number)=>void,
     items: PageEntry[]
+    pageSpread?: number,
 }
 
 class PageEntry {
@@ -38,9 +39,9 @@ function Pagination(props: Props) {
     const renderPagination = () => {
         const pages = [];
         const visiblePages = [];
-        const pageSpread = 2;
+        const pageSpread = props.pageSpread?props.pageSpread:1;
         pages.push(
-            <a key={1} href="#" className={styles.nav_button} onClick={() => handlePageClick(1)}>
+            <a key={1} href="#" className={`${styles.nav_button} ${1 === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(1)}>
                 1
             </a>
         );
@@ -54,7 +55,7 @@ function Pagination(props: Props) {
         }
         visiblePages.forEach((page) => {
             pages.push(
-                <a key={page} href="#" className={styles.nav_button} onClick={() => handlePageClick(page)} disabled={page === props.page}>
+                <a key={page} href="#" className={`${styles.nav_button} ${page === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(page)}>
                     {page}
                 </a>
             );
@@ -64,7 +65,7 @@ function Pagination(props: Props) {
         }
         if (totalPages > 1) {
             pages.push(
-                <a key={totalPages} href="#" className={styles.nav_button} onClick={() => handlePageClick(totalPages)}>
+                <a key={totalPages} href="#" className={`${styles.nav_button} ${totalPages === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(totalPages)}>
                     {totalPages}
                 </a>
             );

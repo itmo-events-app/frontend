@@ -138,7 +138,7 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <EventListPage />,
   },
   [AppRoutes.EVENT_CREATION]: {
-    element: <EventCreationPage />,
+    element: <EventCreationPage onSubmit={null} />,
   },
   [AppRoutes.EVENT_DATA]: {
     element: <EventActivitiesPage />,
