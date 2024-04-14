@@ -1,15 +1,9 @@
-import styles from './index.module.css';
-import BrandLogo from '@widgets/main/BrandLogo';
-import Layout from '@widgets/main/Layout';
-import PageName from '@widgets/main/PageName';
 import Content from '@widgets/main/Content';
-import SideBar from '@widgets/main/SideBar';
 import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
 import { useState, useContext, ChangeEvent } from "react";
 import ApiContext from '@features/api-context';
-import { RoutePaths } from '@shared/config/routes';
-
+import styles from './dialog.module.css';
 // const _test_orgs = [
 //   new DropdownOption('[408975] Григорьев Георгий Александрович'),
 //   new DropdownOption('[621304] Ефимов Евгений Николаевич'),
@@ -17,13 +11,12 @@ import { RoutePaths } from '@shared/config/routes';
 //   new DropdownOption('[107589] Лебедев Леонид Петрович'),
 // ];
 
-function EventCreationPage({onSubmit = null} : {onSubmit: (() => void) | null}) {
+function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}) {
   const [inputValue, setInputValue] = useState('');
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
   const {api} = useContext(ApiContext);
-
   const  _createEvent = async() => {
     if (inputValue.trim().length === 0) return; //blank?
     try {
@@ -41,7 +34,7 @@ function EventCreationPage({onSubmit = null} : {onSubmit: (() => void) | null}) 
       console.error('Error creating event:', error);
     }
   }
-  const content = (
+  return (
     <Content>
           <div className={styles.event_form}>
             <div className={styles.event_form_item}>
@@ -55,21 +48,7 @@ function EventCreationPage({onSubmit = null} : {onSubmit: (() => void) | null}) 
             </div>
           </div>
         </Content>
-  );  
-  return (
-    <>
-      {onSubmit ? (
-        content
-      ) : (
-        <Layout
-          topLeft={<BrandLogo />}
-          topRight={<PageName text="Создание мероприятия" />}
-          bottomLeft={<SideBar currentPageURL={RoutePaths.createEvent} />}
-          bottomRight={content}
-        />
-      )}
-    </>
   );
 }
 
-export default EventCreationPage;
+export default EventCreationDialog;

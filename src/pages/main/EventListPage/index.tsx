@@ -13,15 +13,17 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { getImageUrl } from "@shared/lib/image.ts"
 import { ReactLogo } from "@shared/ui/icons";
 import Fade from '@widgets/main/Fade';
-import EventCreationPage from '../EventCreation';
 import Dialog from '@widgets/main/Dialog';
 import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
+
 import Pagination, { PageEntry } from '@widgets/main/PagedList/pagination';
 
 import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
+import { EventResponse } from '@shared/api/generated';
+import EventCreationPage from './EventCreationDialog';
 
 enum DisplayModes {
   LIST = "Показать списком",
@@ -126,19 +128,15 @@ function EventListPage() {
         filters.status,
         filters.format
       );
-      interface EventType {
-        id: string,
-        placeId?: string,
-        title: string        
-      }
       if (response.status === 200) {
+        // TODO: don't cast types
         const {total, items} = response.data;
         if (total===undefined||items===undefined) throw new Error("Incomplete data received from the server");
-        const pagesPromises = items.map(async (value) => {
-          const e = value as EventType;
-          let address = "null";
-          if (e.placeId !== undefined) {
-            const response = await api.place.placeGet(parseInt(e.placeId));
+        const data = items as unknown as EventResponse[];
+        const pagesPromises = data.map(async (e) => {
+          let address: string = '';
+          if (e.placeId) {
+            const response = await api.place.placeGet(e.placeId);
             if (response.status == 200) {
               const place = response.data;
               address = place.address!==undefined?place.address:"null";
@@ -149,8 +147,8 @@ function EventListPage() {
           return new PageEntry(() => {
             return (
               <PageItemStub
-                key={parseInt(e.id)}
-                index={parseInt(e.id)}
+                key={e.id?e.id:-1}
+                index={e.id?e.id:-1}
                 title={(e.title!==undefined)?e.title:'null'}
                 place={address}
               />);
@@ -171,7 +169,7 @@ function EventListPage() {
   };
   useEffect(() => {
     getEventList();
-  }, []);
+  }, [filters]);
 
   //dialog
   class DialogData {
