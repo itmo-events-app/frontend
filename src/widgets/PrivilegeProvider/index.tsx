@@ -14,6 +14,14 @@ const PrivilegeContextProvider = (props: Props) => {
 
   // load privileges on context first render
   useEffect(() => {
+    updateSystemPrivileges();
+  }, [api]);
+
+  function resetPrivilegeContext() {
+    setPrivilegeContext(new PrivilegeContextData());
+  }
+
+  function updateSystemPrivileges() {
     if (api.isLoggedIn()) {
       api
         .withReauth(() => api.profile.getUserSystemPrivileges())
@@ -22,30 +30,27 @@ const PrivilegeContextProvider = (props: Props) => {
             (p) => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames])
           );
           const orgRoles = r.data!.hasOrganizerRolesResponse ?? false;
-          updateSystemPrivileges(new Set(privileges), orgRoles);
+          setPrivilegeContext(new PrivilegeContextData(new Set(privileges), privilegeContext.eventPrivileges, orgRoles));
         });
-    } else {
-      resetPrivilegeContext();
     }
-  }, [api]);
-
-  function resetPrivilegeContext() {
-    setPrivilegeContext(new PrivilegeContextData());
   }
 
-  function updateSystemPrivileges(e: Set<PrivilegeData>, hasOrgRoles: boolean) {
-    setPrivilegeContext(new PrivilegeContextData(e, privilegeContext.eventPrivileges, hasOrgRoles));
-  }
-
-  function updateEventPrivileges(id: number, e: Set<PrivilegeData>) {
-    privilegeContext.eventPrivileges.set(id, e);
-    setPrivilegeContext(
-      new PrivilegeContextData(
-        privilegeContext.systemPrivileges,
-        privilegeContext.eventPrivileges,
-        privilegeContext.hasOrganizerRoles
-      )
-    );
+  function updateEventPrivileges(id: number) {
+    if (api.isLoggedIn()) {
+      api
+        .withReauth(() => api.profile.getUserEventPrivileges(id))
+        .then((r) => {
+          const privileges = r.data!.map(
+            (p) => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames])
+          );
+          privilegeContext.eventPrivileges.set(id, new Set(privileges));
+          setPrivilegeContext(new PrivilegeContextData(
+            privilegeContext.systemPrivileges,
+            privilegeContext.eventPrivileges,
+            privilegeContext.hasOrganizerRoles
+          ));
+        });
+    }
   }
 
   const contextValue: PrivilegeContextValue = {
