@@ -1,5 +1,5 @@
-import Button from '@widgets/main/Button';
-import InputLabel from '@widgets/main/InputLabel';
+import Button from "@widgets/main/Button";
+import InputLabel from "@widgets/main/InputLabel";
 import styles from './index.module.css';
 import { useContext, useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -19,9 +19,14 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
     const getUsersResponse = await api.profile.getAllUsers();
     const getAllRoles = await api.role.getAllRoles();
     if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
-      setUserList(getUsersResponse.data);
-      setUserId(getUsersResponse.data[0].id);
-      const eventRoles = getAllRoles.data.filter((r) => r.type == 'EVENT');
+      const items = getUsersResponse.data.items;
+      setUserList(items ?? []);
+      if (items != null && items.length > 0) {
+        setUserId(items[0].id)
+      } else {
+        setUserId(undefined);
+      }
+      const eventRoles = getAllRoles.data.filter(r => r.type == "EVENT");
       setRoleList(eventRoles);
       setRoleId(eventRoles[0].id);
       setRoleName(eventRoles[0].name);
@@ -57,7 +62,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
     <div className={styles.dialog_content}>
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
-a       <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
+        a       <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
           {loaded ? (
             userList.map((u) => {
               return <option value={u.id}>{u.name}</option>;

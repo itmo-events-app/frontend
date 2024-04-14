@@ -14,13 +14,13 @@ import { useEffect, useState, useRef, useContext } from 'react';
 import { getImageUrl } from '@shared/lib/image.ts';
 import { ReactLogo } from '@shared/ui/icons';
 import Fade from '@widgets/main/Fade';
-import EventCreationPage from '../EventCreation';
 import Dialog from '@widgets/main/Dialog';
 import { appendClassName } from '@shared/util.ts';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context';
 import { EventResponse } from '@shared/api/generated';
+import EventCreationPage from './EventCreationDialog';
 
 enum DisplayModes {
   LIST = 'Показать списком',
@@ -145,7 +145,7 @@ function EventListPage() {
   };
   useEffect(() => {
     getEventList();
-  }, [filters]);
+  }, []);
 
   //dialog
   class DialogData {
@@ -170,7 +170,7 @@ function EventListPage() {
     let component = <></>;
     switch (dialogData.visible) {
       case DialogSelected.CREATEEVENT:
-        component = <EventCreationPage contentOnly={true} {...dialogData.args} />;
+        component = <EventCreationPage {...dialogData.args} />;
         break;
     }
     return (
