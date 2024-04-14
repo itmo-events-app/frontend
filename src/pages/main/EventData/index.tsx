@@ -21,7 +21,7 @@ import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
-import { EventResponse, ParticipantResponse } from '@shared/api/generated/index.ts';
+import { EventResponse, ParticipantResponse, TaskResponse } from '@shared/api/generated/index.ts';
 
 class EventInfo {
   regDates: string
@@ -323,7 +323,7 @@ function EventActivitiesPage() {
     color: string | undefined,
   }
   const colors: string[] = ["#663333", "#0069FF", "#ff9933", "#990066", "#006633", "#000000", "#666600", "#336666", "#000099", "#FF0033", "#CCCC00", "#CC6666"]
-  let peopleForTasks = new Map<number, peopleTasks>;
+  const peopleForTasks = new Map<number, peopleTasks>;
   useEffect(() => {
     tasks = [];
     let persColor;
@@ -332,14 +332,14 @@ function EventActivitiesPage() {
     //   lastname: "asd",
     //   color: "asd"
     // });
-    for (let et of eventTasks) {
+    for (const et of eventTasks) {
       if (et.deadline != undefined && et.creationTime != undefined && et.title != undefined && et.id != undefined && et.assignee != undefined && et.assignee.id != undefined) {
 
         console.log(peopleForTasks)
         if (peopleForTasks.get(et.assignee.id)) {
           persColor = peopleForTasks.get(et.assignee.id)?.color;
         } else {
-          let stepColor = colors.shift();
+          const stepColor = colors.shift();
           peopleForTasks.set(et.assignee.id, {
             name: et.assignee.name,
             lastname: et.assignee.surname,
@@ -347,7 +347,7 @@ function EventActivitiesPage() {
           })
           persColor = stepColor
         }
-        let newTask: Task = {
+        const newTask: Task = {
           start: new Date(et.creationTime),
           end: new Date(et.deadline),
           name: et.title,
@@ -359,7 +359,7 @@ function EventActivitiesPage() {
           hideChildren: false,
         }
         tasks.push(newTask);
-        setEventTasksPeople(Array.from(peopleForTasks, ([number, peopleTasks]) => (peopleTasks)))
+        setEventTasksPeople(Array.from(peopleForTasks, ([_, peopleTasks]) => (peopleTasks)))
       }
     }
   }, eventTasks);
