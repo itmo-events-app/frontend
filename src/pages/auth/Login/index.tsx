@@ -13,6 +13,7 @@ import { RoutePaths } from '@shared/config/routes';
 import { LoginRequest } from '@shared/api/generated';
 import { TokenContextData } from '@shared/lib/token';
 import ApiContext from '@features/api-context';
+import { getErrorResponse } from '@features/response';
 
 const LOGIN_MAX_LENGTH = 128;
 const PASSWORD_MIN_LENGTH = 8;
@@ -97,12 +98,7 @@ function LoginPage() {
           navigate(RoutePaths.home);
         })
         .catch((e): any => {
-          const response = e.response.data;
-          if (typeof response === 'string') {
-            setErrorText(response);
-          } else {
-            setErrorText(JSON.stringify(response));
-          }
+          setErrorText(getErrorResponse(e.response));
           setIsError(true);
         });
     }
