@@ -126,7 +126,7 @@ export default function RequestListPage() {
   return (
     <Layout
       topLeft={<BrandLogo />}
-      topRight={<PageName text="ЗАявки на регистрацию" />}
+      topRight={<PageName text="Заявки на регистрацию" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.requestList} />}
       bottomRight=
       {
