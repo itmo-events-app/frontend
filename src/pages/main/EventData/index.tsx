@@ -9,22 +9,16 @@ import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from '@shared/config/routes';
 import Button from "@widgets/main/Button";
-import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
 import { useParams } from "react-router-dom";
 import { appendClassName } from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
-import { RoleElement } from "@widgets/main/RoleList";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
 import { Gantt, Task } from 'gantt-task-react';
-import CreateDialogContent from "./CreateDialogContext.tsx";
-import { PrivilegeData } from '@entities/privilege-context.ts';
-import PrivilegeContext from '@features/privilege-context.ts';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
-import { PrivilegeResponse, PrivilegeResponseNameEnum } from "@shared/api/generated";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
 
@@ -116,6 +110,10 @@ class OrgPerson {
     this.surname = surname;
     this.email = email;
     this.role = role;
+  }
+
+  public equals(obj: any): boolean {
+    return obj && typeof obj === 'object' && obj.id === this.id;
   }
 }
 
@@ -209,6 +207,7 @@ function readDate(dateTime: string) {
   const formattedDate = date.toISOString().split('T')[0];
   return formattedDate
 }
+
 function getTimeOnly(dateTimeString) {
   const dateTime = new Date(dateTimeString);
   const hours = dateTime.getHours();
@@ -276,7 +275,7 @@ function EventActivitiesPage() {
       }
     })
     setLoadingEvent(false);
-  }, []);
+  });
 
 
   const [eventPrivileges, setEventPrivileges] = useState([] as PrivilegeNames[]);
@@ -297,11 +296,11 @@ function EventActivitiesPage() {
       .catch((error) => {
         console.log(error.response.data);
       })
-  }, []);
+  });
 
   const activitiesVisible: boolean = PrivilegeNames.VIEW_EVENT_ACTIVITIES in eventPrivileges;
   const orgsVisible: boolean = PrivilegeNames.VIEW_ORGANIZER_USERS in eventPrivileges;
-  const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in eventPrivileges;
+  // const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in eventPrivileges;
 
   const pageTabs: PageTab[] = []
 
@@ -492,10 +491,11 @@ function EventActivitiesPage() {
       console.log(response.status);
     }
   }
+
   useEffect(() => {
     getActivities();
+  });
 
-  }, []);
   function _createActivity(activity: Activity) {
     return (
       <div key={activity.id} className={styles.activity_container}>
@@ -551,10 +551,12 @@ function EventActivitiesPage() {
       </>
     )
   }
+
   const _addOrganizer = (e: MouseEvent) => {
     setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   }
+
   function createOrgPersonRow(person: OrgPerson) {
     return (
       <tr key={person.id}>
@@ -576,11 +578,41 @@ function EventActivitiesPage() {
     )
   }
 
-  function createOrgsTable(persons: OrgPerson[], edit_func: any) {
+  function _groupRoles(entries: OrgPerson[]) {
+    const users: Map<string, OrgPerson> = new Map<string, OrgPerson>([]);
+
+    for (const user of entries) {
+      users.set(user.id, user);
+    }
+
+    const userRoles: Map<string, string[]> = new Map<string, string[]>([]);
+
+    for (const user of entries) {
+      const roles: string[] = userRoles.get(user.id) ?? [];
+
+      roles.push(user.role);
+      userRoles.set(user.id, roles);
+    }
+
+    const orgList: OrgPerson[] = [] as OrgPerson[];
+
+    userRoles.forEach((value: string[], key: string) => {
+      const org: OrgPerson = users.get(key) ?? new OrgPerson("", "", "", "", "");
+      orgList.push(new OrgPerson(org.id, org.name, org.surname, org.email, value.join(", ")));
+    });
+
+    return orgList;
+  }
+
+  function createOrgsTable(persons: OrgPerson[]) {
+    const processedPersons: OrgPerson[] = _groupRoles(persons);
+
     const items = [];
-    for (const person of persons) {
+
+    for (const person of processedPersons) {
       items.push(createOrgPersonRow(person));
     }
+
     return (
       <>
         {add_organizer_privilege ? (
@@ -642,14 +674,15 @@ function EventActivitiesPage() {
         .then((response) => {
           const list = response.data.map(user => {
             return new OrgPerson("" + user.id, user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
-          })
+          });
+
           setOrgs(list);
         })
         .catch((error) => {
           console.log(error.response.data);
         })
     }
-  }, [orgsVisible]);
+  });
 
   const [participants, setParticipants] = useState([] as Person[]);
 
@@ -664,8 +697,10 @@ function EventActivitiesPage() {
       .catch((error) => {
         console.log(error.response.data);
       })
-  }, []);
+  });
+
   const locc = "cz";
+
   function _createTasksTable() {
     return (
       <div className={styles.tasks}>
@@ -716,8 +751,8 @@ function EventActivitiesPage() {
               selectedTab == "Описание" && _createInfoPage(event)
             )}
             {selectedTab == "Активности" && _createActivityList(activities)}
-            {selectedTab == "Организаторы" && createOrgsTable(orgs, _editOrgs)}
-            {selectedTab == "Участники" && createParticipantsTable(participants, _editParticipants)}
+            {selectedTab == "Организаторы" && createOrgsTable(orgs)}
+            {selectedTab == "Участники" && createParticipantsTable(participants, () => {})}
             {selectedTab == "Задачи" && _createTasksTable()}
           </div>
           <Fade
