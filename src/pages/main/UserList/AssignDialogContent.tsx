@@ -4,11 +4,8 @@ import styles from './index.module.css'
 import Button from "@widgets/main/Button";
 import {toRoleModel} from "@entities/role";
 import ApiContext from "@features/api-context";
-import RoleListRadio, {
-  createRoleRadioElementList,
-  getSelectedRoleId,
-  RoleRadioElement
-} from "@widgets/main/RoleListRadio";
+import RoleListRadio from "@widgets/main/RoleListRadio";
+import { RoleRadioElement, createRoleRadioElementList, getSelectedRoleId } from "@widgets/main/RoleListRadio/common";
 
 type AssignProps = {
   userId: number,

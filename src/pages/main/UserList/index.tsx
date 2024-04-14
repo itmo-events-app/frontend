@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef, useState} from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import styles from './index.module.css';
 import BrandLogo from "@widgets/main/BrandLogo";
 import PageName from "@widgets/main/PageName";
@@ -14,13 +14,13 @@ import Dialog from "@widgets/main/Dialog";
 import AssignDialogContent from "@pages/main/UserList/AssignDialogContent";
 import Fade from "@widgets/main/Fade";
 import ApiContext from "@features/api-context";
-import {toUserModel, UserModel} from "@entities/user";
-import {PrivilegeData} from "@entities/privilege-context";
-import {PrivilegeNames} from "@shared/config/privileges";
-import ContextMenu, {ContextMenuItem} from "@widgets/main/ContextMenu";
-import {hasAnyPrivilege} from "@features/privileges";
+import { toUserModel, UserModel } from "@entities/user";
+import { PrivilegeData } from "@entities/privilege-context";
+import { PrivilegeNames } from "@shared/config/privileges";
+import ContextMenu, { ContextMenuItem } from "@widgets/main/ContextMenu";
+import { hasAnyPrivilege } from "@features/privileges";
 import PrivilegeContext from "@features/privilege-context";
-import {MenuVertical} from "@shared/ui/icons";
+import { MenuVertical } from "@shared/ui/icons";
 import RevokeDialogContent from "@pages/main/UserList/RevokeDialogContent";
 import MessageDialogContent from "@pages/main/UserList/MessageDialogContent";
 
@@ -81,10 +81,11 @@ export default function UserListPage() {
   const [users, setUsers] = useState([] as UserModel[]);
 
   const cmRef = useRef(null);
-  const dialogRef = useRef(null);
 
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
+
+  const [searchValue, setSearchValue] = useState('');
 
   const menuVisible = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
     ...privilegeOthers.assign,
@@ -189,10 +190,10 @@ export default function UserListPage() {
           DialogSelected.MESSAGE,
           { messageText: 'Роль пользователя отозвана.' }));
       }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+        setDialogData(new DialogData('Некорректная операция!',
+          DialogSelected.MESSAGE,
+          { messageText: error.response.data }));
+      })
   }
 
   const _revokeRoleFromUser = (userId: number) => {
@@ -205,10 +206,10 @@ export default function UserListPage() {
           { messageText: 'Роль пользователя отозвана.' }));
       }).catch(error => {
         //todo throw error message without error code
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+        setDialogData(new DialogData('Некорректная операция!',
+          DialogSelected.MESSAGE,
+          { messageText: error.response.data }));
+      })
   }
 
   const _onSearch = () => {
@@ -302,10 +303,10 @@ export default function UserListPage() {
       bottomRight={
         <Content>
           <div className={styles.search}>
-            <Search onSearch={_onSearch} placeholder="Поиск" />
+            <Search value={searchValue} onChange={(e) => setSearchValue(e.target.value)} onSearch={_onSearch} placeholder="Поиск" />
           </div>
           <PagedList page={1} page_size={5} page_step={5} items={_renderedUserEntries} />
-          <_ContextMenu/>
+          <_ContextMenu />
           <Fade
             className={appendClassName(styles.fade,
               (dialogData.visible) ? styles.visible : styles.hidden)}>

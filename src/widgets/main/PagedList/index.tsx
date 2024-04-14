@@ -131,7 +131,7 @@ function PagedList(props: Props) {
         {page > 4 && _navPageText(" . . . ")}
         {page_indexes}
         {pages_num - page > 3 && _navPageText(" . . . ")}
-        {pages_num - page > 2 && _navPageNum(pages_num)}
+        {pages_num - page > 2 && _navPageNum(pages_num, false)}
       </div>
     );
   }
