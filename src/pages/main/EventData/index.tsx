@@ -1,39 +1,39 @@
-import { uid } from 'uid'
-import { useContext, useEffect, useRef, useState } from "react";
-import styles from './index.module.css'
+import { uid } from 'uid';
+import { useContext, useEffect, useRef, useState } from 'react';
+import styles from './index.module.css';
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import SideBar from '@widgets/main/SideBar';
-import Content from "@widgets/main/Content";
-import PageTabs, { PageTab } from "@widgets/main/PageTabs";
+import Content from '@widgets/main/Content';
+import PageTabs, { PageTab } from '@widgets/main/PageTabs';
 import { RoutePaths } from '@shared/config/routes';
-import Button from "@widgets/main/Button";
-import { PrivilegeNames } from "@shared/config/privileges.ts";
-import { useParams } from "react-router-dom";
-import { appendClassName } from "@shared/util.ts";
-import Fade from "@widgets/main/Fade";
-import UpdateDialogContent from "./UpdateDialogContext.tsx";
-import Dialog from "@widgets/main/Dialog";
-import CreateActivityDialog from "./CreateActivityDialog.tsx";
+import Button from '@widgets/main/Button';
+import { PrivilegeNames } from '@shared/config/privileges.ts';
+import { useParams } from 'react-router-dom';
+import { appendClassName } from '@shared/util.ts';
+import Fade from '@widgets/main/Fade';
+import UpdateDialogContent from './UpdateDialogContext.tsx';
+import Dialog from '@widgets/main/Dialog';
+import CreateActivityDialog from './CreateActivityDialog.tsx';
 import { Gantt, Task } from 'gantt-task-react';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
-import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
-import "gantt-task-react/dist/index.css";
+import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
+import 'gantt-task-react/dist/index.css';
 import { EventResponse, ParticipantResponse, TaskResponse } from '@shared/api/generated/index.ts';
 
 class EventInfo {
-  regDates: string
-  prepDates: string
-  eventDates: string
-  vacantSlots: string
-  place: string
-  format: string
-  ageRestriction?: string
-  status: string
-  eventName: string
-  description: string
+  regDates: string;
+  prepDates: string;
+  eventDates: string;
+  vacantSlots: string;
+  place: string;
+  format: string;
+  ageRestriction?: string;
+  status: string;
+  eventName: string;
+  description: string;
 
   constructor(
     regDates: string,
@@ -61,15 +61,15 @@ class EventInfo {
 }
 
 class Activity {
-  id: string
-  name: string
-  place: string
-  room: string
-  description: string
-  date: string
-  time: string
-  endDate: string
-  endTime: string
+  id: string;
+  name: string;
+  place: string;
+  room: string;
+  description: string;
+  date: string;
+  time: string;
+  endDate: string;
+  endTime: string;
   constructor(
     activityName: string,
     place: string,
@@ -93,19 +93,13 @@ class Activity {
 }
 
 class OrgPerson {
-  id: string
-  name: string
-  surname: string
-  email: string
-  role: string
+  id: string;
+  name: string;
+  surname: string;
+  email: string;
+  role: string;
 
-  constructor(
-    id: string,
-    name: string,
-    surname: string,
-    email: string,
-    role: string
-  ) {
+  constructor(id: string, name: string, surname: string, email: string, role: string) {
     this.id = id;
     this.name = name;
     this.surname = surname;
@@ -119,19 +113,13 @@ class OrgPerson {
 }
 
 class Person {
-  id: string
-  name: string
-  email: string
-  info: string
-  visited: boolean
+  id: string;
+  name: string;
+  email: string;
+  info: string;
+  visited: boolean;
 
-  constructor(
-    id: string,
-    name: string,
-    email: string,
-    info: string,
-    visited: boolean
-  ) {
+  constructor(id: string, name: string, email: string, info: string, visited: boolean) {
     this.id = id;
     this.name = name;
     this.email = email;
@@ -150,7 +138,7 @@ let tasks: Task[] = [
     progress: 100,
     isDisabled: false,
     styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: "sdsd",
+    project: 'sdsd',
     hideChildren: false,
   },
   {
@@ -162,7 +150,7 @@ let tasks: Task[] = [
     progress: 100,
     isDisabled: false,
     styles: { progressColor: '#663333', progressSelectedColor: '#663333' },
-    project: "sdsd",
+    project: 'sdsd',
   },
   {
     start: new Date(2024, 1, 2),
@@ -173,7 +161,7 @@ let tasks: Task[] = [
     progress: 100,
     isDisabled: false,
     styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: "sdsd",
+    project: 'sdsd',
   },
   {
     start: new Date(2024, 1, 11),
@@ -184,7 +172,7 @@ let tasks: Task[] = [
     progress: 100,
     isDisabled: false,
     styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: "sdsd",
+    project: 'sdsd',
   },
   {
     start: new Date(2024, 1, 3),
@@ -195,7 +183,7 @@ let tasks: Task[] = [
     progress: 100,
     isDisabled: false,
     styles: { progressColor: '#ff9933', progressSelectedColor: '#ff9933' },
-    project: "sdsd",
+    project: 'sdsd',
   },
 ];
 //ff9933
@@ -206,7 +194,7 @@ const add_organizer_privilege: boolean = true;
 function readDate(dateTime: string) {
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
-  return formattedDate
+  return formattedDate;
 }
 
 function getTimeOnly(dateTimeString: string) {
@@ -221,16 +209,15 @@ function getTimeOnly(dateTimeString: string) {
 const url_parts: string[] = window.location.href.split('/');
 const url_tail: string = url_parts[url_parts.length - 1];
 
-const EVENT_ID: number = (url_tail[url_tail.length - 1] == '#') ? +url_tail.split('#')[0] : +url_tail;
+const EVENT_ID: number = url_tail[url_tail.length - 1] == '#' ? +url_tail.split('#')[0] : +url_tail;
 
 function EventActivitiesPage() {
-
   const { api } = useContext(ApiContext);
 
   const { id } = useParams();
   const [event, setEvent] = useState<EventInfo | undefined>(undefined);
   const [loadingEvent, setLoadingEvent] = useState(true);
-  const [eventImageUrl, setEventImageUrl] = useState("");
+  const [eventImageUrl, setEventImageUrl] = useState('');
   const [eventResponse, setEventResponse] = useState({});
 
   const [eventTasks, setEventTasks] = useState<TaskResponse[]>([]);
@@ -239,22 +226,22 @@ function EventActivitiesPage() {
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const eventResponse = await api.event.getEventById(parseInt(id ?? "0"));
+        const eventResponse = await api.event.getEventById(parseInt(id ?? '0'));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
-          let placeAddress = "";
+          let placeAddress = '';
           const placeResponse = await api.place.placeGet(data.placeId ?? 0);
           if (placeResponse.status == 200) {
             placeAddress = placeResponse.data.address ?? '';
             const info = new EventInfo(
-              readDate(data.registrationStart ?? '') + " - " + readDate(data.registrationEnd ?? ''),
-              readDate(data.preparingStart ?? '') + " - " + readDate(data.preparingEnd ?? ''),
-              readDate(data.startDate ?? '') + " - " + readDate(data.endDate ?? ''),
+              readDate(data.registrationStart ?? '') + ' - ' + readDate(data.registrationEnd ?? ''),
+              readDate(data.preparingStart ?? '') + ' - ' + readDate(data.preparingEnd ?? ''),
+              readDate(data.startDate ?? '') + ' - ' + readDate(data.endDate ?? ''),
               String(data.participantLimit),
               placeAddress,
               data.format ?? '',
               data.status ?? '',
-              data.participantAgeLowest + " - " + data.participantAgeHighest,
+              data.participantAgeLowest + ' - ' + data.participantAgeHighest,
               data.title ?? '',
               data.fullDescription ?? ''
             );
@@ -271,21 +258,21 @@ function EventActivitiesPage() {
       }
     };
     getEvent();
-    getImageUrl(id!).then(url => {
+    getImageUrl(id!).then((url) => {
       if (url == '') {
-        setEventImageUrl("http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg");
+        setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
       } else {
         setEventImageUrl(url);
       }
-    })
+    });
     setLoadingEvent(false);
   });
-
 
   const [eventPrivileges, setEventPrivileges] = useState([] as PrivilegeNames[]);
 
   useEffect(() => {
-    api.withReauth(() => api.profile.getUserEventPrivileges(EVENT_ID))
+    api
+      .withReauth(() => api.profile.getUserEventPrivileges(EVENT_ID))
       .then((response) => {
         const list = [];
 
@@ -299,31 +286,42 @@ function EventActivitiesPage() {
       })
       .catch((error) => {
         console.log(error.response.data);
-      })
+      });
   });
 
   useEffect(() => {
-    api.withReauth(() => api.task.taskListShowInEvent(EVENT_ID))
+    api
+      .withReauth(() => api.task.taskListShowInEvent(EVENT_ID))
       .then((response) => {
-
         if (response.data != undefined) {
           setEventTasks(response.data);
-
         }
-
       })
       .catch((error) => {
         console.log(error.response.data);
-      })
+      });
   }, []);
 
   interface peopleTasks {
-    name: string | undefined,
-    lastname: string | undefined,
-    color: string | undefined,
+    name: string | undefined;
+    lastname: string | undefined;
+    color: string | undefined;
   }
-  const colors: string[] = ["#663333", "#0069FF", "#ff9933", "#990066", "#006633", "#000000", "#666600", "#336666", "#000099", "#FF0033", "#CCCC00", "#CC6666"]
-  const peopleForTasks = new Map<number, peopleTasks>;
+  const colors: string[] = [
+    '#663333',
+    '#0069FF',
+    '#ff9933',
+    '#990066',
+    '#006633',
+    '#000000',
+    '#666600',
+    '#336666',
+    '#000099',
+    '#FF0033',
+    '#CCCC00',
+    '#CC6666',
+  ];
+  const peopleForTasks = new Map<number, peopleTasks>();
   useEffect(() => {
     tasks = [];
     let persColor;
@@ -333,9 +331,15 @@ function EventActivitiesPage() {
     //   color: "asd"
     // });
     for (const et of eventTasks) {
-      if (et.deadline != undefined && et.creationTime != undefined && et.title != undefined && et.id != undefined && et.assignee != undefined && et.assignee.id != undefined) {
-
-        console.log(peopleForTasks)
+      if (
+        et.deadline != undefined &&
+        et.creationTime != undefined &&
+        et.title != undefined &&
+        et.id != undefined &&
+        et.assignee != undefined &&
+        et.assignee.id != undefined
+      ) {
+        console.log(peopleForTasks);
         if (peopleForTasks.get(et.assignee.id)) {
           persColor = peopleForTasks.get(et.assignee.id)?.color;
         } else {
@@ -343,23 +347,23 @@ function EventActivitiesPage() {
           peopleForTasks.set(et.assignee.id, {
             name: et.assignee.name,
             lastname: et.assignee.surname,
-            color: stepColor
-          })
-          persColor = stepColor
+            color: stepColor,
+          });
+          persColor = stepColor;
         }
         const newTask: Task = {
           start: new Date(et.creationTime),
           end: new Date(et.deadline),
           name: et.title,
-          id: "" + et.id,
+          id: '' + et.id,
           type: 'task',
           progress: 100,
           isDisabled: false,
           styles: { progressColor: persColor, progressSelectedColor: persColor },
           hideChildren: false,
-        }
+        };
         tasks.push(newTask);
-        setEventTasksPeople(Array.from(peopleForTasks, ([_, peopleTasks]) => (peopleTasks)))
+        setEventTasksPeople(Array.from(peopleForTasks, ([_, peopleTasks]) => peopleTasks));
       }
     }
   }, eventTasks);
@@ -369,33 +373,29 @@ function EventActivitiesPage() {
   const orgsVisible: boolean = PrivilegeNames.VIEW_ORGANIZER_USERS in eventPrivileges;
   // const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in eventPrivileges;
 
-  const pageTabs: PageTab[] = []
+  const pageTabs: PageTab[] = [];
 
-  pageTabs.push(new PageTab("Описание"));
+  pageTabs.push(new PageTab('Описание'));
 
   if (activitiesVisible) {
-    pageTabs.push(new PageTab("Активности"));
+    pageTabs.push(new PageTab('Активности'));
   }
 
   if (orgsVisible) {
-    pageTabs.push(new PageTab("Организаторы"));
+    pageTabs.push(new PageTab('Организаторы'));
   }
 
-  pageTabs.push(new PageTab("Участники"));
+  pageTabs.push(new PageTab('Участники'));
 
   // if (tasksVisible) {
-  pageTabs.push(new PageTab("Задачи"));
+  pageTabs.push(new PageTab('Задачи'));
   //}
 
   class DialogData {
     heading: string | undefined;
     visible: DialogSelected;
     args: any;
-    constructor(
-      heading?: string,
-      visible: DialogSelected = DialogSelected.NONE,
-      args: any = {}
-    ) {
+    constructor(heading?: string, visible: DialogSelected = DialogSelected.NONE, args: any = {}) {
       this.heading = heading;
       this.visible = visible;
       this.args = args;
@@ -411,78 +411,88 @@ function EventActivitiesPage() {
   }
 
   const _Dialog = () => {
-    let component = <></>
+    let component = <></>;
     switch (dialogData.visible) {
       case DialogSelected.UPDATE:
-        component = <UpdateDialogContent
-          {...dialogData.args} eventId={parseInt(id!)} eventInfo={eventResponse} onSubmit={() => {
-            _closeDialog();
-          }}
-        />;
+        component = (
+          <UpdateDialogContent
+            {...dialogData.args}
+            eventId={parseInt(id!)}
+            eventInfo={eventResponse}
+            onSubmit={() => {
+              _closeDialog();
+            }}
+          />
+        );
         break;
       case DialogSelected.CREATEACTIVITY:
-        component = <CreateActivityDialog
-          {...dialogData.args} parentId={parseInt(id!)} onSubmit={() => {
-            _closeDialog();
-          }}
-        />;
+        component = (
+          <CreateActivityDialog
+            {...dialogData.args}
+            parentId={parseInt(id!)}
+            onSubmit={() => {
+              _closeDialog();
+            }}
+          />
+        );
         break;
       case DialogSelected.ADDORGANIZER:
-        component = <AddOrganizerDialog
-          {...dialogData.args} eventId={parseInt(id!)} onSubmit={() => {
-            _closeDialog();
-          }}
-        />;
+        component = (
+          <AddOrganizerDialog
+            {...dialogData.args}
+            eventId={parseInt(id!)}
+            onSubmit={() => {
+              _closeDialog();
+            }}
+          />
+        );
         break;
     }
     return (
       <Dialog
-        className={appendClassName(styles.dialog,
-          (dialogData.visible ? styles.visible : styles.hidden))}
+        className={appendClassName(styles.dialog, dialogData.visible ? styles.visible : styles.hidden)}
         text={dialogData.heading}
         ref={dialogRef}
         onClose={_closeDialog}
       >
         {component}
       </Dialog>
-    )
-  }
+    );
+  };
 
   const _closeDialog = () => {
     setDialogData(new DialogData());
-  }
+  };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
     e.stopPropagation();
-  }
+  };
   const _addActivity = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Создать активность', DialogSelected.CREATEACTIVITY));
     e.stopPropagation();
-  }
+  };
   function _createInfoPage(eventInfo: EventInfo) {
     return (
       <div className={styles.root}>
-        <div className={styles.image_box}>
-          {<img className={styles.image} src={eventImageUrl} alt="Event image" />}
-        </div>
+        <div className={styles.image_box}>{<img className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
         {edit_privilege ? (
           <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
+            <Button className={styles.button} onClick={_updateEvent}>
+              Редактировать информацию о мероприятии
+            </Button>
           </div>
-        ) : <></>}
+        ) : (
+          <></>
+        )}
 
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
-              <div className={styles.field_title}>
-                Информация о мероприятии
-              </div>
+              <div className={styles.field_title}>Информация о мероприятии</div>
               {eventInfo.description}
             </div>
             <div className={styles.description_box}>
-              <div className={styles.field_title}>
-                Место проведения
-              </div>
+              <div className={styles.field_title}>Место проведения</div>
               {eventInfo.place}
             </div>
           </div>
@@ -491,9 +501,7 @@ function EventActivitiesPage() {
               <tr>
                 <td>Сроки регистрации</td>
                 <td>
-                  <div>
-                    {eventInfo.regDates}
-                  </div>
+                  <div>{eventInfo.regDates}</div>
                 </td>
               </tr>
               <tr>
@@ -533,10 +541,10 @@ function EventActivitiesPage() {
     const response = await api.event.getAllOrFilteredEvents(undefined, undefined, parseInt(id!));
     if (response.status == 200) {
       const items = (response.data.items ?? []) as EventResponse[];
-      const activities = items.map(async a => {
+      const activities = items.map(async (a) => {
         const placeResponse = await api.place.placeGet(a.placeId!);
-        let place = "";
-        let room = ""
+        let place = '';
+        let room = '';
         if (placeResponse.status == 200) {
           const data = placeResponse.data;
           place = data.address ?? '';
@@ -561,7 +569,7 @@ function EventActivitiesPage() {
     } else {
       console.log(response.status);
     }
-  }
+  };
 
   useEffect(() => {
     getActivities();
@@ -578,29 +586,29 @@ function EventActivitiesPage() {
           </div>
           <div className={styles.info_block}>{activity.description}</div>
         </div>
-        {activity.endDate == '' || activity.endDate == activity.date ?
-          (
-            <div className={styles.activity_time_column}>
-              <div className={styles.activity_time}>{activity.date}</div>
-              <div className={styles.activity_time}>{activity.time} - {activity.endTime}</div>
+        {activity.endDate == '' || activity.endDate == activity.date ? (
+          <div className={styles.activity_time_column}>
+            <div className={styles.activity_time}>{activity.date}</div>
+            <div className={styles.activity_time}>
+              {activity.time} - {activity.endTime}
             </div>
-          ) : (
-            <div className={styles.activity_time_column}>
-              <div>
-                {activity.date} {activity.time}
-              </div>
-              <div>
-                {activity.endDate} {activity.endTime}
-              </div>
+          </div>
+        ) : (
+          <div className={styles.activity_time_column}>
+            <div>
+              {activity.date} {activity.time}
             </div>
-          )
-        }
+            <div>
+              {activity.endDate} {activity.endTime}
+            </div>
+          </div>
+        )}
       </div>
-    )
+    );
   }
 
   function _createActivityList(activities: Activity[]) {
-    const items = []
+    const items = [];
     for (const activity of activities) {
       items.push(_createActivity(activity));
     }
@@ -608,34 +616,31 @@ function EventActivitiesPage() {
       <>
         {edit_privilege ? (
           <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
+            <Button className={styles.button} onClick={_addActivity}>
+              Создать активность
+            </Button>
           </div>
-        ) : (<></>)}
-        {activitiesLoaded ? (
-          <div className={styles.data_list}>
-            {items}
-          </div>)
-          :
-          (
-            <div />
-          )}
+        ) : (
+          <></>
+        )}
+        {activitiesLoaded ? <div className={styles.data_list}>{items}</div> : <div />}
       </>
-    )
+    );
   }
 
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
-  }
+  };
 
   function createOrgPersonRow(person: OrgPerson) {
     return (
       <tr key={person.id}>
         <td>{person.role}</td>
-        <td>{person.surname + " " + person.name}</td>
+        <td>{person.surname + ' ' + person.name}</td>
         <td>{person.email}</td>
       </tr>
-    )
+    );
   }
 
   function createPersonRow(person: Person) {
@@ -644,9 +649,9 @@ function EventActivitiesPage() {
         <td>{person.name}</td>
         <td>{person.email}</td>
         <td>{person.info}</td>
-        <td>{person.visited ? "Да" : "Нет"}</td>
+        <td>{person.visited ? 'Да' : 'Нет'}</td>
       </tr>
-    )
+    );
   }
 
   function _groupRoles(entries: OrgPerson[]) {
@@ -668,8 +673,8 @@ function EventActivitiesPage() {
     const orgList: OrgPerson[] = [] as OrgPerson[];
 
     userRoles.forEach((value: string[], key: string) => {
-      const org: OrgPerson = users.get(key) ?? new OrgPerson("", "", "", "", "");
-      orgList.push(new OrgPerson(org.id, org.name, org.surname, org.email, value.join(", ")));
+      const org: OrgPerson = users.get(key) ?? new OrgPerson('', '', '', '', '');
+      orgList.push(new OrgPerson(org.id, org.name, org.surname, org.email, value.join(', ')));
     });
 
     return orgList;
@@ -688,9 +693,13 @@ function EventActivitiesPage() {
       <>
         {add_organizer_privilege ? (
           <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_addOrganizer}>Добавить</Button>
+            <Button className={styles.button} onClick={_addOrganizer}>
+              Добавить
+            </Button>
           </div>
-        ) : <></>}
+        ) : (
+          <></>
+        )}
         <table className={styles.table}>
           <thead>
             <tr>
@@ -699,16 +708,14 @@ function EventActivitiesPage() {
               <th>Email</th>
             </tr>
           </thead>
-          <tbody>
-            {items}
-          </tbody>
+          <tbody>{items}</tbody>
         </table>
       </>
-    )
+    );
   }
 
   function createParticipantsTable(persons: Person[], edit_func: any) {
-    const items = []
+    const items = [];
     for (const person of persons) {
       items.push(createPersonRow(person));
     }
@@ -716,10 +723,16 @@ function EventActivitiesPage() {
       <>
         {edit_privilege ? (
           <div className={styles.button_container}>
-            <Button className={styles.buttonXlsx} onClick={edit_func}>Выгрузить xlsx</Button>
-            <Button className={styles.buttonXlsx} onClick={edit_func}>Загрузить xlsx</Button>
+            <Button className={styles.buttonXlsx} onClick={edit_func}>
+              Выгрузить xlsx
+            </Button>
+            <Button className={styles.buttonXlsx} onClick={edit_func}>
+              Загрузить xlsx
+            </Button>
           </div>
-        ) : <></>}
+        ) : (
+          <></>
+        )}
         <table className={styles.table}>
           <thead>
             <tr>
@@ -729,68 +742,80 @@ function EventActivitiesPage() {
               <th>Явка</th>
             </tr>
           </thead>
-          <tbody>
-            {items}
-          </tbody>
+          <tbody>{items}</tbody>
         </table>
       </>
-    )
+    );
   }
 
   const [orgs, setOrgs] = useState([] as OrgPerson[]);
 
   useEffect(() => {
     if (orgsVisible) {
-      api.withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
+      api
+        .withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
         .then((response) => {
-          const list = response.data.map(user => {
-            return new OrgPerson("" + user.id, user.name ?? "", user.surname ?? "", user.login ?? "", user.roleName ?? "");
+          const list = response.data.map((user) => {
+            return new OrgPerson(
+              '' + user.id,
+              user.name ?? '',
+              user.surname ?? '',
+              user.login ?? '',
+              user.roleName ?? ''
+            );
           });
 
           setOrgs(list);
         })
         .catch((error) => {
           console.log(error.response.data);
-        })
+        });
     }
   });
 
   const [participants, setParticipants] = useState([] as Person[]);
 
   useEffect(() => {
-    api.withReauth(() => api.participants.getParticipants(EVENT_ID))
+    api
+      .withReauth(() => api.participants.getParticipants(EVENT_ID))
       .then((response) => {
         // TODO: don't cast types
-        const data = (response.data as unknown) as ParticipantResponse[];
-        const list = data.map(user => {
-          return new Person("" + user.id, user.name ?? "", user.email ?? "", user.additionalInfo ?? "", user.visited ?? false);
-        })
+        const data = response.data as unknown as ParticipantResponse[];
+        const list = data.map((user) => {
+          return new Person(
+            '' + user.id,
+            user.name ?? '',
+            user.email ?? '',
+            user.additionalInfo ?? '',
+            user.visited ?? false
+          );
+        });
         setParticipants(list);
       })
       .catch((error) => {
         console.log(error.response.data);
-      })
+      });
   });
 
-  const locc = "cz";
+  const locc = 'cz';
 
   function _createTasksTable() {
     return (
       <div className={styles.tasks}>
-        <Gantt tasks={tasks} listCellWidth={""} locale={locc} />
+        <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
         <div className={styles.tasks__people}>
-        {eventTasksPeople.map(human =>
+          {eventTasksPeople.map((human) => (
             <div key={human.color} className={styles.tasks__human}>
               <span style={{ background: human.color }}></span>
               {human.name} {human.lastname}
             </div>
-          )}
+          ))}
         </div>
-      </div >
-    )
+      </div>
+    );
   }
 
-  const [selectedTab, setSelectedTab] = useState("Описание");
+  const [selectedTab, setSelectedTab] = useState('Описание');
 
   function pageTabHandler(tab_name: string) {
     setSelectedTab(tab_name);
@@ -801,30 +826,23 @@ function EventActivitiesPage() {
       topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={"Event"} />
+          <PageName text={'Event'} />
           <div className={styles.tabs}>
             <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
           </div>
         </div>
       }
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
-      bottomRight=
-      {
+      bottomRight={
         <Content>
           <div className={styles.content}>
-            {event == null || loadingEvent ? (
-              <p></p>
-            ) : (
-              selectedTab == "Описание" && _createInfoPage(event)
-            )}
-            {selectedTab == "Активности" && _createActivityList(activities)}
-            {selectedTab == "Организаторы" && createOrgsTable(orgs)}
-            {selectedTab == "Участники" && createParticipantsTable(participants, () => { })}
-            {selectedTab == "Задачи" && _createTasksTable()}
+            {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
+            {selectedTab == 'Активности' && _createActivityList(activities)}
+            {selectedTab == 'Организаторы' && createOrgsTable(orgs)}
+            {selectedTab == 'Участники' && createParticipantsTable(participants, () => {})}
+            {selectedTab == 'Задачи' && _createTasksTable()}
           </div>
-          <Fade
-            className={appendClassName(styles.fade,
-              (dialogData.visible) ? styles.visible : styles.hidden)}>
+          <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>
             <_Dialog />
           </Fade>
         </Content>

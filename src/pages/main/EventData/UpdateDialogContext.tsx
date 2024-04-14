@@ -1,19 +1,19 @@
-import Button from "@widgets/main/Button";
-import Input from "@widgets/main/Input";
-import InputLabel from "@widgets/main/InputLabel";
-import TextArea from "@widgets/main/TextArea";
-import DatePicker from "react-datepicker";
-import styles from './index.module.css'
-import { useContext, useEffect, useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
+import Button from '@widgets/main/Button';
+import Input from '@widgets/main/Input';
+import InputLabel from '@widgets/main/InputLabel';
+import TextArea from '@widgets/main/TextArea';
+import DatePicker from 'react-datepicker';
+import styles from './index.module.css';
+import { useContext, useEffect, useState } from 'react';
+import 'react-datepicker/dist/react-datepicker.css';
 import {
   AddActivityFormatEnum,
   AddActivityStatusEnum,
   EventRequest,
   EventResponse,
   PlaceResponse,
-} from "@shared/api/generated";
-import ApiContext from "@features/api-context.ts";
+} from '@shared/api/generated';
+import ApiContext from '@features/api-context.ts';
 
 function getAddActivityFormatEnum(value: string): AddActivityFormatEnum | undefined {
   for (const [_, v] of Object.entries(AddActivityFormatEnum)) {
@@ -42,10 +42,10 @@ function getAddActivityStatusEnum(value: string): AddActivityStatusEnum | undefi
 //   return undefined;
 // }
 type Props = {
-  eventId: number,
-  onSubmit: () => void,
-  eventInfo: EventResponse
-}
+  eventId: number;
+  onSubmit: () => void;
+  eventInfo: EventResponse;
+};
 
 const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   const [startDate, setStartDate] = useState<Date | null>(new Date(eventInfo.startDate!));
@@ -68,7 +68,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   const [image, setImage] = useState<File | undefined>(undefined);
   const { api } = useContext(ApiContext);
   const getPlaces = async () => {
-    const placesResponse = await api.place.getAllOrFilteredPlaces()
+    const placesResponse = await api.place.getAllOrFilteredPlaces();
     if (placesResponse.status == 200) {
       const placesData = placesResponse.data;
       setPlaceList(placeList.concat(placesData));
@@ -76,7 +76,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     } else {
       console.log(placesResponse.status);
     }
-  }
+  };
   useEffect(() => {
     getPlaces();
   }, []);
@@ -105,12 +105,9 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       preparingStart: preparingStartString!,
       preparingEnd: preparingEndString!,
       image: image!,
-    }
+    };
     console.log(eventRequest);
-    const result = await api.event.updateEvent(
-      eventId,
-      eventRequest
-    );
+    const result = await api.event.updateEvent(eventId, eventRequest);
     if (result.status == 200) {
       onSubmit();
     } else {
@@ -129,23 +126,20 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           <InputLabel value="Название" />
-          <Input value={title ?? ''}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <Input value={title ?? ''} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Краткое описание" />
           <TextArea
             value={shortDescription ?? ''}
             onChange={(e) => {
-              setShortDescription(e.target.value)
-            }} />
+              setShortDescription(e.target.value);
+            }}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Полное описание" />
-          <TextArea value={fullDescription ?? ''}
-            onChange={(e) => setFullDescription(e.target.value)}
-          />
+          <TextArea value={fullDescription ?? ''} onChange={(e) => setFullDescription(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальное количество участников" />
@@ -156,42 +150,44 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
-          <Input value={String(participantHighestAge)} onChange={(e) => setParticipantHighestAge(parseInt(e.target.value))} />
+          <Input
+            value={String(participantHighestAge)}
+            onChange={(e) => setParticipantHighestAge(parseInt(e.target.value))}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
-          <Input value={String(participantLowestAge)} onChange={(e) => setParticipantLowestAge(parseInt(e.target.value))} />
+          <Input
+            value={String(participantLowestAge)}
+            onChange={(e) => setParticipantLowestAge(parseInt(e.target.value))}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Формат" />
           <select value={format} onChange={(e) => setFormat(e.target.value as AddActivityFormatEnum)}>
-            {
-              Object.entries(AddActivityFormatEnum).map(([k, v]) => {
-                return <option value={k}>{v}</option>
-              })
-            }
+            {Object.entries(AddActivityFormatEnum).map(([k, v]) => {
+              return <option value={k}>{v}</option>;
+            })}
           </select>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Место" />
           <select value={place} onChange={(e) => setPlace(parseInt(e.target.value))}>
-            {
-              placesLoaded ? (
-                placeList.map(p => {
-                  return <option value={p.id}>{p.address}</option>
-                })
-              ) : (<option value=""></option>)
-            }
+            {placesLoaded ? (
+              placeList.map((p) => {
+                return <option value={p.id}>{p.address}</option>;
+              })
+            ) : (
+              <option value=""></option>
+            )}
           </select>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Состояние" />
-          <select value={status} onChange={(e) => setStatus(e.target.value as AddActivityStatusEnum)} >
-            {
-              Object.entries(AddActivityStatusEnum).map(([k, v]) => {
-                return <option value={k}>{v}</option>
-              })
-            }
+          <select value={status} onChange={(e) => setStatus(e.target.value as AddActivityStatusEnum)}>
+            {Object.entries(AddActivityStatusEnum).map(([k, v]) => {
+              return <option value={k}>{v}</option>;
+            })}
           </select>
         </div>
 
@@ -271,18 +267,21 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Картинка" />
-          <input type="file" onChange={(e) => {
-            if (e.target.files) {
-              const file = e.target.files[0]
-              setImage(file);
-            }
-          }} />
+          <input
+            type="file"
+            onChange={(e) => {
+              if (e.target.files) {
+                const file = e.target.files[0];
+                setImage(file);
+              }
+            }}
+          />
           {image && <p>Selected file: {image.name}</p>}
         </div>
       </div>
       <Button onClick={handleSubmit}>Редактировать</Button>
     </div>
   );
-}
+};
 
 export default UpdateDialogContent;

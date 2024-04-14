@@ -1,15 +1,15 @@
-import { appendClassName } from '@shared/util'
-import styles from './index.module.css'
+import { appendClassName } from '@shared/util';
+import styles from './index.module.css';
 
 type Props = {
-  value: string,
-  onChange: React.ChangeEventHandler<HTMLInputElement>
-  type?: React.HTMLInputTypeAttribute,
-  placeholder?: string,
-  className?: string,
-  error?: boolean,
-  errorText?: string,
-}
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  type?: React.HTMLInputTypeAttribute;
+  placeholder?: string;
+  className?: string;
+  error?: boolean;
+  errorText?: string;
+};
 
 function Input(props: Props) {
   const error = props.error ?? false;
@@ -19,10 +19,16 @@ function Input(props: Props) {
 
   return (
     <div className={appendClassName(styles.root, props.className)}>
-      <input type={props.type} placeholder={props.placeholder} className={appendClassName(styles.input, inputErrorStyle)} onChange={props.onChange} value={props.value} />
+      <input
+        type={props.type}
+        placeholder={props.placeholder}
+        className={appendClassName(styles.input, inputErrorStyle)}
+        onChange={props.onChange}
+        value={props.value}
+      />
       <p className={appendClassName(styles.helper_error, visibilityStyle)}>{errorText}</p>
     </div>
-  )
+  );
 }
 
-export default Input
+export default Input;

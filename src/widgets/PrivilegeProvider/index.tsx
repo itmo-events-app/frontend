@@ -4,10 +4,9 @@ import PrivilegeContext, { PrivilegeContextValue } from '@features/privilege-con
 import { PrivilegeNames } from '@shared/config/privileges';
 import { useContext, useEffect, useState } from 'react';
 
-
 type Props = {
-  children: any
-}
+  children: any;
+};
 
 const PrivilegeContextProvider = (props: Props) => {
   const [privilegeContext, setPrivilegeContext] = useState(new PrivilegeContextData());
@@ -16,9 +15,12 @@ const PrivilegeContextProvider = (props: Props) => {
   // load privileges on context first render
   useEffect(() => {
     if (api.isLoggedIn()) {
-      api.withReauth(() => api.profile.getUserSystemPrivileges())
-        .then(r => {
-          const privileges = r.data!.privileges!.map(p => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames]));
+      api
+        .withReauth(() => api.profile.getUserSystemPrivileges())
+        .then((r) => {
+          const privileges = r.data!.privileges!.map(
+            (p) => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames])
+          );
           const orgRoles = r.data!.hasOrganizerRolesResponse ?? false;
           updateSystemPrivileges(new Set(privileges), orgRoles);
         });
@@ -37,25 +39,23 @@ const PrivilegeContextProvider = (props: Props) => {
 
   function updateEventPrivileges(id: number, e: Set<PrivilegeData>) {
     privilegeContext.eventPrivileges.set(id, e);
-    setPrivilegeContext(new PrivilegeContextData(
-      privilegeContext.systemPrivileges,
-      privilegeContext.eventPrivileges,
-      privilegeContext.hasOrganizerRoles,
-    ));
+    setPrivilegeContext(
+      new PrivilegeContextData(
+        privilegeContext.systemPrivileges,
+        privilegeContext.eventPrivileges,
+        privilegeContext.hasOrganizerRoles
+      )
+    );
   }
 
   const contextValue: PrivilegeContextValue = {
     privilegeContext,
     resetPrivilegeContext,
     updateSystemPrivileges,
-    updateEventPrivileges
+    updateEventPrivileges,
   };
 
-  return (
-    <PrivilegeContext.Provider value={contextValue}>
-      {props.children}
-    </PrivilegeContext.Provider>
-  );
+  return <PrivilegeContext.Provider value={contextValue}>{props.children}</PrivilegeContext.Provider>;
 };
 
-export default PrivilegeContextProvider
+export default PrivilegeContextProvider;

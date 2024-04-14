@@ -32,7 +32,8 @@
   padding-bottom: 10px;
 }
 
-.button {}
+.button {
+}
 
 .image_box {
   position: relative;
@@ -217,7 +218,6 @@
 .inputEmpty {
   border: 1px solid red;
 }
-
 
 .tasks {
   display: block;
