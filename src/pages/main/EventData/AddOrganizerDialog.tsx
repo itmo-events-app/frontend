@@ -32,7 +32,7 @@ const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
       setRoleId(eventRoles[0].id);
       setRoleName(eventRoles[0].name);
     } else {
-      console.log(getEventRoles.status);
+      console.log(getAllRoles.status);
       console.log(getUsersResponse.status);
     }
   }
