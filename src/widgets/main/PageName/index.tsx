@@ -1,11 +1,11 @@
-import styles from './index.module.css'
+import styles from './index.module.css';
 
 type Props = {
-  text: string,
-}
+  text: string;
+};
 
 function PageName(props: Props) {
-  return <div className={styles.name}>{props.text}</div>
+  return <div className={styles.name}>{props.text}</div>;
 }
 
-export default PageName
+export default PageName;

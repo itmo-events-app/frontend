@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
-import styles from './index.module.css'
+import styles from './index.module.css';
 
 type Props = {
-  topLeft?: any,
-  topRight?: any,
-  bottomLeft?: any,
-  bottomRight?: any,
-  children?: any, // fixed positioned children
-}
+  topLeft?: any;
+  topRight?: any;
+  bottomLeft?: any;
+  bottomRight?: any;
+  children?: any; // fixed positioned children
+};
 
 function Layout(props: Props) {
   const topLeftRef = useRef(null);
@@ -42,22 +42,18 @@ function Layout(props: Props) {
           <div className={styles.top_left} ref={topLeftRef}>
             {props.topLeft}
           </div>
-          <div className={styles.bottom_left}>
-            {props.bottomLeft}
-          </div>
+          <div className={styles.bottom_left}>{props.bottomLeft}</div>
         </div>
         <div className={styles.column_right}>
           <div className={styles.top_right} ref={topRightRef}>
             {props.topRight}
           </div>
-          <div className={styles.bottom_right}>
-            {props.bottomRight}
-          </div>
+          <div className={styles.bottom_right}>{props.bottomRight}</div>
         </div>
       </div>
       {props.children}
     </div>
-  )
+  );
 }
 
 export default Layout;

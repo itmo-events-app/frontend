@@ -12,7 +12,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import Dialog from '@widgets/main/Dialog';
 import { appendClassName } from '@shared/util';
 
-import styles from './index.module.css'
+import styles from './index.module.css';
 import Fade from '@widgets/main/Fade';
 import { RoutePaths } from '@shared/config/routes';
 import { hasAnyPrivilege } from '@features/privileges';
@@ -30,12 +30,7 @@ class ContextMenuData {
   clientY: number;
   visible: boolean;
   items: ContextMenuItem[];
-  constructor(
-    clientX: number = 0,
-    clientY: number = 0,
-    visible: boolean = false,
-    items: ContextMenuItem[] = []
-  ) {
+  constructor(clientX: number = 0, clientY: number = 0, visible: boolean = false, items: ContextMenuItem[] = []) {
     this.clientX = clientX;
     this.clientY = clientY;
     this.visible = visible;
@@ -46,18 +41,14 @@ class ContextMenuData {
 enum DialogSelected {
   NONE,
   CREATE,
-  UPDATE
+  UPDATE,
 }
 
 class DialogData {
   heading: string | undefined;
   visible: DialogSelected;
   args: any;
-  constructor(
-    heading?: string,
-    visible: DialogSelected = DialogSelected.NONE,
-    args: any = {}
-  ) {
+  constructor(heading?: string, visible: DialogSelected = DialogSelected.NONE, args: any = {}) {
     this.heading = heading;
     this.visible = visible;
     this.args = args;
@@ -65,17 +56,10 @@ class DialogData {
 }
 
 const privilegeOthers = {
-  create: new Set([
-    new PrivilegeData(PrivilegeNames.CREATE_ROLE)
-  ]),
-  edit: new Set([
-    new PrivilegeData(PrivilegeNames.EDIT_ROLE)
-  ]),
-  delete: new Set([
-    new PrivilegeData(PrivilegeNames.DELETE_ROLE)
-  ]),
-
-}
+  create: new Set([new PrivilegeData(PrivilegeNames.CREATE_ROLE)]),
+  edit: new Set([new PrivilegeData(PrivilegeNames.EDIT_ROLE)]),
+  delete: new Set([new PrivilegeData(PrivilegeNames.DELETE_ROLE)]),
+};
 
 function RoleListPage() {
   const { privilegeContext } = useContext(PrivilegeContext);
@@ -89,10 +73,10 @@ function RoleListPage() {
   const cmRef = useRef(null);
   const dialogRef = useRef(null);
 
-  const menuVisible = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
-    ...privilegeOthers.edit,
-    ...privilegeOthers.delete
-  ]))
+  const menuVisible = hasAnyPrivilege(
+    privilegeContext.systemPrivileges,
+    new Set([...privilegeOthers.edit, ...privilegeOthers.delete])
+  );
 
   const [roles, setRoles] = useState([] as RoleElement[]);
 
@@ -105,7 +89,7 @@ function RoleListPage() {
       current.style.left = `${cmData.clientX - (cmRef.current as any).offsetWidth}px`;
       current.style.top = `${cmData.clientY}px`;
     }
-  },)
+  });
 
   // close context menu when clicking outside
   useEffect(() => {
@@ -115,11 +99,11 @@ function RoleListPage() {
           _closeContextMenu();
         }
       }
-    }
+    };
     document.addEventListener('click', handler);
     return () => {
       document.removeEventListener('click', handler);
-    }
+    };
   }, [cmData, cmRef]);
 
   // close dialog when clicking outside
@@ -130,38 +114,39 @@ function RoleListPage() {
           _closeDialog();
         }
       }
-    }
+    };
     document.addEventListener('click', handler);
     return () => {
       document.removeEventListener('click', handler);
-    }
+    };
   }, [dialogData, dialogRef]);
 
   // load roles on page open
   useEffect(() => {
-    api.withReauth(() => api.role.getAllRoles())
-      .then(r => {
-        const l = createRoleElementList(r.data.map(role => toRoleModel(role)))
+    api
+      .withReauth(() => api.role.getAllRoles())
+      .then((r) => {
+        const l = createRoleElementList(r.data.map((role) => toRoleModel(role)));
         setRoles(l);
-      })
-  }, [])
+      });
+  }, []);
 
   const _closeDialog = () => {
     setDialogData(new DialogData());
-  }
+  };
 
   const _closeContextMenu = () => {
     setCmData(new ContextMenuData());
-  }
+  };
 
   const _onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-  }
+  };
 
   const _openCreateDialog = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Создание роли', DialogSelected.CREATE));
     e.stopPropagation();
-  }
+  };
 
   const _onMenuClick = (role: RoleModel, e: React.MouseEvent) => {
     const contextItems: ContextMenuItem[] = [
@@ -174,105 +159,111 @@ function RoleListPage() {
         setCmData({ ...cmData, visible: false });
         _deleteRole(role);
       }),
-    ]
+    ];
 
     const mine = privilegeContext.systemPrivileges;
 
-    const filteredItems = contextItems.filter(item => {
+    const filteredItems = contextItems.filter((item) => {
       switch (item.text) {
-        case 'Редактировать': return hasAnyPrivilege(mine, privilegeOthers.edit) && role.isEditable
-        case 'Удалить': return hasAnyPrivilege(mine, privilegeOthers.delete) && role.isEditable
+        case 'Редактировать':
+          return hasAnyPrivilege(mine, privilegeOthers.edit) && role.isEditable;
+        case 'Удалить':
+          return hasAnyPrivilege(mine, privilegeOthers.delete) && role.isEditable;
       }
-    })
+    });
 
     e.stopPropagation();
     setCmData(new ContextMenuData(e.clientX, e.clientY, true, filteredItems));
-  }
+  };
 
   const _onSearchSearch = (v: string) => {
-    api.withReauth(() => api.role.searchByName(v))
-      .then(r => {
-        setRoles(createRoleElementList(r.data.map(role => toRoleModel(role))));
-      })
-  }
+    api
+      .withReauth(() => api.role.searchByName(v))
+      .then((r) => {
+        setRoles(createRoleElementList(r.data.map((role) => toRoleModel(role))));
+      });
+  };
 
   const _createRoleCallback = (role: RoleModel) => {
     const prevRoles = roleElementListGetElements(roles);
     setRoles(createRoleElementList([...prevRoles, role]));
     setDialogData(new DialogData());
-  }
+  };
 
   const _updateRoleCallback = (prev: RoleModel, cur: RoleModel) => {
     const prevRoles = roleElementListGetElements(roles);
 
-    setRoles(createRoleElementList(prevRoles.map(p => {
-      if (p.id == prev.id) {
-        return cur;
-      }
-      return p;
-    })))
+    setRoles(
+      createRoleElementList(
+        prevRoles.map((p) => {
+          if (p.id == prev.id) {
+            return cur;
+          }
+          return p;
+        })
+      )
+    );
     setDialogData(new DialogData());
-  }
+  };
 
   const _deleteRole = (cur: RoleModel) => {
-    api.withReauth(() => api.role.deleteRole(cur.id))
-      .then(_ => {
+    api
+      .withReauth(() => api.role.deleteRole(cur.id))
+      .then((_) => {
         const prevRoles = roleElementListGetElements(roles);
-        setRoles(createRoleElementList(prevRoles.filter(r => r.id !== cur.id)));
-      })
-  }
+        setRoles(createRoleElementList(prevRoles.filter((r) => r.id !== cur.id)));
+      });
+  };
 
   const _RolesContent = () => {
     return (
       <Content className={styles.content}>
         <div className={styles.top}>
           <Search value={search} onChange={_onSearchChange} onSearch={_onSearchSearch} placeholder="Поиск роли" />
-          {hasAnyPrivilege(privilegeContext.systemPrivileges, privilegeOthers.create)
-            ? <Button onClick={_openCreateDialog} className={styles.create_button}>Создать роль</Button>
-            : <></>}
+          {hasAnyPrivilege(privilegeContext.systemPrivileges, privilegeOthers.create) ? (
+            <Button onClick={_openCreateDialog} className={styles.create_button}>
+              Создать роль
+            </Button>
+          ) : (
+            <></>
+          )}
         </div>
         <RoleList roles={roles} setRoles={setRoles} onMenuClick={menuVisible ? _onMenuClick : undefined} />
       </Content>
-    )
-  }
+    );
+  };
 
   const _ContextMenu = () => {
-    return <ContextMenu
-      items={cmData.items}
-      className={appendClassName(styles.context_menu,
-        (cmData.visible ? styles.visible : styles.hidden))}
-      ref={cmRef}
-    />;
-  }
+    return (
+      <ContextMenu
+        items={cmData.items}
+        className={appendClassName(styles.context_menu, cmData.visible ? styles.visible : styles.hidden)}
+        ref={cmRef}
+      />
+    );
+  };
 
   const _Dialog = () => {
-    let component = <></>
+    let component = <></>;
     switch (dialogData.visible) {
       case DialogSelected.CREATE:
-        component = <CreateDialogContent
-          callback={_createRoleCallback}
-          {...dialogData.args}
-        />
+        component = <CreateDialogContent callback={_createRoleCallback} {...dialogData.args} />;
         break;
       case DialogSelected.UPDATE:
-        component = <UpdateDialogContent
-          callback={_updateRoleCallback}
-          {...dialogData.args}
-        />;
+        component = <UpdateDialogContent callback={_updateRoleCallback} {...dialogData.args} />;
         break;
     }
     return (
       <Dialog
-        className={appendClassName(styles.dialog,
-          (dialogData.visible ? styles.visible : styles.hidden))}
+        className={appendClassName(styles.dialog, dialogData.visible ? styles.visible : styles.hidden)}
         text={dialogData.heading}
         ref={dialogRef}
         onClose={_closeDialog}
       >
         {component}
       </Dialog>
-    )
-  }
+    );
+  };
 
   return (
     <Layout
@@ -282,15 +273,11 @@ function RoleListPage() {
       bottomRight={_RolesContent()}
     >
       <_ContextMenu />
-      <Fade
-        className={appendClassName(styles.fade,
-          (dialogData.visible) ? styles.visible : styles.hidden)}>
+      <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>
         <_Dialog />
       </Fade>
     </Layout>
   );
 }
-
-
 
 export default RoleListPage;

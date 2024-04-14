@@ -1,4 +1,4 @@
-import { uid } from 'uid'
+import { uid } from 'uid';
 import styles from './index.module.css';
 import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
@@ -10,27 +10,24 @@ import Button from '@widgets/auth/Button';
 import { useNavigate } from 'react-router-dom';
 
 class EventRole {
-  id: string
-  eventName: string
-  eventRole: string
+  id: string;
+  eventName: string;
+  eventRole: string;
 
-  constructor(
-    eventName: string,
-    eventRole: string,
-  ) {
+  constructor(eventName: string, eventRole: string) {
     this.id = uid();
     this.eventName = eventName;
     this.eventRole = eventRole;
   }
 }
 
-const _mainRole: string = "USER";
+const _mainRole: string = 'USER';
 
 const _additionalRoles: EventRole[] = [
-  new EventRole("Событие 1", "Главный оргаизатор"),
-  new EventRole("Событие 2", "Помощник организатора"),
-  new EventRole("Событие 3", "Модератор")
-]
+  new EventRole('Событие 1', 'Главный оргаизатор'),
+  new EventRole('Событие 2', 'Помощник организатора'),
+  new EventRole('Событие 3', 'Модератор'),
+];
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -54,11 +51,11 @@ function ProfilePage() {
     return (
       <table className={styles.roles_table}>
         <tbody>
-        <tr>
-          <th>Основная роль</th>
-          <th>{mainRole}</th>
-        </tr>
-        {items}
+          <tr>
+            <th>Основная роль</th>
+            <th>{mainRole}</th>
+          </tr>
+          {items}
         </tbody>
       </table>
     );
@@ -69,14 +66,13 @@ function ProfilePage() {
       topLeft={<BrandLogo />}
       topRight={<PageName text="Профиль" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.profile} />}
-      bottomRight=
-        {
-          <Content>
-            <div className={styles.root}>
-              <div className={styles.profile}>
-                <div className={styles.profile_col}>
-                  <table className={styles.table}>
-                    <tbody>
+      bottomRight={
+        <Content>
+          <div className={styles.root}>
+            <div className={styles.profile}>
+              <div className={styles.profile_col}>
+                <table className={styles.table}>
+                  <tbody>
                     <tr>
                       <td>Имя</td>
                       <td>Иванов Иван</td>
@@ -85,18 +81,20 @@ function ProfilePage() {
                       <td>Уведомления</td>
                       <td>Включены</td>
                     </tr>
-                    </tbody>
-                  </table>
-                  <div className={styles.button_row}>
-                    <Button className={styles.button}>Редактировать</Button>
-                    <Button className={styles.button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
-                  </div>
+                  </tbody>
+                </table>
+                <div className={styles.button_row}>
+                  <Button className={styles.button}>Редактировать</Button>
+                  <Button className={styles.button} onClick={() => navigate(RoutePaths.login)}>
+                    Выйти
+                  </Button>
                 </div>
               </div>
-              {_createRoleTable(_mainRole, _additionalRoles)}
             </div>
-          </Content>
-        }
+            {_createRoleTable(_mainRole, _additionalRoles)}
+          </div>
+        </Content>
+      }
     />
   );
 }
