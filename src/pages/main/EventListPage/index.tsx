@@ -20,7 +20,7 @@ import { appendClassName } from '@shared/util.ts';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context';
-import { ParticipantResponse } from '@shared/api/generated';
+import { EventResponse } from '@shared/api/generated';
 
 enum DisplayModes {
   LIST = 'Показать списком',
@@ -51,12 +51,23 @@ const eventStatusList = Object.values(EventStatusList);
 const eventFormatList = Object.values(EventFormatList);
 const eventAgeList = Object.values(EventAgeList);
 
-const initialFilters = {
+type InitialFilters = {
+  title: string,
+  startDate: string | null,
+  registrationStartDate: string | null,
+  registrationEndDate: string | null,
+  endDate: string | null,
+  status: string,
+  format: string,
+  eventAge: string
+}
+
+const initialFilters: InitialFilters = {
   title: '',
-  startDate: '',
-  registrationStartDate: '',
-  registrationEndDate: '',
-  endDate: '',
+  startDate: null,
+  registrationStartDate: null,
+  registrationEndDate: null,
+  endDate: null,
   status: '',
   format: '',
   eventAge: '',
@@ -105,19 +116,21 @@ function EventListPage() {
       const response = await api.event.getAllOrFilteredEvents();
       if (response.status === 200) {
         // TODO: don't cast types
-        const data = response.data as unknown as ParticipantResponse[];
+        const data = response.data.items as unknown as EventResponse[];
         const pagesPromises = data.map(async (e) => {
           let address: string | undefined = '';
-          const response = await api.place.placeGet(e.id);
-          console.log(response);
-          if (response.status == 200) {
-            const place = response.data;
-            address = place.address;
-          } else {
-            console.log(response.status);
+          if (e.placeId) {
+            const response = await api.place.placeGet(e.placeId);
+            console.log(response);
+            if (response.status == 200) {
+              const place = response.data;
+              address = place.address;
+            } else {
+              console.log(response.status);
+            }
           }
           return new PageEntry(() => {
-            return _entryStub(e.id, address ?? '', e.additionalInfo!);
+            return _entryStub(e.id!, address ?? '', e.title!);
           });
         });
         const pages = await Promise.all(pagesPromises);
@@ -260,7 +273,7 @@ function EventListPage() {
                   placeholderText="Начало регистрации"
                   className={styles.filter_element}
                   onChange={(date) => _handleFilterChange(formatDate(date), 'registrationStartDate')}
-                  selected={new Date(filters.registrationStartDate)}
+                  selected={filters.registrationStartDate ? new Date(filters.registrationStartDate) : null}
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
                 />
@@ -268,7 +281,7 @@ function EventListPage() {
                   placeholderText="Конец регистрации"
                   className={styles.filter_element}
                   onChange={(date) => _handleFilterChange(formatDate(date), 'registrationEndDate')}
-                  selected={new Date(filters.registrationEndDate)}
+                  selected={filters.registrationEndDate ? new Date(filters.registrationEndDate) : null}
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
                 />
@@ -276,7 +289,7 @@ function EventListPage() {
                   placeholderText="Начало проведения"
                   className={styles.filter_element}
                   onChange={(date) => _handleFilterChange(formatDate(date), 'startDate')}
-                  selected={new Date(filters.startDate)}
+                  selected={filters.startDate ? new Date(filters.startDate) : null}
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
                 />
@@ -284,7 +297,7 @@ function EventListPage() {
                   placeholderText="Конец проведения"
                   className={styles.filter_element}
                   onChange={(date) => _handleFilterChange(formatDate(date), 'endDate')}
-                  selected={new Date(filters.endDate)}
+                  selected={filters.endDate ? new Date(filters.endDate) : null}
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
                 />
