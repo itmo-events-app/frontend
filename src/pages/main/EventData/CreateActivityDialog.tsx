@@ -59,7 +59,6 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
     const registrationEndString = convertToLocaleDateTime(registrationEnd);
     const preparingStartString = convertToLocaleDateTime(preparingStart);
     const preparingEndString = convertToLocaleDateTime(preparingEnd);
-    console.log(status);
     const result = await api.event.addActivity(
       place,
       startDateString!,
