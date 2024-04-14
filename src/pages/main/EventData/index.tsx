@@ -5,17 +5,18 @@ import BrandLogo from '@widgets/main/BrandLogo';
 import Layout from '@widgets/main/Layout';
 import PageName from '@widgets/main/PageName';
 import SideBar from '@widgets/main/SideBar';
-import Content from '@widgets/main/Content';
-import PageTabs, { PageTab } from '@widgets/main/PageTabs';
-import { RoutePaths } from '@shared/config/routes';
-import Button from '@widgets/main/Button';
-import { PrivilegeNames } from '@shared/config/privileges.ts';
-import { useParams } from 'react-router-dom';
-import { appendClassName } from '@shared/util.ts';
-import Fade from '@widgets/main/Fade';
-import UpdateDialogContent from './UpdateDialogContext.tsx';
-import Dialog from '@widgets/main/Dialog';
-import CreateActivityDialog from './CreateActivityDialog.tsx';
+import Content from "@widgets/main/Content";
+import PageTabs, { PageTab } from "@widgets/main/PageTabs";
+import { RouteParams, RoutePaths } from "@shared/config/routes";
+import Button from "@widgets/main/Button";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
+import { useNavigate, useParams } from "react-router-dom";
+import { appendClassName } from "@shared/util.ts";
+import Fade from "@widgets/main/Fade";
+import UpdateDialogContent from "./UpdateDialogContext.tsx";
+import Dialog from "@widgets/main/Dialog";
+import CreateActivityDialog from "./CreateActivityDialog.tsx";
 import { Gantt, Task } from 'gantt-task-react';
 import { getImageUrl } from '@shared/lib/image.ts';
 import ApiContext from '@features/api-context.ts';
@@ -24,7 +25,6 @@ import 'gantt-task-react/dist/index.css';
 import { EventResponse, ParticipantResponse, TaskResponse } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
-import { hasAnyPrivilege } from '@features/privileges.ts';
 
 class EventInfo {
   regDates: string;
@@ -64,16 +64,18 @@ class EventInfo {
 }
 
 class Activity {
-  id: string;
-  name: string;
-  place: string;
-  room: string;
-  description: string;
-  date: string;
-  time: string;
-  endDate: string;
-  endTime: string;
+  id: string
+  activityId: string
+  name: string
+  place: string
+  room: string
+  description: string
+  date: string
+  time: string
+  endDate: string
+  endTime: string
   constructor(
+    activityId: string,
     activityName: string,
     place: string,
     room: string,
@@ -84,6 +86,7 @@ class Activity {
     endTime: string
   ) {
     this.id = uid();
+    this.activityId = activityId;
     this.name = activityName;
     this.place = place;
     this.room = room;
@@ -191,15 +194,11 @@ let tasks: Task[] = [
 ];
 //ff9933
 
-const edit_privilege: boolean = true;
-const add_organizer_privilege: boolean = true;
 
-function readDate(dateTime: string | undefined | null) {
-  if (dateTime) {
-    const date = new Date(dateTime);
-    return date.toISOString().split('T')[0];
-  }
-  return null;
+function readDate(dateTime: string) {
+  const date = new Date(dateTime);
+  const formattedDate = date.toISOString().split('T')[0];
+  return formattedDate
 }
 
 function getTimeOnly(dateTimeString: string) {
@@ -245,9 +244,9 @@ function EventActivitiesPage() {
             }
           }
           const info = new EventInfo(
-            readDate(data.registrationStart) + ' - ' + readDate(data.registrationEnd),
-            readDate(data.preparingStart) + ' - ' + readDate(data.preparingEnd),
-            readDate(data.startDate) + ' - ' + readDate(data.endDate),
+            readDate(data.registrationStart??'') + ' - ' + readDate(data.registrationEnd??''),
+            readDate(data.preparingStart??'') + ' - ' + readDate(data.preparingEnd??''),
+            readDate(data.startDate??'') + ' - ' + readDate(data.endDate??''),
             String(data.participantLimit),
             placeAddress,
             data.format ?? '',
@@ -274,7 +273,7 @@ function EventActivitiesPage() {
       }
     });
     setLoadingEvent(false);
-  });
+  },[]);
 
   useEffect(() => {
     api
@@ -289,6 +288,11 @@ function EventActivitiesPage() {
       });
   }, []);
 
+  const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in privilegeContext;
+  const edit_privilege: boolean = PrivilegeNames.EDIT_EVENT_ACTIVITIES in privilegeContext;
+  const add_organizer_privilege: boolean = PrivilegeNames.ASSIGN_ORGANIZER_ROLE in privilegeContext;
+  const add_helper_privilege: boolean = PrivilegeNames.ASSIGN_ASSISTANT_ROLE in privilegeContext;
+  const add_activity_privilege: boolean = PrivilegeNames.CREATE_EVENT_ACTIVITIES in privilegeContext;
   interface peopleTasks {
     name: string | undefined;
     lastname: string | undefined;
@@ -355,6 +359,9 @@ function EventActivitiesPage() {
     }
   }, eventTasks);
 
+  const [activitiesVisible, setActivitiesVisible] = useState(false);
+  const [orgsVisible, setOrgsVisible] = useState(false);
+
   function _getPrivileges(id: number): Set<PrivilegeData> {
     if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
       return privilegeContext.getPrivilegesForEvent(id)!;
@@ -364,10 +371,13 @@ function EventActivitiesPage() {
     return new Set();
   }
 
-  const eventPrivileges = id != null ? _getPrivileges(parseInt(id)) : new Set<PrivilegeData>();
-
-  const activitiesVisible: boolean = hasAnyPrivilege(eventPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)]));
-  const orgsVisible: boolean = hasAnyPrivilege(eventPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)]));
+  useEffect(() => {
+    if (id) {
+      const privileges = _getPrivileges(parseInt(id));
+      setActivitiesVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])));
+      setOrgsVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])));
+    }
+  }, [privilegeContext]);
 
   const pageTabs: PageTab[] = [];
 
@@ -383,9 +393,9 @@ function EventActivitiesPage() {
 
   pageTabs.push(new PageTab('Участники'));
 
-  // if (tasksVisible) {
+  if (tasksVisible) {
   pageTabs.push(new PageTab('Задачи'));
-  //}
+  }
 
   class DialogData {
     heading: string | undefined;
@@ -536,7 +546,7 @@ function EventActivitiesPage() {
   const getActivities = async () => {
     const response = await api.event.getAllOrFilteredEvents(undefined, undefined, parseInt(id!));
     if (response.status == 200) {
-      const items = (response.data.items ?? []) as EventResponse[];
+      const items = (response.data ?? []) as EventResponse[];
       const activities = items.map(async (a) => {
         const placeResponse = await api.place.placeGet(a.placeId!);
         let place = '';
@@ -548,14 +558,19 @@ function EventActivitiesPage() {
         } else {
           console.log(response.status);
         }
+        let idString = '';
+        if(a.id!=null){
+          idString = a.id.toString();
+        }
         return new Activity(
+          idString,
           a.title ?? '',
           place,
           room,
           a.shortDescription ?? '',
-          readDate(a.startDate) ?? '',
+          readDate(a.startDate??'') ?? '',
           getTimeOnly(a.startDate ?? ''),
-          readDate(a.endDate) ?? '',
+          readDate(a.endDate??'') ?? '',
           getTimeOnly(a.endDate ?? '')
         );
       });
@@ -569,11 +584,17 @@ function EventActivitiesPage() {
 
   useEffect(() => {
     getActivities();
-  });
+  }, []);
+
+  const navigate = useNavigate();
+  const _event = (id:string) => {
+    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID,id));
+    window.location.reload();
+  }
 
   function _createActivity(activity: Activity) {
     return (
-      <div key={activity.id} className={styles.activity_container}>
+      <div key={activity.id} className={styles.activity_container} onClick={()=>_event(activity.activityId)}>
         <div className={styles.activity_info_column}>
           <div className={styles.activity_name}>{activity.name}</div>
           <div className={styles.activity_place_container}>
@@ -610,20 +631,22 @@ function EventActivitiesPage() {
     }
     return (
       <>
-        {edit_privilege ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_addActivity}>
-              Создать активность
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
-        {activitiesLoaded ? <div className={styles.data_list}>{items}</div> : <div />}
+        {add_activity_privilege ? (
+           <div className={styles.button_container}>
+             <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
+           </div>
+         ) : (<></>)}
+        {activitiesLoaded ? (
+          <div className={styles.data_list}>
+            {items}
+          </div>)
+          :
+          (
+            <div />
+          )}
       </>
     );
   }
-
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
@@ -687,7 +710,7 @@ function EventActivitiesPage() {
 
     return (
       <>
-        {add_organizer_privilege ? (
+        {add_organizer_privilege && add_helper_privilege? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_addOrganizer}>
               Добавить
@@ -767,7 +790,7 @@ function EventActivitiesPage() {
           console.log(error.response.data);
         });
     }
-  });
+  },[]);
 
   const [participants, setParticipants] = useState([] as Person[]);
 
@@ -791,7 +814,7 @@ function EventActivitiesPage() {
       .catch((error) => {
         console.log(error.response.data);
       });
-  });
+  },[]);
 
   const locc = 'cz';
 

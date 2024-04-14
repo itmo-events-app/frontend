@@ -1,24 +1,30 @@
-import { useNavigate } from 'react-router-dom';
-import { RoutePaths } from '@shared/config/routes.ts';
-import styles from './index.module.css';
-import { Home } from '@shared/ui/icons';
-import Layout from '@widgets/main/Layout';
-import PagedList, { PageEntry } from '@widgets/main/PagedList';
-import BrandLogo from '@widgets/main/BrandLogo';
-import PageName from '@widgets/main/PageName';
-import SideBar from '@widgets/main/SideBar';
-import Search from '@widgets/main/Search';
-import Button from '@widgets/main/Button';
-import Content from '@widgets/main/Content';
-import Input from '@widgets/main/Input';
-import Label from '@widgets/auth/InputLabel';
-import { useContext, useState } from 'react';
-import Dialog from '@widgets/main/Dialog';
-import { useQuery } from '@tanstack/react-query';
-import { placeService } from '@features/place-service.ts';
-import ApiContext from '@features/api-context.ts';
-import { PlaceRequestFormatEnum, PlaceResponse } from '@shared/api/generated';
-import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
+import { useNavigate } from "react-router-dom";
+import { RoutePaths } from "@shared/config/routes.ts";
+import styles from "./index.module.css";
+import { Home } from "@shared/ui/icons";
+import Layout from "@widgets/main/Layout";
+import PagedList, { PageEntry } from "@widgets/main/PagedList";
+import BrandLogo from "@widgets/main/BrandLogo";
+import PageName from "@widgets/main/PageName";
+import SideBar from "@widgets/main/SideBar";
+import Search from "@widgets/main/Search";
+import Button from "@widgets/main/Button";
+import Content from "@widgets/main/Content";
+import Input from "@widgets/main/Input";
+import Label from "@widgets/auth/InputLabel";
+import { useContext, useEffect, useState } from "react";
+import Dialog from "@widgets/main/Dialog";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { placeService } from "@features/place-service.ts";
+import ApiContext from "@features/api-context.ts";
+import { PlaceRequestFormatEnum, PlaceResponse } from "@shared/api/generated";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeData } from "@entities/privilege-context.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
+import PrivilegeContext from "@features/privilege-context.ts";
+import UpdatePlaceDialog from "@pages/main/PlaceListPage/UpdatePlaceContext.tsx";
+
 
 const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
   const { api } = useContext(ApiContext);
@@ -153,28 +159,66 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
 
 function PlaceListPage() {
   const { api } = useContext(ApiContext);
+  const { privilegeContext } = useContext(PrivilegeContext);
 
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [searchName, setSearchName] = useState('');
-  const { data: foundPlaces = [] } = useQuery({
+  const { data: allPlaces = [] } = useQuery({
     queryFn: placeService.getPlaces(api),
     queryKey: ['getPlaces'],
   });
 
-  const openModal = () => {
-    setModalOpen(true);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [id, setId] = useState<number>(0);
+  const [searchName, setSearchName] = useState("");
+
+  const [filteredPlaces, setFilteredPlaces] = useState<PlaceResponse[]>(allPlaces);
+
+  const { mutate: getFilteredPlaces  } = useMutation({
+    mutationFn: placeService.getFilteredPlaces(api),
+    mutationKey: ["getFilteredPlaces"],
+    onSuccess: (res) => {
+      setFilteredPlaces(res);
+    }
+  });
+
+  useEffect(() => {
+    setFilteredPlaces(allPlaces);
+  }, [allPlaces]);
+
+  const openModalCreate = () => {
+    setCreateModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
+  const closeModalCreate = () => {
+    setCreateModalOpen(false);
+  };
+
+  const openModalUpdate = () => {
+    setUpdateModalOpen(true);
+  };
+
+  const closeModalUpdate = () => {
+    setUpdateModalOpen(false);
   };
 
   const _onSearch = () => {
-    console.log('searching');
+    if (searchName !== "") {
+      getFilteredPlaces({name: searchName});
+    } else setFilteredPlaces(allPlaces);
   };
 
   const _onCreation = () => {
-    openModal();
+    openModalCreate();
+  };
+
+  const _onUpdate = (id: number) => {
+    setId(id)
+    openModalUpdate();
+  };
+
+  const _onDelete = (id: number) => {
+    placeService.deletePlace(api, id);
+    location.reload();
   };
 
   const navigate = useNavigate();
@@ -182,7 +226,7 @@ function PlaceListPage() {
     navigate(`${id}`);
   };
 
-  const _places: PageEntry[] = foundPlaces.map((place: PlaceResponse) => {
+  const _places: PageEntry[] = filteredPlaces.map((place: PlaceResponse) => {
     return new PageEntry(() => {
       return _entryStub(place.id, place.name, place.address);
     });
@@ -190,13 +234,40 @@ function PlaceListPage() {
 
   function _entryStub(index?: number, name?: string, address?: string) {
     return (
-      <a key={index} onClick={() => _event(index ?? 0)} className={styles.place_entry}>
-        <Home className={styles.place_icon} />
-        <div className={styles.place_info_column}>
-          <div className={styles.place_name}>{name}</div>
-          <div className={styles.place_address}>{address}</div>
-        </div>
-      </a>
+      <div>
+        <a key={index} className={styles.place_entry}>
+          <Home className={styles.place_icon} onClick={() => _event(index ?? 0)} />
+          <div className={styles.place_info_column} onClick={() => _event(index ?? 0)}>
+            <div className={styles.place_name}>
+              {name}
+            </div>
+            <div className={styles.place_address}>
+              {address}
+            </div>
+          </div>
+          <div className={styles.place_buttons}>
+            {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+              new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
+            ])) ? <div className={styles.button}>
+                <Button onClick={() => _onUpdate(index!)}>Редактировать</Button>
+              </div>
+              : <></>}
+            {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+              new PrivilegeData(PrivilegeNames.DELETE_EVENT_VENUE),
+            ])) ? <div>
+                <Button className={styles.delete_button} onClick={() => _onDelete(index!)}>
+                  <svg className={styles.delete_button_svg} xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                       fill="none" viewBox="0 0 24 24"
+                       stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </Button>
+              </div>
+              : <></>}
+          </div>
+        </a>
+      </div>
     );
   }
 
@@ -220,9 +291,12 @@ function PlaceListPage() {
                     }}
                   />
                 </div>
-                <div className={styles.button}>
-                  <Button onClick={_onCreation}>Создать</Button>
-                </div>
+                {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+                  new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
+                ])) ? <div className={styles.button}>
+                    <Button onClick={_onCreation}>Создать</Button>
+                  </div>
+                  : <></>}
               </div>
               <div className={styles.event_list_container}>
                 <PagedList page={1} page_size={5} page_step={5} items={_places} />
@@ -231,7 +305,8 @@ function PlaceListPage() {
           </Content>
         }
       />
-      {isModalOpen && <CreatePlaceDialog onClose={closeModal} />}
+      {isCreateModalOpen && <CreatePlaceDialog onClose={closeModalCreate} />}
+      {isUpdateModalOpen && <UpdatePlaceDialog onClose={closeModalUpdate} id={id} />}
     </>
   );
 }

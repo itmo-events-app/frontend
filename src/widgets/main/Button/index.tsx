@@ -1,19 +1,15 @@
-import React from 'react';
-import { appendClassName } from '@shared/util';
-import styles from './index.module.css';
+import { FC, HTMLProps } from "react";
+import { appendClassName } from "@shared/util";
+import styles from "./index.module.css";
 
 type Props = {
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   children?: any;
   className?: string;
-};
+  type?: "button" | "submit" | "reset";
+} & HTMLProps<HTMLButtonElement>;
 
-function Button(props: Props) {
-  return (
-    <button className={appendClassName(styles.button, props.className)} onClick={props.onClick}>
-      {props.children}
-    </button>
-  );
-}
+const Button: FC<Props> = ({ className, children, ...rest }) => (
+  <button className={appendClassName(styles.button, className)} {...rest}>{children}</button>
+);
 
 export default Button;

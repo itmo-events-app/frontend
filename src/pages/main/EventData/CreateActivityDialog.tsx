@@ -155,7 +155,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Время начала" />
           <DatePicker
             selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            onChange={(date: Date) => setStartDate(date)}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
@@ -167,7 +167,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Время окончания" />
           <DatePicker
             selected={endDate}
-            onChange={(date) => setEndDate(date)}
+            onChange={(date: Date) => setEndDate(date)}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
@@ -179,7 +179,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Время начала регистрации" />
           <DatePicker
             selected={registrationStart}
-            onChange={(date) => setRegistrationStart(date)}
+            onChange={(date: Date) => setRegistrationStart(date)}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
@@ -191,7 +191,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Время окончания регистрации" />
           <DatePicker
             selected={registrationEnd}
-            onChange={(date) => setRegistrationEnd(date)}
+            onChange={(date: Date) => setRegistrationEnd(date)}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
@@ -203,7 +203,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Время начала подготовки" />
           <DatePicker
             selected={preparingStart}
-            onChange={(date) => {
+            onChange={(date: Date) => {
               setPreparingStart(date);
             }}
             showTimeSelect
@@ -217,7 +217,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Время окончания подготовки" />
           <DatePicker
             selected={preparingEnd}
-            onChange={(date) => setPreparingEnd(date)}
+            onChange={(date: Date) => setPreparingEnd(date)}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}

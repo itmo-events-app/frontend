@@ -171,7 +171,7 @@ function EventListPage() {
   };
   useEffect(() => {
     getEventList();
-  }, [filters]);
+  }, []);
 
   //dialog
   class DialogData {

@@ -15,11 +15,16 @@ const PrivilegeContextProvider = (props: Props) => {
   // load privileges on context first render
   useEffect(() => {
     updateSystemPrivileges();
+    console.log('system');
   }, [api]);
 
   function resetPrivilegeContext() {
     setPrivilegeContext(new PrivilegeContextData());
   }
+
+  useEffect(() => {
+    console.log(privilegeContext);
+  }, [privilegeContext])
 
   function updateSystemPrivileges() {
     if (api.isLoggedIn()) {
