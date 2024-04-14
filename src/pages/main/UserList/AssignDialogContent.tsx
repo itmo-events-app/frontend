@@ -39,9 +39,8 @@ const AssignDialogContent = (props: AssignProps) => {
           <RoleListRadio roles={roles} setRoles={setRoles} />
         </div>
       </div>
-      {/*//todo change color if disabled*/}
+      {/*//todo make button disabled if none selected*/}
       <Button onClick={_onDoneWrapper}
-              disabled={getSelectedRoleId === null}
               className={getSelectedRoleId === null ? styles.disabled_button : undefined}>Назначить роль</Button>
     </div>
   );
