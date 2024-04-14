@@ -23,6 +23,7 @@ import PrivilegeContext from '@features/privilege-context';
 import { MenuVertical } from '@shared/ui/icons';
 import RevokeDialogContent from '@pages/main/UserList/RevokeDialogContent';
 import MessageDialogContent from '@pages/main/UserList/MessageDialogContent';
+import {UserSystemRoleResponse} from "@shared/api/generated/model";
 
 class ContextMenuData {
   clientX: number;
@@ -117,7 +118,7 @@ export default function UserListPage() {
   function _fetchUsers() {
     api.withReauth(() => api.profile.getAllUsers(searchQuery, page, size))
       .then(r => {
-        const l = r.data.items.map(user => toUserModel(user))
+        const l = r.data.items?.map((user: UserSystemRoleResponse) => toUserModel(user)) || [];
         setUsers(l);
       });
   }
