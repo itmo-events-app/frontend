@@ -68,6 +68,8 @@ export default function UserListPage() {
   const cmRef = useRef(null);
 
   const [searchQuery, setSearchQuery] = useState("")
+  const [page] = useState(0)
+  const [size] = useState(10)
   //todo use when new paging is done
   // const [page, setPage] = useState(0)
   // const [size, setSize] = useState(10)
@@ -75,8 +77,6 @@ export default function UserListPage() {
 
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
-
-  const [searchValue, setSearchValue] = useState('');
 
   const menuVisible = hasAnyPrivilege(
     privilegeContext.systemPrivileges,
