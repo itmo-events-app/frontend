@@ -191,10 +191,12 @@ let tasks: Task[] = [
 const edit_privilege: boolean = true;
 const add_organizer_privilege: boolean = true;
 
-function readDate(dateTime: string) {
-  const date = new Date(dateTime);
-  const formattedDate = date.toISOString().split('T')[0];
-  return formattedDate;
+function readDate(dateTime: string | null) {
+  if (dateTime) {
+    const date = new Date(dateTime);
+    return date.toISOString().split('T')[0];
+  }
+  return null;
 }
 
 function getTimeOnly(dateTimeString: string) {
@@ -229,27 +231,29 @@ function EventActivitiesPage() {
         const eventResponse = await api.event.getEventById(parseInt(id ?? '0'));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
-          let placeAddress = '';
-          const placeResponse = await api.place.placeGet(data.placeId ?? 0);
-          if (placeResponse.status == 200) {
-            placeAddress = placeResponse.data.address ?? '';
-            const info = new EventInfo(
-              readDate(data.registrationStart ?? '') + ' - ' + readDate(data.registrationEnd ?? ''),
-              readDate(data.preparingStart ?? '') + ' - ' + readDate(data.preparingEnd ?? ''),
-              readDate(data.startDate ?? '') + ' - ' + readDate(data.endDate ?? ''),
-              String(data.participantLimit),
-              placeAddress,
-              data.format ?? '',
-              data.status ?? '',
-              data.participantAgeLowest + ' - ' + data.participantAgeHighest,
-              data.title ?? '',
-              data.fullDescription ?? ''
-            );
-            setEvent(info);
-            setEventResponse(data);
-          } else {
-            console.log(placeResponse.status);
+          let placeAddress = 'Отсутствует'
+          if (data.placeId) {
+            const placeResponse = await api.place.placeGet(data.placeId ?? 0);
+            if (placeResponse.status == 200) {
+              placeAddress = placeResponse.data.address ?? '';
+            } else {
+              console.log(placeResponse.status);
+            }
           }
+          const info = new EventInfo(
+            readDate(data.registrationStart) + ' - ' + readDate(data.registrationEnd),
+            readDate(data.preparingStart) + ' - ' + readDate(data.preparingEnd),
+            readDate(data.startDate) + ' - ' + readDate(data.endDate),
+            String(data.participantLimit),
+            placeAddress,
+            data.format ?? '',
+            data.status ?? '',
+            data.participantAgeLowest + ' - ' + data.participantAgeHighest,
+            data.title ?? '',
+            data.fullDescription ?? ''
+          );
+          setEvent(info);
+          setEventResponse(data);
         } else {
           console.error('Error fetching event list:', eventResponse.statusText);
         }
@@ -557,9 +561,9 @@ function EventActivitiesPage() {
           place,
           room,
           a.shortDescription ?? '',
-          readDate(a.startDate ?? ''),
+          readDate(a.startDate),
           getTimeOnly(a.startDate ?? ''),
-          readDate(a.endDate ?? ''),
+          readDate(a.endDate),
           getTimeOnly(a.endDate ?? '')
         );
       });
@@ -839,7 +843,7 @@ function EventActivitiesPage() {
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}
             {selectedTab == 'Организаторы' && createOrgsTable(orgs)}
-            {selectedTab == 'Участники' && createParticipantsTable(participants, () => {})}
+            {selectedTab == 'Участники' && createParticipantsTable(participants, () => { })}
             {selectedTab == 'Задачи' && _createTasksTable()}
           </div>
           <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>
