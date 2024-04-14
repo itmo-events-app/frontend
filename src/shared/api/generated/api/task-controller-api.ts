@@ -22,15 +22,101 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import { FileDataResponse } from '../model';
+// @ts-ignore
 import { TaskRequest } from '../model';
 // @ts-ignore
 import { TaskResponse } from '../model';
+// @ts-ignore
+import { UploadFilesRequest } from '../model';
 /**
  * TaskControllerApi - axios parameter creator
  * @export
  */
 export const TaskControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @summary Удаление файлов из задачи
+         * @param {number} id ID задачи
+         * @param {Array<string>} requestBody 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFiles: async (id: number, requestBody: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteFiles', 'id', id)
+            // verify required parameter 'requestBody' is not null or undefined
+            assertParamExists('deleteFiles', 'requestBody', requestBody)
+            const localVarPath = `/api/tasks/{id}/files`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(requestBody, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получение списка имен файлов задачи
+         * @param {number} id ID задачи
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFileNames: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getFileNames', 'id', id)
+            const localVarPath = `/api/tasks/{id}/files`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary Создание задачи
@@ -601,6 +687,48 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Добавление файлов к задаче
+         * @param {number} id ID задачи
+         * @param {UploadFilesRequest} [uploadFilesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        uploadFiles: async (id: number, uploadFilesRequest?: UploadFilesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('uploadFiles', 'id', id)
+            const localVarPath = `/api/tasks/{id}/files`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(uploadFilesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -611,6 +739,33 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
 export const TaskControllerApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = TaskControllerApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 
+         * @summary Удаление файлов из задачи
+         * @param {number} id ID задачи
+         * @param {Array<string>} requestBody 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteFiles(id: number, requestBody: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFiles(id, requestBody, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskControllerApi.deleteFiles']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Получение списка имен файлов задачи
+         * @param {number} id ID задачи
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFileNames(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<FileDataResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFileNames(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskControllerApi.getFileNames']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
         /**
          * 
          * @summary Создание задачи
@@ -787,6 +942,20 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
             const operationBasePath = operationServerMap['TaskControllerApi.taskTakeOn']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Добавление файлов к задаче
+         * @param {number} id ID задачи
+         * @param {UploadFilesRequest} [uploadFilesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async uploadFiles(id: number, uploadFilesRequest?: UploadFilesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<string>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.uploadFiles(id, uploadFilesRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskControllerApi.uploadFiles']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
     }
 };
 
@@ -797,6 +966,27 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
 export const TaskControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = TaskControllerApiFp(configuration)
     return {
+        /**
+         * 
+         * @summary Удаление файлов из задачи
+         * @param {number} id ID задачи
+         * @param {Array<string>} requestBody 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFiles(id: number, requestBody: Array<string>, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteFiles(id, requestBody, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получение списка имен файлов задачи
+         * @param {number} id ID задачи
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFileNames(id: number, options?: any): AxiosPromise<Array<FileDataResponse>> {
+            return localVarFp.getFileNames(id, options).then((request) => request(axios, basePath));
+        },
         /**
          * 
          * @summary Создание задачи
@@ -937,6 +1127,17 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
         taskTakeOn(id: number, options?: any): AxiosPromise<TaskResponse> {
             return localVarFp.taskTakeOn(id, options).then((request) => request(axios, basePath));
         },
+        /**
+         * 
+         * @summary Добавление файлов к задаче
+         * @param {number} id ID задачи
+         * @param {UploadFilesRequest} [uploadFilesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        uploadFiles(id: number, uploadFilesRequest?: UploadFilesRequest, options?: any): AxiosPromise<Array<string>> {
+            return localVarFp.uploadFiles(id, uploadFilesRequest, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -947,6 +1148,31 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
  * @extends {BaseAPI}
  */
 export class TaskControllerApi extends BaseAPI {
+    /**
+     * 
+     * @summary Удаление файлов из задачи
+     * @param {number} id ID задачи
+     * @param {Array<string>} requestBody 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskControllerApi
+     */
+    public deleteFiles(id: number, requestBody: Array<string>, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).deleteFiles(id, requestBody, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получение списка имен файлов задачи
+     * @param {number} id ID задачи
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskControllerApi
+     */
+    public getFileNames(id: number, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).getFileNames(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @summary Создание задачи
@@ -1109,6 +1335,19 @@ export class TaskControllerApi extends BaseAPI {
      */
     public taskTakeOn(id: number, options?: AxiosRequestConfig) {
         return TaskControllerApiFp(this.configuration).taskTakeOn(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Добавление файлов к задаче
+     * @param {number} id ID задачи
+     * @param {UploadFilesRequest} [uploadFilesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskControllerApi
+     */
+    public uploadFiles(id: number, uploadFilesRequest?: UploadFilesRequest, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).uploadFiles(id, uploadFilesRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

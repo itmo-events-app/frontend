@@ -1,13 +1,13 @@
-import { PrivilegeData } from "@entities/privilege-context";
-import PrivilegeContext from "@features/privilege-context";
-import { useContext } from "react"
-import { Navigate } from "react-router-dom";
+import { PrivilegeData } from '@entities/privilege-context';
+import PrivilegeContext from '@features/privilege-context';
+import { useContext } from 'react';
+import { Navigate } from 'react-router-dom';
 
 type Props = {
-  children: any,
-  whenAllowed: (x: Set<PrivilegeData>) => boolean,
-  rejectNavigateTo: string,
-}
+  children: any;
+  whenAllowed: (x: Set<PrivilegeData>) => boolean;
+  rejectNavigateTo: string;
+};
 
 const Authorized = (props: Props) => {
   const { privilegeContext } = useContext(PrivilegeContext);
@@ -22,10 +22,10 @@ const Authorized = (props: Props) => {
     if (isAuthorized) {
       return props.children;
     }
-    return <Navigate to={props.rejectNavigateTo} replace />
+    return <Navigate to={props.rejectNavigateTo} replace />;
   }
 
   return _Content();
-}
+};
 
-export default Authorized
+export default Authorized;

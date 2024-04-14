@@ -1,49 +1,46 @@
-import {useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useState } from 'react';
 
-import styles from './index.module.css'
-import Button from "@widgets/main/Button";
-import {toRoleModel} from "@entities/role";
-import ApiContext from "@features/api-context";
-import RoleListRadio, {
-  createRoleRadioElementList,
-  getSelectedRoleId,
-  RoleRadioElement
-} from "@widgets/main/RoleListRadio";
+import styles from './index.module.css';
+import Button from '@widgets/main/Button';
+import { toRoleModel } from '@entities/role';
+import ApiContext from '@features/api-context';
+import RoleListRadio from '@widgets/main/RoleListRadio';
+import { RoleRadioElement, createRoleRadioElementList, getSelectedRoleId } from '@widgets/main/RoleListRadio/common';
 
 type AssignProps = {
-  userId: number,
-  onDone: (userId: number, roleId: number | null) => void
-}
+  userId: number;
+  onDone: (userId: number, roleId: number | null) => void;
+};
 
 const AssignDialogContent = (props: AssignProps) => {
   const { api } = useContext(ApiContext);
   const [roles, setRoles] = useState([] as RoleRadioElement[]);
 
   const _onDoneWrapper = () => {
-    props.onDone(props.userId, getSelectedRoleId(roles))
-  }
+    props.onDone(props.userId, getSelectedRoleId(roles));
+  };
 
   // load roles on dialog open
   useEffect(() => {
-    api.withReauth(() => api.role.getSystemRoles())
-      .then(r => {
-        const l = createRoleRadioElementList(r.data.map(role => toRoleModel(role)))
+    api
+      .withReauth(() => api.role.getSystemRoles())
+      .then((r) => {
+        const l = createRoleRadioElementList(r.data.map((role) => toRoleModel(role)));
         setRoles(l);
-      })
-  }, [])
-
+      });
+  }, []);
 
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
-          <RoleListRadio roles={roles} setRoles={setRoles}  />
+          <RoleListRadio roles={roles} setRoles={setRoles} />
         </div>
       </div>
       //todo make button non-clickable if nothing selected
       <Button onClick={_onDoneWrapper}>Назначить роль</Button>
     </div>
   );
-}
+};
 
 export default AssignDialogContent;

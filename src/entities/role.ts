@@ -1,9 +1,9 @@
-import { GetAllPrivilegesTypeEnum, RoleRequest, RoleResponse } from "@shared/api/generated";
-import { PrivilegeModel, toPrivilegeModel } from "@entities/privilege";
+import { GetAllPrivilegesTypeEnum, RoleRequest, RoleResponse } from '@shared/api/generated';
+import { PrivilegeModel, toPrivilegeModel } from '@entities/privilege';
 
 enum RoleModelType {
-  SYSTEM = "Системная",
-  EVENT = "Организационная",
+  SYSTEM = 'Системная',
+  EVENT = 'Организационная',
 }
 
 class RoleModel {
@@ -14,7 +14,14 @@ class RoleModel {
   private _description?: string;
   private _isEditable: boolean;
 
-  constructor(id: number, name: string, type: RoleModelType, privileges?: PrivilegeModel[], description?: string, isEditable: boolean = true) {
+  constructor(
+    id: number,
+    name: string,
+    type: RoleModelType,
+    privileges?: PrivilegeModel[],
+    description?: string,
+    isEditable: boolean = true
+  ) {
     this._id = id;
     this._name = name;
     this._type = type;
@@ -23,21 +30,32 @@ class RoleModel {
     this._isEditable = isEditable;
   }
 
-  get id() { return this._id }
-  get name() { return this._name; }
-  get description() { return this._description; }
-  get privileges() { return this._privileges; }
-  get type() { return this._type; }
-  get isEditable() { return this._isEditable; }
+  get id() {
+    return this._id;
+  }
+  get name() {
+    return this._name;
+  }
+  get description() {
+    return this._description;
+  }
+  get privileges() {
+    return this._privileges;
+  }
+  get type() {
+    return this._type;
+  }
+  get isEditable() {
+    return this._isEditable;
+  }
 }
-
 
 function toRoleModel(role: RoleResponse): RoleModel {
   const type = RoleModelType[role.type!];
 
   let privileges = undefined;
   if (role.privileges) {
-    privileges = role.privileges.map(p => toPrivilegeModel(p));
+    privileges = role.privileges.map((p) => toPrivilegeModel(p));
   }
 
   return new RoleModel(role.id!, role.name!, type, privileges, role.description, role.isEditable);
@@ -46,26 +64,19 @@ function toRoleModel(role: RoleResponse): RoleModel {
 function fromRoleModel(role: RoleModel): RoleRequest {
   let privileges = undefined;
   if (role.privileges) {
-    privileges = role.privileges.map(p => p.id);
+    privileges = role.privileges.map((p) => p.id);
   }
-
 
   return {
     name: role.name,
     description: role.description ?? '',
     isEvent: role.type == RoleModelType.EVENT,
     privileges: privileges ?? [],
-  }
+  };
 }
 
 function copyRole(item: RoleModel) {
-  return new RoleModel(
-    item.id,
-    item.name,
-    item.type,
-    [...(item.privileges ?? [])],
-    item.description,
-  )
+  return new RoleModel(item.id, item.name, item.type, [...(item.privileges ?? [])], item.description);
 }
 
 function fromRoleModelType(type: RoleModelType) {
@@ -75,6 +86,5 @@ function fromRoleModelType(type: RoleModelType) {
   return modelType as GetAllPrivilegesTypeEnum;
 }
 
-
-export { toRoleModel, fromRoleModel, copyRole, fromRoleModelType }
-export { RoleModel, RoleModelType }
+export { toRoleModel, fromRoleModel, copyRole, fromRoleModelType };
+export { RoleModel, RoleModelType };

@@ -1,25 +1,27 @@
-import { PrivilegeNames } from "@shared/config/privileges";
+import { PrivilegeNames } from '@shared/config/privileges';
 
 class PrivilegeData {
-  _name: PrivilegeNames
+  _name: PrivilegeNames;
 
   constructor(name: PrivilegeNames) {
     this._name = name;
   }
 
-  get name() { return this._name }
+  get name() {
+    return this._name;
+  }
 }
 
 // NOTE: undefined - hasn't been loaded, empty - no privileges
 class PrivilegeContextData {
   _systemPrivileges?: Set<PrivilegeData>;
   _eventPrivileges: Map<number, Set<PrivilegeData>>;
-  _hasOrganizerRoles: boolean
+  _hasOrganizerRoles: boolean;
 
   constructor(
     systemPrivileges: Set<PrivilegeData> | undefined = undefined,
     eventPrivileges: Map<number, Set<PrivilegeData>> = new Map(),
-    hasOrganizerRoles: boolean = false,
+    hasOrganizerRoles: boolean = false
   ) {
     this._systemPrivileges = systemPrivileges;
     this._eventPrivileges = eventPrivileges;
@@ -51,4 +53,4 @@ class PrivilegeContextData {
   }
 }
 
-export { PrivilegeData, PrivilegeContextData }
+export { PrivilegeData, PrivilegeContextData };

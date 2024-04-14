@@ -2,15 +2,19 @@ import { RoleModel } from "@entities/role";
 import Button from "@widgets/main/Button";
 import InputLabel from "@widgets/main/InputLabel";
 import styles from './index.module.css';
-import { useContext, useEffect, useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
+import { useContext, useEffect, useState } from 'react';
+import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
+import { RoleResponse, UserSystemRoleResponse } from '@shared/api/generated';
 
-
-type UpdateProps = {
-  role: RoleModel,
-  onDone: (prev: RoleModel, cur: RoleModel) => void
-}
+const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: () => void }) => {
+  const [userList, setUserList] = useState([] as UserSystemRoleResponse[]);
+  const [userId, setUserId] = useState<number | undefined>(undefined);
+  const [roleList, setRoleList] = useState([] as RoleResponse[]);
+  const [roleId, setRoleId] = useState<number | undefined>(undefined);
+  const [roleName, setRoleName] = useState<string | undefined>('');
+  const [loaded, setLoaded] = useState(false);
+  const { api } = useContext(ApiContext);
 
 const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
   const [userList, setUserList] = useState([]);
@@ -35,31 +39,24 @@ const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
       console.log(getAllRoles.status);
       console.log(getUsersResponse.status);
     }
-  }
-  useEffect( ()=> {
-      initDialog();
-      setLoaded(true);
-    }
-    , []);
+  };
+  useEffect(() => {
+    initDialog();
+    setLoaded(true);
+  }, []);
 
-  const handleAddOrganizer = async () =>{
+  const handleAddOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
-    if(roleName=="Организатор") {
-      const result = await api.role.assignOrganizerRole(
-        parseInt(userId),
-        eventId,
-      );
+    if (roleName == 'Организатор') {
+      const result = await api.role.assignOrganizerRole(userId!, eventId);
       if (result.status != 204) {
         console.log(result.status);
       } else {
         onSubmit();
       }
-    }else if(roleName=="Помощник"){
-      const result = await api.role.assignAssistantRole(
-        parseInt(userId),
-        eventId,
-      );
+    } else if (roleName == 'Помощник') {
+      const result = await api.role.assignAssistantRole(userId!, eventId);
       if (result.status != 204) {
         console.log(result.status);
       } else {
@@ -103,6 +100,6 @@ const AddOrganizerDialog = ({props: UpdateProps,eventId, onSubmit}) => {
       <Button onClick={handleAddOrganizer}>Добавить</Button>
     </div>
   );
-}
+};
 
 export default AddOrganizerDialog;
