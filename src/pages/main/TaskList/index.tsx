@@ -7,7 +7,7 @@ import SideBar from "@widgets/main/SideBar";
 import Button from "@widgets/main/Button";
 import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { RoutePaths } from "@shared/config/routes";
-import { FC, MouseEvent, useContext, useEffect, useState } from "react";
+import { FC, ReactNode, useContext, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { taskService } from "@features/task-service.ts";
 import { format } from "date-fns";
@@ -65,70 +65,70 @@ const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
     <div className={styles.content}>
       <table className={styles.table}>
         <thead>
-        <tr>
-          <th>Название</th>
-          <th>Описание</th>
-          <th>Дедлайн</th>
-          <th>Ответственный</th>
-          <th>Мероприятие</th>
-          <th>Активность*</th>
-          <th>Статус</th>
-        </tr>
+          <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Дедлайн</th>
+            <th>Ответственный</th>
+            <th>Мероприятие</th>
+            <th>Активность*</th>
+            <th>Статус</th>
+          </tr>
         </thead>
         <tbody>
-        {tasks.map(task => (
-          <tr key={task.id}>
-            <td>{task.title}</td>
-            <td>
-              <Popup trigger={<div>
-                {task.description!.slice(0, 20)}
-                {task.description!.length! > 20 && <span>...</span>}
-              </div>}
-                     modal nested>
-                {
-                  (close: ((event: MouseEvent<HTMLButtonElement, MouseEvent>) => void) | undefined) => (
-                    <div className={styles.popup__wrapper}>
-                      <div className={styles.popupContentBold}>
-                        {"Описание задачи:"}<br /><br />
+          {tasks.map(task => (
+            <tr key={task.id}>
+              <td>{task.title}</td>
+              <td>
+                <Popup trigger={<div>
+                  {task.description!.slice(0, 20)}
+                  {task.description!.length! > 20 && <span>...</span>}
+                </div>}
+                  modal nested>
+                  {
+                    ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
+                      <div className={styles.popup__wrapper}>
+                        <div className={styles.popupContentBold}>
+                          {"Описание задачи:"}<br /><br />
+                        </div>
+                        <div className={styles.popupContent}>
+                          {task.description!}
+                        </div>
+                        <div className={styles.popupButton}>
+                          <Button onClick={close}>
+                            Скрыть
+                          </Button>
+                        </div>
                       </div>
-                      <div className={styles.popupContent}>
-                        {task.description!}
-                      </div>
-                      <div className={styles.popupButton}>
-                        <Button onClick={close}>
-                          Скрыть
-                        </Button>
-                      </div>
-                    </div>
-                  )
-                }
-              </Popup>
+                    )) as unknown as ReactNode
+                  }
+                </Popup>
 
-            </td>
-            <td>
-              {format(task.deadline!, "H:mm")} <br />
-              {format(task.deadline!, "do MMMM, yyyy", { locale: ru })}
-            </td>
-            <td>{task.assignee?.name + " " + task.assignee?.surname}
-            </td>
-            <td>
-              <Button onClick={() => redirectToEvent(task.event!.eventId!)}>{task.event!.eventTitle}</Button>
-            </td>
-            <td>{task.event!.activityTitle ? task.event!.activityTitle : "-"}</td>
-            <td className={styles.dropdown}>
-              {canChangeTaskStatus ?
-                (<Dropdown placeholder={statusTranslation[task.taskStatus!]}
-                           items={newTaskOptions}
-                           toText={(item) => item.value}
-                           value={selectedStatus}
-                           onChange={(sel) => {
-                             updateTaskStatus({ newStatus: sel.value, id: task.id! });
-                             setStatus(sel);
-                           }}
-                />) : (<>{statusTranslation[task.taskStatus!]}</>)}
-            </td>
-          </tr>
-        ))}
+              </td>
+              <td>
+                {format(task.deadline!, "H:mm")} <br />
+                {format(task.deadline!, "do MMMM, yyyy", { locale: ru })}
+              </td>
+              <td>{task.assignee?.name + " " + task.assignee?.surname}
+              </td>
+              <td>
+                <Button onClick={() => redirectToEvent(task.event!.eventId!)}>{task.event!.eventTitle}</Button>
+              </td>
+              <td>{task.event!.activityTitle ? task.event!.activityTitle : "-"}</td>
+              <td className={styles.dropdown}>
+                {canChangeTaskStatus ?
+                  (<Dropdown placeholder={statusTranslation[task.taskStatus!]}
+                    items={newTaskOptions}
+                    toText={(item) => item.value}
+                    value={selectedStatus}
+                    onChange={(sel) => {
+                      updateTaskStatus({ newStatus: sel.value, id: task.id! });
+                      setStatus(sel);
+                    }}
+                  />) : (<>{statusTranslation[task.taskStatus!]}</>)}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
@@ -184,32 +184,32 @@ function TaskListPage() {
       topRight={<PageName text="Мои задачи" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.taskList} />}
       bottomRight=
-        {
-          <Content>
-            <div className="tasks-filter">
-              <h2 className="tasks-filter__title">Фильтр задач</h2>
-              <form className={styles.tasksfilter__form}>
-                <div className={styles.dropdown}>
-                  <Dropdown value={selectedEvent} placeholder="Мероприятие"
-                            items={filterEvents}
-                            toText={(item) => item.value}
-                            onChange={setSelectedEvent}
-                            onClear={() => {
-                              setSelectedEvent(undefined);
-                            }}
-                  />
-                </div>
-                <Button onClick={(event) => {
-                  event.preventDefault();
-                  handleFilterClick();
-                }}>
-                  Применить
-                </Button>
-              </form>
-            </div>
-            <TaskTable tasks={filteredTasks} api={api} />
-          </Content>
-        }
+      {
+        <Content>
+          <div className="tasks-filter">
+            <h2 className="tasks-filter__title">Фильтр задач</h2>
+            <form className={styles.tasksfilter__form}>
+              <div className={styles.dropdown}>
+                <Dropdown value={selectedEvent} placeholder="Мероприятие"
+                  items={filterEvents}
+                  toText={(item) => item.value}
+                  onChange={setSelectedEvent}
+                  onClear={() => {
+                    setSelectedEvent(undefined);
+                  }}
+                />
+              </div>
+              <Button onClick={(event) => {
+                event.preventDefault();
+                handleFilterClick();
+              }}>
+                Применить
+              </Button>
+            </form>
+          </div>
+          <TaskTable tasks={filteredTasks} api={api} />
+        </Content>
+      }
     />
   );
 }
