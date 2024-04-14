@@ -277,7 +277,7 @@ function RoleListPage() {
   return (
     <Layout
       topLeft={<BrandLogo />}
-      topRight={<PageName text="Список ролей" />}
+      topRight={<PageName text="Роли" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.roleList} />}
       bottomRight={_RolesContent()}
     >

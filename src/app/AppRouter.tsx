@@ -17,6 +17,7 @@ import Authenticated from "@widgets/Authenticated";
 import Authorized from "@widgets/Authorized";
 import UserListPage from "@pages/main/UserList";
 import HomeRedirectPage from "@pages/main/HomeRedirectPage";
+import RequestListPage from "@pages/main/RequestListPage";
 import { AppRouteProps } from "@features/app-route-props";
 import { anyPrivilege } from "@features/privileges";
 import { PrivilegeData } from "@entities/privilege-context";
@@ -162,7 +163,7 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <ProfilePage />,
   },
   [AppRoutes.REQUEST_LIST]: {
-    element: <>Request List</>,
+    element: <RequestListPage />,
   },
   [AppRoutes.NOT_FOUND]: {
     element: <>404 not found</>,

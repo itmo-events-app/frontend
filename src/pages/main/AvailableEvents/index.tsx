@@ -230,7 +230,7 @@ function AvailableEventsPage() {
   return (
     <Layout
       topLeft={<BrandLogo />}
-      topRight={<PageName text="Доступные мероприятия" />}
+      topRight={<PageName text="Мероприятия" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventList} />}
       bottomRight=
       {
