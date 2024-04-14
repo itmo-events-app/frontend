@@ -57,7 +57,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
     <div className={styles.dialog_content}>
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
-        <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
+a       <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
           {loaded ? (
             userList.map((u) => {
               return <option value={u.id}>{u.name}</option>;

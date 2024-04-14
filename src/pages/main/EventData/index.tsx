@@ -191,7 +191,7 @@ let tasks: Task[] = [
 const edit_privilege: boolean = true;
 const add_organizer_privilege: boolean = true;
 
-function readDate(dateTime: string | null) {
+function readDate(dateTime: string | undefined | null) {
   if (dateTime) {
     const date = new Date(dateTime);
     return date.toISOString().split('T')[0];
@@ -561,9 +561,9 @@ function EventActivitiesPage() {
           place,
           room,
           a.shortDescription ?? '',
-          readDate(a.startDate),
+          readDate(a.startDate) ?? '',
           getTimeOnly(a.startDate ?? ''),
-          readDate(a.endDate),
+          readDate(a.endDate) ?? '',
           getTimeOnly(a.endDate ?? '')
         );
       });
