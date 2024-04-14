@@ -43,7 +43,6 @@ type FilterType = {
   [key: string]: number | string | GetAllOrFilteredEventsStatusEnum | GetAllOrFilteredEventsFormatEnum | undefined;
 }
 
-
 const initialFilters : FilterType = {
   title: "",
   startDate: "",
@@ -90,7 +89,6 @@ const PageItemStub = (props: PageItemStubProps) => {
     </a>
   );
 }
-
 
 function getEnumValueFromString<T>(enumObject: T, value: string): T[keyof T] | undefined {
     for (const key in enumObject) {
@@ -161,10 +159,10 @@ function EventListPage() {
         setItemList(pages);
         setLoading(false);
       } else {
-        console.error('Error fetching event list:', response.statusText);
+        console.error("Error fetching event list:", response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching event list:', error);
+      console.error("Error fetching event list:", error);
     }
   };
   useEffect(() => {
@@ -186,9 +184,11 @@ function EventListPage() {
       this.args = args;
     }
   }
+
   const [dialogData, setDialogData] = useState(new DialogData());
   //const [roles, setRoles] = useState([] as RoleElement[]);
   const dialogRef = useRef(null);
+
   enum DialogSelected {
     NONE,
     CREATEEVENT = 1,

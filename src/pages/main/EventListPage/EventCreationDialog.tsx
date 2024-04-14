@@ -80,6 +80,6 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
           </div>
         </Content>
   );
-}
+};
 
 export default EventCreationDialog;
