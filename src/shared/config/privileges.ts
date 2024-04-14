@@ -42,8 +42,8 @@ export const PrivilegeRecords = [
   ['DECLINE_TASK_EXECUTION', 'EVENT', 'Отказ от исполнения задачи'],
   ['IMPORT_PARTICIPANT_LIST_XLSX', 'EVENT', 'Импорт списка участников в формате xlsx'],
   ['EXPORT_PARTICIPANT_LIST_XLSX', 'EVENT', 'Экспорт списка участников в формате xlsx'],
-  ['WORK_WITH_PARTICIPANT_LIST', 'EVENT', 'Работа со списком участников']
-]
+  ['WORK_WITH_PARTICIPANT_LIST', 'EVENT', 'Работа со списком участников'],
+];
 
 export enum PrivilegeNames {
   APPROVE_REGISTRATION_REQUEST,

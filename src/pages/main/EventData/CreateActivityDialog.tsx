@@ -1,15 +1,15 @@
-import Button from "@widgets/main/Button";
-import Input from "@widgets/main/Input";
-import InputLabel from "@widgets/main/InputLabel";
-import TextArea from "@widgets/main/TextArea";
-import DatePicker from "react-datepicker";
+import Button from '@widgets/main/Button';
+import Input from '@widgets/main/Input';
+import InputLabel from '@widgets/main/InputLabel';
+import TextArea from '@widgets/main/TextArea';
+import DatePicker from 'react-datepicker';
 import styles from './index.module.css';
-import { useContext, useEffect, useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
+import { useContext, useEffect, useState } from 'react';
+import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
-import { AddActivityFormatEnum, AddActivityStatusEnum, PlaceResponse } from "@shared/api/generated";
+import { AddActivityFormatEnum, AddActivityStatusEnum, PlaceResponse } from '@shared/api/generated';
 
-const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number, onSubmit: () => void }) => {
+const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubmit: () => void }) => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [title, setTitle] = useState('');
@@ -31,7 +31,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number, onSubm
   const [image, setImage] = useState<File | undefined>(undefined);
   const { api } = useContext(ApiContext);
   const getPlaces = async () => {
-    const placesResponse = await api.place.getAllOrFilteredPlaces()
+    const placesResponse = await api.place.getAllOrFilteredPlaces();
     if (placesResponse.status == 200) {
       const placesData = placesResponse.data;
       setPlaceList(placeList.concat(placesData));
@@ -39,12 +39,11 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number, onSubm
     } else {
       console.log(placesResponse.status);
     }
-  }
+  };
 
   useEffect(() => {
     getPlaces();
-  }
-    , []);
+  }, []);
   function convertToLocaleDateTime(date: Date | null) {
     if (date) {
       const isoDateTime = date.toISOString();
@@ -90,69 +89,65 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number, onSubm
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           <InputLabel value="Название" />
-          <Input value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Краткое описание" />
           <TextArea
             value={shortDescription}
             onChange={(e) => {
-              setShortDescription(e.target.value)
-            }} />
+              setShortDescription(e.target.value);
+            }}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Полное описание" />
-          <TextArea value={fullDescription}
-            onChange={(e) => setFullDescription(e.target.value)}
-          />
+          <TextArea value={fullDescription} onChange={(e) => setFullDescription(e.target.value)} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальное количество участников" />
-          <Input
-            value={String(participantLimit)}
-            onChange={(e) => setParticipantLimit(parseInt(e.target.value))}
-          />
+          <Input value={String(participantLimit)} onChange={(e) => setParticipantLimit(parseInt(e.target.value))} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
-          <Input value={String(participantHighestAge)} onChange={(e) => setParticipantHighestAge(parseInt(e.target.value))} />
+          <Input
+            value={String(participantHighestAge)}
+            onChange={(e) => setParticipantHighestAge(parseInt(e.target.value))}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
-          <Input value={String(participantLowestAge)} onChange={(e) => setParticipantLowestAge(parseInt(e.target.value))} />
+          <Input
+            value={String(participantLowestAge)}
+            onChange={(e) => setParticipantLowestAge(parseInt(e.target.value))}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Формат" />
           <select value={format} onChange={(e) => setFormat(e.target.value as AddActivityFormatEnum)}>
-            {
-              Object.entries(AddActivityFormatEnum).map(([k, v]) => {
-                return <option value={k}>{v}</option>
-              })
-            }
+            {Object.entries(AddActivityFormatEnum).map(([k, v]) => {
+              return <option value={k}>{v}</option>;
+            })}
           </select>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Место" />
           <select value={place} onChange={(e) => setPlace(parseInt(e.target.value))}>
-            {
-              placesLoaded ? (
-                placeList.map(p => {
-                  return <option value={p.id}>{p.address}</option>
-                })
-              ) : (<option value=""></option>)
-            }
+            {placesLoaded ? (
+              placeList.map((p) => {
+                return <option value={p.id}>{p.address}</option>;
+              })
+            ) : (
+              <option value=""></option>
+            )}
           </select>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Состояние" />
           <select value={status} onChange={(e) => setStatus(e.target.value as AddActivityStatusEnum)}>
-            {
-              Object.entries(AddActivityStatusEnum).map(([k, v]) => {
-                return <option value={k}>{v}</option>
-              })
-            }
+            {Object.entries(AddActivityStatusEnum).map(([k, v]) => {
+              return <option value={k}>{v}</option>;
+            })}
           </select>
         </div>
 
@@ -232,18 +227,21 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number, onSubm
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Картинка" />
-          <input type="file" onChange={(e) => {
-            if (e.target.files) {
-              const file = e.target.files[0]
-              setImage(file);
-            }
-          }} />
+          <input
+            type="file"
+            onChange={(e) => {
+              if (e.target.files) {
+                const file = e.target.files[0];
+                setImage(file);
+              }
+            }}
+          />
           {image && <p>Selected file: {image.name}</p>}
         </div>
       </div>
       <Button onClick={handleSubmit}>Создать</Button>
     </div>
   );
-}
+};
 
 export default CreateActivityDialog;

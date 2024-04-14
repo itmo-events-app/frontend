@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 import styles from './index.module.css';
-import { ITMO } from "@widgets/auth/ITMO";
-import Block from "@widgets/Block";
-import Error from "@widgets/auth/Error";
-import Label from "@widgets/auth/InputLabel";
-import Input from "@widgets/auth/Input";
-import Button from "@widgets/auth/Button";
-import { useNavigate } from "react-router-dom";
-import { RoutePaths } from "@shared/config/routes";
-import { NotifyState } from "../Notification";
+import { ITMO } from '@widgets/auth/ITMO';
+import Block from '@widgets/Block';
+import Error from '@widgets/auth/Error';
+import Label from '@widgets/auth/InputLabel';
+import Input from '@widgets/auth/Input';
+import Button from '@widgets/auth/Button';
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '@shared/config/routes';
+import { NotifyState } from '../Notification';
 
 const registerMsg = 'Заявка на регистрацию успешно создана. Ожидайте письма с подтверждением для входа.';
-const justError = 'Пароль должен содержать специальные символы'
+const justError = 'Пароль должен содержать специальные символы';
 
 function RegisterPage() {
   const [error, _] = useState(justError);
@@ -26,10 +26,10 @@ function RegisterPage() {
 
   const _register = () => {
     const state: NotifyState = {
-      msg: registerMsg
-    }
+      msg: registerMsg,
+    };
     navigate(RoutePaths.notify, { state: state });
-  }
+  };
 
   return (
     <div className={styles.root}>
@@ -62,7 +62,7 @@ function RegisterPage() {
         <Button onClick={_register}>Зарегистрироваться</Button>
       </Block>
     </div>
-  )
+  );
 }
 
 export default RegisterPage;

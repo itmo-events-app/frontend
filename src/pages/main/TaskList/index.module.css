@@ -1,35 +1,35 @@
 .tasksfilter__form {
-    display: flex;
-    grid-gap: 15px;
+  display: flex;
+  grid-gap: 15px;
 }
 
 .dropdown {
-    width: 30%;
+  width: 30%;
 }
 
 .tasks__wrap {
-    display: block;
+  display: block;
 }
 
 .table {
-    width: 100%;
-    margin: 20px 0;
-    border: 1px solid var(--itmo-colors-gray);
-    border-collapse: collapse;
-    border-radius: 10px;
+  width: 100%;
+  margin: 20px 0;
+  border: 1px solid var(--itmo-colors-gray);
+  border-collapse: collapse;
+  border-radius: 10px;
 }
 
 .table th {
-    font-weight: bold;
-    padding: 10px 20px;
-    background: var(--itmo-colors-gray);
-    text-align: left;
-    border: 1px solid var(--itmo-colors-gray);
+  font-weight: bold;
+  padding: 10px 20px;
+  background: var(--itmo-colors-gray);
+  text-align: left;
+  border: 1px solid var(--itmo-colors-gray);
 }
 
 .table td {
-    border: 1px solid var(--itmo-colors-gray);
-    padding: 10px 20px;
+  border: 1px solid var(--itmo-colors-gray);
+  padding: 10px 20px;
 }
 
 .popup__wrapper {

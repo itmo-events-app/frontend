@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom'
-import _BrandLogo from './template'
+import { useNavigate } from 'react-router-dom';
+import _BrandLogo from './template';
 import { RoutePaths } from '@shared/config/routes';
 
 const BrandLogo = () => {
@@ -9,7 +9,7 @@ const BrandLogo = () => {
     navigate(RoutePaths.home);
   }
 
-  return (<_BrandLogo onClick={_toHome} />);
-}
+  return <_BrandLogo onClick={_toHome} />;
+};
 
 export default BrandLogo;
