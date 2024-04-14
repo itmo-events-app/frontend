@@ -22,33 +22,9 @@
 export interface ParticipantsListRequest {
     /**
      * 
-     * @type {number}
+     * @type {File}
      * @memberof ParticipantsListRequest
      */
-    'id'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ParticipantsListRequest
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ParticipantsListRequest
-     */
-    'email': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ParticipantsListRequest
-     */
-    'additionalInf0'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ParticipantsListRequest
-     */
-    'visited': boolean;
+    'participantsListFile': File;
 }
 

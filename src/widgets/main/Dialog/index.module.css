@@ -2,18 +2,23 @@
   background-color: var(--itmo-colors-white);
   border: 1px solid var(--itmo-colors-border);
   border-radius: 10px;
-  display: flex;
   flex-direction: column;
   width: fit-content;
   overflow: auto;
+  position: relative;
 }
 
 .header {
+  position: sticky;
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--itmo-colors-gray);
   padding: 10px 20px;
   gap: 20px;
+  top: 0;
+  left: 0;
+  background-color: var(--itmo-colors-white);
+  z-index: 100;
 }
 
 .name {

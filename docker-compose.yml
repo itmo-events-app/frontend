@@ -1,10 +1,44 @@
 services:
+  postgres:
+    image: postgres:16.0
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "postgres" ]
+      interval: 5s
+      timeout: 1s
+      retries: 2
+
+  event-app:
+    image: ip13/event-app:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+
+  minio:
+    image: minio/minio
+    environment:
+      - MINIO_ROOT_USER=minio-admin # AKA accessKey in minioClient, min len 3 characters
+      - MINIO_ROOT_PASSWORD=minio-admin # AKA secretKey in minioClient, min len 8 characters
+    command: server ~/minio --console-address :9001
+    ports:
+      - '9001:9001'
+
   frontend:
-    image: events-app-frontend:latest
-    build: .
+    image: zubrailx/itmo-events-app-frontend:latest
+    profiles:
+      - frontend
     ports:
       - "5573:80"
     deploy:
       restart_policy:
         condition: on-failure
+    volumes: # mount config
+      - '${PWD}/public/config.js:/usr/share/nginx/html/config.js'
 

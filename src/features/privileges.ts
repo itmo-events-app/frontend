@@ -1,8 +1,8 @@
-import { intersection, union } from '@shared/util'
-import { PrivilegeData } from './PrivilegeProvider';
+import { PrivilegeData } from '@entities/privilege-context';
+import { intersection, union } from '@shared/util';
 
 function getPrivilegeDataNames(set: Set<PrivilegeData>) {
-  return new Set([...set].map(e => e.name));
+  return new Set([...set].map((e) => e.name));
 }
 
 function hasAnyPrivilege(mine: Set<PrivilegeData> | undefined, others: Set<PrivilegeData>) {
@@ -17,17 +17,16 @@ function hasAllPrivileges(mine: Set<PrivilegeData> | undefined, others: Set<Priv
   return union(mineNames, othersNames).size == othersNames.size;
 }
 
-
 function anyPrivilege(others: Set<PrivilegeData>) {
-  return function(mine: Set<PrivilegeData>) {
+  return function (mine: Set<PrivilegeData>) {
     return hasAnyPrivilege(mine, others);
-  }
+  };
 }
 
 function allPrivileges(others: Set<PrivilegeData>) {
-  return function(mine: Set<PrivilegeData>) {
+  return function (mine: Set<PrivilegeData>) {
     return hasAllPrivileges(mine, others);
-  }
+  };
 }
 
-export { hasAnyPrivilege, hasAllPrivileges, anyPrivilege, allPrivileges }
+export { hasAnyPrivilege, hasAllPrivileges, anyPrivilege, allPrivileges };

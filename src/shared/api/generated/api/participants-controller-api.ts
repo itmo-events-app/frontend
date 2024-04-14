@@ -22,11 +22,11 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import { ParticipantPresenceRequest } from '../model';
+// @ts-ignore
 import { ParticipantResponse } from '../model';
 // @ts-ignore
 import { ParticipantsListRequest } from '../model';
-// @ts-ignore
-import { ParticipantsListResponse } from '../model';
 /**
  * ParticipantsControllerApi - axios parameter creator
  * @export
@@ -35,20 +35,17 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
     return {
         /**
          * 
-         * @summary Изменение статуса присутствия участника на данном мероприятии
-         * @param {number} id ID мероприятия
-         * @param {number} idParticipant ID участника мероприятия
-         * @param {boolean} isVisited Статус посещения участником мероприятия (да/нет)
+         * @summary Изменения поля visited у участника мероприятия
+         * @param {number} id 
+         * @param {ParticipantPresenceRequest} participantPresenceRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        changePresence: async (id: number, idParticipant: number, isVisited: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        changePresence: async (id: number, participantPresenceRequest: ParticipantPresenceRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('changePresence', 'id', id)
-            // verify required parameter 'idParticipant' is not null or undefined
-            assertParamExists('changePresence', 'idParticipant', idParticipant)
-            // verify required parameter 'isVisited' is not null or undefined
-            assertParamExists('changePresence', 'isVisited', isVisited)
+            // verify required parameter 'participantPresenceRequest' is not null or undefined
+            assertParamExists('changePresence', 'participantPresenceRequest', participantPresenceRequest)
             const localVarPath = `/api/events/{id}/participants`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -62,19 +59,18 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            if (idParticipant !== undefined) {
-                localVarQueryParameter['idParticipant'] = idParticipant;
-            }
-
-            if (isVisited !== undefined) {
-                localVarQueryParameter['isVisited'] = isVisited;
-            }
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(participantPresenceRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -83,15 +79,15 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
         },
         /**
          * 
-         * @summary Получение списка участников данного мероприятия
-         * @param {number} id ID мероприятия
+         * @summary Получение списка участников мероприятия
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getParticipantsList: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getParticipants: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('getParticipantsList', 'id', id)
-            const localVarPath = `/api/events/{id}/participants/list`
+            assertParamExists('getParticipants', 'id', id)
+            const localVarPath = `/api/events/{id}/participants`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -104,6 +100,10 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -117,15 +117,15 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
         },
         /**
          * 
-         * @summary Экспорт списка участников данного мероприятия в формате xlsx
-         * @param {number} id ID мероприятия
+         * @summary Экспорт списка участников мероприятия
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getParticipantsXlsxFile: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getParticipantsXlsxFile', 'id', id)
-            const localVarPath = `/api/events/{id}/participants/list/xlsx`
+            const localVarPath = `/api/events/{id}/participants/file`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -137,6 +137,10 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -151,16 +155,18 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
         },
         /**
          * 
-         * @summary Импорт нового списка участников данного мероприятия
-         * @param {number} id ID мероприятия
-         * @param {ParticipantsListRequest} [participantsListRequest] 
+         * @summary Импорт списка участников мероприятия
+         * @param {number} id 
+         * @param {ParticipantsListRequest} participantsListRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setParticipantsList: async (id: number, participantsListRequest?: ParticipantsListRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        setPartisipantsList: async (id: number, participantsListRequest: ParticipantsListRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('setParticipantsList', 'id', id)
-            const localVarPath = `/api/events/{id}/participants/newlist`
+            assertParamExists('setPartisipantsList', 'id', id)
+            // verify required parameter 'participantsListRequest' is not null or undefined
+            assertParamExists('setPartisipantsList', 'participantsListRequest', participantsListRequest)
+            const localVarPath = `/api/events/{id}/participants`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -172,6 +178,10 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -199,40 +209,39 @@ export const ParticipantsControllerApiFp = function(configuration?: Configuratio
     return {
         /**
          * 
-         * @summary Изменение статуса присутствия участника на данном мероприятии
-         * @param {number} id ID мероприятия
-         * @param {number} idParticipant ID участника мероприятия
-         * @param {boolean} isVisited Статус посещения участником мероприятия (да/нет)
+         * @summary Изменения поля visited у участника мероприятия
+         * @param {number} id 
+         * @param {ParticipantPresenceRequest} participantPresenceRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async changePresence(id: number, idParticipant: number, isVisited: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ParticipantResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.changePresence(id, idParticipant, isVisited, options);
+        async changePresence(id: number, participantPresenceRequest: ParticipantPresenceRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ParticipantResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.changePresence(id, participantPresenceRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParticipantsControllerApi.changePresence']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
          * 
-         * @summary Получение списка участников данного мероприятия
-         * @param {number} id ID мероприятия
+         * @summary Получение списка участников мероприятия
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getParticipantsList(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ParticipantsListResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getParticipantsList(id, options);
+        async getParticipants(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ParticipantResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getParticipants(id, options);
             const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['ParticipantsControllerApi.getParticipantsList']?.[index]?.url;
+            const operationBasePath = operationServerMap['ParticipantsControllerApi.getParticipants']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
          * 
-         * @summary Экспорт списка участников данного мероприятия в формате xlsx
-         * @param {number} id ID мероприятия
+         * @summary Экспорт списка участников мероприятия
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getParticipantsXlsxFile(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ParticipantsListResponse>>> {
+        async getParticipantsXlsxFile(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getParticipantsXlsxFile(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParticipantsControllerApi.getParticipantsXlsxFile']?.[index]?.url;
@@ -240,16 +249,16 @@ export const ParticipantsControllerApiFp = function(configuration?: Configuratio
         },
         /**
          * 
-         * @summary Импорт нового списка участников данного мероприятия
-         * @param {number} id ID мероприятия
-         * @param {ParticipantsListRequest} [participantsListRequest] 
+         * @summary Импорт списка участников мероприятия
+         * @param {number} id 
+         * @param {ParticipantsListRequest} participantsListRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async setParticipantsList(id: number, participantsListRequest?: ParticipantsListRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ParticipantsListResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.setParticipantsList(id, participantsListRequest, options);
+        async setPartisipantsList(id: number, participantsListRequest: ParticipantsListRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ParticipantResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setPartisipantsList(id, participantsListRequest, options);
             const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['ParticipantsControllerApi.setParticipantsList']?.[index]?.url;
+            const operationBasePath = operationServerMap['ParticipantsControllerApi.setPartisipantsList']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -264,46 +273,45 @@ export const ParticipantsControllerApiFactory = function (configuration?: Config
     return {
         /**
          * 
-         * @summary Изменение статуса присутствия участника на данном мероприятии
-         * @param {number} id ID мероприятия
-         * @param {number} idParticipant ID участника мероприятия
-         * @param {boolean} isVisited Статус посещения участником мероприятия (да/нет)
+         * @summary Изменения поля visited у участника мероприятия
+         * @param {number} id 
+         * @param {ParticipantPresenceRequest} participantPresenceRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        changePresence(id: number, idParticipant: number, isVisited: boolean, options?: any): AxiosPromise<Array<ParticipantResponse>> {
-            return localVarFp.changePresence(id, idParticipant, isVisited, options).then((request) => request(axios, basePath));
+        changePresence(id: number, participantPresenceRequest: ParticipantPresenceRequest, options?: any): AxiosPromise<ParticipantResponse> {
+            return localVarFp.changePresence(id, participantPresenceRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary Получение списка участников данного мероприятия
-         * @param {number} id ID мероприятия
+         * @summary Получение списка участников мероприятия
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getParticipantsList(id: number, options?: any): AxiosPromise<Array<ParticipantsListResponse>> {
-            return localVarFp.getParticipantsList(id, options).then((request) => request(axios, basePath));
+        getParticipants(id: number, options?: any): AxiosPromise<ParticipantResponse> {
+            return localVarFp.getParticipants(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary Экспорт списка участников данного мероприятия в формате xlsx
-         * @param {number} id ID мероприятия
+         * @summary Экспорт списка участников мероприятия
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getParticipantsXlsxFile(id: number, options?: any): AxiosPromise<Array<ParticipantsListResponse>> {
+        getParticipantsXlsxFile(id: number, options?: any): AxiosPromise<File> {
             return localVarFp.getParticipantsXlsxFile(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary Импорт нового списка участников данного мероприятия
-         * @param {number} id ID мероприятия
-         * @param {ParticipantsListRequest} [participantsListRequest] 
+         * @summary Импорт списка участников мероприятия
+         * @param {number} id 
+         * @param {ParticipantsListRequest} participantsListRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setParticipantsList(id: number, participantsListRequest?: ParticipantsListRequest, options?: any): AxiosPromise<Array<ParticipantsListResponse>> {
-            return localVarFp.setParticipantsList(id, participantsListRequest, options).then((request) => request(axios, basePath));
+        setPartisipantsList(id: number, participantsListRequest: ParticipantsListRequest, options?: any): AxiosPromise<ParticipantResponse> {
+            return localVarFp.setPartisipantsList(id, participantsListRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -317,34 +325,33 @@ export const ParticipantsControllerApiFactory = function (configuration?: Config
 export class ParticipantsControllerApi extends BaseAPI {
     /**
      * 
-     * @summary Изменение статуса присутствия участника на данном мероприятии
-     * @param {number} id ID мероприятия
-     * @param {number} idParticipant ID участника мероприятия
-     * @param {boolean} isVisited Статус посещения участником мероприятия (да/нет)
+     * @summary Изменения поля visited у участника мероприятия
+     * @param {number} id 
+     * @param {ParticipantPresenceRequest} participantPresenceRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ParticipantsControllerApi
      */
-    public changePresence(id: number, idParticipant: number, isVisited: boolean, options?: AxiosRequestConfig) {
-        return ParticipantsControllerApiFp(this.configuration).changePresence(id, idParticipant, isVisited, options).then((request) => request(this.axios, this.basePath));
+    public changePresence(id: number, participantPresenceRequest: ParticipantPresenceRequest, options?: AxiosRequestConfig) {
+        return ParticipantsControllerApiFp(this.configuration).changePresence(id, participantPresenceRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @summary Получение списка участников данного мероприятия
-     * @param {number} id ID мероприятия
+     * @summary Получение списка участников мероприятия
+     * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ParticipantsControllerApi
      */
-    public getParticipantsList(id: number, options?: AxiosRequestConfig) {
-        return ParticipantsControllerApiFp(this.configuration).getParticipantsList(id, options).then((request) => request(this.axios, this.basePath));
+    public getParticipants(id: number, options?: AxiosRequestConfig) {
+        return ParticipantsControllerApiFp(this.configuration).getParticipants(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @summary Экспорт списка участников данного мероприятия в формате xlsx
-     * @param {number} id ID мероприятия
+     * @summary Экспорт списка участников мероприятия
+     * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ParticipantsControllerApi
@@ -355,15 +362,15 @@ export class ParticipantsControllerApi extends BaseAPI {
 
     /**
      * 
-     * @summary Импорт нового списка участников данного мероприятия
-     * @param {number} id ID мероприятия
-     * @param {ParticipantsListRequest} [participantsListRequest] 
+     * @summary Импорт списка участников мероприятия
+     * @param {number} id 
+     * @param {ParticipantsListRequest} participantsListRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ParticipantsControllerApi
      */
-    public setParticipantsList(id: number, participantsListRequest?: ParticipantsListRequest, options?: AxiosRequestConfig) {
-        return ParticipantsControllerApiFp(this.configuration).setParticipantsList(id, participantsListRequest, options).then((request) => request(this.axios, this.basePath));
+    public setPartisipantsList(id: number, participantsListRequest: ParticipantsListRequest, options?: AxiosRequestConfig) {
+        return ParticipantsControllerApiFp(this.configuration).setPartisipantsList(id, participantsListRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

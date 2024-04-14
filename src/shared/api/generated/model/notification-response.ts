@@ -50,5 +50,11 @@ export interface NotificationResponse {
      * @memberof NotificationResponse
      */
     'sent_time'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NotificationResponse
+     */
+    'link'?: string;
 }
 

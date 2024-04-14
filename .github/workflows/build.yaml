@@ -1,0 +1,70 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  namer:
+      runs-on: ubuntu-latest
+
+      outputs:
+        tag: ${{ steps.name.outputs.tag }}
+        repository: ${{ github.repository_owner }}-${{ github.event.repository.name }}
+
+      steps:
+        - name: Get repository name & branch name
+          id: name
+          run: |
+            branch=${{ github.head_ref || github.ref_name }}
+            tag=$( [ "$branch" == "${{ github.event.repository.default_branch }}" ] && echo "latest" || echo "${branch////-}" )
+            echo "tag=$tag"
+            echo "tag=${tag}" >> $GITHUB_OUTPUT
+
+  build:
+    needs: namer
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: ['21.x']
+
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+
+      - name: Use node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        id: install
+        run: npm install
+
+      - name: 'Lint: eslint'
+        id: eslint
+        # if: ${{ always() && steps.install.outcome == 'success' }}
+        run: npm run eslint
+
+      - name: 'Lint: tsc'
+        id: tsc
+        # if: ${{ always() && steps.install.outcome == 'success' }}
+        run: npm run tsc
+
+      - name: Build
+        id: build
+        # if: ${{ always() && steps.install.outcome == 'success' }}
+        run: npm run build.nolint
+
+      - name: Build runner & Push Docker Image
+        # if: ${{ always() && steps.build.outcome == 'success' }}
+        uses: niqzart/ffs-devops/docker-build@main
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ needs.namer.outputs.repository }}
+          tag: ${{ needs.namer.outputs.tag }}
+          base-tag: latest
+          dockerfile: "./runner.dockerfile"

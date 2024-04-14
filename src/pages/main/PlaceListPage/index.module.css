@@ -1,0 +1,151 @@
+.places_page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.horizontal_bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.place_entry {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+  cursor: pointer;
+}
+
+.place_icon {
+  width: 75px;
+  height: 75px;
+}
+
+.place_info_column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.place_name {
+  color: var(--itmo-colors-black);
+  font-weight: bold;
+}
+
+.place_address {
+  color: var(--itmo-colors-dark-gray);
+}
+
+.search {
+  min-width: 250px;
+  flex-grow: 1;
+}
+
+.event_list_container {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  padding-bottom: 50px;
+}
+
+.dialog {
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 500;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0 0 0;
+}
+
+.dialog_content {
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  background: #ffffff;
+  border: 1px solid black;
+  border-radius: 16px;
+
+  width: 60%;
+  padding: 10px;
+}
+
+.place_form {
+  min-height: 100%;
+  background-color: var(--itmo-colors-white);
+  display: block;
+  justify-content: center;
+  align-items: normal;
+  flex-direction: column;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.place_form_item {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  margin: 0.5rem;
+}
+
+.emptyFieldsMessage {
+  color: var(--itmo-colors-red);
+}
+
+.place_form_button {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  width: 10rem;
+  margin: 0.5rem;
+}
+
+.delete_button {
+  position: relative;
+  width: 50px;
+  height: 40px;
+  border-radius: 25px;
+  border: 2px solid rgb(231, 50, 50);
+  background-color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #333;
+  overflow: hidden;
+  transition: .3s;
+}
+
+.delete_button:hover {
+  background-color: rgb(245, 207, 207);
+  transform: scale(1.2);
+  box-shadow: 0 0 4px #111;
+  transition: .3s;
+}
+
+.delete_button_svg {
+  color: rgb(231, 50, 50);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: .3s;
+}
+
+.place_buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+

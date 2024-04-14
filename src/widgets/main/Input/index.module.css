@@ -3,9 +3,34 @@
   border-radius: 10px;
   padding: 10px 10px;
   font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input:focus {
   border: 1px solid var(--itmo-colors-blue);
   outline: none;
+}
+
+.input_error {
+  border-color: var(--itmo-colors-red);
+}
+
+.input_error:focus {
+  border-color: var(--itmo-colors-red);
+}
+
+.visible {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+.helper_error {
+  color: var(--itmo-colors-red);
+  margin: 0px;
+  padding: 10px 0px;
+  font-size: 14px;
 }

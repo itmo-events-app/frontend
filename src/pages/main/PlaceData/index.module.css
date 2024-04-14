@@ -1,0 +1,47 @@
+.header {
+  background-color: var(--itmo-colors-white);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 2px;
+}
+
+.place_data {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.place_data_list {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.data_string {
+  display: flex;
+  align-items: center;
+}
+
+.place_column {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.place_description {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.data {
+}
+
+.empty_field_msg {
+  color: var(--itmo-colors-red);
+}

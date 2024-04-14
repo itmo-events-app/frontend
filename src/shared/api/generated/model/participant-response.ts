@@ -25,36 +25,36 @@ export interface ParticipantResponse {
      * @type {number}
      * @memberof ParticipantResponse
      */
-    'id'?: number;
+    'id': number;
     /**
      * 
      * @type {string}
      * @memberof ParticipantResponse
      */
-    'name'?: string;
+    'name': string;
     /**
      * 
      * @type {string}
      * @memberof ParticipantResponse
      */
-    'email'?: string;
+    'email': string;
     /**
      * 
      * @type {string}
      * @memberof ParticipantResponse
      */
-    'additionalInf0'?: string;
+    'additionalInfo'?: string;
     /**
      * 
      * @type {boolean}
      * @memberof ParticipantResponse
      */
-    'visited'?: boolean;
+    'visited': boolean;
     /**
      * 
      * @type {number}
      * @memberof ParticipantResponse
      */
-    'eventId'?: number;
+    'eventId': number;
 }
 

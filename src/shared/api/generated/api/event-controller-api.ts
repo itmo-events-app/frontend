@@ -28,6 +28,8 @@ import { EventRequest } from '../model';
 // @ts-ignore
 import { EventResponse } from '../model';
 // @ts-ignore
+import { PaginatedResponse } from '../model';
+// @ts-ignore
 import { UserRoleResponse } from '../model';
 /**
  * EventControllerApi - axios parameter creator
@@ -103,6 +105,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
             const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
             if (placeId !== undefined) { 
@@ -208,6 +214,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -245,6 +255,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
             if (deep !== undefined) {
                 localVarQueryParameter['deep'] = deep;
@@ -284,6 +298,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -321,6 +339,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
             if (page !== undefined) {
                 localVarQueryParameter['page'] = page;
@@ -392,6 +414,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -425,6 +451,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -460,6 +490,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -568,7 +602,7 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllOrFilteredEvents(page?: number, size?: number, parentId?: number, title?: string, startDate?: string, endDate?: string, status?: GetAllOrFilteredEventsStatusEnum, format?: GetAllOrFilteredEventsFormatEnum, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<EventResponse>>> {
+        async getAllOrFilteredEvents(page?: number, size?: number, parentId?: number, title?: string, startDate?: string, endDate?: string, status?: GetAllOrFilteredEventsStatusEnum, format?: GetAllOrFilteredEventsFormatEnum, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAllOrFilteredEvents(page, size, parentId, title, startDate, endDate, status, format, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['EventControllerApi.getAllOrFilteredEvents']?.[index]?.url;
@@ -695,7 +729,7 @@ export const EventControllerApiFactory = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllOrFilteredEvents(page?: number, size?: number, parentId?: number, title?: string, startDate?: string, endDate?: string, status?: GetAllOrFilteredEventsStatusEnum, format?: GetAllOrFilteredEventsFormatEnum, options?: any): AxiosPromise<Array<EventResponse>> {
+        getAllOrFilteredEvents(page?: number, size?: number, parentId?: number, title?: string, startDate?: string, endDate?: string, status?: GetAllOrFilteredEventsStatusEnum, format?: GetAllOrFilteredEventsFormatEnum, options?: any): AxiosPromise<PaginatedResponse> {
             return localVarFp.getAllOrFilteredEvents(page, size, parentId, title, startDate, endDate, status, format, options).then((request) => request(axios, basePath));
         },
         /**

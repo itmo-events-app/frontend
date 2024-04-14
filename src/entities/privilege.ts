@@ -1,4 +1,4 @@
-import { PrivilegeResponse } from "@shared/api/generated";
+import { PrivilegeResponse } from '@shared/api/generated';
 
 class PrivilegeModel {
   private _id: number;
@@ -11,9 +11,15 @@ class PrivilegeModel {
     this._description = description;
   }
 
-  get id() { return this._id };
-  get name() { return this._name; }
-  get description() { return this._description; }
+  get id() {
+    return this._id;
+  }
+  get name() {
+    return this._name;
+  }
+  get description() {
+    return this._description;
+  }
 }
 
 function toPrivilegeModel(priv: PrivilegeResponse) {
@@ -21,11 +27,8 @@ function toPrivilegeModel(priv: PrivilegeResponse) {
 }
 
 function copyPrivilege(item: PrivilegeModel) {
-  return new PrivilegeModel(
-    item.id,
-    item.name,
-    item.description);
+  return new PrivilegeModel(item.id, item.name, item.description);
 }
 
-export { toPrivilegeModel, copyPrivilege }
-export { PrivilegeModel }
+export { toPrivilegeModel, copyPrivilege };
+export { PrivilegeModel };
