@@ -1,187 +1,118 @@
-import { useEffect, useState } from 'react';
-import styles from './index.module.css';
-import BrandLogo from '@widgets/main/BrandLogo';
-import PageName from '@widgets/main/PageName';
-import SideBar from '@widgets/main/SideBar';
-import { RoutePaths } from '@shared/config/routes.ts';
-import Content from '@widgets/main/Content';
-import PagedList, { PageEntry } from '@widgets/main/PagedList';
-import Layout from '@widgets/main/Layout';
-import { uid } from 'uid';
-import Button from '@widgets/main/Button';
-import { appendClassName, truncateTextByWords } from '@shared/util.ts';
-import { ArrowDown } from '@shared/ui/icons';
+import { useContext, useEffect, useState } from "react";
+import styles from './index.module.css'
+import BrandLogo from "@widgets/main/BrandLogo";
+import PageName from "@widgets/main/PageName";
+import SideBar from "@widgets/main/SideBar";
+import { RoutePaths } from "@shared/config/routes.ts";
+import Content from "@widgets/main/Content";
+import { PageEntry } from "@widgets/main/PagedList";
+import Layout from "@widgets/main/Layout";
+import Button from "@widgets/main/Button";
+import { appendClassName, formatDateTime, truncateTextByWords } from "@shared/util.ts";
+import { ArrowDown } from "@shared/ui/icons";
+import { NotificationResponse } from "@shared/api/generated";
+import PagedList2 from "@widgets/main/PagedList2";
+import ApiContext from "@features/api-context";
+
 
 class Notification {
-  id: string;
-  eventName: string;
-  activityName: string;
-  taskName: string;
-  date: string;
-  time: string;
-  text: string;
-  isRead: boolean;
+  id: number
+  title: string
+  description: string
+  seen: boolean
+  sent_time: string
 
-  constructor(
-    eventName: string,
-    activityName: string,
-    taskName: string,
-    date: string,
-    time: string,
-    text: string,
-    isRead: boolean
-  ) {
-    this.id = uid();
-    this.eventName = eventName;
-    this.activityName = activityName;
-    this.taskName = taskName;
-    this.date = date;
-    this.time = time;
-    this.text = text;
-    this.isRead = isRead;
+
+  constructor(notificationResponse: NotificationResponse) {
+    if (notificationResponse.id === undefined ||
+      notificationResponse.title === undefined ||
+      notificationResponse.description === undefined ||
+      notificationResponse.seen === undefined ||
+      notificationResponse.sent_time === undefined) {
+      console.warn(`One of the fields of NotificationResponse is unidentified - possible errors in render`, notificationResponse)
+    }
+
+    this.id = notificationResponse.id!
+    this.title = notificationResponse.title!
+    this.description = this.title + notificationResponse.description!
+    this.seen = notificationResponse.seen!
+    this.sent_time = notificationResponse.sent_time!
   }
 }
 
-const _notifications: Notification[] = [
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    false
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    false
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'At vero eos et accusamus et iusto odio dignissimos ducimus, consectetur adipiscing elit, sunt in culpa qui officia deserunt mollit anim id est laborum!\n' +
-      '\n' +
-      'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.\n' +
-      '\n' +
-      'Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet, qui blanditiis praesentium voluptatum deleniti atque corrupti, quos dolores et quas molestias excepturi sint, nisi ut aliquid ex ea commodi consequatur?\n' +
-      '\n' +
-      'Ut enim ad minima veniam, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Nemo enim ipsam voluptatem, qui in ea voluptate velit esse, quam nihil molestiae consequatur, vel illum, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Quis autem vel eum iure reprehenderit, consectetur adipiscing elit, nisi ut...',
-    false
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    false
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    true
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    true
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    true
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    true
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    true
-  ),
-  new Notification(
-    'At vero eos',
-    'et accusamus',
-    'et iusto',
-    '31.10.2008',
-    '20:31',
-    'Quis autem vel eum iure reprehenderit, quis nostrum exercitationem ullam corporis suscipit laboriosam, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga.',
-    true
-  ),
-];
-
 class NotificationEntry {
-  data: Notification;
-  expanded: boolean;
+  data: Notification
+  expanded: boolean
+
+  //TODO: delete that
+  eventName: string
+  activityName: string
+  taskName: string
 
   constructor(data: Notification, expanded: boolean) {
     this.data = data;
     this.expanded = expanded;
+
+    // Заглушка до исправления прототипа
+    this.eventName = "Event"
+    this.activityName = "Activity"
+    this.taskName = "Task"
   }
 }
 
+
 export default function NotificationListPage() {
-  const [notifications, setNotifications] = useState(_notifications);
-  const [notificationEntries, setNotificationEntries] = useState(
-    notifications.map((n) => new NotificationEntry(n, false))
-  );
+  const { api } = useContext(ApiContext);
+  const [notifications, setNotifications] = useState<Notification[]>(new Array<Notification>())
+  const [notificationEntries, setNotificationEntries] = useState<NotificationEntry[]>(new Array<NotificationEntry>())
+
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(5)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalElements, setTotalElements] = useState(1)
 
   useEffect(() => {
-    setNotificationEntries(notifications.map((n) => new NotificationEntry(n, false)));
-  }, [notifications]);
+    api.withReauth(() => api.notification.getNotifications(page - 1, pageSize))
+      .then(result => {
+        setNotifications(result.data.content!.map(notificationResponse => new Notification(notificationResponse)))
+        setTotalPages(result.data.totalPages!)
+        setTotalElements(result.data.totalElements!)
+      })
+      .catch(reason => {
+        console.error("Невозможно получить уведомления:", reason.response.data)
+      })
+  }, [page, pageSize]);
+
+  useEffect(() => {
+    setNotificationEntries(notifications.map(n => new NotificationEntry(n, false)))
+  }, [notifications])
 
   const _readNotification = (notification: Notification) => {
-    console.log('Notification read', notification);
-  };
+    api.notification.setOneAsSeenNotification(notification.id)
+      .catch(reason => console.error("Не получилось поменять статус уведомления", reason.response.data))
+  }
 
-  const _renderedNotificationEntries: any[] = notificationEntries.map((n) => {
-    return new PageEntry(() => {
-      return _renderNotificationEntry(n);
-    });
-  });
+  const _readAllNotificationsOnPage = () => {
+    api.notification.setAllAsSeenNotifications(page, pageSize)
+      .catch(reason => console.error("Не получилось прочитать все уведомления", reason.response.data))
+  }
+
+  const _renderedNotificationEntries: any[] = notificationEntries.map(n => {
+    return new PageEntry(() => { return _renderNotificationEntry(n) })
+  })
 
   function _renderNotificationEntry(ne: NotificationEntry) {
     return (
       <div className={styles.notification_entry} key={ne.data.id}>
         <div className={styles.notification_header}>
           <span className={styles.notification_titles}>
-            {ne.data.eventName} | {ne.data.activityName} | {ne.data.taskName}
+            {ne.eventName} | {ne.activityName} | {ne.taskName}
           </span>
 
           <div className={styles.notification_date_and_expand_container}>
             <span className={styles.notification_date_time}>
-              {ne.data.date} <br /> {ne.data.time}
+              {formatDateTime(ne.data.sent_time).date} <br />
+              {formatDateTime(ne.data.sent_time).time}
             </span>
 
             <div>
@@ -194,15 +125,13 @@ export default function NotificationListPage() {
         </div>
 
         <div className={styles.notification_text}>
-          {ne.expanded ? ne.data.text : truncateTextByWords(ne.data.text, 10)}
+          {ne.expanded ? ne.data.description : truncateTextByWords(ne.data.description, 10)}
         </div>
 
         <div className={styles.notification_read}>
-          <Button
-            className={ne.data.isRead ? styles.read_button : styles.not_read_button}
-            onClick={() => _readEntryClick(ne)}
-          >
-            {ne.data.isRead ? 'Прочитано' : 'Прочитать'}
+          <Button className={ne.data.seen ? styles.read_button : styles.not_read_button}
+            onClick={() => _readEntry(ne)}>
+            {ne.data.seen ? 'Прочитано' : 'Прочитать'}
           </Button>
         </div>
       </div>
@@ -210,27 +139,31 @@ export default function NotificationListPage() {
   }
 
   function _expandEntryClick(notificationEntry: NotificationEntry) {
-    setNotificationEntries(
-      notificationEntries.map((ne) => {
-        if (ne.data.id === notificationEntry.data.id) {
-          ne.expanded = !ne.expanded;
-        }
-        return ne;
-      })
-    );
+    setNotificationEntries(notificationEntries.map(ne => {
+      if (ne.data.id === notificationEntry.data.id) {
+        ne.expanded = !ne.expanded
+      }
+      return ne;
+    }))
   }
 
-  function _readEntryClick(notificationEntry: NotificationEntry) {
+  function _readEntry(notificationEntry: NotificationEntry) {
     // some callback to server?
-    _readNotification(notificationEntry.data);
-    setNotifications(
-      notifications.map((e) => {
-        if (e == notificationEntry.data) {
-          e.isRead = !e.isRead;
-        }
-        return e;
-      })
-    );
+    _readNotification(notificationEntry.data)
+    setNotifications(notifications.map(n => {
+      if (n == notificationEntry.data) {
+        n.seen = true;
+      }
+      return n;
+    }))
+  }
+
+  function _readAllNotReadNotifications() {
+    _readAllNotificationsOnPage()
+    setNotifications(notifications.map(n => {
+      n.seen = true;
+      return n;
+    }))
   }
 
   return (
@@ -238,9 +171,24 @@ export default function NotificationListPage() {
       topLeft={<BrandLogo />}
       topRight={<PageName text="Уведомления" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.notifications} />}
-      bottomRight={
+      bottomRight=
+      {
         <Content>
-          <PagedList page={1} page_size={5} page_step={5} items={_renderedNotificationEntries} />
+          <PagedList2
+            pageState={[page, setPage]}
+            pageSizeState={[pageSize, setPageSize]}
+            page_step={5}
+            total_pages={totalPages}
+            total_elements={totalElements}
+            items={_renderedNotificationEntries}
+          />
+
+          <div className={styles.read_all_button_div}>
+            <Button className={styles.not_read_button + styles.read_all_button}
+              onClick={() => _readAllNotReadNotifications()}>
+              Прочитать все
+            </Button>
+          </div>
         </Content>
       }
     />

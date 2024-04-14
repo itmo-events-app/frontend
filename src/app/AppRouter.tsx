@@ -68,10 +68,20 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+      ])
+    ),
   },
   [AppRoutes.PLACE_DATA]: {
     path: RoutePaths.placeData,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+      ])
+    ),
   },
   [AppRoutes.ROLE_LIST]: {
     path: RoutePaths.roleList,
