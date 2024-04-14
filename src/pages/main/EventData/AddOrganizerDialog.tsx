@@ -1,5 +1,5 @@
-import Button from '@widgets/main/Button';
-import InputLabel from '@widgets/main/InputLabel';
+import Button from "@widgets/main/Button";
+import InputLabel from "@widgets/main/InputLabel";
 import styles from './index.module.css';
 import { useContext, useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -18,10 +18,10 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
     const getAllRoles = await api.role.getAllRoles();
-    if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
+    if (getUsersResponse.status == 200 && getAllRoles.status==200) {
       setUserList(getUsersResponse.data);
-      setUserId(getUsersResponse.data[0].id);
-      const eventRoles = getAllRoles.data.filter((r) => r.type == 'EVENT');
+      setUserId(getUsersResponse.data[0].id)
+      const eventRoles = getAllRoles.data.filter(r=>r.type=="EVENT");
       setRoleList(eventRoles);
       setRoleId(eventRoles[0].id);
       setRoleName(eventRoles[0].name);
