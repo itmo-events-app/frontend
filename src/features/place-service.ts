@@ -1,5 +1,5 @@
-import { Api } from "@entities/api.ts";
-import { PlaceRequest, PlaceRequestFormatEnum, PlaceResponse } from "@shared/api/generated";
+import { Api } from '@entities/api.ts';
+import { PlaceRequest, PlaceRequestFormatEnum, PlaceResponse } from '@shared/api/generated';
 
 export const placeService = {
   getPlace: async (api: Api, id: number) => {

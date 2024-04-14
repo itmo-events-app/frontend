@@ -29,22 +29,22 @@ import UpdatePlaceDialog from "@pages/main/PlaceListPage/UpdatePlaceContext.tsx"
 const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
   const { api } = useContext(ApiContext);
   const placeFormat: DropdownOption<string>[] = [
-    new DropdownOption("Онлайн"),
-    new DropdownOption("Офлайн"),
-    new DropdownOption("Гибрид"),
+    new DropdownOption('Онлайн'),
+    new DropdownOption('Офлайн'),
+    new DropdownOption('Гибрид'),
   ];
   const formatEnum: Record<string, PlaceRequestFormatEnum> = {
-    "Онлайн": PlaceRequestFormatEnum.Online,
-    "Офлайн": PlaceRequestFormatEnum.Offline,
-    "Гибрид": PlaceRequestFormatEnum.Hybrid,
+    Онлайн: PlaceRequestFormatEnum.Online,
+    Офлайн: PlaceRequestFormatEnum.Offline,
+    Гибрид: PlaceRequestFormatEnum.Hybrid,
   };
   const [format, setFormat] = useState<DropdownOption<string>>(placeFormat[1]);
-  const [placeName, setPlaceName] = useState("");
-  const [roomName, setRoomName] = useState("");
-  const [description, setDescription] = useState("");
+  const [placeName, setPlaceName] = useState('');
+  const [roomName, setRoomName] = useState('');
+  const [description, setDescription] = useState('');
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState('');
   const [showEmptyFieldsMessage, setShowEmptyFieldsMessage] = useState(false);
 
   const createPlace = () => {
@@ -52,67 +52,107 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
       setShowEmptyFieldsMessage(true);
       return;
     }
-    placeService.createPlace(api, placeName, address, formatEnum[format.value], roomName, description, latitude, longitude);
+    placeService.createPlace(
+      api,
+      placeName,
+      address,
+      formatEnum[format.value],
+      roomName,
+      description,
+      latitude,
+      longitude
+    );
     onClose();
     location.reload();
   };
 
   return (
     <div className={styles.dialog} onClick={onClose}>
-      <Dialog className={styles.dialog_content} text={"Создание площадки"}>
-        <div onClick={e => e.stopPropagation()}>
+      <Dialog className={styles.dialog_content} text={'Создание площадки'}>
+        <div onClick={(e) => e.stopPropagation()}>
           <div className={styles.place_form}>
             <div className={styles.place_form_item}>
               <Label value="Название" />
-              <Input type="text" placeholder={"Название"} value={placeName}
-                     onChange={(event) => setPlaceName(event.target.value)} />
+              <Input
+                type="text"
+                placeholder={'Название'}
+                value={placeName}
+                onChange={(event) => setPlaceName(event.target.value)}
+              />
             </div>
             <div className={styles.place_form_item}>
               <Label value="Адрес" />
-              <Input type="text" placeholder={"Адрес"} value={address}
-                     onChange={(event) => setAddress(event.target.value)} />
+              <Input
+                type="text"
+                placeholder={'Адрес'}
+                value={address}
+                onChange={(event) => setAddress(event.target.value)}
+              />
             </div>
             <div className={styles.place_form_item}>
               <Label value="Формат" />
-              <Dropdown items={placeFormat}
-                        toText={(item) => item.value}
-                        value={format}
-                        onChange={(sel) => {
-                          setFormat(sel);
-                        }}
+              <Dropdown
+                items={placeFormat}
+                toText={(item) => item.value}
+                value={format}
+                onChange={(sel) => {
+                  setFormat(sel);
+                }}
               />
             </div>
             <div className={styles.place_form_item}>
               <Label value="Аудитория" />
-              <Input type="text" placeholder={"Аудитория"} value={roomName}
-                     onChange={(event) => setRoomName(event.target.value)} />
+              <Input
+                type="text"
+                placeholder={'Аудитория'}
+                value={roomName}
+                onChange={(event) => setRoomName(event.target.value)}
+              />
             </div>
             <div className={styles.place_form_item}>
               <Label value="Описание площадки" />
-              <Input type="text" placeholder={"Описание"} value={description}
-                     onChange={(event) => setDescription(event.target.value)} />
+              <Input
+                type="text"
+                placeholder={'Описание'}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+              />
             </div>
             <div className={styles.place_form_item}>
               <Label value="Долгота" />
-              <Input type="number" placeholder={"Долгота"} value={String(latitude)}
-                     onChange={(event) => {
-                       setLatitude(Number(event.target.value));
-                     }} step={0.01} min={-180} max={180} />
+              <Input
+                type="number"
+                placeholder={'Долгота'}
+                value={String(latitude)}
+                onChange={(event) => {
+                  setLatitude(Number(event.target.value));
+                }}
+                step={0.01}
+                min={-180}
+                max={180}
+              />
             </div>
             <div className={styles.place_form_item}>
               <Label value="Широта" />
-              <Input type="number" placeholder={"Широта"} value={String(longitude)}
-                     onChange={(event) => setLongitude(Number(event.target.value))} step={0.01} min={-90} max={90} />
+              <Input
+                type="number"
+                placeholder={'Широта'}
+                value={String(longitude)}
+                onChange={(event) => setLongitude(Number(event.target.value))}
+                step={0.01}
+                min={-90}
+                max={90}
+              />
             </div>
             <div className={styles.place_form_button}>
               <Button onClick={createPlace}>Создать</Button>
-              {showEmptyFieldsMessage &&
-                <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>}
+              {showEmptyFieldsMessage && (
+                <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>
+              )}
             </div>
           </div>
         </div>
       </Dialog>
-
     </div>
   );
 };
@@ -123,7 +163,7 @@ function PlaceListPage() {
 
   const { data: allPlaces = [] } = useQuery({
     queryFn: placeService.getPlaces(api),
-    queryKey: ["getPlaces"],
+    queryKey: ['getPlaces'],
   });
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
@@ -242,9 +282,14 @@ function PlaceListPage() {
             <div className={styles.places_page}>
               <div className={styles.horizontal_bar}>
                 <div className={styles.search}>
-                  <Search onSearch={_onSearch} placeholder="Поиск" value={searchName} onChange={(event) => {
-                    setSearchName(event.target.value);
-                  }} />
+                  <Search
+                    onSearch={_onSearch}
+                    placeholder="Поиск"
+                    value={searchName}
+                    onChange={(event) => {
+                      setSearchName(event.target.value);
+                    }}
+                  />
                 </div>
                 {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
                   new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),

@@ -1,5 +1,5 @@
-import { LocalStorageKeys } from "@shared/config/localstorage";
-import { plainToInstance } from "class-transformer";
+import { LocalStorageKeys } from '@shared/config/localstorage';
+import { plainToInstance } from 'class-transformer';
 
 class TokenContextData {
   _accessToken?: string;
@@ -33,4 +33,4 @@ function setTokenContextData(token: TokenContextData) {
   localStorage.setItem(LocalStorageKeys.TOKEN, data);
 }
 
-export { TokenContextData, getTokenContextData, setTokenContextData }
+export { TokenContextData, getTokenContextData, setTokenContextData };
