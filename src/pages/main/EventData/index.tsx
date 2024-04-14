@@ -201,7 +201,9 @@ const tasks: Task[] = [
 ];
 //ff9933
 
-const edit_privilege: boolean = false;
+const edit_privilege: boolean = true;
+const add_organizer_privilege: boolean = true;
+
 function readDate(dateTime: string) {
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
@@ -237,35 +239,27 @@ function EventActivitiesPage() {
         const eventResponse = await api.event.getEventById(parseInt(id ?? "0"));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
-          let placeAddress = ""
-          await fetch('/api/places/' + data.placeId, {
-            method: 'GET'
-          }).then(
-            placeResponse => {
-              if (placeResponse.status == 200) {
-                const place = placeResponse.json();
-                place.then(p => {
-                  placeAddress = p.address;
-                  const info = new EventInfo(
-                    readDate(data.registrationStart) + " - " + readDate(data.registrationEnd),
-                    readDate(data.preparingStart) + " - " + readDate(data.preparingEnd),
-                    readDate(data.startDate) + " - " + readDate(data.endDate),
-                    data.participantLimit,
-                    placeAddress,
-                    data.format,
-                    data.status,
-                    data.participantAgeLowest + " - " + data.participantAgeHighest,
-                    data.title,
-                    data.fullDescription
-                  );
-                  setEvent(info);
-                  setEventResponse(data);
-                });
-              } else {
-                console.log(placeResponse.status);
-              }
-            }
-          )
+          let placeAddress = "";
+          const placeResponse = await api.place.placeGet(parseInt(data.placeId));
+          if(placeResponse.status==200){
+            placeAddress = placeResponse.data.address;
+            const info = new EventInfo(
+              readDate(data.registrationStart) + " - " + readDate(data.registrationEnd),
+              readDate(data.preparingStart) + " - " + readDate(data.preparingEnd),
+              readDate(data.startDate) + " - " + readDate(data.endDate),
+              data.participantLimit,
+              placeAddress,
+              data.format,
+              data.status,
+              data.participantAgeLowest + " - " + data.participantAgeHighest,
+              data.title,
+              data.fullDescription
+            );
+            setEvent(info);
+            setEventResponse(data);
+          }else{
+            console.log(placeResponse.status);
+          }
         } else {
           console.error('Error fetching event list:', eventResponse.statusText);
         }
@@ -326,7 +320,13 @@ function EventActivitiesPage() {
   // if (tasksVisible) {
   pageTabs.push(new PageTab("Задачи"));
   //}
+  const _editOrgs = () => {
+    console.log('editing orgs')
+  }
 
+  const _editParticipants = () => {
+    console.log('editing participants')
+  }
   class DialogData {
     heading: string | undefined;
     visible: DialogSelected;
@@ -366,12 +366,14 @@ function EventActivitiesPage() {
             _closeDialog();
           }}
         />;
+        break;
       case DialogSelected.ADDORGANIZER:
         component = <AddOrganizerDialog
-          {...dialogData.args} parentId={parseInt(id)} onSubmit={()=>{
+          {...dialogData.args} eventId={parseInt(id)} onSubmit={()=>{
           _closeDialog();
         }}
         />;
+        break;
     }
     return (
       <Dialog
@@ -408,6 +410,7 @@ function EventActivitiesPage() {
             <Button className={styles.button} onClick={_updateEvent}>Редактировать информацию о мероприятии</Button>
           </div>
         ) : <></>}
+
         <div className={styles.info_page}>
           <div className={styles.info_column}>
             <div className={styles.description_box}>
@@ -549,7 +552,7 @@ function EventActivitiesPage() {
     )
   }
   const _addOrganizer = (e: MouseEvent) => {
-    setDialogData(new DialogData('Создать активность', DialogSelected.ADDORGANIZER));
+    setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   }
   function createOrgPersonRow(person: OrgPerson) {
@@ -580,7 +583,7 @@ function EventActivitiesPage() {
     }
     return (
       <>
-        {edit_privilege ? (
+        {add_organizer_privilege ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_addOrganizer}>Добавить</Button>
           </div>
