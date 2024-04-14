@@ -22,6 +22,8 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import { NotificationPageResponse } from '../model';
+// @ts-ignore
 import { NotificationResponse } from '../model';
 /**
  * NotificationControllerApi - axios parameter creator
@@ -37,11 +39,11 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllNotifications: async (page: number, size: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getNotifications: async (page: number, size: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'page' is not null or undefined
-            assertParamExists('getAllNotifications', 'page', page)
+            assertParamExists('getNotifications', 'page', page)
             // verify required parameter 'size' is not null or undefined
-            assertParamExists('getAllNotifications', 'size', size)
+            assertParamExists('getNotifications', 'size', size)
             const localVarPath = `/api/notifications`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -181,10 +183,10 @@ export const NotificationControllerApiFp = function(configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllNotifications(page: number, size: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<NotificationResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllNotifications(page, size, options);
+        async getNotifications(page: number, size: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationPageResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getNotifications(page, size, options);
             const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['NotificationControllerApi.getAllNotifications']?.[index]?.url;
+            const operationBasePath = operationServerMap['NotificationControllerApi.getNotifications']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -232,8 +234,8 @@ export const NotificationControllerApiFactory = function (configuration?: Config
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllNotifications(page: number, size: number, options?: any): AxiosPromise<Array<NotificationResponse>> {
-            return localVarFp.getAllNotifications(page, size, options).then((request) => request(axios, basePath));
+        getNotifications(page: number, size: number, options?: any): AxiosPromise<NotificationPageResponse> {
+            return localVarFp.getNotifications(page, size, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -275,8 +277,8 @@ export class NotificationControllerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof NotificationControllerApi
      */
-    public getAllNotifications(page: number, size: number, options?: AxiosRequestConfig) {
-        return NotificationControllerApiFp(this.configuration).getAllNotifications(page, size, options).then((request) => request(this.axios, this.basePath));
+    public getNotifications(page: number, size: number, options?: AxiosRequestConfig) {
+        return NotificationControllerApiFp(this.configuration).getNotifications(page, size, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
