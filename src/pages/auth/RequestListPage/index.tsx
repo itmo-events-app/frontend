@@ -43,10 +43,9 @@ class RequestEntry {
   id: number
   data: Request
 
-  constructor(id: number, data: Request, expanded: boolean) {
+  constructor(id: number, data: Request) {
     this.id = id;
     this.data = data;
-    this.expanded = expanded;
   }
 }
 
@@ -54,7 +53,7 @@ export default function RequestListPage() {
   var startEntries: Array<RequestEntry> = [];
   const [requests, setRequests] = useState(_requests)
   for (var i: number = 0; i < requests; i++)
-    startEntries.push(new RequestEntry(i, requests[i], false));
+    startEntries.push(new RequestEntry(i, requests[i]));
   const [requestEntries, setRequestEntries] = useState(startEntries)
 
   useEffect(() => {setRequestEntries(startEntries)}, [requests])
