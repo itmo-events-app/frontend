@@ -4,11 +4,8 @@ import styles from './index.module.css'
 import Button from "@widgets/main/Button";
 import {toRoleModel} from "@entities/role";
 import ApiContext from "@features/api-context";
-import RoleListRadio, {
-  createRoleRadioElementList,
-  getSelectedRoleId,
-  RoleRadioElement
-} from "@widgets/main/RoleListRadio";
+import RoleListRadio, { RoleRadioElement } from "@widgets/main/RoleListRadio";
+import {createRoleRadioElementList, getSelectedRoleId} from "@widgets/main/RoleListRadio/common";
 
 type AssignProps = {
   userId: number,
@@ -16,7 +13,7 @@ type AssignProps = {
 }
 
 const AssignDialogContent = (props: AssignProps) => {
-  const { api } = useContext(ApiContext);
+  const {api} = useContext(ApiContext);
   const [roles, setRoles] = useState([] as RoleRadioElement[]);
 
   const _onDoneWrapper = () => {
@@ -37,11 +34,13 @@ const AssignDialogContent = (props: AssignProps) => {
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
-          <RoleListRadio roles={roles} setRoles={setRoles}  />
+          <RoleListRadio roles={roles} setRoles={setRoles}/>
         </div>
       </div>
-      //todo make button non-clickable if nothing selected
-      <Button onClick={_onDoneWrapper}>Назначить роль</Button>
+      <Button onClick={_onDoneWrapper}
+              disabled={getSelectedRoleId === null}
+              {/*//todo change color if disabled*/}
+              className={getSelectedRoleId === null ? styles.disabled_button : undefined}>Назначить роль</Button>
     </div>
   );
 }

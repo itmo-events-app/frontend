@@ -1,7 +1,7 @@
 import { uid } from 'uid'
 import styles from './index.module.css'
 import { RoleModel } from '@entities/role'
-import { ArrowDown, MenuVertical } from '@shared/ui/icons'
+import { ArrowDown } from '@shared/ui/icons'
 import { appendClassName } from '@shared/util'
 import { PrivilegeModel } from '@entities/privilege'
 
@@ -114,15 +114,6 @@ function RoleListRadio(props: Props) {
   )
 }
 
-function createRoleRadioElementList(roles: RoleModel[]) {
-  return roles.map(r => new RoleRadioElement(r, false));
-}
-
-function getSelectedRoleId(roles: RoleRadioElement[]) {
-  const selectedRole = roles.find(role => role.selected);
-  return selectedRole ? selectedRole.entry.id : null;
-}
-
 export default RoleListRadio;
-export { RoleRadioElement, createRoleRadioElementList, getSelectedRoleId }
+export { RoleRadioElement }
 

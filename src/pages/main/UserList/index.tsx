@@ -81,7 +81,14 @@ export default function UserListPage() {
   const [users, setUsers] = useState([] as UserModel[]);
 
   const cmRef = useRef(null);
-  const dialogRef = useRef(null);
+
+  const [searchQuery, setSearchQuery] = useState("")
+  const [page] = useState(0)
+  const [size] = useState(10)
+  //todo use when new paging is done
+  // const [page, setPage] = useState(0)
+  // const [size, setSize] = useState(10)
+  // const [total, setTotal] = useState(10)
 
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
@@ -117,32 +124,15 @@ export default function UserListPage() {
     }
   }, [cmData, cmRef]);
 
-  //todo fix assign dialog closing incorrectly
-
-  // close dialog when clicking outside
-  // useEffect(() => {
-  //   const handler = (e: any) => {
-  //     if (dialogRef.current) {
-  //       if (dialogData.visible && !(dialogRef.current as any).contains(e.target)) {
-  //         _closeDialog();
-  //       }
-  //     }
-  //   }
-  //   document.addEventListener('click', handler);
-  //   return () => {
-  //     document.removeEventListener('click', handler);
-  //   }
-  // }, [dialogData, dialogRef]);
-
   // fill users on startup
   useEffect(() => {
     _fetchUsers()
   }, [])
 
   function _fetchUsers() {
-    api.withReauth(() => api.profile.getAllUsers())
+    api.withReauth(() => api.profile.getAllUsers(searchQuery, page, size))
       .then(r => {
-        const l = r.data.map(user => toUserModel(user))
+        const l = r.data.items.map(user => toUserModel(user))
         setUsers(l);
       })
   }
@@ -181,7 +171,6 @@ export default function UserListPage() {
   }
 
   const _assignRoleToUser = (userId: number, roleId: number) => {
-    //todo rewrite alerts to error messages and success operations
     api.withReauth(() => api.role.assignSystemRole(userId, roleId))
       .then(_ => {
         _fetchUsers()
@@ -196,7 +185,6 @@ export default function UserListPage() {
   }
 
   const _revokeRoleFromUser = (userId: number) => {
-    //todo rewrite alerts to error messages and success operations
     api.withReauth(() => api.role.revokeSystemRole(userId))
       .then(_ => {
         _fetchUsers()
@@ -204,15 +192,14 @@ export default function UserListPage() {
           DialogSelected.MESSAGE,
           { messageText: 'Роль пользователя отозвана.' }));
       }).catch(error => {
-        //todo throw error message without error code
       setDialogData(new DialogData('Некорректная операция!',
         DialogSelected.MESSAGE,
         { messageText: error.response.data }));
     })
   }
 
-  const _onSearch = () => {
-    console.log('searching')
+  const _onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   }
 
   const _closeDialog = () => {
@@ -250,8 +237,6 @@ export default function UserListPage() {
         className={appendClassName(styles.dialog,
           (dialogData.visible ? styles.visible : styles.hidden))}
         text={dialogData.heading}
-        //todo solve unclosable assign dialog issue
-        // ref={dialogRef}
         onClose={_closeDialog}
       >
         {component}
@@ -302,9 +287,10 @@ export default function UserListPage() {
       bottomRight={
         <Content>
           <div className={styles.search}>
-            <Search onSearch={_onSearch} placeholder="Поиск" />
+            <Search value={searchQuery} onChange={_onSearchChange} onSearch={_fetchUsers} placeholder="Поиск пользователей" />
           </div>
-          <PagedList page={1} page_size={5} page_step={5} items={_renderedUserEntries} />
+          {/*//todo apply new pagination when done*/}
+          <PagedList page={page + 1} page_size={size} page_step={10} items={_renderedUserEntries} />
           <_ContextMenu/>
           <Fade
             className={appendClassName(styles.fade,
