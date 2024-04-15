@@ -42,9 +42,6 @@ export const placeService = {
       longitude: long,
     };
 
-    debugger
-    console.log('debugger', request);
-
     api.withReauth(() => api.place.placeAdd(request));
   },
 
