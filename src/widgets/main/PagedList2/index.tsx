@@ -77,7 +77,6 @@ function PagedList2(props: Props) {
     return (
       <a
         key={index}
-        href="#"
         onClick={_selectPage(index)}
         className={selected ? styles.nav_page_num_selected : styles.nav_page_num}>
         {index}
@@ -154,10 +153,10 @@ function PagedList2(props: Props) {
     <div className={styles.list_container}>
       <div className={styles.navigator}>
         <div className={styles.nav_buttons}>
-          <a href="#" onClick={_decPage()} className={styles.nav_button}>
+          <a onClick={_decPage()} className={styles.nav_button}>
             <ArrowLeft className={styles.arrow}/>
           </a>
-          <a href="#" onClick={_incPage()} className={styles.nav_button}>
+          <a onClick={_incPage()} className={styles.nav_button}>
             <ArrowRight className={styles.arrow}/>
           </a>
         </div>
@@ -165,16 +164,16 @@ function PagedList2(props: Props) {
           {_navInfo()}
         </div>
         <div className={styles.nav_buttons}>
-          <a href="#" onClick={_decPage()} className={styles.nav_button}>
+          <a onClick={_decPage()} className={styles.nav_button}>
             <ArrowLeft className={styles.arrow}/>
           </a>
           {_navPageNums()}
-          <a href="#" onClick={_incPage()} className={styles.nav_button}>
+          <a onClick={_incPage()} className={styles.nav_button}>
             <ArrowRight className={styles.arrow}/>
           </a>
         </div>
         <div className={styles.nav_buttons}>
-          <a href="#" onClick={_decPageSize()} className={styles.nav_button}>
+          <a onClick={_decPageSize()} className={styles.nav_button}>
             <ArrowLeft className={styles.arrow}/>
           </a>
           <div className={styles.nav_page_num}>
@@ -183,7 +182,7 @@ function PagedList2(props: Props) {
           <div className={styles.nav_page_num}>
             {page_size}
           </div>
-          <a href="#" onClick={_incPageSize()} className={styles.nav_button}>
+          <a onClick={_incPageSize()} className={styles.nav_button}>
             <ArrowRight className={styles.arrow}/>
           </a>
         </div>
