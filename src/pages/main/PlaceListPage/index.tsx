@@ -143,6 +143,9 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
                 max={90}
               />
             </div>
+            <iframe src="https://trickyfoxy.ru/practice/map.html" width="100%" height="420px">
+              Ваш браузер не поддерживает плавающие фреймы!
+            </iframe>
             <div className={styles.place_form_button}>
               <Button onClick={createPlace}>Создать</Button>
               {showEmptyFieldsMessage && (
