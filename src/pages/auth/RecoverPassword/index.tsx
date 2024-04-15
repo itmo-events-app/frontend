@@ -9,26 +9,27 @@ import {useContext, useEffect, useState} from 'react';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import {RoutePaths} from '@shared/config/routes';
 import {NotifyState} from '../Notification';
-import ApiContext from "@features/api-context";
-import {getErrorResponse} from "@features/response";
+import ApiContext from '@features/api-context';
+import {getErrorResponse} from '@features/response';
 import {NewPasswordRequest} from "@shared/api/generated/model";
 
 
 const PWD_MIN_LEN = 8;
-
-const PWD_EMPTY_ER_MSG = 'Поля не должны быть пустым';
-
-const PWD_LEN_ER_MSG = 'Пароль не должен быть короче 8 символов';
-const PWD_NOT_EQ_MSG = 'Введенные пароли не совпадают';
-const PWD_CASE_MSG = 'Пароль должен содержать минимум один символ верхнего и нижнего регистра';
-const PWD_SPEC_CHR_MSG = 'Пароль должен содержать минимум один специальный символ';
-
-const SUCCESS_MESSAGE = 'Смена пароля произошла успешно. Вернитесь на страницу входа.';
-
-const NO_TOKEN_MESSAGE = 'Отсутствует токен восстановления пароля';
-const INVALID_TOKEN_MESSAGE = 'Используемый токен восстановления пароля не существует или срок его действия истек.';
+const PWD_MAX_LEN = Number.MAX_VALUE; // to adjust
 
 const SPEC_CHAR_REGEX = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
+
+const PWD_EMPTY_ERR_MSG = 'Поля не должны быть пустым';
+const PWD_LEN_ERR_MSG = 'Пароль не должен быть короче  символов';
+const PWD_NOT_EQ_ERR_MSG = 'Введенные пароли не совпадают';
+const PWD_CASE_ERR_MSG = 'Пароль должен содержать минимум один символ верхнего и нижнего регистра';
+const PWD_SPEC_CHR_ERR_MSG = 'Пароль должен содержать минимум один специальный символ';
+
+const SUCCESS_MESSAGE = 'Восстановление пароля произошла успешно. Вернитесь на страницу входа.';
+const FAIL_MESSAGE = 'Не удалось восстановить пароль.';
+
+const NO_TOKEN_ERR_MSG = 'Отсутствует токен восстановления пароля';
+const TOKEN_INVALID_ERR_MSG = 'Используемый токен восстановления пароля не существует или срок его действия истек.';
 
 
 function RecoverPasswordPage() {
@@ -53,7 +54,7 @@ function RecoverPasswordPage() {
     }
 
     api.auth
-      .validateRecoveryToken(token)
+      .validateRecoveryToken(token.toString())
       .then(() => {
         console.log("Token is valid!");
         setPasswordRestoreToken(token);
@@ -61,11 +62,28 @@ function RecoverPasswordPage() {
       .catch((e): any => {
         console.log(e.response.data);
         const state: NotifyState = {
-          msg: INVALID_TOKEN_MESSAGE
+          msg: TOKEN_INVALID_ERR_MSG
         };
         navigate(RoutePaths.notify, {state: state});
       });
-  });
+  }, [searchParams]);
+
+
+  const _passwordOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length > PWD_MAX_LEN)
+      return;
+    setPasswordValue(value);
+    setError('');
+  };
+
+  const _repeatOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length > PWD_MAX_LEN)
+      return;
+    setRepeatValue(value);
+    setError('');
+  };
 
   const _change = () => {
     let ok = true;
@@ -102,38 +120,29 @@ function RecoverPasswordPage() {
           navigate(RoutePaths.notify, {state: state});
         })
         .catch((e): any => {
-          setError(getErrorResponse(e.response));
+          console.log(getErrorResponse(e.response));
+          setError(FAIL_MESSAGE);
         });
     }
   };
 
-  const _passwordOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordValue(e.target.value);
-    setError('');
-  };
-
-  const _repeatOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRepeatValue(e.target.value);
-    setError('');
-  };
-
   const _empty = (v: string | null) => {
     if (v == null || v.length == 0) {
-      return NO_TOKEN_MESSAGE;
+      return NO_TOKEN_ERR_MSG;
     }
     return null;
   };
 
   const _validatePassword = (password: string) => {
     if (password == '') {
-      return PWD_EMPTY_ER_MSG;
+      return PWD_EMPTY_ERR_MSG;
     } else if (password.length < PWD_MIN_LEN) {
-      return PWD_LEN_ER_MSG;
+      return PWD_LEN_ERR_MSG;
     } else if (password == password.toLowerCase() ||
       password == password.toUpperCase()) {
-      return PWD_CASE_MSG;
+      return PWD_CASE_ERR_MSG;
     } else if (!SPEC_CHAR_REGEX.test(password)) {
-      return PWD_SPEC_CHR_MSG;
+      return PWD_SPEC_CHR_ERR_MSG;
     } else {
       return null;
     }
@@ -141,15 +150,16 @@ function RecoverPasswordPage() {
 
   const _validateConfirmation = (newPwd: string, confirmPwd: string) => {
     if (newPwd != confirmPwd) {
-      return (PWD_NOT_EQ_MSG);
+      return (PWD_NOT_EQ_ERR_MSG);
     }
     return null;
   }
 
+
   return (
     <div className={styles.root}>
       <ITMO/>
-      <Block className={styles.block}>
+      {passwordRestoreToken && <Block className={styles.block}>
         <span className={styles.header}>Смена пароля</span>
         <Error value={error} isError={error != ''}/>
         {(passwordRestoreToken) && <div className={styles.form}>
@@ -163,7 +173,7 @@ function RecoverPasswordPage() {
           </div>
         </div>}
         <Button onClick={_change}>Отправить</Button>
-      </Block>
+      </Block>}
     </div>
   );
 }

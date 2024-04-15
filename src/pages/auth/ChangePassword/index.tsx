@@ -13,18 +13,20 @@ import ApiContext from "@features/api-context";
 import {UserChangePasswordRequest} from "@shared/api/generated/model";
 
 const PWD_MIN_LEN = 8;
+const PWD_MAX_LEN = Number.MAX_VALUE; // to adjust
 
-const PWD_EMPTY_ER_MSG = 'Поле не должно быть пустым';
-const PWD_LEN_ER_MSG = 'Пароль не должен быть короче 8 символов';
-const PWD_NOT_EQ_MSG = 'Пароль должен совпадать';
-const PWD_CASE_MSG = 'Пароль должен содержать минимум один символ верхнего и нижнего регистра';
-const PWD_SPEC_CHR_MSG = 'Пароль должен содержать минимум один специальный символ';
-const PWD_EQ_OLD_MSG = 'Указанный пароль не совпадает с текущим';
+const PWD_EMPTY_ERR_MSG = 'Поле не должно быть пустым';
+const PWD_LEN_ERR_MSG = 'Пароль не должен быть короче 8 символов';
+const PWD_NOT_EQ_ERR_MSG = 'Пароль должен совпадать';
+const PWD_CASE_ERR_MSG = 'Пароль должен содержать минимум один символ верхнего и нижнего регистра';
+const PWD_SPEC_CHR_ERR_MSG = 'Пароль должен содержать минимум один специальный символ';
+const PWD_EQ_OLD_ERR_MSG = 'Указанный пароль не совпадает с текущим';
 
 const SUCCESS_MESSAGE = 'Смена пароля произошла успешно. Вернитесь на страницу входа.';
 const FAIL_MESSAGE = 'Не удалось сменить пароль. Ошибка аутентификации.';
 
 const SPEC_CHAR_REGEX = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
 
 function ChangePasswordPage() {
   const navigate = useNavigate();
@@ -43,17 +45,29 @@ function ChangePasswordPage() {
 
 
   const _setOldPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value > PWD_MAX_LEN) {
+      return;
+    }
     setOldPassword(e.target.value);
     setOldPasswordError('');
     setError('');
   }
 
   const _setNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value > PWD_MAX_LEN) {
+      return;
+    }
     setNewPassword(e.target.value);
     setNewPasswordError('');
   }
 
   const _setConfirmNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value > PWD_MAX_LEN) {
+      return;
+    }
     setConfirmNewPassword(e.target.value);
     setConfirmNewPasswordError('');
   }
@@ -99,12 +113,12 @@ function ChangePasswordPage() {
           navigate(RoutePaths.notify, {state: state});
         })
         .catch((e: any) => {
-          console.log("[Ошибка при вызове АПИ]");
           console.log(e.response.data);
           setError(FAIL_MESSAGE);
 
+          // TODO add responses handling
           if (e.response.data.includes('Ошибка аутентификации')) {
-            setOldPasswordError(PWD_EQ_OLD_MSG);
+            setOldPasswordError(PWD_EQ_OLD_ERR_MSG);
           }
         });
     }
@@ -112,14 +126,14 @@ function ChangePasswordPage() {
 
   const _validatePassword = (password: string) => {
     if (password == '') {
-      return PWD_EMPTY_ER_MSG;
+      return PWD_EMPTY_ERR_MSG;
     } else if (password.length < PWD_MIN_LEN) {
-      return PWD_LEN_ER_MSG;
+      return PWD_LEN_ERR_MSG;
     } else if (password == password.toLowerCase() ||
       password == password.toUpperCase()) {
-      return PWD_CASE_MSG;
+      return PWD_CASE_ERR_MSG;
     } else if (!SPEC_CHAR_REGEX.test(password)) {
-      return PWD_SPEC_CHR_MSG;
+      return PWD_SPEC_CHR_ERR_MSG;
     } else {
       return null;
     }
@@ -127,7 +141,7 @@ function ChangePasswordPage() {
 
   const _validateConfirmation = (newPwd: string, confirmPwd: string) => {
     if (newPwd != confirmPwd) {
-      return (PWD_NOT_EQ_MSG);
+      return (PWD_NOT_EQ_ERR_MSG);
     }
     return null;
   }
