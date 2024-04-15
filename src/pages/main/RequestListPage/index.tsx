@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import styles from './index.module.css'
+import { useContext, useEffect, useState } from 'react';
+import styles from './index.module.css';
 import BrandLogo from "@widgets/main/BrandLogo";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
@@ -7,10 +7,11 @@ import { RoutePaths } from "@shared/config/routes.ts";
 import Content from "@widgets/main/Content";
 import PagedList, { PageEntry } from "@widgets/main/PagedList";
 import Layout from "@widgets/main/Layout";
-import { uid } from "uid";
 import Button from "@widgets/main/Button";
-import { appendClassName, truncateTextByWords } from "@shared/util.ts";
-import { ArrowDown } from "@shared/ui/icons";
+import { appendClassName } from "@shared/util.ts";
+import ApiContext from '@features/api-context';
+import { RegistrationRequestForAdmin, RegistrationRequestForAdminStatusEnum } from '@shared/api/generated/model/registration-request-for-admin.ts';
+import type { AxiosResponse } from 'axios';
 
 enum RequestStatus {
   New,
@@ -19,108 +20,128 @@ enum RequestStatus {
 }
 
 class Request {
-  email: string
-  name: string
-  surname: string
-  status: RequestStatus
-  sentTime: Date
+  id: number;
+  email: string;
+  name: string;
+  surname: string;
+  status: RequestStatus;
+  sentTime: Date;
 
-  constructor(email: string, name: string, surname: string, status: RequestStatus, sentTime: Date) {
-    this.email = email
-    this.name = name
-    this.surname = surname
-    this.status = status
-    this.sentTime = sentTime
-  }
-}
-
-const _requests: Request[] = [
-  new Request("one@itmo.ru", "Один", "Одинов", RequestStatus.New, new Date(2024, 3, 14, 10, 1, 34)),
-  new Request("two@itmo.ru", "Два", "Дваев", RequestStatus.New, new Date(2024, 3, 14, 10, 1, 34))
-]
-
-class RequestEntry {
-  id: number
-  data: Request
-
-  constructor(id: number, data: Request) {
-    this.id = id;
-    this.data = data;
+  constructor(req: RegistrationRequestForAdmin) {
+    this.id = req.id || 0;
+    this.email = req.email || "";
+    this.name = req.name || "";
+    this.surname = req.surname || "";
+    switch (req.status || RegistrationRequestForAdminStatusEnum.New) {
+      case RegistrationRequestForAdminStatusEnum.New: this.status= RequestStatus.New; break;
+      case RegistrationRequestForAdminStatusEnum.Approved: this.status= RequestStatus.Approved; break;
+      case RegistrationRequestForAdminStatusEnum.Declined: this.status= RequestStatus.Declined; break;
+    }
+    this.sentTime = new Date(req.sentTime || "");
   }
 }
 
 export default function RequestListPage() {
-  var startEntries: Array<RequestEntry> = [];
-  const [requests, setRequests] = useState(_requests)
-  for (var i: number = 0; i < requests; i++)
-    startEntries.push(new RequestEntry(i, requests[i]));
-  const [requestEntries, setRequestEntries] = useState(startEntries)
+  const { api } = useContext(ApiContext);
+  const [requests, setRequests] = useState([] as Request[]);
 
-  useEffect(() => {setRequestEntries(startEntries)}, [requests])
+  useEffect(() => {
+    api
+      .auth
+      .listRegisterRequests()
+      .then((response: AxiosResponse<RegistrationRequestForAdmin[], any>) => {
+        if (response.status == 200) {
+          setRequests(response.data.map((req) => new Request(req)));
+        }
+        else {
+          console.log("Fail list: " + response.status + " " + response.statusText);
+        }
+      })
+      .catch((reason: any) => console.log("Reject list: " + reason));
+  }, [requests]);
 
-  const _approveRequest = (request: Request) => {
-    console.log("Request approved", request)
-  }
+  function _approveRequestClick(request: Request) {
+    api
+      .auth
+      .approveRegister(request.id)
+      .then((response) =>{
+        if (response.status == 200) {
+          console.log("Request approved", request);
+          setRequests(requests.map((r: Request) => {
+            if (r == request) {
+              r.status = RequestStatus.Approved;
+            }
+            return r;
+          }));
+        }
+        else {
+          console.log("Fail approve: " + response.status + " " + response.statusText);
+        }
+      })
+      .catch((reason: any) => console.log("Reject approve: " + reason));
+  };
 
-  const _declineRequest = (request: Request) => {
-    console.log("Request declined", request)
-  }
+  function _declineRequestClick(request: Request) {
+    api
+      .auth
+      .declineRegister(request.id)
+      .then((response) =>{
+        if (response.status == 200) {
+          console.log("Request decline", request);
+          setRequests(requests.map((r: Request) => {
+            if (r == request) {
+              r.status = RequestStatus.Declined;
+            }
+            return r;
+          }));
+        }
+        else {
+          console.log("Fail decline: " + response.status + " " + response.statusText);
+        }
+      })
+      .catch((reason: any) => console.log("Reject decline: " + reason));  
+  };
 
-  function _approveEntryClick(requestEntry: RequestEntry) {
-    // some callback to server?
-    _approveRequest(requestEntry.data)
-    setRequests(requests.map((r: Request) => {
-      if (r == requestEntry.data) {
-        r.status = RequestStatus.Approved;
-      }
-      return r;
-    }))
-  }
-
-  function _declineEntryClick(requestEntry: RequestEntry) {
-    // some callback to server?
-    _declineRequest(requestEntry.data)
-    setRequests(requests.map((r: Request) => {
-      if (r == requestEntry.data) {
-        r.status = RequestStatus.Declined;
-      }
-      return r;
-    }))
-  }
-
-  function _renderButtons(req: RequestEntry) {
-    if (req.data.status == RequestStatus.New) {
+  function _renderButtons(req: Request) {
+    if (req.status == RequestStatus.New) {
       return (
         <>
-          <Button className={styles.approve_button} onClick={() => _approveEntryClick(req)}>Одобрить</Button>
-          <Button className={styles.approve_button} onClick={() => _declineEntryClick(req)}>Отклонить</Button>
+          <Button className={
+            styles.button
+            } onClick={() => _approveRequestClick(req)}>Одобрить</Button>
+          <Button className={
+            appendClassName(styles.button, styles.decline_button)
+            } onClick={() => _declineRequestClick(req)}>Отклонить</Button>
         </>
-      )
+      );
     }
-    if (req.data.status == RequestStatus.Approved) {
-      return <p>Одобрено</p>
+    if (req.status == RequestStatus.Approved) {
+      return <p className={styles.label}>Утверждено</p>;
     }
-    return <p>Отклонено</p>
-  }
+    return <p className={styles.label}>Отклонено</p>;
+  };
 
-  function _renderRequestEntry(req: RequestEntry) {
+  function _renderRequestEntry(req: Request) {
     return (
       <div className={styles.request_entry} key={req.id}>
         <div className={styles.request_header}>
-          <span className={styles.request_titles}>
-            {req.data.name} | {req.data.surname} | {req.data.email} | {req.data.sentTime}
+          <span className={
+            (req.status == RequestStatus.New)
+            ? styles.request_titles
+            : appendClassName(styles.request_titles, styles.responded)}>
+            {req.name} {req.surname}, {req.email}, {req.sentTime.toLocaleString()}
           </span>
-        </div>
-
-        <div className={styles.request_respond}>
-          {_renderButtons(req)}
+          <span>
+            {_renderButtons(req)}
+          </span>
         </div>
       </div>
     );
-  }
-  const _renderedRequestEntries: any[] = requestEntries.map((req: RequestEntry) => {
+  };
+
+  const _renderedRequests: any[] = requests.map((req: Request) => {
     return new PageEntry(() => { return _renderRequestEntry(req) })
-  })
+  });
 
   return (
     <Layout
@@ -131,7 +152,7 @@ export default function RequestListPage() {
       {
         (
           <Content>
-            <PagedList page={1} page_size={5} page_step={5} items={_renderedRequestEntries} />
+            <PagedList page={1} page_size={5} page_step={5} items={_renderedRequests} />
           </Content>
         )
       }

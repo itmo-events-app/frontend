@@ -1,3 +1,8 @@
+:root {
+  --itmo-colors-decline-button-80: rgba(200, 1, 83, 0.8);
+  --itmo-colors-decline-button: rgba(200, 1, 83, 1);
+}
+
 .request_entry {
   padding: 16px;
   border: 1px solid var(--itmo-colors-gray);
@@ -11,12 +16,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
 }
 
 .request_titles {
   font-weight: bold;
   color: var(--itmo-colors-black);
+}
+
+.request_titles.responded {
+  font-weight: normal;
 }
 
 .request_text {
@@ -32,28 +40,15 @@
   margin-top: 8px;
 }
 
-.approve_button {
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  background-color: var(--itmo-colors-gray);
-}
-
-.approve_button:hover {
-  cursor: auto;
-  background-color: var(--itmo-colors-gray);
+.button, .label {
+  margin: 0;
 }
 
 .decline_button {
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  background-color: var(--itmo-colors-gray);
+  background-color: var(--itmo-colors-decline-button-80);
 }
 
 .decline_button:hover {
-  cursor: auto;
-  background-color: var(--itmo-colors-gray);
+  cursor: pointer;
+  background-color: var(--itmo-colors-decline-button);
 }
-
-  
