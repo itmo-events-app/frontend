@@ -162,18 +162,15 @@ function ProfilePage() {
                     </tr>
                   </tbody>
                 </table>
+
+                <div className={styles.button_column}>
+                  <Button onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
+                    {notificationSettings?.enableEmail ? 'Отключить уведомления по почте' : 'Включить уведомления по почте'}
+                  </Button>
+                  <Button onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
+                    {notificationSettings?.enablePush ? 'Отключить пуш-уведомления' : 'Включить пуш-уведомления'}
+                  </Button>
                 <div>
-                  <div className={styles.button_column}>
-                    <Button onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
-                      {notificationSettings?.enableEmail ? 'Отключить уведомления по почте' : 'Включить уведомления по почте'}
-                    </Button>
-                    </div>
-                    <div>
-                    <Button onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
-                      {notificationSettings?.enablePush ? 'Отключить пуш-уведомления' : 'Включить пуш-уведомления'}
-                    </Button>
-                  </div>
-                </div>
 
                 <div className={styles.button_column}>
                   {isEditing ? (
