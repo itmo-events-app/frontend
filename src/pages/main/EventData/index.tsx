@@ -33,6 +33,7 @@ import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
 import InputLabel from "@widgets/main/InputLabel";
+import {AxiosRequestConfig, Method} from "axios";
 
 class EventInfo {
   regDates: string;
@@ -153,6 +154,14 @@ class ParticipantsListResponse implements SetPartisipantsListRequest {
 
   constructor(file: File) {
     this.participantsFile = file;
+  }
+}
+
+class ImportHeader implements AxiosRequestConfig {
+  method?: Method | string;
+
+  constructor() {
+    this.method = 'POST';
   }
 }
 
@@ -865,7 +874,9 @@ function EventActivitiesPage() {
   function import_xlsx(file: File) {
     if (idInt != null) {
       api
-        .withReauth(() => api.participants.setPartisipantsList(idInt, new ParticipantsListResponse(file)))
+        .withReauth(() => api.participants.setPartisipantsList(idInt,
+          new ParticipantsListResponse(file),
+          new ImportHeader()))
         // Yars: ToDo check if something is needed here
         .catch((error) => {
           console.log(error);
