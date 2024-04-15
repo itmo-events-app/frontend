@@ -24,6 +24,10 @@ import Pagination, { PageEntry } from '@widgets/main/PagedList/pagination';
 import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
 import { EventResponse } from '@shared/api/generated';
 import EventCreationPage from './EventCreationDialog';
+import PrivilegeContext from '@features/privilege-context';
+import { hasAnyPrivilege } from '@features/privileges';
+import { PrivilegeData } from '@entities/privilege-context';
+import { PrivilegeNames } from '@shared/config/privileges';
 
 enum DisplayModes {
   LIST = "Показать списком",
@@ -105,6 +109,11 @@ const isBlank = (str: string): boolean => {
 
 function EventListPage() {
   const {api} = useContext(ApiContext);
+  const { privilegeContext } = useContext(PrivilegeContext);
+  const canCreateEvent = hasAnyPrivilege(
+    privilegeContext.systemPrivileges,
+    new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])
+  );
   const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
@@ -261,9 +270,11 @@ function EventListPage() {
                   onChange={(mode) => {setDisplayMode(mode)}}
                   toText={(input: string) => {return input}} />
               </div>
-              <div className={styles.button}>
-                <Button onClick={_onCreationPopUp}>Создать</Button>
-              </div>
+              {canCreateEvent &&
+                <div className={styles.button}>
+                  <Button onClick={_onCreationPopUp}>Создать</Button>
+                </div>
+              }
             </div>
             <div className={styles.filters}>
               <div className={styles.filter_group}>
