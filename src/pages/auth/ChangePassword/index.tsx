@@ -21,6 +21,7 @@ const PWD_NOT_EQ_ERR_MSG = 'Пароль должен совпадать';
 const PWD_CASE_ERR_MSG = 'Пароль должен содержать минимум один символ верхнего и нижнего регистра';
 const PWD_SPEC_CHR_ERR_MSG = 'Пароль должен содержать минимум один специальный символ';
 const PWD_EQ_OLD_ERR_MSG = 'Указанный пароль не совпадает с текущим';
+const PWD_EQ_CUR_ERR_MSG = 'Указанный новый пароль совпадает с текущим';
 
 const SUCCESS_MESSAGE = 'Смена пароля произошла успешно. Вернитесь на страницу входа.';
 const FAIL_MESSAGE = 'Не удалось сменить пароль.';
@@ -90,13 +91,20 @@ function ChangePasswordPage() {
 
     const eConfPwd = _validatePassword(confirmNewPassword);
     const eEqlPwd = _validateConfirmation(newPassword, confirmNewPassword);
+    const eCngPwd = _validatePwdChange(oldPassword, newPassword);
     if (eConfPwd) {
       setConfirmNewPasswordError(eConfPwd);
       ok = false;
     } else if (eEqlPwd) {
       setConfirmNewPasswordError(eEqlPwd);
       ok = false;
+    } else if (eCngPwd) {
+      setNewPasswordError(eCngPwd);
+      ok = false;
     }
+
+
+
 
     if (ok) {
       const request: UserChangePasswordRequest = {
@@ -142,6 +150,13 @@ function ChangePasswordPage() {
   const _validateConfirmation = (newPwd: string, confirmPwd: string) => {
     if (newPwd != confirmPwd) {
       return (PWD_NOT_EQ_ERR_MSG);
+    }
+    return null;
+  }
+
+  const _validatePwdChange = (newPwd: string, oldPwd: string) => {
+    if (newPwd == oldPwd) {
+      return (PWD_EQ_CUR_ERR_MSG);
     }
     return null;
   }
