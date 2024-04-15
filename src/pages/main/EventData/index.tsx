@@ -627,7 +627,7 @@ function EventActivitiesPage() {
 
   const _event = (id: string) => {
     navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
-    window.location.reload();
+    setTimeout(() => { location.reload() }, 500);
   }
 
   function _createActivity(activity: Activity) {
