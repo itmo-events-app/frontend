@@ -55,6 +55,14 @@
   background-color: var(--itmo-colors-gray);
 }
 
+.read_all_button {
+  padding: 8px;
+}
+
+.read_all_button_div {
+  margin-top: 20px;
+}
+
 .not_read_button {
   color: white;
   border: none;

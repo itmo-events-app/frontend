@@ -4,6 +4,7 @@ export * from './event-response';
 export * from './event-short-data-response';
 export * from './file-data-response';
 export * from './login-request';
+export * from './notification-page-response';
 export * from './notification-response';
 export * from './notification-settings-request';
 export * from './paginated-response';

@@ -1,0 +1,66 @@
+:root {
+  --itmo-colors-decline-button-80: rgba(200, 1, 83, 0.8);
+  --itmo-colors-decline-button: rgba(200, 1, 83, 1);
+}
+
+.request_entry {
+  padding: 16px;
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.request_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.request_titles {
+  font-weight: bold;
+  color: var(--itmo-colors-black);
+}
+
+.request_titles.responded {
+  font-weight: normal;
+}
+
+.request_text {
+  color: #333333;
+  overflow-wrap: break-word; /* Ensures the break of long words if necessary */
+  word-wrap: break-word;     /* Deprecated version of the above property for older browsers */
+  white-space: normal;       /* Allows the text to wrap to the next line */
+}
+
+.request_respond {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.button, .label {
+  margin: 0;
+}
+
+.button_panel {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.decline_button {
+  background-color: var(--itmo-colors-decline-button-80);
+}
+
+.decline_button:hover {
+  cursor: pointer;
+  background-color: var(--itmo-colors-decline-button);
+}
+
+.no_requests {
+  justify-content: center;
+}
+

@@ -56,13 +56,20 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
       } else {
         onSubmit();
       }
+    } else {
+      const result = await api.role.assignOrganizationalRole(userId!, eventId, roleId!);
+      if (result.status != 204) {
+        console.log(result.status);
+      } else {
+        onSubmit();
+      }
     }
   };
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
-        a       <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
+               <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
           {loaded ? (
             userList.map((u) => {
               return <option value={u.id}>{u.name}</option>;
