@@ -32,6 +32,7 @@ import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
 import axios from 'axios';
+import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
 
 class EventInfo {
   regDates: string;
@@ -331,7 +332,7 @@ function EventActivitiesPage() {
     getEvent();
     getImageUrl(String(idInt)).then((url) => {
       if (url == '') {
-        setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
+        setEventImageUrl('http://158.160.150.192:9000/hello/Screenshot%20from%202024-04-12%2020-14-41.png');
       } else {
         setEventImageUrl(url);
       }
@@ -519,7 +520,7 @@ function EventActivitiesPage() {
   function _createInfoPage(eventInfo: EventInfo) {
     return (
       <div className={styles.root}>
-        <div className={styles.image_box}>{<img className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
+        <div className={styles.image_box}>{<ImagePreview className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
         {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_updateEvent}>
