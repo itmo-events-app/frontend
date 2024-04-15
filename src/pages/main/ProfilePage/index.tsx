@@ -239,25 +239,25 @@ function ProfilePage() {
                   </table>
                 </div>
                 <div className={styles.profile_col}>
-                  <Button onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
+                  <Button className={styles.button} onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
                     {notificationSettings?.enableEmail ? 'Отключить уведомления по почте' : 'Включить уведомления по почте'}
                   </Button>
-                  <Button onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
+                  <Button className={styles.button} onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
                     {notificationSettings?.enablePush ? 'Отключить пуш-уведомления' : 'Включить пуш-уведомления'}
                   </Button>
                   {isEditing ? (
                     _renderProfileEdit()
                   ) : (
-                    <Button onClick={customEditRenameModal}>Редактировать имя и фамилию</Button>
+                    <Button className={styles.button} onClick={customEditRenameModal}>Редактировать имя и фамилию</Button>
                   )}
                   {isChangingPassword ? (
                     _renderPasswordEdit()
                   ) : (
-                    <Button onClick={customEditChangePasswordModal}>Сменить пароль</Button>
+                    <Button className={styles.button} onClick={customEditChangePasswordModal}>Сменить пароль</Button>
                   )}
                 </div>
               </div>
-              <Button className={styles.button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
+              <Button className={styles.exit_button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
             </div>
           </Content>
         }
