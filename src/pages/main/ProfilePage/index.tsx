@@ -24,8 +24,8 @@ import { useState } from "react";
 
 function ProfilePage() {
   const navigate = useNavigate();
-  const { api } = useContext(ApiContext);
-  const { data: userInfo, refetch: refetchUserInfo } = useQuery<ProfileResponse>({
+  const {api} = useContext(ApiContext);
+  const {data: userInfo, refetch: refetchUserInfo} = useQuery<ProfileResponse>({
     queryFn: () => profileService.getUserInfo(api),
     enabled: true,
     queryKey: ['userInfo'],
@@ -70,7 +70,7 @@ function ProfilePage() {
 
   const handleNameChange = async () => {
     try {
-      const userChangeNameRequest: UserChangeNameRequest = { name, surname };
+      const userChangeNameRequest: UserChangeNameRequest = {name, surname};
       await profileService.changeName(api, userChangeNameRequest);
       clearFieldsForEditingName();
       setErrorMessageEditingName('');
@@ -107,7 +107,7 @@ function ProfilePage() {
 
   const handleChangePassword = async () => {
     try {
-      const userChangePasswordRequest: UserChangePasswordRequest = { oldPassword, newPassword, confirmNewPassword };
+      const userChangePasswordRequest: UserChangePasswordRequest = {oldPassword, newPassword, confirmNewPassword};
       await profileService.changePassword(api, userChangePasswordRequest);
       clearFieldsForChangingPassword();
       setSuccessMessageChangingPassword('Пароль успешно изменён');
@@ -119,19 +119,94 @@ function ProfilePage() {
     }
   };
 
+  function _renderProfileEdit() {
+    return (
+      <>
+        <div>
+          <Label value="Имя " error={false}/>
+          <Input
+            type="text"
+            placeholder="Введите имя"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label value="Фамилия " error={false}/>
+          <Input
+            type="text"
+            placeholder="Введите фамилию"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+          />
+        </div>
+        {errorMessageEditingName && <div className={styles.error}>{errorMessageEditingName}</div>}
+        <div className={styles.button_row}>
+          <Button onClick={handleNameChange}>Сохранить изменения</Button>
+          <Button onClick={clearFieldsForEditingName}>Закрыть</Button>
+        </div>
+      </>
+    );
+  }
+
+  function _renderPasswordEdit() {
+    return (
+      <>
+        <div>
+          <Label value="Старый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите старый пароль"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label value="Новый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите новый пароль"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label value="Подтвердите новый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите новый пароль"
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+          />
+        </div>
+
+        {errorMessageChangingPassword && <div className={styles.error}>{errorMessageChangingPassword}</div>}
+        {successMessageChangingPassword && <div className={styles.success}>{successMessageChangingPassword}</div>}
+
+        <div className={styles.button_row}>
+          <Button onClick={handleChangePassword}>Сохранить пароль</Button>
+          <Button onClick={() => {
+            clearFieldsForChangingPassword();
+            setSuccessMessageChangingPassword('');
+          }}>Закрыть</Button>
+        </div>
+      </>
+    );
+  }
+
   return (
     <Layout
-      topLeft={<BrandLogo />}
-      topRight={<PageName text="Профиль" />}
-      bottomLeft={<SideBar currentPageURL={RoutePaths.profile} />}
+      topLeft={<BrandLogo/>}
+      topRight={<PageName text="Профиль"/>}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.profile}/>}
       bottomRight=
-      {
-        <Content>
-          <div className={styles.root}>
-            <div className={styles.profile}>
-              <div className={styles.profile_col}>
-                <table className={styles.table}>
-                  <tbody>
+        {
+          <Content>
+            <div className={styles.root}>
+              <div className={styles.profile}>
+                <div className={styles.profile_col}>
+                  <table className={styles.table}>
+                    <tbody>
                     <tr>
                       <td>Имя</td>
                       <td>{userInfo?.name}</td>
@@ -160,98 +235,32 @@ function ProfilePage() {
                         <td>Нет устройств</td>
                       )}
                     </tr>
-                  </tbody>
-                </table>
-
-                <div className={styles.button_column}>
+                    </tbody>
+                  </table>
+                </div>
+                <div className={styles.profile_col}>
                   <Button onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
                     {notificationSettings?.enableEmail ? 'Отключить уведомления по почте' : 'Включить уведомления по почте'}
                   </Button>
                   <Button onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
                     {notificationSettings?.enablePush ? 'Отключить пуш-уведомления' : 'Включить пуш-уведомления'}
                   </Button>
-                <div>
-
-                <div className={styles.button_column}>
                   {isEditing ? (
-                    <>
-                      <div>
-                        <Label value="Имя " error={false} />
-                        <Input
-                          type="text"
-                          placeholder="Введите имя"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label value="Фамилия " error={false} />
-                        <Input
-                          type="text"
-                          placeholder="Введите фамилию"
-                          value={surname}
-                          onChange={(e) => setSurname(e.target.value)}
-                        />
-                      </div>
-                      {errorMessageEditingName && <div className={styles.error}>{errorMessageEditingName}</div>}
-                      <div className={styles.button_row}>
-                        <Button onClick={handleNameChange}>Сохранить изменения</Button>
-                        <Button onClick={clearFieldsForEditingName}>Закрыть</Button>
-                      </div>
-                    </>
+                    _renderProfileEdit()
                   ) : (
                     <Button onClick={customEditRenameModal}>Редактировать имя и фамилию</Button>
                   )}
                   {isChangingPassword ? (
-                    <div>
-                      <div>
-                        <Label value="Старый пароль " error={false} />
-                        <Input
-                          type="password"
-                          placeholder="Введите старый пароль"
-                          value={oldPassword}
-                          onChange={(e) => setOldPassword(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label value="Новый пароль " error={false} />
-                        <Input
-                          type="password"
-                          placeholder="Введите новый пароль"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label value="Подтвердите новый пароль " error={false} />
-                        <Input
-                          type="password"
-                          placeholder="Введите новый пароль"
-                          value={confirmNewPassword}
-                          onChange={(e) => setConfirmNewPassword(e.target.value)}
-                        />
-                      </div>
-                      {errorMessageChangingPassword && <div className={styles.error}>{errorMessageChangingPassword}</div>}
-                      {successMessageChangingPassword && <div className={styles.success}>{successMessageChangingPassword}</div>}
-                      <div className={styles.button_row}>
-                        <Button onClick={handleChangePassword}>Сохранить пароль</Button>
-                        <Button onClick={() => {
-                          clearFieldsForChangingPassword();
-                          setSuccessMessageChangingPassword('');
-                        }}>Закрыть</Button>
-                      </div>
-                    </div>
+                    _renderPasswordEdit()
                   ) : (
                     <Button onClick={customEditChangePasswordModal}>Сменить пароль</Button>
                   )}
                 </div>
-
               </div>
+              <Button className={styles.button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
             </div>
-            <Button className={styles.button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
-          </div>
-        </Content>
-      }
+          </Content>
+        }
     />
   );
 }

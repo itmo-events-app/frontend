@@ -83,12 +83,6 @@
   font-size: 16px;
 }
 
-.button_column {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .button_row {
   display: flex;
   flex-flow: row wrap;
