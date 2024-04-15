@@ -223,6 +223,31 @@ let tasks: Task[] = [
 ];
 //ff9933
 
+type OptionsPrivileges = {
+  activitiesVisible: boolean,
+  orgsVisible: boolean,
+  modifyVisitStatus: boolean,
+  exportParticipants: boolean,
+  importParticipants: boolean,
+  tasksVisible: boolean,
+  edit: boolean,
+  addOrganizer: boolean,
+  addHelper: boolean,
+  addActivity: boolean
+}
+
+const optionsPrivilegesInitial: OptionsPrivileges = {
+  activitiesVisible: false,
+  orgsVisible: false,
+  modifyVisitStatus: false,
+  exportParticipants: false,
+  importParticipants: false,
+  tasksVisible: false,
+  edit: false,
+  addOrganizer: false,
+  addHelper: false,
+  addActivity: false
+} as const;
 
 function readDate(dateTime: string) {
   const date = new Date(dateTime);
@@ -239,16 +264,12 @@ function getTimeOnly(dateTimeString: string) {
   return timeOnly;
 }
 
-const url_parts: string[] = window.location.href.split('/');
-const url_tail: string = url_parts[url_parts.length - 1];
-
-const EVENT_ID: number = url_tail[url_tail.length - 1] == '#' ? +url_tail.split('#')[0] : +url_tail;
-
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
   const { privilegeContext, updateEventPrivileges } = useContext(PrivilegeContext);
 
   const { id } = useParams();
+  const [idInt, setIdInt] = useState<number | null>(null)
   const [event, setEvent] = useState<EventInfo | undefined>(undefined);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState('');
@@ -258,9 +279,19 @@ function EventActivitiesPage() {
   const [eventTasksPeople, setEventTasksPeople] = useState<peopleTasks[]>([]);
 
   useEffect(() => {
+    if (id) {
+      setIdInt(parseInt(id));
+    }
+  }, [id])
+
+  useEffect(() => {
+    if (idInt == null) {
+      return;
+    }
+
     const getEvent = async () => {
       try {
-        const eventResponse = await api.event.getEventById(parseInt(id ?? '0'));
+        const eventResponse = await api.event.getEventById(idInt);
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = 'Отсутствует'
@@ -272,10 +303,19 @@ function EventActivitiesPage() {
               console.log(placeResponse.status);
             }
           }
+
+          function _parseDate(start: string | null | undefined, end: string | null | undefined) {
+            if (start == null || end == null) {
+              return '';
+            } else {
+              return readDate(start) + ' - ' + readDate(end);
+            }
+          }
+
           const info = new EventInfo(
-            readDate(data.registrationStart??'') + ' - ' + readDate(data.registrationEnd??''),
-            readDate(data.preparingStart??'') + ' - ' + readDate(data.preparingEnd??''),
-            readDate(data.startDate??'') + ' - ' + readDate(data.endDate??''),
+            _parseDate(data.registrationStart, data.registrationEnd),
+            _parseDate(data.preparingStart, data.preparingEnd),
+            _parseDate(data.startDate, data.endDate),
             String(data.participantLimit),
             placeAddress,
             data.format ?? '',
@@ -294,7 +334,7 @@ function EventActivitiesPage() {
       }
     };
     getEvent();
-    getImageUrl(id!).then((url) => {
+    getImageUrl(String(idInt)).then((url) => {
       if (url == '') {
         setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
       } else {
@@ -302,11 +342,15 @@ function EventActivitiesPage() {
       }
     });
     setLoadingEvent(false);
-  },[]);
+  }, [idInt]);
 
   useEffect(() => {
+    if (idInt == null) {
+      return;
+    }
+
     api
-      .withReauth(() => api.task.taskListShowInEvent(EVENT_ID))
+      .withReauth(() => api.task.taskListShowInEvent(idInt))
       .then((response) => {
         if (response.data != undefined) {
           setEventTasks(response.data);
@@ -315,13 +359,8 @@ function EventActivitiesPage() {
       .catch((error) => {
         console.log(error.response.data);
       });
-  }, []);
+  }, [idInt]);
 
-  const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in privilegeContext;
-  const edit_privilege: boolean = PrivilegeNames.EDIT_EVENT_ACTIVITIES in privilegeContext;
-  const add_organizer_privilege: boolean = PrivilegeNames.ASSIGN_ORGANIZER_ROLE in privilegeContext;
-  const add_helper_privilege: boolean = PrivilegeNames.ASSIGN_ASSISTANT_ROLE in privilegeContext;
-  const add_activity_privilege: boolean = PrivilegeNames.CREATE_EVENT_ACTIVITIES in privilegeContext;
   interface peopleTasks {
     name: string | undefined;
     lastname: string | undefined;
@@ -388,11 +427,8 @@ function EventActivitiesPage() {
     }
   }, eventTasks);
 
-  const [activitiesVisible, setActivitiesVisible] = useState(false);
-  const [orgsVisible, setOrgsVisible] = useState(false);
-  const [modifyVisitStatus, setModifyVisitStatus] = useState(false);
-  const [exportParticipants, setExportParticipants] = useState(false);
-  const [importParticipants, setImportParticipants] = useState(false);
+
+  const [optionsPrivileges, setOptionsPrivileges] = useState<OptionsPrivileges>(optionsPrivilegesInitial);
 
   function _getPrivileges(id: number): Set<PrivilegeData> {
     if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
@@ -404,33 +440,49 @@ function EventActivitiesPage() {
   }
 
   useEffect(() => {
-    if (id) {
-      const privileges = _getPrivileges(parseInt(id));
-      setActivitiesVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])));
-      setOrgsVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])));
-      setModifyVisitStatus(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])));
-      setExportParticipants(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])));
-      setImportParticipants(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])));
+    if (idInt != null) {
+      const privileges = _getPrivileges(idInt);
+      setOptionsPrivileges({
+        activitiesVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
+        orgsVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])),
+        modifyVisitStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])),
+        exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
+        importParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])),
+        tasksVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)])),
+        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_ACTIVITIES)])),
+        addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
+        addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
+        addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
+      })
+    } else {
+      setOptionsPrivileges(optionsPrivilegesInitial)
     }
-  }, [privilegeContext]);
+  }, [idInt, privilegeContext]);
 
-  const pageTabs: PageTab[] = [];
+  const [pageTabs, setPageTabs] = useState<PageTab[]>([]);
 
-  pageTabs.push(new PageTab('Описание'));
+  useEffect(() => {
+    const tabs = [];
 
-  if (activitiesVisible) {
-    pageTabs.push(new PageTab('Активности'));
-  }
+    tabs.push(new PageTab('Описание'));
 
-  if (orgsVisible) {
-    pageTabs.push(new PageTab('Организаторы'));
-  }
+    if (optionsPrivileges.activitiesVisible) {
+      tabs.push(new PageTab('Активности'));
+    }
 
-  pageTabs.push(new PageTab('Участники'));
+    if (optionsPrivileges.orgsVisible) {
+      tabs.push(new PageTab('Организаторы'));
+    }
 
-  if (tasksVisible) {
-    pageTabs.push(new PageTab('Задачи'));
-  }
+    tabs.push(new PageTab('Участники'));
+
+    if (optionsPrivileges.tasksVisible) {
+      tabs.push(new PageTab('Задачи'));
+    }
+
+    setPageTabs(tabs);
+  }, [optionsPrivileges])
+
 
   class DialogData {
     heading: string | undefined;
@@ -458,7 +510,7 @@ function EventActivitiesPage() {
         component = (
           <UpdateDialogContent
             {...dialogData.args}
-            eventId={parseInt(id!)}
+            eventId={idInt}
             eventInfo={eventResponse}
             onSubmit={() => {
               _closeDialog();
@@ -470,7 +522,7 @@ function EventActivitiesPage() {
         component = (
           <CreateActivityDialog
             {...dialogData.args}
-            parentId={parseInt(id!)}
+            parentId={idInt}
             onSubmit={() => {
               _closeDialog();
             }}
@@ -481,7 +533,7 @@ function EventActivitiesPage() {
         component = (
           <AddOrganizerDialog
             {...dialogData.args}
-            eventId={parseInt(id!)}
+            eventId={idInt}
             onSubmit={() => {
               _closeDialog();
             }}
@@ -516,7 +568,7 @@ function EventActivitiesPage() {
     return (
       <div className={styles.root}>
         <div className={styles.image_box}>{<img className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
-        {edit_privilege ? (
+        {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_updateEvent}>
               Редактировать информацию о мероприятии
@@ -578,8 +630,8 @@ function EventActivitiesPage() {
 
   const [activities, setActivities] = useState([] as Activity[]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
-  const getActivities = async () => {
-    const response = await api.event.getAllOrFilteredEvents(undefined, undefined, parseInt(id!));
+  const getActivities = async (id: number) => {
+    const response = await api.event.getAllOrFilteredEvents(undefined, undefined, id);
     if (response.status == 200) {
       const items = (response.data.items ?? []) as EventResponse[];
       const activities = items.map(async (a) => {
@@ -594,7 +646,7 @@ function EventActivitiesPage() {
           console.log(response.status);
         }
         let idString = '';
-        if(a.id!=null){
+        if (a.id != null) {
           idString = a.id.toString();
         }
         return new Activity(
@@ -603,10 +655,10 @@ function EventActivitiesPage() {
           place,
           room,
           a.shortDescription ?? '',
-          readDate(a.startDate??'') ?? '',
-          getTimeOnly(a.startDate ?? ''),
-          readDate(a.endDate??'') ?? '',
-          getTimeOnly(a.endDate ?? '')
+          a.startDate ? readDate(a.startDate) : '',
+          a.startDate ? getTimeOnly(a.startDate) : '',
+          a.endDate ? readDate(a.endDate) : '',
+          a.endDate ? getTimeOnly(a.endDate) : ''
         );
       });
       const activitiesPromise = await Promise.all(activities);
@@ -618,18 +670,20 @@ function EventActivitiesPage() {
   };
 
   useEffect(() => {
-    getActivities();
-  }, []);
+    if (idInt != null) {
+      getActivities(idInt);
+    }
+  }, [idInt]);
 
   const navigate = useNavigate();
-  const _event = (id:string) => {
-    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID,id));
+  const _event = (id: string) => {
+    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
     window.location.reload();
   }
 
   function _createActivity(activity: Activity) {
     return (
-      <div key={activity.id} className={styles.activity_container} onClick={()=>_event(activity.activityId)}>
+      <div key={activity.id} className={styles.activity_container} onClick={() => _event(activity.activityId)}>
         <div className={styles.activity_info_column}>
           <div className={styles.activity_name}>{activity.name}</div>
           <div className={styles.activity_place_container}>
@@ -666,11 +720,11 @@ function EventActivitiesPage() {
     }
     return (
       <>
-        {add_activity_privilege ? (
-           <div className={styles.button_container}>
-             <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-           </div>
-         ) : (<></>)}
+        {optionsPrivileges.addActivity ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
+          </div>
+        ) : (<></>)}
         {activitiesLoaded ? (
           <div className={styles.data_list}>
             {items}
@@ -705,7 +759,7 @@ function EventActivitiesPage() {
         <td>{person.name}</td>
         <td>{person.email}</td>
         <td>{person.info}</td>
-        {modifyVisitStatus ?
+        {optionsPrivileges.modifyVisitStatus ?
           (
             <td>
               <Dropdown
@@ -714,12 +768,14 @@ function EventActivitiesPage() {
                 value={visitStatus.get(person.id)}
                 onChange={(status) => {
                   setVisitStatus(visitStatus.set(person.id, status));
-                  api
-                    .withReauth(() => api.participants.changePresence(EVENT_ID,
-                      new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
-                    .catch((error) => {
-                      console.log(error);
-                    });
+                  if (id) {
+                    api
+                      .withReauth(() => api.participants.changePresence(idInt!,
+                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
+                      .catch((error) => {
+                        console.log(error);
+                      });
+                  }
                 }}
                 toText={(input: string) => {
                   return input;
@@ -771,7 +827,7 @@ function EventActivitiesPage() {
 
     return (
       <>
-        {add_organizer_privilege && add_helper_privilege? (
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_addOrganizer}>
               Добавить
@@ -795,21 +851,25 @@ function EventActivitiesPage() {
   }
 
   function export_xlsx() {
-    api
-      .withReauth(() => api.participants.getParticipantsXlsxFile(EVENT_ID))
-      // Yars: ToDo check if something is needed here
-      .catch((error) => {
-        console.log(error);
-      });
+    if (idInt != null) {
+      api
+        .withReauth(() => api.participants.getParticipantsXlsxFile(idInt))
+        // Yars: ToDo check if something is needed here
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
 
   function import_xlsx(file: File) {
-    api
-      .withReauth(() => api.participants.setPartisipantsList(EVENT_ID, new ParticipantsListResponse(file)))
-      // Yars: ToDo check if something is needed here
-      .catch((error) => {
-        console.log(error);
-      });
+    if (idInt != null) {
+      api
+        .withReauth(() => api.participants.setPartisipantsList(idInt, new ParticipantsListResponse(file)))
+        // Yars: ToDo check if something is needed here
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
 
   function createParticipantsTable(persons: Person[]) {
@@ -819,10 +879,10 @@ function EventActivitiesPage() {
     }
     return (
       <>
-        {(exportParticipants || importParticipants) ?
+        {(optionsPrivileges.exportParticipants || optionsPrivileges.importParticipants) ?
           (
             <div className={styles.button_container}>
-              {exportParticipants ?
+              {optionsPrivileges.exportParticipants ?
                 (
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
@@ -831,7 +891,7 @@ function EventActivitiesPage() {
                   <></>
                 )
               }
-              {importParticipants ?
+              {optionsPrivileges.importParticipants ?
                 (
                   <>
                     <InputLabel value="Загрузить xlsx" />
@@ -846,7 +906,7 @@ function EventActivitiesPage() {
                     />
                   </>
                 ) : (
-                <></>
+                  <></>
                 )
               }
             </div>
@@ -872,9 +932,9 @@ function EventActivitiesPage() {
   const [orgs, setOrgs] = useState([] as OrgPerson[]);
 
   useEffect(() => {
-    if (orgsVisible) {
+    if (optionsPrivileges.orgsVisible && idInt != null) {
       api
-        .withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
+        .withReauth(() => api.event.getUsersHavingRoles(idInt))
         .then((response) => {
           const list = response.data.map((user) => {
             return new OrgPerson(
@@ -892,31 +952,33 @@ function EventActivitiesPage() {
           console.log(error.response.data);
         });
     }
-  },[]);
+  }, [optionsPrivileges, idInt]);
 
   const [participants, setParticipants] = useState([] as Person[]);
 
   useEffect(() => {
-    api
-      .withReauth(() => api.participants.getParticipants(EVENT_ID))
-      .then((response) => {
-        // TODO: don't cast types
-        const data = response.data as unknown as ParticipantResponse[];
-        const list = data.map((user) => {
-          return new Person(
-            '' + user.id,
-            user.name ?? '',
-            user.email ?? '',
-            user.additionalInfo ?? '',
-            user.visited ?? false
-          );
+    if (idInt != null) {
+      api
+        .withReauth(() => api.participants.getParticipants(idInt))
+        .then((response) => {
+          // TODO: don't cast types
+          const data = response.data as unknown as ParticipantResponse[];
+          const list = data.map((user) => {
+            return new Person(
+              '' + user.id,
+              user.name ?? '',
+              user.email ?? '',
+              user.additionalInfo ?? '',
+              user.visited ?? false
+            );
+          });
+          setParticipants(list);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
         });
-        setParticipants(list);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
-  },[]);
+    }
+  }, [idInt]);
 
   const locc = 'cz';
 
