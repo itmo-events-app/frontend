@@ -26,13 +26,12 @@ import {
   EventResponse,
   ParticipantPresenceRequest,
   ParticipantResponse,
-  SetPartisipantsListRequest,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
-import InputLabel from "@widgets/main/InputLabel";
+import axios from 'axios';
 
 class EventInfo {
   regDates: string;
@@ -145,14 +144,6 @@ class PersonVisitResponse implements ParticipantPresenceRequest {
   constructor(participantId: number, isVisited: boolean) {
     this.participantId = participantId;
     this.isVisited = isVisited;
-  }
-}
-
-class ParticipantsListResponse implements SetPartisipantsListRequest {
-  participantsFile: File;
-
-  constructor(file: File) {
-    this.participantsFile = file;
   }
 }
 
@@ -298,7 +289,7 @@ function EventActivitiesPage() {
 
     const getEvent = async () => {
       try {
-        const eventResponse = await api.event.getEventById(idInt);
+        const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = 'Отсутствует'
@@ -327,8 +318,13 @@ function EventActivitiesPage() {
           setEventResponse(data);
         } else {
           console.error('Error fetching event list:', eventResponse.statusText);
+
         }
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response.status == 404) {
+          navigate(RoutePaths.notFound);
+          return;
+        }
         console.error('Error fetching event list:', error);
       }
     };
@@ -690,7 +686,7 @@ function EventActivitiesPage() {
     );
   }
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
+    setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   };
 
@@ -806,21 +802,38 @@ function EventActivitiesPage() {
     if (idInt != null) {
       api
         .withReauth(() => api.participants.getParticipantsXlsxFile(idInt))
-        // Yars: ToDo check if something is needed here
+        // Yars: TODO check if something is needed here
         .catch((error) => {
           console.log(error);
         });
     }
   }
 
-  function import_xlsx(file: File) {
+  const [participantsFile, setParticipantsFile] = useState(new File([], ""));
+
+  function handleFileChange(event: any) {
+    setParticipantsFile(event.target.files[0]);
+  }
+
+  function handleFileSubmit(event: any) {
     if (idInt != null) {
-      api
-        .withReauth(() => api.participants.setPartisipantsList(idInt, new ParticipantsListResponse(file)))
-        // Yars: ToDo check if something is needed here
-        .catch((error) => {
-          console.log(error);
-        });
+      event.preventDefault()
+
+      const url = (window as any).ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
+      const formData = new FormData();
+
+      formData.append('file', participantsFile ?? "");
+      formData.append('fileName', participantsFile ? participantsFile.name : "file-not-found");
+
+      const config = {
+        headers: {
+          'content-type': 'multipart/form-data',
+        },
+      };
+
+      axios.post(url, formData, config).then((response) => {
+        console.log(response.data);
+      });
     }
   }
 
@@ -845,18 +858,13 @@ function EventActivitiesPage() {
               }
               {optionsPrivileges.importParticipants ?
                 (
-                  <>
-                    <InputLabel value="Загрузить xlsx" />
+                  <form onSubmit={handleFileSubmit}>
                     <input
                       type="file"
-                      onChange={(e) => {
-                        if (e.target.files) {
-                          const file = e.target.files[0];
-                          import_xlsx(file);
-                        }
-                      }}
+                      onChange={handleFileChange}
                     />
-                  </>
+                    <Button type="submit">Загрузить xlsx</Button>
+                  </form>
                 ) : (
                   <></>
                 )
@@ -959,7 +967,7 @@ function EventActivitiesPage() {
       topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={'Event'} />
+          <PageName text={event?.eventName ?? ''} />
           <div className={styles.tabs}>
             <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
           </div>

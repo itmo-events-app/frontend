@@ -32,7 +32,7 @@ function PageTabs(props: Props) {
   function _createUnselectedTab(tab: PageTab) {
     return (
       <div key={tab.id} className={styles.page_tab_container + ' ' + (props.className ?? '')} onClick={_select(tab)}>
-        <a href="#" className={styles.page_tab} onClick={_select(tab)}>
+        <a className={styles.page_tab} onClick={_select(tab)}>
           {tab.text}
         </a>
       </div>
@@ -46,7 +46,7 @@ function PageTabs(props: Props) {
         className={styles.page_tab_container + ' ' + styles.page_tab_container_selected + ' ' + (props.className ?? '')}
         onClick={_select(tab)}
       >
-        <a href="#" className={styles.page_tab_selected} onClick={_select(tab)}>
+        <a className={styles.page_tab_selected} onClick={_select(tab)}>
           {tab.text}
         </a>
       </div>

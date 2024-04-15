@@ -110,7 +110,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       preparingEnd: preparingEndString!,
       image: image!,
     };
-    console.log(eventRequest);
     const result = await api.event.updateEvent(eventId, eventRequest);
     if (result.status == 200) {
       onSubmit();

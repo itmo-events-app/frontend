@@ -9,22 +9,35 @@ type Props = {
 };
 
 const PrivilegeContextProvider = (props: Props) => {
-  const [privilegeContext, setPrivilegeContext] = useState(new PrivilegeContextData());
   const { api } = useContext(ApiContext);
 
-  // load privileges on context first render
+  const [systemPrivileges, setSystemPrivileges] = useState<Set<PrivilegeData> | undefined>(undefined);
+  const [eventPrivileges, setEventPrivileges] = useState(new Map<number, Set<PrivilegeData>>());
+  const [hasOrgRole, setHasOrgRole] = useState(false);
+
+  const [privilegeContext, setPrivilegeContext] = useState(new PrivilegeContextData(systemPrivileges, eventPrivileges, hasOrgRole));
+
   useEffect(() => {
-    updateSystemPrivileges();
-    console.log('system');
+    setPrivilegeContext(new PrivilegeContextData(systemPrivileges, eventPrivileges, hasOrgRole));
+  }, [systemPrivileges, eventPrivileges, hasOrgRole])
+
+  useEffect(() => {
+    if (api.isLoggedIn()) {
+      updateSystemPrivileges();
+    } else {
+      resetPrivilegeContext();
+    }
   }, [api]);
 
   function resetPrivilegeContext() {
-    setPrivilegeContext(new PrivilegeContextData());
+    setSystemPrivileges(undefined);
+    setEventPrivileges(new Map());
+    setHasOrgRole(false);
   }
 
-  useEffect(() => {
-    console.log(privilegeContext);
-  }, [privilegeContext])
+  // useEffect(() => {
+  //   console.log(privilegeContext);
+  // }, [privilegeContext])
 
   function updateSystemPrivileges() {
     if (api.isLoggedIn()) {
@@ -35,7 +48,8 @@ const PrivilegeContextProvider = (props: Props) => {
             (p) => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames])
           );
           const orgRoles = r.data!.hasOrganizerRolesResponse ?? false;
-          setPrivilegeContext(new PrivilegeContextData(new Set(privileges), privilegeContext.eventPrivileges, orgRoles));
+          setSystemPrivileges(new Set(privileges));
+          setHasOrgRole(orgRoles);
         });
     }
   }
@@ -48,12 +62,8 @@ const PrivilegeContextProvider = (props: Props) => {
           const privileges = r.data!.map(
             (p) => new PrivilegeData(PrivilegeNames[p.name as keyof typeof PrivilegeNames])
           );
-          privilegeContext.eventPrivileges.set(id, new Set(privileges));
-          setPrivilegeContext(new PrivilegeContextData(
-            privilegeContext.systemPrivileges,
-            privilegeContext.eventPrivileges,
-            privilegeContext.hasOrganizerRoles
-          ));
+          eventPrivileges.set(id, new Set(privileges));
+          setEventPrivileges(new Map(eventPrivileges));
         });
     }
   }
