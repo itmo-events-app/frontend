@@ -148,72 +148,38 @@ class PersonVisitResponse implements ParticipantPresenceRequest {
   }
 }
 
+class ParticipantsListResponse implements SetPartisipantsListRequest {
+  participantsFile: File;
+
+  constructor(file: File) {
+    this.participantsFile = file;
+  }
+}
+
+enum DialogSelected {
+  NONE,
+  UPDATE,
+  CREATEACTIVITY = 2,
+  ADDORGANIZER = 3,
+}
+
+class DialogData {
+  heading: string | undefined;
+  visible: DialogSelected;
+  args: any;
+  constructor(heading?: string, visible: DialogSelected = DialogSelected.NONE, args: any = {}) {
+    this.heading = heading;
+    this.visible = visible;
+    this.args = args;
+  }
+}
+
 enum VisitStatusList {
   TRUE = 'Да',
   FALSE = 'Нет'
 }
 
 const userVisitStatus = Object.values(VisitStatusList);
-
-let tasks: Task[] = [
-  {
-    start: new Date(2024, 1, 1),
-    end: new Date(2024, 1, 2),
-    name: 'Создать зум',
-    id: 'Task 0',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: 'sdsd',
-    hideChildren: false,
-  },
-  {
-    start: new Date(2024, 1, 3),
-    end: new Date(2024, 1, 14),
-    name: 'Забронировать аудиторию',
-    id: 'Task 2',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#663333', progressSelectedColor: '#663333' },
-    project: 'sdsd',
-  },
-  {
-    start: new Date(2024, 1, 2),
-    end: new Date(2024, 1, 10),
-    name: 'Написать программу выступления в зуме',
-    id: 'Task 3',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: 'sdsd',
-  },
-  {
-    start: new Date(2024, 1, 11),
-    end: new Date(2024, 1, 16),
-    name: 'Тестовый прогон',
-    id: 'Task 4',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: 'sdsd',
-  },
-  {
-    start: new Date(2024, 1, 3),
-    end: new Date(2024, 1, 9),
-    name: 'Подготовить подарки',
-    id: 'Task 4',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#ff9933', progressSelectedColor: '#ff9933' },
-    project: 'sdsd',
-  },
-];
-//ff9933
 
 type OptionsPrivileges = {
   activitiesVisible: boolean,
@@ -241,6 +207,26 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   addActivity: false
 } as const;
 
+interface PeopleTasks {
+  name: string | undefined;
+  lastname: string | undefined;
+  color: string | undefined;
+}
+const colors: string[] = [
+  '#663333',
+  '#0069FF',
+  '#ff9933',
+  '#990066',
+  '#006633',
+  '#000000',
+  '#666600',
+  '#336666',
+  '#000099',
+  '#FF0033',
+  '#CCCC00',
+  '#CC6666',
+];
+
 function readDate(dateTime: string) {
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
@@ -267,6 +253,8 @@ function getTimeOnly(dateTimeString: string) {
 
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
+  const navigate = useNavigate();
+
   const { privilegeContext, updateEventPrivileges } = useContext(PrivilegeContext);
 
   const { id } = useParams();
@@ -277,7 +265,25 @@ function EventActivitiesPage() {
   const [eventResponse, setEventResponse] = useState({});
 
   const [eventTasks, setEventTasks] = useState<TaskResponse[]>([]);
-  const [eventTasksPeople, setEventTasksPeople] = useState<peopleTasks[]>([]);
+  const [eventTasksPeople, setEventTasksPeople] = useState<PeopleTasks[]>([]);
+
+  const [optionsPrivileges, setOptionsPrivileges] = useState<OptionsPrivileges>(optionsPrivilegesInitial);
+  const [tasks, setTasks] = useState([] as Task[]);
+
+  const [pageTabs, setPageTabs] = useState<PageTab[]>([]);
+
+  const [dialogData, setDialogData] = useState(new DialogData());
+  const dialogRef = useRef(null);
+
+  const [activities, setActivities] = useState([] as Activity[]);
+  const [activitiesLoaded, setActivitiesLoaded] = useState(false);
+
+  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
+
+  const [orgs, setOrgs] = useState([] as OrgPerson[]);
+  const [participants, setParticipants] = useState([] as Person[]);
+
+  const [selectedTab, setSelectedTab] = useState('Описание');
 
   useEffect(() => {
     if (id) {
@@ -292,7 +298,7 @@ function EventActivitiesPage() {
 
     const getEvent = async () => {
       try {
-        const eventResponse = await api.event.getEventById(idInt);
+        const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = 'Отсутствует'
@@ -321,8 +327,13 @@ function EventActivitiesPage() {
           setEventResponse(data);
         } else {
           console.error('Error fetching event list:', eventResponse.statusText);
+
         }
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response.status == 404) {
+          navigate(RoutePaths.notFound);
+          return;
+        }
         console.error('Error fetching event list:', error);
       }
     };
@@ -341,7 +352,6 @@ function EventActivitiesPage() {
     if (idInt == null) {
       return;
     }
-
     api
       .withReauth(() => api.task.taskListShowInEvent(idInt))
       .then((response) => {
@@ -354,28 +364,10 @@ function EventActivitiesPage() {
       });
   }, [idInt]);
 
-  interface peopleTasks {
-    name: string | undefined;
-    lastname: string | undefined;
-    color: string | undefined;
-  }
-  const colors: string[] = [
-    '#663333',
-    '#0069FF',
-    '#ff9933',
-    '#990066',
-    '#006633',
-    '#000000',
-    '#666600',
-    '#336666',
-    '#000099',
-    '#FF0033',
-    '#CCCC00',
-    '#CC6666',
-  ];
-  const peopleForTasks = new Map<number, peopleTasks>();
+
   useEffect(() => {
-    tasks = [];
+    const peopleForTasks = new Map<number, PeopleTasks>();
+    const curTasks = [];
     let persColor;
     // peopleForTasks.set(1, {
     //   name: "asd",
@@ -391,7 +383,6 @@ function EventActivitiesPage() {
         et.assignee != undefined &&
         et.assignee.id != undefined
       ) {
-        console.log(peopleForTasks);
         if (peopleForTasks.get(et.assignee.id)) {
           persColor = peopleForTasks.get(et.assignee.id)?.color;
         } else {
@@ -414,14 +405,12 @@ function EventActivitiesPage() {
           styles: { progressColor: persColor, progressSelectedColor: persColor },
           hideChildren: false,
         };
-        tasks.push(newTask);
+        curTasks.push(newTask);
         setEventTasksPeople(Array.from(peopleForTasks, ([_, peopleTasks]) => peopleTasks));
+        setTasks(curTasks);
       }
     }
-  }, eventTasks);
-
-
-  const [optionsPrivileges, setOptionsPrivileges] = useState<OptionsPrivileges>(optionsPrivilegesInitial);
+  }, [eventTasks]);
 
   function _getPrivileges(id: number): Set<PrivilegeData> {
     if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
@@ -452,8 +441,6 @@ function EventActivitiesPage() {
     }
   }, [idInt, privilegeContext]);
 
-  const [pageTabs, setPageTabs] = useState<PageTab[]>([]);
-
   useEffect(() => {
     const tabs = [];
 
@@ -476,25 +463,6 @@ function EventActivitiesPage() {
     setPageTabs(tabs);
   }, [optionsPrivileges])
 
-
-  class DialogData {
-    heading: string | undefined;
-    visible: DialogSelected;
-    args: any;
-    constructor(heading?: string, visible: DialogSelected = DialogSelected.NONE, args: any = {}) {
-      this.heading = heading;
-      this.visible = visible;
-      this.args = args;
-    }
-  }
-  const [dialogData, setDialogData] = useState(new DialogData());
-  const dialogRef = useRef(null);
-  enum DialogSelected {
-    NONE,
-    UPDATE,
-    CREATEACTIVITY = 2,
-    ADDORGANIZER = 3,
-  }
 
   const _Dialog = () => {
     let component = <></>;
@@ -621,8 +589,6 @@ function EventActivitiesPage() {
     );
   }
 
-  const [activities, setActivities] = useState([] as Activity[]);
-  const [activitiesLoaded, setActivitiesLoaded] = useState(false);
   const getActivities = async (id: number) => {
     const response = await api.event.getAllOrFilteredEvents(undefined, undefined, id);
     if (response.status == 200) {
@@ -668,7 +634,6 @@ function EventActivitiesPage() {
     }
   }, [idInt]);
 
-  const navigate = useNavigate();
   const _event = (id: string) => {
     navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
     window.location.reload();
@@ -730,7 +695,7 @@ function EventActivitiesPage() {
     );
   }
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
+    setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   };
 
@@ -744,7 +709,6 @@ function EventActivitiesPage() {
     );
   }
 
-  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
 
   function createPersonRow(person: Person) {
     return (
@@ -847,7 +811,7 @@ function EventActivitiesPage() {
     if (idInt != null) {
       api
         .withReauth(() => api.participants.getParticipantsXlsxFile(idInt))
-        // Yars: ToDo check if something is needed here
+        // Yars: TODO check if something is needed here
         .catch((error) => {
           console.log(error);
         });
@@ -934,8 +898,6 @@ function EventActivitiesPage() {
     );
   }
 
-  const [orgs, setOrgs] = useState([] as OrgPerson[]);
-
   useEffect(() => {
     if (optionsPrivileges.orgsVisible && idInt != null) {
       api
@@ -958,8 +920,6 @@ function EventActivitiesPage() {
         });
     }
   }, [optionsPrivileges, idInt]);
-
-  const [participants, setParticipants] = useState([] as Person[]);
 
   useEffect(() => {
     if (idInt != null) {
@@ -990,7 +950,11 @@ function EventActivitiesPage() {
   function _createTasksTable() {
     return (
       <div className={styles.tasks}>
-        <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
+        {
+          tasks.length > 0 ?
+            <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
+            : <></>
+        }
         <div className={styles.tasks__people}>
           {eventTasksPeople.map((human) => (
             <div key={human.color} className={styles.tasks__human}>
@@ -1003,8 +967,6 @@ function EventActivitiesPage() {
     );
   }
 
-  const [selectedTab, setSelectedTab] = useState('Описание');
-
   function pageTabHandler(tab_name: string) {
     setSelectedTab(tab_name);
   }
@@ -1014,7 +976,7 @@ function EventActivitiesPage() {
       topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={'Event'} />
+          <PageName text={event?.eventName ?? ''} />
           <div className={styles.tabs}>
             <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
           </div>
