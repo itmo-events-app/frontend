@@ -255,6 +255,15 @@ function readDate(dateTime: string) {
   return formattedDate
 }
 
+function getIntervalString(start: string | null | undefined, end: string | null | undefined) {
+  if (start == null || end == null) {
+    return '';
+  } else {
+    return readDate(start) + ' - ' + readDate(end);
+  }
+}
+
+
 function getTimeOnly(dateTimeString: string) {
   const dateTime = new Date(dateTimeString);
   const hours = dateTime.getHours();
@@ -304,18 +313,10 @@ function EventActivitiesPage() {
             }
           }
 
-          function _parseDate(start: string | null | undefined, end: string | null | undefined) {
-            if (start == null || end == null) {
-              return '';
-            } else {
-              return readDate(start) + ' - ' + readDate(end);
-            }
-          }
-
           const info = new EventInfo(
-            _parseDate(data.registrationStart, data.registrationEnd),
-            _parseDate(data.preparingStart, data.preparingEnd),
-            _parseDate(data.startDate, data.endDate),
+            getIntervalString(data.registrationStart, data.registrationEnd),
+            getIntervalString(data.preparingStart, data.preparingEnd),
+            getIntervalString(data.startDate, data.endDate),
             String(data.participantLimit),
             placeAddress,
             data.format ?? '',
