@@ -44,6 +44,13 @@
   margin: 0;
 }
 
+.button_panel {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .decline_button {
   background-color: var(--itmo-colors-decline-button-80);
 }
@@ -52,3 +59,8 @@
   cursor: pointer;
   background-color: var(--itmo-colors-decline-button);
 }
+
+.no_requests {
+  justify-content: center;
+}
+

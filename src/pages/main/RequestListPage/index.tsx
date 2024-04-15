@@ -108,7 +108,7 @@ export default function RequestListPage() {
         <>
           <Button className={
             styles.button
-            } onClick={() => _approveRequestClick(req)}>Одобрить</Button>
+            } onClick={() => _approveRequestClick(req)}>Утвердить</Button>
           <Button className={
             appendClassName(styles.button, styles.decline_button)
             } onClick={() => _declineRequestClick(req)}>Отклонить</Button>
@@ -125,15 +125,15 @@ export default function RequestListPage() {
     return (
       <div className={styles.request_entry} key={req.id}>
         <div className={styles.request_header}>
-          <span className={
+          <div className={
             (req.status == RequestStatus.New)
             ? styles.request_titles
             : appendClassName(styles.request_titles, styles.responded)}>
             {req.name} {req.surname}, {req.email}, {req.sentTime.toLocaleString()}
-          </span>
-          <span>
+          </div>
+          <div className={styles.button_panel}>
             {_renderButtons(req)}
-          </span>
+          </div>
         </div>
       </div>
     );
@@ -150,7 +150,13 @@ export default function RequestListPage() {
       bottomLeft={<SideBar currentPageURL={RoutePaths.requestList} />}
       bottomRight=
       {
-        (
+        (requests.length == 0)
+        ? (
+          <Content>
+            <div className={styles.no_requests}>Заявок нет</div>
+          </Content>
+        )
+        : (
           <Content>
             <PagedList page={1} page_size={5} page_step={5} items={_renderedRequests} />
           </Content>
