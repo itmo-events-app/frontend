@@ -690,7 +690,7 @@ function EventActivitiesPage() {
     );
   }
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
+    setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   };
 
@@ -806,7 +806,7 @@ function EventActivitiesPage() {
     if (idInt != null) {
       api
         .withReauth(() => api.participants.getParticipantsXlsxFile(idInt))
-        // Yars: ToDo check if something is needed here
+        // Yars: TODO check if something is needed here
         .catch((error) => {
           console.log(error);
         });
@@ -817,7 +817,7 @@ function EventActivitiesPage() {
     if (idInt != null) {
       api
         .withReauth(() => api.participants.setPartisipantsList(idInt, new ParticipantsListResponse(file)))
-        // Yars: ToDo check if something is needed here
+        // Yars: TODO check if something is needed here
         .catch((error) => {
           console.log(error);
         });
@@ -959,7 +959,7 @@ function EventActivitiesPage() {
       topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={'Event'} />
+          <PageName text={event?.eventName ?? ''} />
           <div className={styles.tabs}>
             <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
           </div>
