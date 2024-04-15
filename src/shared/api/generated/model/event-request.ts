@@ -121,7 +121,7 @@ export interface EventRequest {
      * @type {File}
      * @memberof EventRequest
      */
-    'image': File;
+    'image'?: File;
 }
 
 export const EventRequestFormatEnum = {
