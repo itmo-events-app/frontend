@@ -50,3 +50,5 @@ model/user-info-response.ts
 model/user-role-response.ts
 model/user-short-data-response.ts
 model/user-system-role-response.ts
+model/recovery-password-request.ts
+model/new-password-request.ts
