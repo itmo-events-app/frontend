@@ -32,8 +32,7 @@ import {
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
-import InputLabel from "@widgets/main/InputLabel";
-import {AxiosRequestConfig, Method} from "axios";
+import axios from 'axios';
 
 class EventInfo {
   regDates: string;
@@ -154,14 +153,6 @@ class ParticipantsListResponse implements SetPartisipantsListRequest {
 
   constructor(file: File) {
     this.participantsFile = file;
-  }
-}
-
-class ImportHeader implements AxiosRequestConfig {
-  method?: Method | string;
-
-  constructor() {
-    this.method = 'POST';
   }
 }
 
@@ -871,16 +862,31 @@ function EventActivitiesPage() {
     }
   }
 
-  function import_xlsx(file: File) {
+  const [participantsFile, setParticipantsFile] = useState(new File([], ""));
+
+  function handleFileChange(event: any) {
+    setParticipantsFile(event.target.files[0]);
+  }
+
+  function handleFileSubmit(event: any) {
     if (idInt != null) {
-      api
-        .withReauth(() => api.participants.setPartisipantsList(idInt,
-          new ParticipantsListResponse(file),
-          new ImportHeader()))
-        // Yars: ToDo check if something is needed here
-        .catch((error) => {
-          console.log(error);
-        });
+      event.preventDefault()
+
+      const url = window.ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
+      const formData = new FormData();
+
+      formData.append('file', participantsFile ?? "");
+      formData.append('fileName', participantsFile ? participantsFile.name : "file-not-found");
+
+      const config = {
+        headers: {
+          'content-type': 'multipart/form-data',
+        },
+      };
+      
+      axios.post(url, formData, config).then((response) => {
+        console.log(response.data);
+      });
     }
   }
 
@@ -905,18 +911,13 @@ function EventActivitiesPage() {
               }
               {optionsPrivileges.importParticipants ?
                 (
-                  <>
-                    <InputLabel value="Загрузить xlsx" />
+                  <form onSubmit={handleFileSubmit}>
                     <input
                       type="file"
-                      onChange={(e) => {
-                        if (e.target.files) {
-                          const file = e.target.files[0];
-                          import_xlsx(file);
-                        }
-                      }}
+                      onChange={handleFileChange}
                     />
-                  </>
+                    <Button type="submit">Загрузить xlsx</Button>
+                  </form>
                 ) : (
                   <></>
                 )
