@@ -28,6 +28,7 @@ import PrivilegeContext from '@features/privilege-context';
 import { hasAnyPrivilege } from '@features/privileges';
 import { PrivilegeData } from '@entities/privilege-context';
 import { PrivilegeNames } from '@shared/config/privileges';
+import ImagePreview from "@widgets/main/ImagePreview";
 
 enum DisplayModes {
   LIST = "Показать списком",
@@ -79,8 +80,7 @@ const PageItemStub = (props: PageItemStubProps) => {
       {imageUrl == '' ? (
         <ReactLogo className={styles.event_icon} />
       ) : (
-        <img src={imageUrl}
-          className={styles.event_icon} />
+        <ImagePreview className={styles.event_icon} src={imageUrl} alt="Event Icon" />
       )}
       <div className={styles.event_info_column}>
         <div className={styles.event_name}>
