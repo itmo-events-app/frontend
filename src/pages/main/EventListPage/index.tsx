@@ -110,10 +110,6 @@ const isBlank = (str: string): boolean => {
 function EventListPage() {
   const {api} = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
-  const canCreateEvent = hasAnyPrivilege(
-    privilegeContext.systemPrivileges,
-    new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])
-  );
   const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
@@ -177,7 +173,16 @@ function EventListPage() {
   useEffect(() => {
     getEventList();
   }, [filters]);
-
+  const [canCreateEvent, setCanCreateEvent] = useState(false);
+  useEffect(() => {
+    if (privilegeContext.systemPrivileges) {
+      const newCanCreateEvent = hasAnyPrivilege(
+        privilegeContext.systemPrivileges,
+        new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])
+      );
+      setCanCreateEvent(newCanCreateEvent);
+    }
+  }, []);
   //dialog
   class DialogData {
     heading: string | undefined;
