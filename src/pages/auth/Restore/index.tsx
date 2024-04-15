@@ -19,12 +19,12 @@ const EMAIL_MAX_LENGTH = 128;
 const RETURN_URL = window.location.protocol + "//" + window.location.host + RoutePaths.recoverPassword;
 const MAIL_REGEX = "^\\w[\\w\\-.]*@(niu|idu.)?itmo\\.ru$"
 
-const LABEL = 'Пожалуйста, укажите ваш Email. Вы получите письмо со ссылкой для создания нового пароля.';
+const LABEL = 'Пожалуйста, укажите ваш Email. Вы получите письмо со ссылкой для восстановления пароля.';
 
 const FIELD_EMPTY_ERR_MSG = 'Поле не должно быть пустым';
 const MAIL_DOMAIN_ERR_MSG = 'Некорректный Email. Поддерживаемые домены: @itmo.ru, @idu.itmo.ru и @niuitmo.ru';
-const MAIL_UNKNOWN_ERR_MSG = 'Пользователь c таким Email не существует';
-const SUCCESS_MESSAGE = 'Заявка на восстановление пароля отправлена. Вы получите письмо на ваш Email со ссылкой для создания нового пароля.';
+const MAIL_UNKNOWN_ERR_MSG = 'Пользователя c таким Email не существует';
+const SUCCESS_MESSAGE = 'Заявка на восстановление пароля отправлена. Вы получите письмо на ваш Email со ссылкой для восстановления пароля.';
 const FAIL_MESSAGE = 'Неудалось отправить заявку на восстановление пароля.';
 
 
