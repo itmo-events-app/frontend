@@ -1,15 +1,15 @@
-import BrandLogo from '@widgets/main/BrandLogo';
-import Layout from '@widgets/main/Layout';
-import PageName from '@widgets/main/PageName';
-import styles from './index.module.css';
-import SideBar from '@widgets/main/SideBar';
-import { RoutePaths } from '@shared/config/routes.ts';
-import Content from '@widgets/main/Content';
-import { useContext } from 'react';
-import ApiContext from '@features/api-context.ts';
-import { useQuery } from '@tanstack/react-query';
-import { placeService } from '@features/place-service.ts';
-import { useParams } from 'react-router-dom';
+import BrandLogo from "@widgets/main/BrandLogo";
+import Layout from "@widgets/main/Layout";
+import PageName from "@widgets/main/PageName";
+import styles from "./index.module.css";
+import SideBar from "@widgets/main/SideBar";
+import { RoutePaths } from "@shared/config/routes.ts";
+import Content from "@widgets/main/Content";
+import { useContext } from "react";
+import ApiContext from "@features/api-context.ts";
+import { useQuery } from "@tanstack/react-query";
+import { placeService } from "@features/place-service.ts";
+import { useParams } from "react-router-dom";
 
 function PlaceDataPage() {
   const { api } = useContext(ApiContext);
@@ -19,13 +19,13 @@ function PlaceDataPage() {
   const { data: foundPlace } = useQuery({
     queryFn: () => placeService.getPlace(api, Number(placeId)),
     enabled: placeId !== undefined,
-    queryKey: ['getPlace'],
+    queryKey: ["getPlace"],
   });
 
   const formatTranslation: Record<string, string> = {
-    ONLINE: 'Онлайн',
-    OFFLINE: 'Офлайн',
-    HYBRID: 'Гибрид',
+    ONLINE: "Онлайн",
+    OFFLINE: "Офлайн",
+    HYBRID: "Гибрид",
   };
 
   return (
@@ -48,9 +48,9 @@ function PlaceDataPage() {
                 <div className={styles.label}>Координаты:</div>
               </div>
               <div className={styles.place_column}>
-                <div className={styles.data}>{foundPlace?.address ?? ''}</div>
+                <div className={styles.data}>{foundPlace?.address ?? ""}</div>
                 <div className={styles.data}>
-                  {foundPlace == undefined ? 'Неопределен' : formatTranslation[foundPlace!.format!]}
+                  {foundPlace == undefined ? "Неопределен" : formatTranslation[foundPlace!.format!]}
                 </div>
                 <div className={styles.data}>{foundPlace?.room}</div>
                 <div className={styles.data}>{`${foundPlace?.latitude ?? 0}, ${foundPlace?.longitude ?? 0}`}</div>
@@ -61,6 +61,10 @@ function PlaceDataPage() {
               <div className={styles.data}>{foundPlace?.description}</div>
             </div>
           </div>
+          <div className={styles.label}>Карта:</div>
+          <iframe src="https://trickyfoxy.ru/practice/map.html" width="100%" height="420px">
+            Ваш браузер не поддерживает плавающие фреймы!
+          </iframe>
         </Content>
       }
     />
