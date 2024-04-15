@@ -224,7 +224,10 @@ let tasks: Task[] = [
 //ff9933
 
 
-function readDate(dateTime: string) {
+function readDate(dateTime: string | null | undefined) {
+  if(dateTime==undefined || dateTime=="" || dateTime==null){
+    return "";
+  }
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
   return formattedDate
@@ -319,8 +322,8 @@ function EventActivitiesPage() {
 
   const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in privilegeContext;
   const edit_privilege: boolean = PrivilegeNames.EDIT_EVENT_ACTIVITIES in privilegeContext;
-  const add_organizer_privilege: boolean = PrivilegeNames.ASSIGN_ORGANIZER_ROLE in privilegeContext;
-  const add_helper_privilege: boolean = PrivilegeNames.ASSIGN_ASSISTANT_ROLE in privilegeContext;
+  const add_organizer_privilege: boolean = true;
+  const add_helper_privilege: boolean = true;
   const add_activity_privilege: boolean = PrivilegeNames.CREATE_EVENT_ACTIVITIES in privilegeContext;
   interface peopleTasks {
     name: string | undefined;
@@ -422,9 +425,7 @@ function EventActivitiesPage() {
     pageTabs.push(new PageTab('Активности'));
   }
 
-  if (orgsVisible) {
-    pageTabs.push(new PageTab('Организаторы'));
-  }
+  pageTabs.push(new PageTab('Организаторы'));
 
   pageTabs.push(new PageTab('Участники'));
 
