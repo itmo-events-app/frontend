@@ -148,14 +148,6 @@ class PersonVisitResponse implements ParticipantPresenceRequest {
   }
 }
 
-class ParticipantsListResponse implements SetPartisipantsListRequest {
-  participantsFile: File;
-
-  constructor(file: File) {
-    this.participantsFile = file;
-  }
-}
-
 enum VisitStatusList {
   TRUE = 'Да',
   FALSE = 'Нет'
@@ -883,7 +875,7 @@ function EventActivitiesPage() {
           'content-type': 'multipart/form-data',
         },
       };
-      
+
       axios.post(url, formData, config).then((response) => {
         console.log(response.data);
       });
