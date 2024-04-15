@@ -26,7 +26,6 @@ import {
   EventResponse,
   ParticipantPresenceRequest,
   ParticipantResponse,
-  SetPartisipantsListRequest,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
@@ -145,14 +144,6 @@ class PersonVisitResponse implements ParticipantPresenceRequest {
   constructor(participantId: number, isVisited: boolean) {
     this.participantId = participantId;
     this.isVisited = isVisited;
-  }
-}
-
-class ParticipantsListResponse implements SetPartisipantsListRequest {
-  participantsFile: File;
-
-  constructor(file: File) {
-    this.participantsFile = file;
   }
 }
 
