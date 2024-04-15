@@ -110,10 +110,11 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       preparingEnd: preparingEndString!,
       image: image!,
     };
+    console.log(eventId, eventRequest);
     const result = await api.event.updateEvent(eventId, eventRequest);
     if (result.status == 200) {
       onSubmit();
-      window.location.reload();
+      setTimeout(() => { location.reload() }, 500);
     } else {
       console.log(result.status);
     }
@@ -170,7 +171,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
           <InputLabel value="Формат" />
           <select value={format} onChange={(e) => setFormat(e.target.value as AddActivityFormatEnum)}>
             {Object.entries(AddActivityFormatEnum).map(([k, v]) => {
-              return <option key={k} value={k}>{v}</option>;
+              return <option key={k} value={v}>{v}</option>;
             })}
           </select>
         </div>
@@ -190,7 +191,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
           <InputLabel value="Состояние" />
           <select value={status} onChange={(e) => setStatus(e.target.value as AddActivityStatusEnum)}>
             {Object.entries(AddActivityStatusEnum).map(([k, v]) => {
-              return <option key={k} value={k}>{v}</option>;
+              return <option key={k} value={v}>{v}</option>;
             })}
           </select>
         </div>

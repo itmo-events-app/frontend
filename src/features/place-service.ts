@@ -26,7 +26,7 @@ export const placeService = {
     return async ({ name }: { name: string }): Promise<PlaceResponse[]> => {
       return Promise.resolve(api
         .withReauth(() => api.place.getAllOrFilteredPlaces(undefined, undefined, name))
-        .then((response) => response.data),
+        .then((response) => response.data)
       );
     };
   },
@@ -41,6 +41,9 @@ export const placeService = {
       latitude: lat,
       longitude: long,
     };
+
+    debugger
+    console.log('debugger', request);
 
     api.withReauth(() => api.place.placeAdd(request));
   },
