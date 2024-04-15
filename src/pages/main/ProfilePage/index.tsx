@@ -163,59 +163,50 @@ function ProfilePage() {
                   </tbody>
                 </table>
                 <div>
-                  <div>
+                  <div className={styles.button_column}>
                     <Button onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
                       {notificationSettings?.enableEmail ? 'Отключить уведомления по почте' : 'Включить уведомления по почте'}
                     </Button>
                     </div>
-                    <br />
                     <div>
                     <Button onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
                       {notificationSettings?.enablePush ? 'Отключить пуш-уведомления' : 'Включить пуш-уведомления'}
                     </Button>
                   </div>
                 </div>
-                <br></br>
-                <div>
+
+                <div className={styles.button_column}>
                   {isEditing ? (
                     <>
                       <div>
-                        <div>
-                          <Label value="Имя " error={false} />
-                          <Input
-                            type="text"
-                            placeholder="Введите имя"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                          />
-                        </div>
+                        <Label value="Имя " error={false} />
+                        <Input
+                          type="text"
+                          placeholder="Введите имя"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
                       </div>
                       <div>
-                        <div>
-                          <Label value="Фамилия " error={false} />
-                          <Input
-                            type="text"
-                            placeholder="Введите фамилию"
-                            value={surname}
-                            onChange={(e) => setSurname(e.target.value)}
-                          />
-                        </div>
+                        <Label value="Фамилия " error={false} />
+                        <Input
+                          type="text"
+                          placeholder="Введите фамилию"
+                          value={surname}
+                          onChange={(e) => setSurname(e.target.value)}
+                        />
                       </div>
                       {errorMessageEditingName && <div className={styles.error}>{errorMessageEditingName}</div>}
-                      <br />
-                      <Button onClick={handleNameChange}>Сохранить изменения</Button>
-                      <span>&nbsp;</span>
-                      <Button onClick={clearFieldsForEditingName}>Закрыть</Button>
+                      <div className={styles.button_row}>
+                        <Button onClick={handleNameChange}>Сохранить изменения</Button>
+                        <Button onClick={clearFieldsForEditingName}>Закрыть</Button>
+                      </div>
                     </>
                   ) : (
                     <Button onClick={customEditRenameModal}>Редактировать имя и фамилию</Button>
                   )}
-                  <br></br><br />
-                </div>
-                <div>
                   {isChangingPassword ? (
                     <div>
-                      <br />
                       <div>
                         <Label value="Старый пароль " error={false} />
                         <Input
@@ -245,24 +236,22 @@ function ProfilePage() {
                       </div>
                       {errorMessageChangingPassword && <div className={styles.error}>{errorMessageChangingPassword}</div>}
                       {successMessageChangingPassword && <div className={styles.success}>{successMessageChangingPassword}</div>}
-                      <br />
-                      <Button onClick={handleChangePassword}>Сохранить пароль</Button>
-                      <span>&nbsp;</span>
-                      <Button onClick={() => {
-                        clearFieldsForChangingPassword();
-                        setSuccessMessageChangingPassword('');
-                      }}>Закрыть</Button>
+                      <div className={styles.button_row}>
+                        <Button onClick={handleChangePassword}>Сохранить пароль</Button>
+                        <Button onClick={() => {
+                          clearFieldsForChangingPassword();
+                          setSuccessMessageChangingPassword('');
+                        }}>Закрыть</Button>
+                      </div>
                     </div>
                   ) : (
                     <Button onClick={customEditChangePasswordModal}>Сменить пароль</Button>
                   )}
                 </div>
+
               </div>
             </div>
-            <div>
-              <br />
-              <Button className={styles.button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
-            </div>
+            <Button className={styles.button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
           </div>
         </Content>
       }
