@@ -3,7 +3,8 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from '@pages/auth/Login';
 import RegisterPage from '@pages/auth/Register';
 import RestorePage from '@pages/auth/Restore';
-import PasswordPage from '@pages/auth/Password';
+import PasswordPage from '@pages/auth/RecoverPassword';
+import ChangePasswordPage from "@pages/auth/ChangePassword";
 import NotifyPage from '@pages/auth/Notification';
 import RoleListPage from '@pages/main/RoleList';
 import EventListPage from '@pages/main/EventListPage';
@@ -45,9 +46,13 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     path: RoutePaths.restore,
     authenticated: false,
   },
-  [AppRoutes.PASSWORD]: {
-    path: RoutePaths.password,
+  [AppRoutes.RECOVER_PASSWORD]: {
+    path: RoutePaths.recoverPassword,
     authenticated: false,
+  },
+  [AppRoutes.CHANGE_PASSWORD]: {
+    path: RoutePaths.changePassword,
+    authenticated: true,
   },
   [AppRoutes.NOTIFY]: {
     path: RoutePaths.notify,
@@ -133,8 +138,11 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.RESTORE]: {
     element: <RestorePage />,
   },
-  [AppRoutes.PASSWORD]: {
-    element: <PasswordPage />,
+  [AppRoutes.RECOVER_PASSWORD]: {
+    element: <PasswordPage/>,
+  },
+  [AppRoutes.CHANGE_PASSWORD]: {
+    element: <ChangePasswordPage/>,
   },
   [AppRoutes.NOTIFY]: {
     element: <NotifyPage />,
