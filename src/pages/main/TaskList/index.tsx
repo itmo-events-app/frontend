@@ -1,26 +1,22 @@
-import styles from './index.module.css';
-import BrandLogo from '@widgets/main/BrandLogo';
-import Layout from '@widgets/main/Layout';
-import PageName from '@widgets/main/PageName';
-import Content from '@widgets/main/Content';
-import SideBar from '@widgets/main/SideBar';
-import Button from '@widgets/main/Button';
-import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
-import { RoutePaths } from '@shared/config/routes';
-import { FC, ReactNode, useContext, useEffect, useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { taskService } from '@features/task-service.ts';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale/ru';
-import { hasAnyPrivilege } from '@features/privileges.ts';
-import { PrivilegeNames } from '@shared/config/privileges.ts';
-import { TaskResponse } from '@shared/api/generated';
-import PrivilegeContext from '@features/privilege-context.ts';
-import { PrivilegeData } from '@entities/privilege-context.ts';
-import ApiContext from '@features/api-context';
-import { Api } from '@entities/api';
-import { useNavigate } from 'react-router-dom';
-import Popup from 'reactjs-popup';
+import styles from "./index.module.css";
+import BrandLogo from "@widgets/main/BrandLogo";
+import Layout from "@widgets/main/Layout";
+import PageName from "@widgets/main/PageName";
+import Content from "@widgets/main/Content";
+import SideBar from "@widgets/main/SideBar";
+import Button from "@widgets/main/Button";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { RoutePaths } from "@shared/config/routes";
+import { FC, ReactNode, useContext, useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { taskService } from "@features/task-service.ts";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale/ru";
+import { TaskResponse, TaskResponseTaskStatusEnum } from "@shared/api/generated";
+import ApiContext from "@features/api-context";
+import { Api } from "@entities/api";
+import { useNavigate } from "react-router-dom";
+import Popup from "reactjs-popup";
 
 type TaskTableProps = {
   tasks: TaskResponse[];
@@ -28,135 +24,163 @@ type TaskTableProps = {
 };
 
 const newTaskOptions: DropdownOption<string>[] = [
-  new DropdownOption('Новое'),
-  new DropdownOption('В работе'),
-  new DropdownOption('Выполнено'),
-  new DropdownOption('Просрочено'),
+  new DropdownOption("Новое"),
+  new DropdownOption("В работе"),
+  new DropdownOption("Выполнено"),
+  new DropdownOption("Просрочено"),
 ];
 
 const statusTranslation: Record<string, string> = {
-  NEW: 'Новое',
-  IN_PROGRESS: 'В работе',
-  EXPIRED: 'Просрочено',
-  DONE: 'Выполнено',
+  NEW: "Новое",
+  IN_PROGRESS: "В работе",
+  EXPIRED: "Просрочено",
+  DONE: "Выполнено",
 };
 
-const TaskTable: FC<TaskTableProps> = ({ tasks, api }) => {
-  const { privilegeContext } = useContext(PrivilegeContext);
+type TaskTableRowProps = {
+  taskId: number;
+  title: string;
+  description: string;
+  deadline: string;
+  assigneeName: string;
+  eventId: number;
+  eventName?: string;
+  taskStatus: TaskResponseTaskStatusEnum;
+  activityTitle?: string;
+}
+
+const TaskTableRow: FC<TaskTableRowProps> = ({
+                                               taskId,
+                                               title,
+                                               description,
+                                               deadline,
+                                               assigneeName,
+                                               eventId, eventName,
+                                               taskStatus,
+                                               activityTitle,
+                                             }) => {
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
+  const navigate = useNavigate();
+  const canChangeTaskStatus = true;
 
-  const canChangeTaskStatus = hasAnyPrivilege(
-    privilegeContext.systemPrivileges,
-    new Set([new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS)])
-  );
+  const { api } = useContext(ApiContext);
 
-  // для автоматического обновления статуса задачи в бд
+
   const { mutate: updateTaskStatus } = useMutation({
     mutationFn: taskService.updateTaskStatus(api),
-    mutationKey: ['updateTaskStatus'],
+    mutationKey: ["updateTaskStatus"],
   });
 
-  const navigate = useNavigate();
   const redirectToEvent = (id: number) => {
     const path = `/events/${id}`;
     navigate(path);
   };
 
-  return (
+  return (<tr>
+    <td>{title}</td>
+    <td>
+      <Popup
+        trigger={
+          <div>
+            {description!.slice(0, 20)}
+            {description!.length! > 20 && <span>...</span>}
+          </div>
+        }
+        modal
+        nested
+      >
+        {
+          ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
+            <div className={styles.popup__wrapper}>
+              <div className={styles.popupContentBold}>
+                {"Описание задачи:"}
+                <br />
+                <br />
+              </div>
+              <div className={styles.popupContent}>{description}</div>
+              <div className={styles.popupButton}>
+                <Button onClick={close}>Скрыть</Button>
+              </div>
+            </div>
+          )) as unknown as ReactNode
+        }
+      </Popup>
+    </td>
+    <td>
+      {format(deadline, "H:mm")} <br />
+      {format(deadline, "do MMMM, yyyy", { locale: ru })}
+    </td>
+    <td>{assigneeName}</td>
+    <td>
+      <Button onClick={() => redirectToEvent(eventId)}>{eventName}</Button>
+    </td>
+    <td>{activityTitle ?? "-"}</td>
+    <td className={styles.dropdown}>
+      {canChangeTaskStatus ? (
+        <Dropdown
+          placeholder={statusTranslation[taskStatus]}
+          items={newTaskOptions}
+          toText={(item) => item.value}
+          value={selectedStatus}
+          onChange={(sel) => {
+            updateTaskStatus({ newStatus: sel.value, id: taskId });
+            setStatus(sel);
+          }}
+        />
+      ) : (
+        <>{statusTranslation[taskStatus]}</>
+      )}
+    </td>
+  </tr>);
+};
+
+const TaskTable: FC<TaskTableProps> = ({ tasks }) =>
+  (
     <div className={styles.content}>
       <table className={styles.table}>
         <thead>
-          <tr>
-            <th>Название</th>
-            <th>Описание</th>
-            <th>Дедлайн</th>
-            <th>Ответственный</th>
-            <th>Мероприятие</th>
-            <th>Активность*</th>
-            <th>Статус</th>
-          </tr>
+        <tr>
+          <th>Название</th>
+          <th>Описание</th>
+          <th>Дедлайн</th>
+          <th>Ответственный</th>
+          <th>Мероприятие</th>
+          <th>Активность*</th>
+          <th>Статус</th>
+        </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => (
-            <tr key={task.id}>
-              <td>{task.title}</td>
-              <td>
-                <Popup
-                  trigger={
-                    <div>
-                      {task.description!.slice(0, 20)}
-                      {task.description!.length! > 20 && <span>...</span>}
-                    </div>
-                  }
-                  modal
-                  nested
-                >
-                  {
-                    ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
-                      <div className={styles.popup__wrapper}>
-                        <div className={styles.popupContentBold}>
-                          {'Описание задачи:'}
-                          <br />
-                          <br />
-                        </div>
-                        <div className={styles.popupContent}>{task.description!}</div>
-                        <div className={styles.popupButton}>
-                          <Button onClick={close}>Скрыть</Button>
-                        </div>
-                      </div>
-                    )) as unknown as ReactNode
-                  }
-                </Popup>
-              </td>
-              <td>
-                {format(task.deadline!, 'H:mm')} <br />
-                {format(task.deadline!, 'do MMMM, yyyy', { locale: ru })}
-              </td>
-              <td>{task.assignee?.name + ' ' + task.assignee?.surname}</td>
-              <td>
-                <Button onClick={() => redirectToEvent(task.event!.eventId!)}>{task.event!.eventTitle}</Button>
-              </td>
-              <td>{task.event!.activityTitle ? task.event!.activityTitle : '-'}</td>
-              <td className={styles.dropdown}>
-                {canChangeTaskStatus ? (
-                  <Dropdown
-                    placeholder={statusTranslation[task.taskStatus!]}
-                    items={newTaskOptions}
-                    toText={(item) => item.value}
-                    value={selectedStatus}
-                    onChange={(sel) => {
-                      updateTaskStatus({ newStatus: sel.value, id: task.id! });
-                      setStatus(sel);
-                    }}
-                  />
-                ) : (
-                  <>{statusTranslation[task.taskStatus!]}</>
-                )}
-              </td>
-            </tr>
-          ))}
+        {tasks.map((task) => (
+          <TaskTableRow key={task.id}
+                        taskId={Number(task.id)} title={String(task.title)} description={task.description || ""}
+                        deadline={task.deadline || ""}
+                        assigneeName={`${task.assignee?.name} ${task.assignee?.surname}`}
+                        eventId={Number(task.event?.eventId)}
+                        eventName={task.event?.eventTitle}
+                        taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
+                        activityTitle={task.event?.activityTitle} />
+        ))}
         </tbody>
       </table>
     </div>
   );
-};
 
 function TaskListPage() {
   const { api } = useContext(ApiContext);
 
   const { data: tasks = [] } = useQuery({
     queryFn: taskService.getTasks(api),
-    queryKey: ['getTasks'],
+    queryKey: ["getTasks"],
   });
 
   const { data: filterEvents = [] } = useQuery({
     queryFn: taskService.getEventsNames(api),
-    queryKey: ['getEventsNames'],
+    queryKey: ["getEventsNames"],
   });
 
   const { mutate: getFilteredTasksByEvent } = useMutation({
     mutationFn: taskService.getEventTasks(api),
-    mutationKey: ['getEventTasks'],
+    mutationKey: ["getEventTasks"],
     onSuccess: (res) => {
       setFilteredTasks(res);
     },
