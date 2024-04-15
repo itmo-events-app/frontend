@@ -75,8 +75,8 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
       participantHighestAge,
       preparingStartString!,
       preparingEndString!,
-      image!,
-      parentId
+      parentId,
+      image!
     );
     if (result.status != 201) {
       console.log(result.status);
@@ -126,7 +126,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Формат" />
           <select value={format} onChange={(e) => setFormat(e.target.value as AddActivityFormatEnum)}>
             {Object.entries(AddActivityFormatEnum).map(([k, v]) => {
-              return <option value={k}>{v}</option>;
+              return <option value={v}>{k}</option>;
             })}
           </select>
         </div>
@@ -146,7 +146,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Состояние" />
           <select value={status} onChange={(e) => setStatus(e.target.value as AddActivityStatusEnum)}>
             {Object.entries(AddActivityStatusEnum).map(([k, v]) => {
-              return <option value={k}>{v}</option>;
+              return <option value={v}>{k}</option>;
             })}
           </select>
         </div>
