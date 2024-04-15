@@ -1,24 +1,34 @@
-import Content from '@widgets/main/Content';
-import Input from '@widgets/main/Input';
-import Button from '@widgets/main/Button';
-import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
-import { useState } from 'react';
+import Content from "@widgets/main/Content";
+import Input from "@widgets/main/Input";
+import Button from "@widgets/main/Button";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { FC, useContext, useState } from "react";
 
-import styles from './dialog.module.css';
+import styles from "./dialog.module.css";
+import { eventService } from "@features/event-service.ts";
+import ApiContext from "@features/api-context.ts";
+import { useQuery } from "@tanstack/react-query";
 
-const _test_orgs = [
-  new DropdownOption('[408975] Григорьев Георгий Александрович'),
-  new DropdownOption('[621304] Ефимов Евгений Николаевич'),
-  new DropdownOption('[308820] Васильева Валентина Сергеевна'),
-  new DropdownOption('[107589] Лебедев Леонид Петрович'),
-];
+export type EventCreationDialogProps = {
+  onCreateEvent?: () => void;
+};
 
-function EventCreationDialog() {
-  const [name, setName] = useState('');
+const EventCreationDialog: FC<EventCreationDialogProps> = ({ onCreateEvent }) => {
+  const { api } = useContext(ApiContext);
+  const [name, setName] = useState("");
+  const [user, setUser] = useState<DropdownOption<string> | undefined>();
 
   const _createEvent = () => {
-    console.log('creating event! hello');
+    eventService.createTask(api, name, Number(user!.id!)).then(() => {
+      onCreateEvent?.();
+    });
+    location.reload()
   };
+
+  const { data: allUsers = [] } = useQuery({
+    queryFn: eventService.getUsers(api),
+    queryKey: ["getAllUsers"],
+  });
 
   return (
     <Content>
@@ -32,7 +42,8 @@ function EventCreationDialog() {
           />
         </div>
         <div className={styles.event_form_item}>
-          <Dropdown placeholder="Выберите главного организатора" items={_test_orgs} toText={(e) => e.value} />
+          <Dropdown placeholder="Выберите главного организатора" items={allUsers} toText={(e) => e.value} value={user}
+                    onChange={setUser} />
         </div>
         <div className={styles.event_form_button}>
           <Button onClick={_createEvent}>Создать</Button>
@@ -40,6 +51,6 @@ function EventCreationDialog() {
       </div>
     </Content>
   );
-}
+};
 
 export default EventCreationDialog;
