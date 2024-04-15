@@ -298,7 +298,7 @@ function EventActivitiesPage() {
 
     const getEvent = async () => {
       try {
-        const eventResponse = await api.event.getEventById(idInt);
+        const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = 'Отсутствует'
@@ -327,8 +327,13 @@ function EventActivitiesPage() {
           setEventResponse(data);
         } else {
           console.error('Error fetching event list:', eventResponse.statusText);
+
         }
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response.status == 404) {
+          navigate(RoutePaths.notFound);
+          return;
+        }
         console.error('Error fetching event list:', error);
       }
     };
