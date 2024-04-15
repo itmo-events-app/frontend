@@ -79,7 +79,7 @@ export default function RequestListPage() {
         }
       })
       .catch((reason: any) => console.log("Reject approve: " + reason));
-  };
+  }
 
   function _declineRequestClick(request: Request) {
     api
@@ -100,7 +100,7 @@ export default function RequestListPage() {
         }
       })
       .catch((reason: any) => console.log("Reject decline: " + reason));  
-  };
+  }
 
   function _renderButtons(req: Request) {
     if (req.status == RequestStatus.New) {
@@ -119,7 +119,7 @@ export default function RequestListPage() {
       return <p className={styles.label}>Утверждено</p>;
     }
     return <p className={styles.label}>Отклонено</p>;
-  };
+  }
 
   function _renderRequestEntry(req: Request) {
     return (
@@ -137,7 +137,7 @@ export default function RequestListPage() {
         </div>
       </div>
     );
-  };
+  }
 
   const _renderedRequests: any[] = requests.map((req: Request) => {
     return new PageEntry(() => { return _renderRequestEntry(req) })
