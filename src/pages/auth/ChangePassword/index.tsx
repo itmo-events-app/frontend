@@ -154,7 +154,7 @@ function ChangePasswordPage() {
         <Error value={error} isError={error != ''}/>
         <div className={styles.form}>
           <div className={styles.form_item}>
-            <Label value="Старый вароль"/>
+            <Label value="Старый пароль"/>
             <Input value={oldPassword} onChange={_setOldPassword} error={oldPasswordError != ''}
                    errorText={oldPasswordError}/>
           </div>
