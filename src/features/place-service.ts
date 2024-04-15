@@ -26,7 +26,7 @@ export const placeService = {
     return async ({ name }: { name: string }): Promise<PlaceResponse[]> => {
       return Promise.resolve(api
         .withReauth(() => api.place.getAllOrFilteredPlaces(undefined, undefined, name))
-        .then((response) => response.data),
+        .then((response) => response.data)
       );
     };
   },

@@ -26,13 +26,12 @@ import {
   EventResponse,
   ParticipantPresenceRequest,
   ParticipantResponse,
-  SetPartisipantsListRequest,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
-import InputLabel from "@widgets/main/InputLabel";
+import axios from 'axios';
 
 class EventInfo {
   regDates: string;
@@ -148,11 +147,21 @@ class PersonVisitResponse implements ParticipantPresenceRequest {
   }
 }
 
-class ParticipantsListResponse implements SetPartisipantsListRequest {
-  participantsFile: File;
+enum DialogSelected {
+  NONE,
+  UPDATE,
+  CREATEACTIVITY = 2,
+  ADDORGANIZER = 3,
+}
 
-  constructor(file: File) {
-    this.participantsFile = file;
+class DialogData {
+  heading: string | undefined;
+  visible: DialogSelected;
+  args: any;
+  constructor(heading?: string, visible: DialogSelected = DialogSelected.NONE, args: any = {}) {
+    this.heading = heading;
+    this.visible = visible;
+    this.args = args;
   }
 }
 
@@ -163,66 +172,51 @@ enum VisitStatusList {
 
 const userVisitStatus = Object.values(VisitStatusList);
 
-let tasks: Task[] = [
-  {
-    start: new Date(2024, 1, 1),
-    end: new Date(2024, 1, 2),
-    name: 'Создать зум',
-    id: 'Task 0',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: 'sdsd',
-    hideChildren: false,
-  },
-  {
-    start: new Date(2024, 1, 3),
-    end: new Date(2024, 1, 14),
-    name: 'Забронировать аудиторию',
-    id: 'Task 2',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#663333', progressSelectedColor: '#663333' },
-    project: 'sdsd',
-  },
-  {
-    start: new Date(2024, 1, 2),
-    end: new Date(2024, 1, 10),
-    name: 'Написать программу выступления в зуме',
-    id: 'Task 3',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: 'sdsd',
-  },
-  {
-    start: new Date(2024, 1, 11),
-    end: new Date(2024, 1, 16),
-    name: 'Тестовый прогон',
-    id: 'Task 4',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#0069FF', progressSelectedColor: '#0069FF' },
-    project: 'sdsd',
-  },
-  {
-    start: new Date(2024, 1, 3),
-    end: new Date(2024, 1, 9),
-    name: 'Подготовить подарки',
-    id: 'Task 4',
-    type: 'task',
-    progress: 100,
-    isDisabled: false,
-    styles: { progressColor: '#ff9933', progressSelectedColor: '#ff9933' },
-    project: 'sdsd',
-  },
-];
-//ff9933
+type OptionsPrivileges = {
+  activitiesVisible: boolean,
+  orgsVisible: boolean,
+  modifyVisitStatus: boolean,
+  exportParticipants: boolean,
+  importParticipants: boolean,
+  tasksVisible: boolean,
+  edit: boolean,
+  addOrganizer: boolean,
+  addHelper: boolean,
+  addActivity: boolean
+}
 
+const optionsPrivilegesInitial: OptionsPrivileges = {
+  activitiesVisible: false,
+  orgsVisible: false,
+  modifyVisitStatus: false,
+  exportParticipants: false,
+  importParticipants: false,
+  tasksVisible: false,
+  edit: false,
+  addOrganizer: false,
+  addHelper: false,
+  addActivity: false
+} as const;
+
+interface PeopleTasks {
+  name: string | undefined;
+  lastname: string | undefined;
+  color: string | undefined;
+}
+const colors: string[] = [
+  '#663333',
+  '#0069FF',
+  '#ff9933',
+  '#990066',
+  '#006633',
+  '#000000',
+  '#666600',
+  '#336666',
+  '#000099',
+  '#FF0033',
+  '#CCCC00',
+  '#CC6666',
+];
 
 function readDate(dateTime: string | null | undefined) {
   if(dateTime==undefined || dateTime=="" || dateTime==null){
@@ -233,6 +227,15 @@ function readDate(dateTime: string | null | undefined) {
   return formattedDate
 }
 
+function getIntervalString(start: string | null | undefined, end: string | null | undefined) {
+  if (start == null || end == null) {
+    return '';
+  } else {
+    return readDate(start) + ' - ' + readDate(end);
+  }
+}
+
+
 function getTimeOnly(dateTimeString: string) {
   const dateTime = new Date(dateTimeString);
   const hours = dateTime.getHours();
@@ -242,28 +245,55 @@ function getTimeOnly(dateTimeString: string) {
   return timeOnly;
 }
 
-const url_parts: string[] = window.location.href.split('/');
-const url_tail: string = url_parts[url_parts.length - 1];
-
-const EVENT_ID: number = url_tail[url_tail.length - 1] == '#' ? +url_tail.split('#')[0] : +url_tail;
 
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
+  const navigate = useNavigate();
+
   const { privilegeContext, updateEventPrivileges } = useContext(PrivilegeContext);
 
   const { id } = useParams();
+  const [idInt, setIdInt] = useState<number | null>(null)
   const [event, setEvent] = useState<EventInfo | undefined>(undefined);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState('');
   const [eventResponse, setEventResponse] = useState({});
 
   const [eventTasks, setEventTasks] = useState<TaskResponse[]>([]);
-  const [eventTasksPeople, setEventTasksPeople] = useState<peopleTasks[]>([]);
+  const [eventTasksPeople, setEventTasksPeople] = useState<PeopleTasks[]>([]);
+
+  const [optionsPrivileges, setOptionsPrivileges] = useState<OptionsPrivileges>(optionsPrivilegesInitial);
+  const [tasks, setTasks] = useState([] as Task[]);
+
+  const [pageTabs, setPageTabs] = useState<PageTab[]>([]);
+
+  const [dialogData, setDialogData] = useState(new DialogData());
+  const dialogRef = useRef(null);
+
+  const [activities, setActivities] = useState([] as Activity[]);
+  const [activitiesLoaded, setActivitiesLoaded] = useState(false);
+
+  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
+
+  const [orgs, setOrgs] = useState([] as OrgPerson[]);
+  const [participants, setParticipants] = useState([] as Person[]);
+
+  const [selectedTab, setSelectedTab] = useState('Описание');
 
   useEffect(() => {
+    if (id) {
+      setIdInt(parseInt(id));
+    }
+  }, [id])
+
+  useEffect(() => {
+    if (idInt == null) {
+      return;
+    }
+
     const getEvent = async () => {
       try {
-        const eventResponse = await api.event.getEventById(parseInt(id ?? '0'));
+        const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
         if (eventResponse.status === 200) {
           const data = eventResponse.data;
           let placeAddress = 'Отсутствует'
@@ -275,10 +305,11 @@ function EventActivitiesPage() {
               console.log(placeResponse.status);
             }
           }
+
           const info = new EventInfo(
-            readDate(data.registrationStart??'') + ' - ' + readDate(data.registrationEnd??''),
-            readDate(data.preparingStart??'') + ' - ' + readDate(data.preparingEnd??''),
-            readDate(data.startDate??'') + ' - ' + readDate(data.endDate??''),
+            getIntervalString(data.registrationStart, data.registrationEnd),
+            getIntervalString(data.preparingStart, data.preparingEnd),
+            getIntervalString(data.startDate, data.endDate),
             String(data.participantLimit),
             placeAddress,
             data.format ?? '',
@@ -291,13 +322,18 @@ function EventActivitiesPage() {
           setEventResponse(data);
         } else {
           console.error('Error fetching event list:', eventResponse.statusText);
+
         }
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response.status == 404) {
+          navigate(RoutePaths.notFound);
+          return;
+        }
         console.error('Error fetching event list:', error);
       }
     };
     getEvent();
-    getImageUrl(id!).then((url) => {
+    getImageUrl(String(idInt)).then((url) => {
       if (url == '') {
         setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
       } else {
@@ -305,11 +341,14 @@ function EventActivitiesPage() {
       }
     });
     setLoadingEvent(false);
-  },[]);
+  }, [idInt]);
 
   useEffect(() => {
+    if (idInt == null) {
+      return;
+    }
     api
-      .withReauth(() => api.task.taskListShowInEvent(EVENT_ID))
+      .withReauth(() => api.task.taskListShowInEvent(idInt))
       .then((response) => {
         if (response.data != undefined) {
           setEventTasks(response.data);
@@ -318,35 +357,12 @@ function EventActivitiesPage() {
       .catch((error) => {
         console.log(error.response.data);
       });
-  }, []);
+  }, [idInt]);
 
-  const tasksVisible: boolean = PrivilegeNames.VIEW_ALL_EVENT_TASKS in privilegeContext;
-  const edit_privilege: boolean = PrivilegeNames.EDIT_EVENT_ACTIVITIES in privilegeContext;
-  const add_organizer_privilege: boolean = true;
-  const add_helper_privilege: boolean = true;
-  const add_activity_privilege: boolean = PrivilegeNames.CREATE_EVENT_ACTIVITIES in privilegeContext;
-  interface peopleTasks {
-    name: string | undefined;
-    lastname: string | undefined;
-    color: string | undefined;
-  }
-  const colors: string[] = [
-    '#663333',
-    '#0069FF',
-    '#ff9933',
-    '#990066',
-    '#006633',
-    '#000000',
-    '#666600',
-    '#336666',
-    '#000099',
-    '#FF0033',
-    '#CCCC00',
-    '#CC6666',
-  ];
-  const peopleForTasks = new Map<number, peopleTasks>();
+
   useEffect(() => {
-    tasks = [];
+    const peopleForTasks = new Map<number, PeopleTasks>();
+    const curTasks = [];
     let persColor;
     // peopleForTasks.set(1, {
     //   name: "asd",
@@ -362,7 +378,6 @@ function EventActivitiesPage() {
         et.assignee != undefined &&
         et.assignee.id != undefined
       ) {
-        console.log(peopleForTasks);
         if (peopleForTasks.get(et.assignee.id)) {
           persColor = peopleForTasks.get(et.assignee.id)?.color;
         } else {
@@ -385,17 +400,12 @@ function EventActivitiesPage() {
           styles: { progressColor: persColor, progressSelectedColor: persColor },
           hideChildren: false,
         };
-        tasks.push(newTask);
+        curTasks.push(newTask);
         setEventTasksPeople(Array.from(peopleForTasks, ([_, peopleTasks]) => peopleTasks));
+        setTasks(curTasks);
       }
     }
-  }, eventTasks);
-
-  const [activitiesVisible, setActivitiesVisible] = useState(false);
-  const [orgsVisible, setOrgsVisible] = useState(false);
-  const [modifyVisitStatus, setModifyVisitStatus] = useState(false);
-  const [exportParticipants, setExportParticipants] = useState(false);
-  const [importParticipants, setImportParticipants] = useState(false);
+  }, [eventTasks]);
 
   function _getPrivileges(id: number): Set<PrivilegeData> {
     if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
@@ -407,50 +417,48 @@ function EventActivitiesPage() {
   }
 
   useEffect(() => {
-    if (id) {
-      const privileges = _getPrivileges(parseInt(id));
-      setActivitiesVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])));
-      setOrgsVisible(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])));
-      setModifyVisitStatus(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])));
-      setExportParticipants(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])));
-      setImportParticipants(hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])));
+    if (idInt != null) {
+      const privileges = _getPrivileges(idInt);
+      setOptionsPrivileges({
+        activitiesVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
+        orgsVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])),
+        modifyVisitStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])),
+        exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
+        importParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])),
+        tasksVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)])),
+        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_ACTIVITIES)])),
+        addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
+        addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
+        addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
+      })
+    } else {
+      setOptionsPrivileges(optionsPrivilegesInitial)
     }
-  }, [privilegeContext]);
+  }, [idInt, privilegeContext]);
 
-  const pageTabs: PageTab[] = [];
+  useEffect(() => {
+    const tabs = [];
 
-  pageTabs.push(new PageTab('Описание'));
+    tabs.push(new PageTab('Описание'));
 
-  if (activitiesVisible) {
-    pageTabs.push(new PageTab('Активности'));
-  }
 
-  pageTabs.push(new PageTab('Организаторы'));
-
-  pageTabs.push(new PageTab('Участники'));
-
-  if (tasksVisible) {
-    pageTabs.push(new PageTab('Задачи'));
-  }
-
-  class DialogData {
-    heading: string | undefined;
-    visible: DialogSelected;
-    args: any;
-    constructor(heading?: string, visible: DialogSelected = DialogSelected.NONE, args: any = {}) {
-      this.heading = heading;
-      this.visible = visible;
-      this.args = args;
+    if (optionsPrivileges.activitiesVisible) {
+      tabs.push(new PageTab('Активности'));
     }
-  }
-  const [dialogData, setDialogData] = useState(new DialogData());
-  const dialogRef = useRef(null);
-  enum DialogSelected {
-    NONE,
-    UPDATE,
-    CREATEACTIVITY = 2,
-    ADDORGANIZER = 3,
-  }
+
+    if (optionsPrivileges.orgsVisible) {
+      tabs.push(new PageTab('Организаторы'));
+    }
+
+    tabs.push(new PageTab('Участники'));
+
+    if (optionsPrivileges.tasksVisible) {
+      tabs.push(new PageTab('Задачи'));
+    }
+
+    setPageTabs(tabs);
+  }, [optionsPrivileges])
+
 
   const _Dialog = () => {
     let component = <></>;
@@ -459,7 +467,7 @@ function EventActivitiesPage() {
         component = (
           <UpdateDialogContent
             {...dialogData.args}
-            eventId={parseInt(id!)}
+            eventId={idInt}
             eventInfo={eventResponse}
             onSubmit={() => {
               _closeDialog();
@@ -471,7 +479,7 @@ function EventActivitiesPage() {
         component = (
           <CreateActivityDialog
             {...dialogData.args}
-            parentId={parseInt(id!)}
+            parentId={idInt}
             onSubmit={() => {
               _closeDialog();
             }}
@@ -482,7 +490,7 @@ function EventActivitiesPage() {
         component = (
           <AddOrganizerDialog
             {...dialogData.args}
-            eventId={parseInt(id!)}
+            eventId={idInt}
             onSubmit={() => {
               _closeDialog();
             }}
@@ -517,7 +525,7 @@ function EventActivitiesPage() {
     return (
       <div className={styles.root}>
         <div className={styles.image_box}>{<img className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
-        {edit_privilege ? (
+        {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_updateEvent}>
               Редактировать информацию о мероприятии
@@ -577,10 +585,8 @@ function EventActivitiesPage() {
     );
   }
 
-  const [activities, setActivities] = useState([] as Activity[]);
-  const [activitiesLoaded, setActivitiesLoaded] = useState(false);
-  const getActivities = async () => {
-    const response = await api.event.getAllOrFilteredEvents(undefined, undefined, parseInt(id!));
+  const getActivities = async (id: number) => {
+    const response = await api.event.getAllOrFilteredEvents(undefined, undefined, id);
     if (response.status == 200) {
       const items = (response.data.items ?? []) as EventResponse[];
       const activities = items.map(async (a) => {
@@ -595,7 +601,7 @@ function EventActivitiesPage() {
           console.log(response.status);
         }
         let idString = '';
-        if(a.id!=null){
+        if (a.id != null) {
           idString = a.id.toString();
         }
         return new Activity(
@@ -604,10 +610,10 @@ function EventActivitiesPage() {
           place,
           room,
           a.shortDescription ?? '',
-          readDate(a.startDate??'') ?? '',
-          getTimeOnly(a.startDate ?? ''),
-          readDate(a.endDate??'') ?? '',
-          getTimeOnly(a.endDate ?? '')
+          a.startDate ? readDate(a.startDate) : '',
+          a.startDate ? getTimeOnly(a.startDate) : '',
+          a.endDate ? readDate(a.endDate) : '',
+          a.endDate ? getTimeOnly(a.endDate) : ''
         );
       });
       const activitiesPromise = await Promise.all(activities);
@@ -619,18 +625,19 @@ function EventActivitiesPage() {
   };
 
   useEffect(() => {
-    getActivities();
-  }, []);
+    if (idInt != null) {
+      getActivities(idInt);
+    }
+  }, [idInt]);
 
-  const navigate = useNavigate();
-  const _event = (id:string) => {
-    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID,id));
-    window.location.reload();
+  const _event = (id: string) => {
+    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
+    setTimeout(() => { location.reload() }, 500);
   }
 
   function _createActivity(activity: Activity) {
     return (
-      <div key={activity.id} className={styles.activity_container} onClick={()=>_event(activity.activityId)}>
+      <div key={activity.id} className={styles.activity_container} onClick={() => _event(activity.activityId)}>
         <div className={styles.activity_info_column}>
           <div className={styles.activity_name}>{activity.name}</div>
           <div className={styles.activity_place_container}>
@@ -667,11 +674,11 @@ function EventActivitiesPage() {
     }
     return (
       <>
-        {add_activity_privilege ? (
-           <div className={styles.button_container}>
-             <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-           </div>
-         ) : (<></>)}
+        {optionsPrivileges.addActivity ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
+          </div>
+        ) : (<></>)}
         {activitiesLoaded ? (
           <div className={styles.data_list}>
             {items}
@@ -684,7 +691,7 @@ function EventActivitiesPage() {
     );
   }
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setDialogData(new DialogData('Добваить организатора', DialogSelected.ADDORGANIZER));
+    setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   };
 
@@ -698,7 +705,6 @@ function EventActivitiesPage() {
     );
   }
 
-  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
 
   function createPersonRow(person: Person) {
     return (
@@ -706,7 +712,7 @@ function EventActivitiesPage() {
         <td>{person.name}</td>
         <td>{person.email}</td>
         <td>{person.info}</td>
-        {modifyVisitStatus ?
+        {optionsPrivileges.modifyVisitStatus ?
           (
             <td>
               <Dropdown
@@ -715,12 +721,14 @@ function EventActivitiesPage() {
                 value={visitStatus.get(person.id)}
                 onChange={(status) => {
                   setVisitStatus(visitStatus.set(person.id, status));
-                  api
-                    .withReauth(() => api.participants.changePresence(EVENT_ID,
-                      new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
-                    .catch((error) => {
-                      console.log(error);
-                    });
+                  if (id) {
+                    api
+                      .withReauth(() => api.participants.changePresence(idInt!,
+                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
+                      .catch((error) => {
+                        console.log(error);
+                      });
+                  }
                 }}
                 toText={(input: string) => {
                   return input;
@@ -772,7 +780,7 @@ function EventActivitiesPage() {
 
     return (
       <>
-        {add_organizer_privilege && add_helper_privilege? (
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_addOrganizer}>
               Добавить
@@ -796,21 +804,42 @@ function EventActivitiesPage() {
   }
 
   function export_xlsx() {
-    api
-      .withReauth(() => api.participants.getParticipantsXlsxFile(EVENT_ID))
-      // Yars: ToDo check if something is needed here
-      .catch((error) => {
-        console.log(error);
-      });
+    if (idInt != null) {
+      api
+        .withReauth(() => api.participants.getParticipantsXlsxFile(idInt))
+        // Yars: TODO check if something is needed here
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
 
-  function import_xlsx(file: File) {
-    api
-      .withReauth(() => api.participants.setPartisipantsList(EVENT_ID, new ParticipantsListResponse(file)))
-      // Yars: ToDo check if something is needed here
-      .catch((error) => {
-        console.log(error);
+  const [participantsFile, setParticipantsFile] = useState(new File([], ""));
+
+  function handleFileChange(event: any) {
+    setParticipantsFile(event.target.files[0]);
+  }
+
+  function handleFileSubmit(event: any) {
+    if (idInt != null) {
+      event.preventDefault()
+
+      const url = (window as any).ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
+      const formData = new FormData();
+
+      formData.append('file', participantsFile ?? "");
+      formData.append('fileName', participantsFile ? participantsFile.name : "file-not-found");
+
+      const config = {
+        headers: {
+          'content-type': 'multipart/form-data',
+        },
+      };
+
+      axios.post(url, formData, config).then((response) => {
+        console.log(response.data);
       });
+    }
   }
 
   function createParticipantsTable(persons: Person[]) {
@@ -820,10 +849,10 @@ function EventActivitiesPage() {
     }
     return (
       <>
-        {(exportParticipants || importParticipants) ?
+        {(optionsPrivileges.exportParticipants || optionsPrivileges.importParticipants) ?
           (
             <div className={styles.button_container}>
-              {exportParticipants ?
+              {optionsPrivileges.exportParticipants ?
                 (
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
@@ -832,22 +861,17 @@ function EventActivitiesPage() {
                   <></>
                 )
               }
-              {importParticipants ?
+              {optionsPrivileges.importParticipants ?
                 (
-                  <>
-                    <InputLabel value="Загрузить xlsx" />
+                  <form onSubmit={handleFileSubmit}>
                     <input
                       type="file"
-                      onChange={(e) => {
-                        if (e.target.files) {
-                          const file = e.target.files[0];
-                          import_xlsx(file);
-                        }
-                      }}
+                      onChange={handleFileChange}
                     />
-                  </>
+                    <Button type="submit">Загрузить xlsx</Button>
+                  </form>
                 ) : (
-                <></>
+                  <></>
                 )
               }
             </div>
@@ -870,12 +894,10 @@ function EventActivitiesPage() {
     );
   }
 
-  const [orgs, setOrgs] = useState([] as OrgPerson[]);
-
   useEffect(() => {
-    if (orgsVisible) {
+    if (optionsPrivileges.orgsVisible && idInt != null) {
       api
-        .withReauth(() => api.event.getUsersHavingRoles(EVENT_ID))
+        .withReauth(() => api.event.getUsersHavingRoles(idInt))
         .then((response) => {
           const list = response.data.map((user) => {
             return new OrgPerson(
@@ -893,38 +915,42 @@ function EventActivitiesPage() {
           console.log(error.response.data);
         });
     }
-  },[]);
-
-  const [participants, setParticipants] = useState([] as Person[]);
+  }, [optionsPrivileges, idInt]);
 
   useEffect(() => {
-    api
-      .withReauth(() => api.participants.getParticipants(EVENT_ID))
-      .then((response) => {
-        // TODO: don't cast types
-        const data = response.data as unknown as ParticipantResponse[];
-        const list = data.map((user) => {
-          return new Person(
-            '' + user.id,
-            user.name ?? '',
-            user.email ?? '',
-            user.additionalInfo ?? '',
-            user.visited ?? false
-          );
+    if (idInt != null) {
+      api
+        .withReauth(() => api.participants.getParticipants(idInt))
+        .then((response) => {
+          // TODO: don't cast types
+          const data = response.data as unknown as ParticipantResponse[];
+          const list = data.map((user) => {
+            return new Person(
+              '' + user.id,
+              user.name ?? '',
+              user.email ?? '',
+              user.additionalInfo ?? '',
+              user.visited ?? false
+            );
+          });
+          setParticipants(list);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
         });
-        setParticipants(list);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
-  },[]);
+    }
+  }, [idInt]);
 
   const locc = 'cz';
 
   function _createTasksTable() {
     return (
       <div className={styles.tasks}>
-        <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
+        {
+          tasks.length > 0 ?
+            <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
+            : <></>
+        }
         <div className={styles.tasks__people}>
           {eventTasksPeople.map((human) => (
             <div key={human.color} className={styles.tasks__human}>
@@ -937,8 +963,6 @@ function EventActivitiesPage() {
     );
   }
 
-  const [selectedTab, setSelectedTab] = useState('Описание');
-
   function pageTabHandler(tab_name: string) {
     setSelectedTab(tab_name);
   }
@@ -948,7 +972,7 @@ function EventActivitiesPage() {
       topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={'Event'} />
+          <PageName text={event?.eventName ?? ''} />
           <div className={styles.tabs}>
             <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
           </div>

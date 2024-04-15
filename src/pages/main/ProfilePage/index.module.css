@@ -9,19 +9,15 @@
   border-radius: 10px;
   display: flex;
   flex-flow: row wrap;
-  gap: 10px;
+  gap: 40px;
   padding: 10px;
 }
 
-.image_container {
-  display: flex;
-  overflow: hidden;
-  border-radius: 15px;
-}
 
 .profile_col {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .table {
@@ -54,9 +50,16 @@
 }
 
 .button {
+  margin-top: 10px;
+  min-width: 400px;
+  width: 400px;
+}
+
+.exit_button {
   min-width: 245px;
   width: 245px;
 }
+
 
 .roles_table {
   margin: 20px 0;
@@ -82,10 +85,18 @@
   font-size: 16px;
 }
 
+.button_row {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+}
+
 .error {
   color: red;
+  max-width: 400px;
 }
 
 .success {
   color: green;
+  max-width: 400px;
 }

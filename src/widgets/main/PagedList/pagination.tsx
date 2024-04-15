@@ -15,7 +15,7 @@ type Props = {
 class PageEntry {
     id: string
     render_func: any
-  
+
     constructor(
       render_func: any
     ) {
@@ -26,7 +26,7 @@ class PageEntry {
 
 function Pagination(props: Props) {
     const totalPages = Math.ceil(props.total/props.size);
-    
+
     const handlePageClick = (page: number) => {
         if (page<1||page>totalPages) return
         props.onPageChange(page,props.size);
@@ -41,7 +41,7 @@ function Pagination(props: Props) {
         const visiblePages = [];
         const pageSpread = props.pageSpread?props.pageSpread:1;
         pages.push(
-            <a key={1} href="#" className={`${styles.nav_button} ${1 === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(1)}>
+            <a key={1} className={`${styles.nav_button} ${1 === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(1)}>
                 1
             </a>
         );
@@ -55,7 +55,7 @@ function Pagination(props: Props) {
         }
         visiblePages.forEach((page) => {
             pages.push(
-                <a key={page} href="#" className={`${styles.nav_button} ${page === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(page)}>
+                <a key={page} className={`${styles.nav_button} ${page === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(page)}>
                     {page}
                 </a>
             );
@@ -65,7 +65,7 @@ function Pagination(props: Props) {
         }
         if (totalPages > 1) {
             pages.push(
-                <a key={totalPages} href="#" className={`${styles.nav_button} ${totalPages === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(totalPages)}>
+                <a key={totalPages} className={`${styles.nav_button} ${totalPages === props.page ? styles.current_page : ''}`} onClick={() => handlePageClick(totalPages)}>
                     {totalPages}
                 </a>
             );
@@ -114,11 +114,11 @@ function Pagination(props: Props) {
         <div className={styles.list_container}>
             <div className={styles.navigator}>
                 <div className={styles.nav_buttons}>
-                <a href="#" className={styles.nav_button} onClick={()=>handlePageClick(props.page-1)}>
+                <a className={styles.nav_button} onClick={()=>handlePageClick(props.page-1)}>
                     <ArrowLeft className={styles.arrow}/>
                 </a>
                 {renderPagination()}
-                <a href="#" className={styles.nav_button} onClick={()=>handlePageClick(props.page+1)}>
+                <a className={styles.nav_button} onClick={()=>handlePageClick(props.page+1)}>
                     <ArrowRight className={styles.arrow}/>
                 </a>
                 </div>
@@ -126,7 +126,7 @@ function Pagination(props: Props) {
                 {_navInfo()}
                 </div>
                 <div className={styles.nav_buttons}>
-                <a href="#" className={styles.nav_button} onClick={()=>handleSizeClick(props.size-1)}>
+                <a className={styles.nav_button} onClick={()=>handleSizeClick(props.size-1)}>
                     <ArrowLeft className={styles.arrow}/>
                 </a>
                 <div className={styles.nav_page_num}>
@@ -135,7 +135,7 @@ function Pagination(props: Props) {
                 <div className={styles.nav_page_num}>
                     {props.size}
                 </div>
-                <a href="#" className={styles.nav_button} onClick={()=>handleSizeClick(props.size+1)}>
+                <a className={styles.nav_button} onClick={()=>handleSizeClick(props.size+1)}>
                     <ArrowRight className={styles.arrow}/>
                 </a>
                 </div>

@@ -109,6 +109,12 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.REQUEST_LIST]: {
     path: RoutePaths.requestList,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.APPROVE_REGISTRATION_REQUEST),
+        new PrivilegeData(PrivilegeNames.REJECT_REGISTRATION_REQUEST),
+      ])
+    ),
   },
   [AppRoutes.NOT_FOUND]: {
     path: RoutePaths.notFound,
