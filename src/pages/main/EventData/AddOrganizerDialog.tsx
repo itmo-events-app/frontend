@@ -93,7 +93,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
         >
           {loaded ? (
             roleList.map((r) => {
-              return <option value={r.id}>{r.name}</option>;
+              return <option key={r.id} value={r.id}>{r.name}</option>;
             })
           ) : (
             <option value=""></option>
