@@ -819,7 +819,7 @@ function EventActivitiesPage() {
     if (idInt != null) {
       event.preventDefault()
 
-      const url = window.ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
+      const url = (window as any).ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
       const formData = new FormData();
 
       formData.append('file', participantsFile ?? "");
