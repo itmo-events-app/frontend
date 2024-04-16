@@ -3,7 +3,7 @@ import {
   ProfileResponse,
   NotificationSettingsRequest,
   UserChangeNameRequest,
-  UserChangePasswordRequest
+  UserChangePasswordRequest, UserChangeLoginRequest,
 } from "@shared/api/generated";
 
 const profileService = {
@@ -22,7 +22,9 @@ const profileService = {
   changePassword: async (api: Api, userChangePasswordRequest: UserChangePasswordRequest): Promise<void> => {
     await api.withReauth(() => api.profile.changePassword(userChangePasswordRequest));
   },
-
+  changeLogin: async (api: Api, userChangeLoginRequest: UserChangeLoginRequest): Promise<void> => {
+    await api.withReauth(() => api.profile.changeLogin(userChangeLoginRequest));
+  }
 };
 
 export default profileService;
