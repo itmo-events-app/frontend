@@ -6,6 +6,7 @@ import ApiContext from '@features/api-context';
 import styles from './dialog.module.css';
 import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
 import { UserSystemRoleResponse } from '@shared/api/generated/model';
+import { eventService } from '@features/event-service';
 
 function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}) {
   const {api} = useContext(ApiContext);
@@ -15,19 +16,15 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
   useEffect(() => {
     try {
       const fetchUsers = async() => {
-        const response = await api.profile.getAllUsers();
-        console.log(response);
-        if (response.status == 200) {
-          const users = response.data.items as unknown as UserSystemRoleResponse[];
-          users.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0)); 
+        const {total, items} = await eventService.getUsers(api);
+        if (total&&total>0&&items)  { 
+          items.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0)); 
           const values: DropdownOption<string>[] = [];
-          users.forEach(user => {
-            values.push(new DropdownOption(user.id+'. '+user.name+' '+user.surname,(user.id?user.id:0).toString()));
+          items.forEach(user => {
+            values.push(new DropdownOption(user.id+'. '+user.name+' '+user.surname+' ('+user.login+')',(user.id?user.id:0).toString()));
           });
           setDropdownValues(values);
           setDropdownValue(values[0]);
-        } else {
-          console.error(response.status);
         }
       }
       fetchUsers();}
@@ -46,15 +43,8 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
     try {
       const userId = parseInt(dropdownValue?.id?dropdownValue.id:'0');
       if (userId<1) return
-      const response = await api.event.addEventByOrganizer({
-        'userId':userId,
-        'title':inputValue
-      });
-      if (response.status === 201) {
-        if (onSubmit) onSubmit();
-      } else {
-        console.error('Error creating event:', response.statusText);
-      }
+      const success = await eventService.createEvent(api,inputValue,userId);
+      if (success&&onSubmit) onSubmit();
     } catch (error) {
       console.error('Error creating event:', error);
     }

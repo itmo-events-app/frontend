@@ -13,8 +13,7 @@
 .filters {
   display: flex;
   flex-flow: row wrap;
-  gap: 5px;
-  max-width: 920px;
+  gap: 10px;
 }
 
 .filter_group {
@@ -23,13 +22,12 @@
   display: flex;
   flex-flow: row wrap;
   width: 100%;
-  gap: 5px;
-  justify-content: space-between;
+  gap: 20px;
   padding: 10px;
 }
 
 .filter_element {
-  min-width: 197px;
+  min-width: 200px;
   border: 1px solid var(--itmo-colors-black);
   border-radius: 10px;
   padding: 10px 10px;
@@ -37,13 +35,12 @@
 }
 
 .dropdownfilter {
-  min-width: 197px;
+  min-width: 200px;
 }
 
 .search {
-  display: flex;
   min-width: 250px;
-  width: 800px;
+  flex-grow: 1;
 }
 
 .event_list_container {
