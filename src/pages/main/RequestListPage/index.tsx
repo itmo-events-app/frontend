@@ -45,7 +45,7 @@ export default function RequestListPage() {
   const { api } = useContext(ApiContext);
   const [requests, setRequests] = useState([] as Request[]);
 
-  useEffect(() => {
+  function _fetchData() {
     api
       .auth
       .listRegisterRequests()
@@ -58,7 +58,9 @@ export default function RequestListPage() {
         }
       })
       .catch((reason: any) => console.log("Reject list: " + reason));
-  }, [requests]);
+  }
+  
+  useEffect(_fetchData, []);
 
   function _approveRequestClick(request: Request) {
     api
@@ -153,7 +155,10 @@ export default function RequestListPage() {
         (requests.length == 0)
         ? (
           <Content>
-            <div className={styles.no_requests}>Заявок нет</div>
+            <div className={styles.no_requests}>
+              Заявок нет
+            </div>
+            <Button className={styles.button_reload} onClick={_fetchData}>Перезагрузить</Button>
           </Content>
         )
         : (
