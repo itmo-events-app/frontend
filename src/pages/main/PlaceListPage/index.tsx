@@ -166,8 +166,6 @@ function PlaceListPage() {
 
   });
 
-  const [update, setUpdate] = useState<number>(0);
-
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [id, setId] = useState<number>(0);
@@ -186,10 +184,6 @@ function PlaceListPage() {
   useEffect(() => {
     setFilteredPlaces(allPlaces);
   }, [allPlaces]);
-
-  useEffect(() => {
-
-  }, [update])
 
   const openModalCreate = () => {
     setCreateModalOpen(true);
