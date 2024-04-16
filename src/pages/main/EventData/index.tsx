@@ -31,7 +31,6 @@ import {
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
-import axios from 'axios';
 
 class EventInfo {
   regDates: string;
@@ -819,21 +818,20 @@ function EventActivitiesPage() {
     if (idInt != null) {
       event.preventDefault()
 
-      const url = (window as any).ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
-      const formData = new FormData();
+      const formData: FormData = new FormData();
 
-      formData.append('file', participantsFile ?? "");
-      formData.append('fileName', participantsFile ? participantsFile.name : "file-not-found");
+      formData.append('participantsFile', participantsFile ?? new File([], ''));
 
-      const config = {
+      fetch((window as any).ENV_BACKEND_API_URL + '/api/events/' + idInt + '/participants', {
+        method: 'POST',
         headers: {
-          'content-type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data; boundary=AaBbCc'
         },
-      };
-
-      axios.post(url, formData, config).then((response) => {
-        console.log(response.data);
-      });
+        body: formData
+      })
+        .then( (res) => {
+          console.log(res);
+        });
     }
   }
 
@@ -858,9 +856,10 @@ function EventActivitiesPage() {
               }
               {optionsPrivileges.importParticipants ?
                 (
-                  <form onSubmit={handleFileSubmit}>
+                  <form method="post" onSubmit={handleFileSubmit}>
                     <input
                       type="file"
+                      name="participantsFile"
                       onChange={handleFileChange}
                     />
                     <Button type="submit">Загрузить xlsx</Button>
