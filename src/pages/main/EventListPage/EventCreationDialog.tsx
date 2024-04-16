@@ -5,7 +5,6 @@ import { useState, useContext, ChangeEvent, useEffect } from "react";
 import ApiContext from '@features/api-context';
 import styles from './dialog.module.css';
 import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
-import { UserSystemRoleResponse } from '@shared/api/generated/model';
 import { eventService } from '@features/event-service';
 
 function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}) {
