@@ -18,7 +18,7 @@ import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
-import Pagination, { PageEntry } from '@widgets/main/PagedList/pagination';
+import Pagination, { PageEntry, PageProps } from '@widgets/main/PagedList/pagination';
 import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
 import { EventResponse } from '@shared/api/generated';
 import EventCreationPage from './EventCreationDialog';
@@ -108,16 +108,13 @@ const isBlank = (str: string): boolean => {
 }
 
 function EventListPage() {
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
-  const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
   const [searchValue, setSearchValue] = useState("");
   
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentSize, setCurrentSize] = useState(15);
-  const [totalItem, setTotalItem] = useState(0);
+  const [pageProps, setPageProps] = useState<PageProps>({page:1,size:5,total:0});
   const [itemList, setItemList] = useState<PageEntry[]>([]);
 
   const getEventList = async (page: number = 1, size: number = 5) => {
@@ -152,11 +149,8 @@ function EventListPage() {
         });
       });
       const pages = await Promise.all(pagesPromises);
-      setCurrentPage(page);
-      setCurrentSize(size);
-      setTotalItem(total);
+      setPageProps({page:page,size:size,total:total});
       setItemList(pages);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching event list:", error);
     }
@@ -313,12 +307,7 @@ function EventListPage() {
               </div>
             </div>
             <div className={styles.event_list_container}>
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                //<PagedList page={1} page_size={5} page_step={5} items={events} />
-                <Pagination page={currentPage} size={currentSize} total={totalItem} onPageChange={(page,size)=>getEventList(page,size)} items={itemList}/>
-              )}
+              <Pagination pageProps={pageProps} onPageChange={(page,size)=>getEventList(page,size)} items={itemList} pageSpread={1}/>
             </div>
           </div>
           <Fade
