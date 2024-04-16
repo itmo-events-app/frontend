@@ -17,8 +17,8 @@ import {
   ProfileResponse,
   NotificationSettingsRequest,
   UserChangeNameRequest,
-  UserChangePasswordRequest
-} from '@shared/api/generated';
+  UserChangePasswordRequest, UserChangeLoginRequest,
+} from "@shared/api/generated";
 import { useState } from "react";
 
 
@@ -36,6 +36,8 @@ function ProfilePage() {
   const [notificationSettings, setNotificationSettings] = useState<NotificationSettingsRequest | null>(null);
   const [isEditing, setIsEditingMode] = useState(false);
 
+  const [isChangingLogin, setIsChangingLogin] = useState(false);
+  const [login, setLogin] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -45,9 +47,14 @@ function ProfilePage() {
   const [successMessageChangingPassword, setSuccessMessageChangingPassword] = useState('');
 
   const [errorMessageEditingName, setErrorMessageEditingName] = useState('');
+  const [errorMessageEditingLogin, setErrorMessageEditingLogin] = useState('');
 
   const customEditRenameModal = () => {
     setIsEditingMode((prev) => !prev);
+  };
+
+  const customEditChangeLoginModal = () => {
+    setIsChangingLogin((prev) => !prev);
   };
 
   const customEditChangePasswordModal = () => {
@@ -60,12 +67,32 @@ function ProfilePage() {
     setIsEditingMode(false);
   };
 
+  const clearFieldsForChangingLogin = () => {
+    setLogin('');
+    setIsChangingLogin(false);
+  };
+
   const clearFieldsForChangingPassword = () => {
     setOldPassword('');
     setNewPassword('');
     setConfirmNewPassword('');
     setIsChangingPassword(false);
     setErrorMessageChangingPassword('');
+  };
+
+  const handleLoginChange = async () => {
+    try {
+      const userChangeLoginRequest: UserChangeLoginRequest = {login, type:"EMAIL"};
+      await profileService.changeLogin(api, userChangeLoginRequest);
+      clearFieldsForChangingLogin();
+      setErrorMessageEditingLogin('');
+      refetchUserInfo();
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errorMessage = error.response.data.errors.join(', ');
+        setErrorMessageEditingLogin(errorMessage);
+      }
+    }
   };
 
   const handleNameChange = async () => {
@@ -144,6 +171,27 @@ function ProfilePage() {
         <div className={styles.button_row}>
           <Button onClick={handleNameChange}>Сохранить изменения</Button>
           <Button onClick={clearFieldsForEditingName}>Закрыть</Button>
+        </div>
+      </>
+    );
+  }
+
+  function _renderLoginEdit() {
+    return (
+      <>
+        <div>
+          <Label value="Новый логин " error={false}/>
+          <Input
+            type="text"
+            placeholder="Введите новый логин"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
+          />
+        </div>
+        {errorMessageEditingLogin && <div className={styles.error}>{errorMessageEditingLogin}</div>}
+        <div className={styles.button_row}>
+          <Button onClick={handleLoginChange}>Сохранить изменения</Button>
+          <Button onClick={clearFieldsForChangingLogin}>Закрыть</Button>
         </div>
       </>
     );
@@ -249,6 +297,11 @@ function ProfilePage() {
                     _renderProfileEdit()
                   ) : (
                     <Button className={styles.button} onClick={customEditRenameModal}>Редактировать имя и фамилию</Button>
+                  )}
+                  {isChangingLogin ? (
+                    _renderLoginEdit()
+                  ) : (
+                    <Button className={styles.button} onClick={customEditChangeLoginModal}>Сменить логин</Button>
                   )}
                   {isChangingPassword ? (
                     _renderPasswordEdit()
