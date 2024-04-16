@@ -44,6 +44,7 @@ class EventInfo {
   status: string;
   eventName: string;
   description: string;
+  parent: number | undefined;
 
   constructor(
     regDates: string,
@@ -55,7 +56,8 @@ class EventInfo {
     status: string,
     ageRestriction: string,
     eventName: string,
-    description: string
+    description: string,
+    parent: number|undefined
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -67,6 +69,7 @@ class EventInfo {
     this.status = status;
     this.eventName = eventName;
     this.description = description;
+    this.parent = parent;
   }
 }
 
@@ -305,7 +308,10 @@ function EventActivitiesPage() {
               console.log(placeResponse.status);
             }
           }
-
+          let parent = undefined;
+          if(data.parent){
+            parent = data.parent;
+          }
           const info = new EventInfo(
             getIntervalString(data.registrationStart, data.registrationEnd),
             getIntervalString(data.preparingStart, data.preparingEnd),
@@ -316,7 +322,8 @@ function EventActivitiesPage() {
             data.status ?? '',
             data.participantAgeLowest + ' - ' + data.participantAgeHighest,
             data.title ?? '',
-            data.fullDescription ?? ''
+            data.fullDescription ?? '',
+            parent
           );
           setEvent(info);
           setEventResponse(data);

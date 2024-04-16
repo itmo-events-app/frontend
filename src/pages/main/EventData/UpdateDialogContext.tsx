@@ -343,7 +343,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       participantHighestAge!,
       preparingStartString!,
       preparingEndString!,
-      undefined,
+      eventInfo.parent,
       image!
       );
     if (result.status == 200) {
