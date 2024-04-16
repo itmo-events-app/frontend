@@ -30,16 +30,14 @@
 
 .filter_element {
   min-width: 197px;
-  width: 197px;
   border: 1px solid var(--itmo-colors-black);
   border-radius: 10px;
   padding: 10px 10px;
   font-size: 16px;
 }
 
-.dropdown {
+.dropdownfilter {
   min-width: 197px;
-  width: 296px;
 }
 
 .search {
@@ -106,8 +104,8 @@
   max-height: calc(100% - 60px);
   width: auto;
   max-width: 960px;
-}
-/* header */
-.dialog > :first-child {
-  z-index: 10;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  box-sizing: border-box;
 }

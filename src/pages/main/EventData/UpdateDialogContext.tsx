@@ -47,21 +47,26 @@ type Props = {
   eventInfo: EventResponse;
 };
 
+function createDateOrNull(str: string | undefined | null) {
+  return str ? new Date(str) : null;
+}
+
 const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
-  const [startDate, setStartDate] = useState<Date | null>(new Date(eventInfo.startDate!));
-  const [endDate, setEndDate] = useState<Date | null>(new Date(eventInfo.endDate!));
+  console.log(eventInfo);
+  const [startDate, setStartDate] = useState<Date | null>(createDateOrNull(eventInfo.startDate));
+  const [endDate, setEndDate] = useState<Date | null>(createDateOrNull(eventInfo.endDate));
   const [title, setTitle] = useState(eventInfo.title);
   const [shortDescription, setShortDescription] = useState(eventInfo.shortDescription);
   const [fullDescription, setFullDescription] = useState(eventInfo.fullDescription);
   const [format, setFormat] = useState(getAddActivityFormatEnum(eventInfo.format!));
   const [status, setStatus] = useState(getAddActivityStatusEnum(eventInfo.status!));
-  const [registrationStart, setRegistrationStart] = useState<Date | null>(new Date(eventInfo.registrationStart!));
-  const [registrationEnd, setRegistrationEnd] = useState<Date | null>(new Date(eventInfo.registrationEnd!));
+  const [registrationStart, setRegistrationStart] = useState<Date | null>(createDateOrNull(eventInfo.registrationStart));
+  const [registrationEnd, setRegistrationEnd] = useState<Date | null>(createDateOrNull(eventInfo.registrationEnd));
   const [participantLimit, setParticipantLimit] = useState(eventInfo.participantLimit!);
   const [participantHighestAge, setParticipantHighestAge] = useState(eventInfo.participantAgeHighest);
   const [participantLowestAge, setParticipantLowestAge] = useState(eventInfo.participantAgeLowest);
-  const [preparingStart, setPreparingStart] = useState<Date | null>(new Date(eventInfo.preparingStart!));
-  const [preparingEnd, setPreparingEnd] = useState<Date | null>(new Date(eventInfo.preparingEnd!));
+  const [preparingStart, setPreparingStart] = useState<Date | null>(createDateOrNull(eventInfo.preparingStart));
+  const [preparingEnd, setPreparingEnd] = useState<Date | null>(createDateOrNull(eventInfo.preparingEnd));
   const [place, setPlace] = useState(1);
   const [placeList, setPlaceList] = useState([] as PlaceResponse[]);
   const [placesLoaded, setPlacesLoaded] = useState(false);
@@ -105,11 +110,11 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       preparingEnd: preparingEndString!,
       image: image!,
     };
-    console.log(eventRequest);
+    console.log(eventId, eventRequest);
     const result = await api.event.updateEvent(eventId, eventRequest);
     if (result.status == 200) {
       onSubmit();
-      window.location.reload();
+      setTimeout(() => { location.reload() }, 500);
     } else {
       console.log(result.status);
     }
@@ -166,7 +171,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
           <InputLabel value="Формат" />
           <select value={format} onChange={(e) => setFormat(e.target.value as AddActivityFormatEnum)}>
             {Object.entries(AddActivityFormatEnum).map(([k, v]) => {
-              return <option value={k}>{v}</option>;
+              return <option key={k} value={v}>{v}</option>;
             })}
           </select>
         </div>
@@ -175,7 +180,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
           <select value={place} onChange={(e) => setPlace(parseInt(e.target.value))}>
             {placesLoaded ? (
               placeList.map((p) => {
-                return <option value={p.id}>{p.address}</option>;
+                return <option key={p.id} value={p.id}>{p.address}</option>;
               })
             ) : (
               <option value=""></option>
@@ -186,7 +191,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
           <InputLabel value="Состояние" />
           <select value={status} onChange={(e) => setStatus(e.target.value as AddActivityStatusEnum)}>
             {Object.entries(AddActivityStatusEnum).map(([k, v]) => {
-              return <option value={k}>{v}</option>;
+              return <option key={k} value={v}>{v}</option>;
             })}
           </select>
         </div>

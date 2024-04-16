@@ -155,11 +155,11 @@ function RegisterPage() {
           </div>
           <div className={styles.form_item}>
             <Label value="Пароль" />
-            <Input value={password} onChange={_setPassword} error={passwordError != ''} errorText={passwordError} />
+            <Input type="password" value={password} onChange={_setPassword} error={passwordError != ''} errorText={passwordError} />
           </div>
           <div className={styles.form_item}>
             <Label value="Подтверждение пароля" />
-            <Input value={repeat} onChange={_setRepeat} error={repeatError != ''} errorText={repeatError} />
+            <Input type="password" value={repeat} onChange={_setRepeat} error={repeatError != ''} errorText={repeatError} />
           </div>
         </div>
         <Button onClick={_register}>Зарегистрироваться</Button>
