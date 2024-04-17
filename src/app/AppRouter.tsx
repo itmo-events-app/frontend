@@ -58,7 +58,8 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authenticated: true,
     authorized: anyPrivilege(
       new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
+        new PrivilegeData(PrivilegeNames.CREATE_EVENT)
       ])
     ),
   },
@@ -70,7 +71,13 @@ const routes: Record<AppRoutes, AppRouteProps> = {
         new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
         new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES),
         new PrivilegeData(PrivilegeNames.SEARCH_EVENTS_AND_ACTIVITIES),
-        new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)
+        new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS),
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS),
+        new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES),
+        new PrivilegeData(PrivilegeNames.EDIT_EVENT_INFO),
+        new PrivilegeData(PrivilegeNames.EDIT_EVENT_ACTIVITIES),
+        new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX),
+        new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)
       ])
     ),
   },
@@ -90,7 +97,9 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authenticated: true,
     authorized: anyPrivilege(
       new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
+        new PrivilegeData(PrivilegeNames.EDIT_EVENT_VENUE),
+        new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
       ])
     ),
   },
