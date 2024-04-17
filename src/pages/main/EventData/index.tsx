@@ -867,14 +867,16 @@ function EventActivitiesPage() {
               }
               {optionsPrivileges.importParticipants ?
                 (
-                  <label className={styles.file_input} htmlFor="uploadParticipants">Загрузить xlsx</label>
-                  <input
-                    className={styles.file_input_actual}
-                    type="file"
-                    name="participantsFile"
-                    id="uploadParticipants"
-                    onChange={handleFileChange}
-                  />
+                  <>
+                    <label className={styles.file_input} htmlFor="uploadParticipants">Загрузить xlsx</label>
+                    <input
+                      className={styles.file_input_actual}
+                      type="file"
+                      name="participantsFile"
+                      id="uploadParticipants"
+                      onChange={handleFileChange}
+                    />
+                  </>
                 ) : (
                   <></>
                 )
