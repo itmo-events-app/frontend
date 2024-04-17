@@ -34,7 +34,7 @@ const DialogContent = (props: AssignProps) => {
   // load roles on dialog open
   useEffect(() => {
     if (props.isRevoke){
-      if (props.isEvent) {
+      if (!props.isEvent) {
         _fetchUserSystemRoles()
       }
     } else {
