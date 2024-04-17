@@ -31,6 +31,8 @@ const CreateDialogContent = (props: CreateProps) => {
   const [nameError, setNameError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
 
+  const [errorMessageCreatingRole, setErrorMessageCreatingRole] = useState('');
+
   // NOTE: maybe cache privilege list results?
   useEffect(() => {
     if (prevType == type) {
@@ -87,8 +89,14 @@ const CreateDialogContent = (props: CreateProps) => {
         .then((res) => {
           const role = toRoleModel(res.data);
           props.callback(role);
+        })
+        .catch((error: any) => {
+          const errorMessage = error.response.data;
+          console.log(error.response.data);
+          setErrorMessageCreatingRole(errorMessage);
         });
     }
+
   };
 
   const _nameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,6 +116,7 @@ const CreateDialogContent = (props: CreateProps) => {
           <InputLabel value="Название роли" />
           <Input value={name} onChange={_nameOnChange} errorText={nameError} />
         </div>
+        {errorMessageCreatingRole && <div className={styles.error}>{errorMessageCreatingRole}</div>}
         <div className={styles.dialog_item}>
           <InputLabel value="Описание" />
           <TextArea value={description} onChange={_descriptionOnChange} errorText={descriptionError} />
