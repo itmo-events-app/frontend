@@ -17,6 +17,10 @@ import ApiContext from "@features/api-context";
 import { Api } from "@entities/api";
 import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeData } from "@entities/privilege-context.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
+import PrivilegeContext from "@features/privilege-context.ts";
 
 type TaskTableProps = {
   tasks: TaskResponse[];
@@ -61,7 +65,10 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                                              }) => {
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
   const navigate = useNavigate();
-  const canChangeTaskStatus = true;
+  const { privilegeContext } = useContext(PrivilegeContext);
+  const canChangeTaskStatus = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
+    new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
+  ]));
 
   const { api } = useContext(ApiContext);
 

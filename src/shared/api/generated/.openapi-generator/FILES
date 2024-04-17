@@ -16,7 +16,6 @@ configuration.ts
 git_push.sh
 index.ts
 model/create-event-request.ts
-model/event-request.ts
 model/event-response.ts
 model/event-short-data-response.ts
 model/file-data-response.ts

@@ -1,10 +1,10 @@
-import { uid } from 'uid';
-import { useContext, useEffect, useRef, useState } from 'react';
-import styles from './index.module.css';
-import BrandLogo from '@widgets/main/BrandLogo';
-import Layout from '@widgets/main/Layout';
-import PageName from '@widgets/main/PageName';
-import SideBar from '@widgets/main/SideBar';
+import { uid } from "uid";
+import { useContext, useEffect, useRef, useState } from "react";
+import styles from "./index.module.css";
+import BrandLogo from "@widgets/main/BrandLogo";
+import Layout from "@widgets/main/Layout";
+import PageName from "@widgets/main/PageName";
+import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
@@ -17,21 +17,20 @@ import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
-import { Gantt, Task } from 'gantt-task-react';
-import { getImageUrl } from '@shared/lib/image.ts';
-import ApiContext from '@features/api-context.ts';
-import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
-import 'gantt-task-react/dist/index.css';
+import { Gantt, Task } from "gantt-task-react";
+import { getImageUrl } from "@shared/lib/image.ts";
+import ApiContext from "@features/api-context.ts";
+import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
+import "gantt-task-react/dist/index.css";
 import {
   EventResponse,
   ParticipantPresenceRequest,
   ParticipantResponse,
-  TaskResponse
-} from '@shared/api/generated/index.ts';
-import PrivilegeContext from '@features/privilege-context.ts';
-import { PrivilegeData } from '@entities/privilege-context.ts';
+  TaskResponse,
+} from "@shared/api/generated/index.ts";
+import PrivilegeContext from "@features/privilege-context.ts";
+import { PrivilegeData } from "@entities/privilege-context.ts";
 import Dropdown from "@widgets/main/Dropdown";
-import axios from 'axios';
 
 class EventInfo {
   regDates: string;
@@ -44,6 +43,7 @@ class EventInfo {
   status: string;
   eventName: string;
   description: string;
+  parent: number | undefined;
 
   constructor(
     regDates: string,
@@ -55,7 +55,8 @@ class EventInfo {
     status: string,
     ageRestriction: string,
     eventName: string,
-    description: string
+    description: string,
+    parent: number|undefined
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -67,6 +68,7 @@ class EventInfo {
     this.status = status;
     this.eventName = eventName;
     this.description = description;
+    this.parent = parent;
   }
 }
 
@@ -218,7 +220,10 @@ const colors: string[] = [
   '#CC6666',
 ];
 
-function readDate(dateTime: string) {
+function readDate(dateTime: string | null | undefined) {
+  if(dateTime==undefined || dateTime=="" || dateTime==null){
+    return "";
+  }
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
   return formattedDate
@@ -241,6 +246,7 @@ function getTimeOnly(dateTimeString: string) {
   const timeOnly = `${hours}:${minutes}:${seconds}`;
   return timeOnly;
 }
+
 
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
@@ -301,7 +307,10 @@ function EventActivitiesPage() {
               console.log(placeResponse.status);
             }
           }
-
+          let parent = undefined;
+          if(data.parent){
+            parent = data.parent;
+          }
           const info = new EventInfo(
             getIntervalString(data.registrationStart, data.registrationEnd),
             getIntervalString(data.preparingStart, data.preparingEnd),
@@ -312,7 +321,8 @@ function EventActivitiesPage() {
             data.status ?? '',
             data.participantAgeLowest + ' - ' + data.participantAgeHighest,
             data.title ?? '',
-            data.fullDescription ?? ''
+            data.fullDescription ?? '',
+            parent
           );
           setEvent(info);
           setEventResponse(data);
@@ -422,7 +432,7 @@ function EventActivitiesPage() {
         exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
         importParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])),
         tasksVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)])),
-        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_ACTIVITIES)])),
+        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_INFO)])),
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
@@ -436,6 +446,7 @@ function EventActivitiesPage() {
     const tabs = [];
 
     tabs.push(new PageTab('Описание'));
+
 
     if (optionsPrivileges.activitiesVisible) {
       tabs.push(new PageTab('Активности'));
@@ -819,21 +830,20 @@ function EventActivitiesPage() {
     if (idInt != null) {
       event.preventDefault()
 
-      const url = (window as any).ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
-      const formData = new FormData();
+      const formData: FormData = new FormData();
 
-      formData.append('file', participantsFile ?? "");
-      formData.append('fileName', participantsFile ? participantsFile.name : "file-not-found");
+      formData.append('participantsFile', participantsFile ?? new File([], ''));
 
-      const config = {
+      fetch((window as any).ENV_BACKEND_API_URL + '/api/events/' + idInt + '/participants', {
+        method: 'POST',
         headers: {
-          'content-type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data; boundary=AaBbCc'
         },
-      };
-
-      axios.post(url, formData, config).then((response) => {
-        console.log(response.data);
-      });
+        body: formData
+      })
+        .then( (res) => {
+          console.log(res);
+        });
     }
   }
 
@@ -858,9 +868,10 @@ function EventActivitiesPage() {
               }
               {optionsPrivileges.importParticipants ?
                 (
-                  <form onSubmit={handleFileSubmit}>
+                  <form method="post" onSubmit={handleFileSubmit}>
                     <input
                       type="file"
+                      name="participantsFile"
                       onChange={handleFileChange}
                     />
                     <Button type="submit">Загрузить xlsx</Button>

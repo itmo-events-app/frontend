@@ -242,3 +242,21 @@
   height: 20px;
   border-radius: 50%;
 }
+.input_error {
+  border-color: var(--itmo-colors-red);
+}
+
+.input:focus {
+  border: 1px solid var(--itmo-colors-blue);
+  outline: none;
+}
+
+.input_error:focus {
+  border-color: var(--itmo-colors-red);
+}
+.helper_error {
+  color: var(--itmo-colors-red);
+  margin: 0px;
+  padding: 10px 0px;
+  font-size: 14px;
+}
