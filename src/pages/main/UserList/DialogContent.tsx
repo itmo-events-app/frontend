@@ -9,6 +9,7 @@ import RoleListRadio, {RoleRadioElement} from "@widgets/main/RoleListRadio";
 import {createRoleRadioElementList, getSelectedRoleId} from "@widgets/main/RoleListRadio/common";
 import InputLabel from "@widgets/main/InputLabel";
 import {PrivilegeNames} from "@shared/config/privileges";
+import {EventResponse} from "@shared/api/generated/model";
 
 
 type AssignProps = {
@@ -109,7 +110,7 @@ const DialogContent = (props: AssignProps) => {
         })
         .then((eventsResponse) => {
           //map the events
-          const eventList = eventsResponse.data.map((e: EventSelectElement) => ({
+          const eventList = eventsResponse.data.map((e: EventResponse) => ({
             id: e.id,
             title: e.title,
           })) as EventSelectElement[];

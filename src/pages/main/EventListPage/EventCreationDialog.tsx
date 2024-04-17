@@ -16,8 +16,8 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
     try {
       const fetchUsers = async() => {
         const {total, items} = await eventService.getUsers(api);
-        if (total&&total>0&&items)  { 
-          items.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0)); 
+        if (total&&total>0&&items)  {
+          items.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0));
           const values: DropdownOption<string>[] = [];
           items.forEach(user => {
             values.push(new DropdownOption(user.id+'. '+user.name+' '+user.surname+' ('+user.login+')',(user.id?user.id:0).toString()));
@@ -55,9 +55,9 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
               <Input type="text" placeholder="Введите название мероприятия" value={inputValue} onChange={_handleChangeText}/>
             </div>
             <div className={styles.event_form_item}>
-              <Dropdown 
-                placeholder="Выберите главного организатора" 
-                items={dropdownValues} 
+              <Dropdown
+                placeholder="Выберите главного организатора"
+                items={dropdownValues}
                 value={dropdownValue}
                 toText={(input: DropdownOption<string>) => {return input.value}}
                 onChange={(value) =>_handleChangeDropdown(value)}
