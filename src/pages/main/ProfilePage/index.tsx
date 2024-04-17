@@ -88,8 +88,12 @@ function ProfilePage() {
       setErrorMessageEditingLogin('');
       refetchUserInfo();
     } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.errors) {
+      if (error.response.data.errors) {
         const errorMessage = error.response.data.errors.join(', ');
+        setErrorMessageEditingLogin(errorMessage);
+      }
+      else {
+        const errorMessage = error.response.data;
         setErrorMessageEditingLogin(errorMessage);
       }
     }
