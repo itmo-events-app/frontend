@@ -5,22 +5,32 @@ import styles from "./index.module.css";
 import SideBar from "@widgets/main/SideBar";
 import { RoutePaths } from "@shared/config/routes.ts";
 import Content from "@widgets/main/Content";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import ApiContext from "@features/api-context.ts";
 import { useQuery } from "@tanstack/react-query";
 import { placeService } from "@features/place-service.ts";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function PlaceDataPage() {
   const { api } = useContext(ApiContext);
 
   const { place_id: placeId } = useParams();
+  const navigate = useNavigate();
 
-  const { data: foundPlace } = useQuery({
+  const { data: foundPlace, failureReason } = useQuery({
     queryFn: () => placeService.getPlace(api, Number(placeId)),
     enabled: placeId !== undefined,
     queryKey: ["getPlace"],
+
   });
+
+  useEffect(() => {
+    if(!failureReason) return;
+    if ((failureReason as any)?.response.status === 404) {
+      navigate(RoutePaths.notFound);
+      return;
+    }
+  }, [failureReason])
 
   const formatTranslation: Record<string, string> = {
     ONLINE: "Онлайн",

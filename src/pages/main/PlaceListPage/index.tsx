@@ -61,9 +61,8 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
       description,
       latitude,
       longitude
-    );
-    onClose();
-    setTimeout(() => { location.reload() }, 500);
+    ).then(() => onClose());
+    // setTimeout(() => { location.reload() }, 500);
   };
 
   return (
@@ -161,9 +160,10 @@ function PlaceListPage() {
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
 
-  const { data: allPlaces = [] } = useQuery({
+  const { data: allPlaces = [], refetch } = useQuery({
     queryFn: placeService.getPlaces(api),
     queryKey: ['getPlaces'],
+
   });
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
@@ -190,7 +190,7 @@ function PlaceListPage() {
   };
 
   const closeModalCreate = () => {
-    setCreateModalOpen(false);
+    refetch().then(() => setCreateModalOpen(false));
   };
 
   const openModalUpdate = () => {
@@ -198,7 +198,7 @@ function PlaceListPage() {
   };
 
   const closeModalUpdate = () => {
-    setUpdateModalOpen(false);
+    refetch().then(() => setUpdateModalOpen(false));
   };
 
   const _onSearch = () => {
@@ -232,10 +232,12 @@ function PlaceListPage() {
     });
   });
 
+
+
   function _entryStub(index?: number, name?: string, address?: string) {
     return (
-      <div>
-        <a key={index} className={styles.place_entry}>
+      <div key={index}>
+        <a className={styles.place_entry}>
           <Home className={styles.place_icon} onClick={() => _event(index ?? 0)} />
           <div className={styles.place_info_column} onClick={() => _event(index ?? 0)}>
             <div className={styles.place_name}>
