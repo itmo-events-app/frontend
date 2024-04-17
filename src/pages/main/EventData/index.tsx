@@ -25,7 +25,7 @@ import 'gantt-task-react/dist/index.css';
 import {
   EventResponse,
   ParticipantPresenceRequest,
-  ParticipantResponse,
+  ParticipantResponse, SetPartisipantsListRequest,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
@@ -161,6 +161,14 @@ class DialogData {
     this.heading = heading;
     this.visible = visible;
     this.args = args;
+  }
+}
+
+class ParticipantsListRequest implements SetPartisipantsListRequest {
+  participantsFile: File;
+
+  constructor(file: File) {
+    this.participantsFile = file;
   }
 }
 
@@ -808,6 +816,7 @@ function EventActivitiesPage() {
     }
   }
 
+  const [reloadPage, setReloadPage] = useState(0);
   const [participantsFile, setParticipantsFile] = useState(new File([], ""));
 
   function handleFileChange(event: any) {
@@ -815,22 +824,26 @@ function EventActivitiesPage() {
   }
 
   function handleFileSubmit(event: any) {
-    if (idInt != null) {
-      event.preventDefault()
+    event.preventDefault();
 
-      const formData: FormData = new FormData();
-
-      formData.append('participantsFile', participantsFile ?? new File([], ''));
-
-      fetch((window as any).ENV_BACKEND_API_URL + '/api/events/' + idInt + '/participants', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data; boundary=AaBbCc'
-        },
-        body: formData
-      })
-        .then( (res) => {
-          console.log(res);
+    if (optionsPrivileges.importParticipants && idInt != null) {
+      api.participants
+        .setPartisipantsList(
+          idInt!,
+          new ParticipantsListRequest(participantsFile ?? new File([], '')),
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'multipart/form-data; boundary=AaBbCc'
+            }
+          }
+        )
+        .then((response) => {
+          console.log(response);
+          setReloadPage(reloadPage + 1);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
         });
     }
   }
@@ -845,21 +858,28 @@ function EventActivitiesPage() {
         {(optionsPrivileges.exportParticipants || optionsPrivileges.importParticipants) ?
           (
             <div className={styles.button_container}>
-              {optionsPrivileges.exportParticipants ?
-                (
-                  <Button className={styles.buttonXlsx} onClick={export_xlsx}>
-                    Скачать xlsx
-                  </Button>
-                ) : (
-                  <></>
-                )
-              }
+              <div className={styles.button_container}>
+                {optionsPrivileges.exportParticipants ?
+                  (
+                    <Button className={styles.buttonXlsx} onClick={export_xlsx}>
+                      Скачать xlsx
+                    </Button>
+                  ) : (
+                    <></>
+                  )
+                }
+              </div>
               {optionsPrivileges.importParticipants ?
                 (
-                  <form method="post" onSubmit={handleFileSubmit}>
+                  <form className={styles.button_container} method="post" onSubmit={handleFileSubmit}>
+                    <label className={styles.file_input} htmlFor="uploadParticipants">
+                      {participantsFile.name == "" ? "Выбрать файл" : participantsFile.name}
+                    </label>
                     <input
+                      className={styles.file_input_actual}
                       type="file"
                       name="participantsFile"
+                      id="uploadParticipants"
                       onChange={handleFileChange}
                     />
                     <Button type="submit">Загрузить xlsx</Button>
@@ -933,7 +953,7 @@ function EventActivitiesPage() {
           console.log(error.response.data);
         });
     }
-  }, [idInt]);
+  }, [idInt, reloadPage]);
 
   const locc = 'cz';
 
