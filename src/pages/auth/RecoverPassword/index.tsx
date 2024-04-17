@@ -19,13 +19,13 @@ const PWD_MAX_LEN = Number.MAX_VALUE; // to adjust
 
 const SPEC_CHAR_REGEX = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
 
-const PWD_EMPTY_ERR_MSG = 'Поля не должны быть пустым';
-const PWD_LEN_ERR_MSG = 'Пароль не должен быть короче  символов';
+const PWD_EMPTY_ERR_MSG = 'Поля не должны быть пустыми';
+const PWD_LEN_ERR_MSG = 'Пароль не должен быть короче 8 символов';
 const PWD_NOT_EQ_ERR_MSG = 'Введенные пароли не совпадают';
 const PWD_CASE_ERR_MSG = 'Пароль должен содержать минимум один символ верхнего и нижнего регистра';
 const PWD_SPEC_CHR_ERR_MSG = 'Пароль должен содержать минимум один специальный символ';
 
-const SUCCESS_MESSAGE = 'Восстановление пароля произошла успешно. Вернитесь на страницу входа.';
+const SUCCESS_MESSAGE = 'Восстановление пароля произошло успешно. Вернитесь на страницу входа.';
 const FAIL_MESSAGE = 'Не удалось восстановить пароль.';
 
 const NO_TOKEN_ERR_MSG = 'Не удалось восстановить пароль. Необходимый для восстановления токен отсутствует.';
@@ -54,10 +54,10 @@ function RecoverPasswordPage() {
     }
 
     api.auth
-      .validateRecoveryToken(token.toString())
+      .validateRecoveryToken(token!.toString())
       .then(() => {
         console.log("Token is valid!");
-        setPasswordRestoreToken(token);
+        setPasswordRestoreToken(token!);
       })
       .catch((e): any => {
         console.log(e.response.data);

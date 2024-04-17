@@ -15,9 +15,9 @@ import {UserChangePasswordRequest} from "@shared/api/generated/model";
 const PWD_MIN_LEN = 8;
 const PWD_MAX_LEN = Number.MAX_VALUE; // to adjust
 
-const PWD_EMPTY_ERR_MSG = 'Поле не должно быть пустым';
+const PWD_EMPTY_ERR_MSG = 'Поле не должно быть пустыми';
 const PWD_LEN_ERR_MSG = 'Пароль не должен быть короче 8 символов';
-const PWD_NOT_EQ_ERR_MSG = 'Пароль должен совпадать';
+const PWD_NOT_EQ_ERR_MSG = 'Введенные пароли не совпадают';
 const PWD_CASE_ERR_MSG = 'Пароль должен содержать минимум один символ верхнего и нижнего регистра';
 const PWD_SPEC_CHR_ERR_MSG = 'Пароль должен содержать минимум один специальный символ';
 const PWD_EQ_OLD_ERR_MSG = 'Указанный пароль не совпадает с текущим';
@@ -47,7 +47,7 @@ function ChangePasswordPage() {
 
   const _setOldPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value > PWD_MAX_LEN) {
+    if (value.length > PWD_MAX_LEN) {
       return;
     }
     setOldPassword(e.target.value);
@@ -57,7 +57,7 @@ function ChangePasswordPage() {
 
   const _setNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value > PWD_MAX_LEN) {
+    if (value.length > PWD_MAX_LEN) {
       return;
     }
     setNewPassword(e.target.value);
@@ -66,7 +66,7 @@ function ChangePasswordPage() {
 
   const _setConfirmNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value > PWD_MAX_LEN) {
+    if (value.length > PWD_MAX_LEN) {
       return;
     }
     setConfirmNewPassword(e.target.value);
