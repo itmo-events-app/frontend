@@ -1,4 +1,5 @@
 export const PrivilegeRecords = [
+  ['NONE', 'EMPTY', 'EMPTY'],
   ['APPROVE_REGISTRATION_REQUEST', 'SYSTEM', 'Утверждение заявки на регистрацию в системе'],
   ['REJECT_REGISTRATION_REQUEST', 'SYSTEM', 'Отклонение заявки на регистрацию в системе'],
   ['MODIFY_PROFILE_DATA', 'SYSTEM', 'Изменение данных в личном кабинете'],
@@ -46,6 +47,7 @@ export const PrivilegeRecords = [
 ];
 
 export enum PrivilegeNames {
+  NONE,
   APPROVE_REGISTRATION_REQUEST,
   REJECT_REGISTRATION_REQUEST,
   MODIFY_PROFILE_DATA,
