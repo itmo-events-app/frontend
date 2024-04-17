@@ -1,10 +1,10 @@
-import { uid } from 'uid';
-import { useContext, useEffect, useRef, useState } from 'react';
-import styles from './index.module.css';
-import BrandLogo from '@widgets/main/BrandLogo';
-import Layout from '@widgets/main/Layout';
-import PageName from '@widgets/main/PageName';
-import SideBar from '@widgets/main/SideBar';
+import { uid } from "uid";
+import { useContext, useEffect, useRef, useState } from "react";
+import styles from "./index.module.css";
+import BrandLogo from "@widgets/main/BrandLogo";
+import Layout from "@widgets/main/Layout";
+import PageName from "@widgets/main/PageName";
+import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
@@ -17,19 +17,19 @@ import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
-import { Gantt, Task } from 'gantt-task-react';
-import { getImageUrl } from '@shared/lib/image.ts';
-import ApiContext from '@features/api-context.ts';
-import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
-import 'gantt-task-react/dist/index.css';
+import { Gantt, Task } from "gantt-task-react";
+import { getImageUrl } from "@shared/lib/image.ts";
+import ApiContext from "@features/api-context.ts";
+import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
+import "gantt-task-react/dist/index.css";
 import {
   EventResponse,
   ParticipantPresenceRequest,
   ParticipantResponse,
-  TaskResponse
-} from '@shared/api/generated/index.ts';
-import PrivilegeContext from '@features/privilege-context.ts';
-import { PrivilegeData } from '@entities/privilege-context.ts';
+  TaskResponse,
+} from "@shared/api/generated/index.ts";
+import PrivilegeContext from "@features/privilege-context.ts";
+import { PrivilegeData } from "@entities/privilege-context.ts";
 import Dropdown from "@widgets/main/Dropdown";
 
 class EventInfo {
@@ -421,7 +421,7 @@ function EventActivitiesPage() {
         exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
         importParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])),
         tasksVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)])),
-        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_ACTIVITIES)])),
+        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_INFO)])),
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
