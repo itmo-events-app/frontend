@@ -43,6 +43,7 @@ class EventInfo {
   status: string;
   eventName: string;
   description: string;
+  parent: number | undefined;
 
   constructor(
     regDates: string,
@@ -54,7 +55,8 @@ class EventInfo {
     status: string,
     ageRestriction: string,
     eventName: string,
-    description: string
+    description: string,
+    parent: number|undefined
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -66,6 +68,7 @@ class EventInfo {
     this.status = status;
     this.eventName = eventName;
     this.description = description;
+    this.parent = parent;
   }
 }
 
@@ -217,7 +220,10 @@ const colors: string[] = [
   '#CC6666',
 ];
 
-function readDate(dateTime: string) {
+function readDate(dateTime: string | null | undefined) {
+  if(dateTime==undefined || dateTime=="" || dateTime==null){
+    return "";
+  }
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
   return formattedDate
@@ -240,6 +246,7 @@ function getTimeOnly(dateTimeString: string) {
   const timeOnly = `${hours}:${minutes}:${seconds}`;
   return timeOnly;
 }
+
 
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
@@ -300,7 +307,10 @@ function EventActivitiesPage() {
               console.log(placeResponse.status);
             }
           }
-
+          let parent = undefined;
+          if(data.parent){
+            parent = data.parent;
+          }
           const info = new EventInfo(
             getIntervalString(data.registrationStart, data.registrationEnd),
             getIntervalString(data.preparingStart, data.preparingEnd),
@@ -311,7 +321,8 @@ function EventActivitiesPage() {
             data.status ?? '',
             data.participantAgeLowest + ' - ' + data.participantAgeHighest,
             data.title ?? '',
-            data.fullDescription ?? ''
+            data.fullDescription ?? '',
+            parent
           );
           setEvent(info);
           setEventResponse(data);
@@ -435,6 +446,7 @@ function EventActivitiesPage() {
     const tabs = [];
 
     tabs.push(new PageTab('Описание'));
+
 
     if (optionsPrivileges.activitiesVisible) {
       tabs.push(new PageTab('Активности'));

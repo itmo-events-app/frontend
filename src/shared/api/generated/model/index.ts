@@ -1,5 +1,4 @@
 export * from './create-event-request';
-export * from './event-request';
 export * from './event-response';
 export * from './event-short-data-response';
 export * from './file-data-response';
