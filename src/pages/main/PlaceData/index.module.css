@@ -6,6 +6,34 @@
   padding: 2px;
 }
 
+.filters {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+}
+
+.filter_group {
+  border: 1px solid var(--itmo-colors-gray);
+  border-radius: 10px;
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  gap: 20px;
+  padding: 10px;
+}
+
+.filter_element {
+  min-width: 200px;
+  border: 1px solid var(--itmo-colors-black);
+  border-radius: 10px;
+  padding: 10px 10px;
+  font-size: 16px;
+}
+
+.dropdownfilter {
+  min-width: 200px;
+}
+
 .place_data {
   display: flex;
   flex-direction: column;
@@ -37,9 +65,6 @@
 
 .label {
   font-weight: bold;
-}
-
-.data {
 }
 
 .empty_field_msg {

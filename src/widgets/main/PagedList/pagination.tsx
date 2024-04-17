@@ -2,7 +2,7 @@ import { uid } from 'uid';
 import styles from './index.module.css'
 import { ArrowLeft } from '@shared/ui/icons'
 import { ArrowRight } from '@shared/ui/icons'
-import React, { FC, ReactNode } from 'react';
+import React, { FC } from 'react';
 
 export type PageProps = {
     page: number,

@@ -158,16 +158,6 @@ function EventListPage() {
   useEffect(() => {
     getEventList();
   }, [filters]);
-  const [canCreateEvent, setCanCreateEvent] = useState(false);
-  useEffect(() => {
-    if (privilegeContext.systemPrivileges) {
-      const newCanCreateEvent = hasAnyPrivilege(
-        privilegeContext.systemPrivileges,
-        new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])
-      );
-      setCanCreateEvent(newCanCreateEvent);
-    }
-  }, []);
   //dialog
   class DialogData {
     heading: string | undefined;
@@ -199,7 +189,7 @@ function EventListPage() {
       case DialogSelected.CREATEEVENT:
         component = <EventCreationPage onSubmit={()=>{
           _closeDialog();
-          getEventList(1,currentSize);
+          getEventList(1,pageProps.size);
           }} 
           {...dialogData.args}
         />;
@@ -260,7 +250,7 @@ function EventListPage() {
                   onChange={(mode) => {setDisplayMode(mode)}}
                   toText={(input: string) => {return input}} />
               </div>
-              {canCreateEvent &&
+              {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])) &&
                 <div className={styles.button}>
                   <Button onClick={_onCreationPopUp}>Создать</Button>
                 </div>
