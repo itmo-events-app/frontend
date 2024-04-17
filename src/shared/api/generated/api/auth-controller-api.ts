@@ -24,6 +24,10 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, ope
 // @ts-ignore
 import { LoginRequest } from '../model';
 // @ts-ignore
+import { NewPasswordRequest } from '../model';
+// @ts-ignore
+import { RecoveryPasswordRequest } from '../model';
+// @ts-ignore
 import { RegistrationRequestForAdmin } from '../model';
 // @ts-ignore
 import { RegistrationUserRequest } from '../model';
@@ -183,6 +187,86 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
+         * @summary Запрос на смену пароля
+         * @param {NewPasswordRequest} newPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        newPassword: async (newPasswordRequest: NewPasswordRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'newPasswordRequest' is not null or undefined
+            assertParamExists('newPassword', 'newPasswordRequest', newPasswordRequest)
+            const localVarPath = `/newPassword`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(newPasswordRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Отправка запроса на восстановление пароля
+         * @param {RecoveryPasswordRequest} recoveryPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        recoveryPassword: async (recoveryPasswordRequest: RecoveryPasswordRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'recoveryPasswordRequest' is not null or undefined
+            assertParamExists('recoveryPassword', 'recoveryPasswordRequest', recoveryPasswordRequest)
+            const localVarPath = `/recoveryPassword`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(recoveryPasswordRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Регистрация пользователя
          * @param {RegistrationUserRequest} registrationUserRequest 
          * @param {*} [options] Override http request option.
@@ -215,6 +299,47 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(registrationUserRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Запрос на валидацию токена
+         * @param {string} token Токен восстановления пароля
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        validateRecoveryToken: async (token: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'token' is not null or undefined
+            assertParamExists('validateRecoveryToken', 'token', token)
+            const localVarPath = `/validateRecoveryToken`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer Authentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (token !== undefined) {
+                localVarQueryParameter['token'] = token;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -282,6 +407,32 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Запрос на смену пароля
+         * @param {NewPasswordRequest} newPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async newPassword(newPasswordRequest: NewPasswordRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.newPassword(newPasswordRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthControllerApi.newPassword']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Отправка запроса на восстановление пароля
+         * @param {RecoveryPasswordRequest} recoveryPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async recoveryPassword(recoveryPasswordRequest: RecoveryPasswordRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.recoveryPassword(recoveryPasswordRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthControllerApi.recoveryPassword']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Регистрация пользователя
          * @param {RegistrationUserRequest} registrationUserRequest 
          * @param {*} [options] Override http request option.
@@ -291,6 +442,19 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.register(registrationUserRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AuthControllerApi.register']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Запрос на валидацию токена
+         * @param {string} token Токен восстановления пароля
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async validateRecoveryToken(token: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.validateRecoveryToken(token, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthControllerApi.validateRecoveryToken']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -342,6 +506,26 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @summary Запрос на смену пароля
+         * @param {NewPasswordRequest} newPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        newPassword(newPasswordRequest: NewPasswordRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.newPassword(newPasswordRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Отправка запроса на восстановление пароля
+         * @param {RecoveryPasswordRequest} recoveryPasswordRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        recoveryPassword(recoveryPasswordRequest: RecoveryPasswordRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.recoveryPassword(recoveryPasswordRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Регистрация пользователя
          * @param {RegistrationUserRequest} registrationUserRequest 
          * @param {*} [options] Override http request option.
@@ -349,6 +533,16 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
          */
         register(registrationUserRequest: RegistrationUserRequest, options?: any): AxiosPromise<void> {
             return localVarFp.register(registrationUserRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Запрос на валидацию токена
+         * @param {string} token Токен восстановления пароля
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        validateRecoveryToken(token: string, options?: any): AxiosPromise<void> {
+            return localVarFp.validateRecoveryToken(token, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -407,6 +601,30 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Запрос на смену пароля
+     * @param {NewPasswordRequest} newPasswordRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthControllerApi
+     */
+    public newPassword(newPasswordRequest: NewPasswordRequest, options?: AxiosRequestConfig) {
+        return AuthControllerApiFp(this.configuration).newPassword(newPasswordRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Отправка запроса на восстановление пароля
+     * @param {RecoveryPasswordRequest} recoveryPasswordRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthControllerApi
+     */
+    public recoveryPassword(recoveryPasswordRequest: RecoveryPasswordRequest, options?: AxiosRequestConfig) {
+        return AuthControllerApiFp(this.configuration).recoveryPassword(recoveryPasswordRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Регистрация пользователя
      * @param {RegistrationUserRequest} registrationUserRequest 
      * @param {*} [options] Override http request option.
@@ -415,6 +633,18 @@ export class AuthControllerApi extends BaseAPI {
      */
     public register(registrationUserRequest: RegistrationUserRequest, options?: AxiosRequestConfig) {
         return AuthControllerApiFp(this.configuration).register(registrationUserRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Запрос на валидацию токена
+     * @param {string} token Токен восстановления пароля
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthControllerApi
+     */
+    public validateRecoveryToken(token: string, options?: AxiosRequestConfig) {
+        return AuthControllerApiFp(this.configuration).validateRecoveryToken(token, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
