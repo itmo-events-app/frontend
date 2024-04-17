@@ -276,7 +276,7 @@ function EventActivitiesPage() {
   const [activities, setActivities] = useState([] as Activity[]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
 
-  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
+  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>([]));
 
   const [orgs, setOrgs] = useState([] as OrgPerson[]);
   const [participants, setParticipants] = useState([] as Person[]);
@@ -707,7 +707,6 @@ function EventActivitiesPage() {
     );
   }
 
-
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -723,10 +722,12 @@ function EventActivitiesPage() {
                 value={visitStatus.get(person.id)}
                 onChange={(status) => {
                   setVisitStatus(visitStatus.set(person.id, status));
+                  setReloadPage(reloadPage + 1);
+
                   if (id) {
                     api
                       .withReauth(() => api.participants.changePresence(idInt!,
-                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
+                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) === VisitStatusList.TRUE)))
                       .catch((error) => {
                         console.log(error);
                       });
@@ -817,18 +818,15 @@ function EventActivitiesPage() {
   }
 
   const [reloadPage, setReloadPage] = useState(0);
-  const [participantsFile, setParticipantsFile] = useState(new File([], ""));
 
   function handleFileChange(event: any) {
     event.preventDefault();
 
     if (optionsPrivileges.importParticipants && idInt != null) {
-      setParticipantsFile(event.target.files[0]);
-      
       api.participants
         .setPartisipantsList(
           idInt!,
-          new ParticipantsListRequest(participantsFile ?? new File([], '')),
+          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')),
           {
             method: 'POST',
             headers: {
