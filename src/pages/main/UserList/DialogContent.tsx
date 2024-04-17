@@ -82,11 +82,10 @@ const DialogContent = (props: AssignProps) => {
 
   function _fetchOrganizationalRoles() {
     api
-      .withReauth(() => api.role.getAllRoles())
+      .withReauth(() => api.role.getOrganizationalRoles())
       .then((r) => {
         const l = createRoleRadioElementList(r.data.map((role) => toRoleModel(role)));
-        setRoles(l.filter(r => r.entry.type == RoleModelType.EVENT));
-
+        setRoles(l);
       });
   }
 
