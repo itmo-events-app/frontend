@@ -820,13 +820,11 @@ function EventActivitiesPage() {
   const [participantsFile, setParticipantsFile] = useState(new File([], ""));
 
   function handleFileChange(event: any) {
-    setParticipantsFile(event.target.files[0]);
-  }
-
-  function handleFileSubmit(event: any) {
     event.preventDefault();
 
     if (optionsPrivileges.importParticipants && idInt != null) {
+      setParticipantsFile(event.target.files[0]);
+      
       api.participants
         .setPartisipantsList(
           idInt!,
@@ -858,32 +856,25 @@ function EventActivitiesPage() {
         {(optionsPrivileges.exportParticipants || optionsPrivileges.importParticipants) ?
           (
             <div className={styles.button_container}>
-              <div className={styles.button_container}>
-                {optionsPrivileges.exportParticipants ?
-                  (
-                    <Button className={styles.buttonXlsx} onClick={export_xlsx}>
-                      Скачать xlsx
-                    </Button>
-                  ) : (
-                    <></>
-                  )
-                }
-              </div>
+              {optionsPrivileges.exportParticipants ?
+                (
+                  <Button className={styles.buttonXlsx} onClick={export_xlsx}>
+                    Скачать xlsx
+                  </Button>
+                 ) : (
+                  <></>
+                )
+              }
               {optionsPrivileges.importParticipants ?
                 (
-                  <form className={styles.button_container} method="post" onSubmit={handleFileSubmit}>
-                    <label className={styles.file_input} htmlFor="uploadParticipants">
-                      {participantsFile.name == "" ? "Выбрать файл" : participantsFile.name}
-                    </label>
-                    <input
-                      className={styles.file_input_actual}
-                      type="file"
-                      name="participantsFile"
-                      id="uploadParticipants"
-                      onChange={handleFileChange}
-                    />
-                    <Button type="submit">Загрузить xlsx</Button>
-                  </form>
+                  <label className={styles.file_input} htmlFor="uploadParticipants">Загрузить xlsx</label>
+                  <input
+                    className={styles.file_input_actual}
+                    type="file"
+                    name="participantsFile"
+                    id="uploadParticipants"
+                    onChange={handleFileChange}
+                  />
                 ) : (
                   <></>
                 )
