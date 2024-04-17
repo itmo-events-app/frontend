@@ -7,9 +7,9 @@ import {RoleModelType, toRoleModel} from "@entities/role";
 import ApiContext from "@features/api-context";
 import RoleListRadio, {RoleRadioElement} from "@widgets/main/RoleListRadio";
 import {createRoleRadioElementList, getSelectedRoleId} from "@widgets/main/RoleListRadio/common";
-import InputLabel from "@widgets/main/InputLabel";
 import {PrivilegeNames} from "@shared/config/privileges";
 import {EventResponse} from "@shared/api/generated/model";
+import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
 
 
 type AssignProps = {
@@ -20,21 +20,12 @@ type AssignProps = {
   onDone: (userId: number, roleId: number | null, eventId: number | null) => void;
 };
 
-class EventSelectElement {
-  id: number;
-  title: string;
-
-  constructor(id: number, title: string) {
-    this.id = id;
-    this.title = title;
-  }
-}
-
 const DialogContent = (props: AssignProps) => {
   const {api} = useContext(ApiContext);
   const [roles, setRoles] = useState([] as RoleRadioElement[]);
-  const [events, setEvents] = useState([] as EventSelectElement[])
   const [eventId, setEventId] = useState(0)
+  const [dropdownValues, setDropdownValues] = useState<DropdownOption<string>[]>([]);
+  const [dropdownValue, setDropdownValue] = useState<DropdownOption<string> | undefined>();
 
   const _onDoneWrapper = () => {
     props.onDone(props.userId, getSelectedRoleId(roles), eventId);
@@ -44,8 +35,6 @@ const DialogContent = (props: AssignProps) => {
   useEffect(() => {
     if (props.isRevoke){
       if (props.isEvent) {
-        _fetchUserOrganizationalRoles()
-      } else {
         _fetchUserSystemRoles()
       }
     } else {
@@ -56,6 +45,13 @@ const DialogContent = (props: AssignProps) => {
       }
     }
   }, []);
+
+  //load organizational roles on selected event change
+  useEffect(() => {
+    if (props.isRevoke && props.isEvent) {
+      _fetchUserOrganizationalRoles();
+    }
+  }, [eventId]);
 
   function _fetchUserOrganizationalRoles() {
     api
@@ -111,14 +107,12 @@ const DialogContent = (props: AssignProps) => {
         .then((eventsResponse) => {
           //map the events
           const eventList = eventsResponse.data.map((e: EventResponse) => ({
-            id: e.id,
-            title: e.title,
-          })) as EventSelectElement[];
-          setEvents(eventList);
-          setEventId(eventList[0].id || 0);
+            id: String(e.id),
+            value: e.title,
+          })) as DropdownOption<string>[];
+          setDropdownValues(eventList)
+          setEventId( 0);
         })
-    } else {
-      setEvents([])
     }
   }, []);
 
@@ -127,21 +121,16 @@ const DialogContent = (props: AssignProps) => {
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           {props.isEvent ? (
-            <>
-              <InputLabel value="Мероприятие" />
-              <select value={eventId} onChange={(e) => {
-                setEventId(Number(e.target.value));
-                if (props.isRevoke) _fetchUserOrganizationalRoles();
-              }}>
-                {events.length ? (
-                  events.map((e) => {
-                    return <option key={e.id} value={e.id}>{e.title}</option>;
-                  })
-                ) : (
-                  <option value="">Нет доступных мероприятий</option>
-                )}
-              </select>
-            </>
+            <Dropdown
+              placeholder={"Мероприятие"}
+              items={dropdownValues}
+              toText={(item) => item.value}
+              value={dropdownValue}
+              onChange={(sel) => {
+                setEventId(Number(sel.id))
+                setDropdownValue(sel)
+              }}
+            />
           ) : (
             <div></div>
           )}
