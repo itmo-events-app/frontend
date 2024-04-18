@@ -17,15 +17,15 @@ import {
   ProfileResponse,
   NotificationSettingsRequest,
   UserChangeNameRequest,
-  UserChangePasswordRequest
-} from '@shared/api/generated';
+  UserChangePasswordRequest, UserChangeLoginRequest,
+} from "@shared/api/generated";
 import { useState } from "react";
 
 
 function ProfilePage() {
   const navigate = useNavigate();
-  const { api } = useContext(ApiContext);
-  const { data: userInfo, refetch: refetchUserInfo } = useQuery<ProfileResponse>({
+  const {api} = useContext(ApiContext);
+  const {data: userInfo, refetch: refetchUserInfo} = useQuery<ProfileResponse>({
     queryFn: () => profileService.getUserInfo(api),
     enabled: true,
     queryKey: ['userInfo'],
@@ -36,6 +36,8 @@ function ProfilePage() {
   const [notificationSettings, setNotificationSettings] = useState<NotificationSettingsRequest | null>(null);
   const [isEditing, setIsEditingMode] = useState(false);
 
+  const [isChangingLogin, setIsChangingLogin] = useState(false);
+  const [login, setLogin] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -45,9 +47,14 @@ function ProfilePage() {
   const [successMessageChangingPassword, setSuccessMessageChangingPassword] = useState('');
 
   const [errorMessageEditingName, setErrorMessageEditingName] = useState('');
+  const [errorMessageEditingLogin, setErrorMessageEditingLogin] = useState('');
 
   const customEditRenameModal = () => {
     setIsEditingMode((prev) => !prev);
+  };
+
+  const customEditChangeLoginModal = () => {
+    setIsChangingLogin((prev) => !prev);
   };
 
   const customEditChangePasswordModal = () => {
@@ -60,6 +67,11 @@ function ProfilePage() {
     setIsEditingMode(false);
   };
 
+  const clearFieldsForChangingLogin = () => {
+    setLogin('');
+    setIsChangingLogin(false);
+  };
+
   const clearFieldsForChangingPassword = () => {
     setOldPassword('');
     setNewPassword('');
@@ -68,9 +80,28 @@ function ProfilePage() {
     setErrorMessageChangingPassword('');
   };
 
+  const handleLoginChange = async () => {
+    try {
+      const userChangeLoginRequest: UserChangeLoginRequest = {login, type:"EMAIL"};
+      await profileService.changeLogin(api, userChangeLoginRequest);
+      clearFieldsForChangingLogin();
+      setErrorMessageEditingLogin('');
+      refetchUserInfo();
+    } catch (error: any) {
+      if (error.response.data.errors) {
+        const errorMessage = error.response.data.errors.join(', ');
+        setErrorMessageEditingLogin(errorMessage);
+      }
+      else {
+        const errorMessage = error.response.data;
+        setErrorMessageEditingLogin(errorMessage);
+      }
+    }
+  };
+
   const handleNameChange = async () => {
     try {
-      const userChangeNameRequest: UserChangeNameRequest = { name, surname };
+      const userChangeNameRequest: UserChangeNameRequest = {name, surname};
       await profileService.changeName(api, userChangeNameRequest);
       clearFieldsForEditingName();
       setErrorMessageEditingName('');
@@ -107,7 +138,7 @@ function ProfilePage() {
 
   const handleChangePassword = async () => {
     try {
-      const userChangePasswordRequest: UserChangePasswordRequest = { oldPassword, newPassword, confirmNewPassword };
+      const userChangePasswordRequest: UserChangePasswordRequest = {oldPassword, newPassword, confirmNewPassword};
       await profileService.changePassword(api, userChangePasswordRequest);
       clearFieldsForChangingPassword();
       setSuccessMessageChangingPassword('Пароль успешно изменён');
@@ -119,19 +150,115 @@ function ProfilePage() {
     }
   };
 
+  function _renderProfileEdit() {
+    return (
+      <>
+        <div>
+          <Label value="Имя " error={false}/>
+          <Input
+            type="text"
+            placeholder="Введите имя"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label value="Фамилия " error={false}/>
+          <Input
+            type="text"
+            placeholder="Введите фамилию"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+          />
+        </div>
+        {errorMessageEditingName && <div className={styles.error}>{errorMessageEditingName}</div>}
+        <div className={styles.button_row}>
+          <Button onClick={handleNameChange}>Сохранить изменения</Button>
+          <Button onClick={clearFieldsForEditingName}>Закрыть</Button>
+        </div>
+      </>
+    );
+  }
+
+  function _renderLoginEdit() {
+    return (
+      <>
+        <div>
+          <Label value="Новый логин " error={false}/>
+          <Input
+            type="text"
+            placeholder="Введите новый логин"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
+          />
+        </div>
+        {errorMessageEditingLogin && <div className={styles.error}>{errorMessageEditingLogin}</div>}
+        <div className={styles.button_row}>
+          <Button onClick={handleLoginChange}>Сохранить изменения</Button>
+          <Button onClick={clearFieldsForChangingLogin}>Закрыть</Button>
+        </div>
+      </>
+    );
+  }
+
+  function _renderPasswordEdit() {
+    return (
+      <>
+        <div>
+          <Label value="Старый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите старый пароль"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label value="Новый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите новый пароль"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label value="Подтвердите новый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите новый пароль"
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+          />
+        </div>
+
+        {errorMessageChangingPassword && <div className={styles.error}>{errorMessageChangingPassword}</div>}
+        {successMessageChangingPassword && <div className={styles.success}>{successMessageChangingPassword}</div>}
+
+        <div className={styles.button_row}>
+          <Button onClick={handleChangePassword}>Сохранить пароль</Button>
+          <Button onClick={() => {
+            clearFieldsForChangingPassword();
+            setSuccessMessageChangingPassword('');
+          }}>Закрыть</Button>
+        </div>
+      </>
+    );
+  }
+
   return (
     <Layout
-      topLeft={<BrandLogo />}
-      topRight={<PageName text="Профиль" />}
-      bottomLeft={<SideBar currentPageURL={RoutePaths.profile} />}
+      topLeft={<BrandLogo/>}
+      topRight={<PageName text="Профиль"/>}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.profile}/>}
       bottomRight=
-      {
-        <Content>
-          <div className={styles.root}>
-            <div className={styles.profile}>
-              <div className={styles.profile_col}>
-                <table className={styles.table}>
-                  <tbody>
+        {
+          <Content>
+            <div className={styles.root}>
+              <div className={styles.profile}>
+                <div className={styles.profile_col}>
+                  <table className={styles.table}>
+                    <tbody>
                     <tr>
                       <td>Имя</td>
                       <td>{userInfo?.name}</td>
@@ -160,98 +287,37 @@ function ProfilePage() {
                         <td>Нет устройств</td>
                       )}
                     </tr>
-                  </tbody>
-                </table>
-
-                <div className={styles.button_column}>
-                  <Button onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
+                    </tbody>
+                  </table>
+                </div>
+                <div className={styles.profile_col}>
+                  <Button className={styles.button} onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
                     {notificationSettings?.enableEmail ? 'Отключить уведомления по почте' : 'Включить уведомления по почте'}
                   </Button>
-                  <Button onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
+                  <Button className={styles.button} onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
                     {notificationSettings?.enablePush ? 'Отключить пуш-уведомления' : 'Включить пуш-уведомления'}
                   </Button>
-                <div>
-
-                <div className={styles.button_column}>
                   {isEditing ? (
-                    <>
-                      <div>
-                        <Label value="Имя " error={false} />
-                        <Input
-                          type="text"
-                          placeholder="Введите имя"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label value="Фамилия " error={false} />
-                        <Input
-                          type="text"
-                          placeholder="Введите фамилию"
-                          value={surname}
-                          onChange={(e) => setSurname(e.target.value)}
-                        />
-                      </div>
-                      {errorMessageEditingName && <div className={styles.error}>{errorMessageEditingName}</div>}
-                      <div className={styles.button_row}>
-                        <Button onClick={handleNameChange}>Сохранить изменения</Button>
-                        <Button onClick={clearFieldsForEditingName}>Закрыть</Button>
-                      </div>
-                    </>
+                    _renderProfileEdit()
                   ) : (
-                    <Button onClick={customEditRenameModal}>Редактировать имя и фамилию</Button>
+                    <Button className={styles.button} onClick={customEditRenameModal}>Редактировать имя и фамилию</Button>
+                  )}
+                  {isChangingLogin ? (
+                    _renderLoginEdit()
+                  ) : (
+                    <Button className={styles.button} onClick={customEditChangeLoginModal}>Сменить логин</Button>
                   )}
                   {isChangingPassword ? (
-                    <div>
-                      <div>
-                        <Label value="Старый пароль " error={false} />
-                        <Input
-                          type="password"
-                          placeholder="Введите старый пароль"
-                          value={oldPassword}
-                          onChange={(e) => setOldPassword(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label value="Новый пароль " error={false} />
-                        <Input
-                          type="password"
-                          placeholder="Введите новый пароль"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label value="Подтвердите новый пароль " error={false} />
-                        <Input
-                          type="password"
-                          placeholder="Введите новый пароль"
-                          value={confirmNewPassword}
-                          onChange={(e) => setConfirmNewPassword(e.target.value)}
-                        />
-                      </div>
-                      {errorMessageChangingPassword && <div className={styles.error}>{errorMessageChangingPassword}</div>}
-                      {successMessageChangingPassword && <div className={styles.success}>{successMessageChangingPassword}</div>}
-                      <div className={styles.button_row}>
-                        <Button onClick={handleChangePassword}>Сохранить пароль</Button>
-                        <Button onClick={() => {
-                          clearFieldsForChangingPassword();
-                          setSuccessMessageChangingPassword('');
-                        }}>Закрыть</Button>
-                      </div>
-                    </div>
+                    _renderPasswordEdit()
                   ) : (
-                    <Button onClick={customEditChangePasswordModal}>Сменить пароль</Button>
+                    <Button className={styles.button} onClick={customEditChangePasswordModal}>Сменить пароль</Button>
                   )}
                 </div>
-
               </div>
+              <Button className={styles.exit_button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
             </div>
-            <Button className={styles.button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
-          </div>
-        </Content>
-      }
+          </Content>
+        }
     />
   );
 }

@@ -4,10 +4,10 @@ import styles from './index.module.css';
 import { useContext, useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
-import { RoleResponse, UserSystemRoleResponse } from '@shared/api/generated';
+import { RoleResponse, UserResponse } from '@shared/api/generated';
 
 const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: () => void }) => {
-  const [userList, setUserList] = useState([] as UserSystemRoleResponse[]);
+  const [userList, setUserList] = useState([] as UserResponse[]);
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
   const [roleId, setRoleId] = useState<number | undefined>(undefined);

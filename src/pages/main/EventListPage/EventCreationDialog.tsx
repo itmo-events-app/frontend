@@ -5,7 +5,7 @@ import { useState, useContext, ChangeEvent, useEffect } from "react";
 import ApiContext from '@features/api-context';
 import styles from './dialog.module.css';
 import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
-import { UserSystemRoleResponse } from '@shared/api/generated/model';
+import { UserResponse } from '@shared/api/generated/model';
 
 function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}) {
   const {api} = useContext(ApiContext);
@@ -18,8 +18,8 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
         const response = await api.profile.getAllUsers();
         console.log(response);
         if (response.status == 200) {
-          const users = response.data.items as unknown as UserSystemRoleResponse[];
-          users.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0)); 
+          const users = response.data.items as unknown as UserResponse[];
+          users.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0));
           const values: DropdownOption<string>[] = [];
           users.forEach(user => {
             values.push(new DropdownOption(user.id+'. '+user.name+' '+user.surname,(user.id?user.id:0).toString()));
@@ -66,9 +66,9 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
               <Input type="text" placeholder="Введите название мероприятия" value={inputValue} onChange={_handleChangeText}/>
             </div>
             <div className={styles.event_form_item}>
-              <Dropdown 
-                placeholder="Выберите главного организатора" 
-                items={dropdownValues} 
+              <Dropdown
+                placeholder="Выберите главного организатора"
+                items={dropdownValues}
                 value={dropdownValue}
                 toText={(input: DropdownOption<string>) => {return input.value}}
                 onChange={(value) =>_handleChangeDropdown(value)}

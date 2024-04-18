@@ -32,7 +32,26 @@
   padding-bottom: 10px;
 }
 
-.button {
+.file_input_actual {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+.file_input {
+  background-color: var(--itmo-colors-blue-80);
+  border-radius: 10px;
+  padding: 12px 30px;
+  color: var(--itmo-colors-white);
+  font-size: 16px;
+  font-weight: bold;
+  border-width: 0;
+  white-space: nowrap;
+}
+
+.file_input:hover {
+  cursor: pointer;
+  background-color: var(--itmo-colors-blue);
 }
 
 .image_box {
@@ -63,6 +82,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 38%;
   max-width: 62%;
 }
 
@@ -104,6 +124,15 @@
   background: var(--itmo-colors-gray);
   text-align: left;
   border: 1px solid var(--itmo-colors-gray);
+}
+
+.table .clickable_th {
+  text-decoration: underline 2px;
+}
+
+.table .clickable_th:hover {
+  color: var(--itmo-colors-blue-selected);
+  cursor: pointer;
 }
 
 .table td {
@@ -241,4 +270,29 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
+}
+
+.input_error {
+  border-color: var(--itmo-colors-red);
+}
+
+.input:focus {
+  border: 1px solid var(--itmo-colors-blue);
+  outline: none;
+}
+
+.input_error:focus {
+  border-color: var(--itmo-colors-red);
+}
+
+.helper_error {
+  color: var(--itmo-colors-red);
+  margin: 0px;
+  padding: 10px 0px;
+  font-size: 14px;
+}
+
+.visited_checkbox {
+  display: flex;
+  justify-content: center;
 }

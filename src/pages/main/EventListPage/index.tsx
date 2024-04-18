@@ -18,9 +18,7 @@ import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
-
-import Pagination, { PageEntry } from '@widgets/main/PagedList/pagination';
-
+import Pagination, { PageEntry, PageProps } from '@widgets/main/PagedList/pagination';
 import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
 import { EventResponse } from '@shared/api/generated';
 import EventCreationPage from './EventCreationDialog';
@@ -28,6 +26,9 @@ import PrivilegeContext from '@features/privilege-context';
 import { hasAnyPrivilege } from '@features/privileges';
 import { PrivilegeData } from '@entities/privilege-context';
 import { PrivilegeNames } from '@shared/config/privileges';
+import ImagePreview from "@widgets/main/ImagePreview";
+import { eventService } from '@features/event-service';
+import { placeService } from '@features/place-service';
 
 enum DisplayModes {
   LIST = "Показать списком",
@@ -79,8 +80,7 @@ const PageItemStub = (props: PageItemStubProps) => {
       {imageUrl == '' ? (
         <ReactLogo className={styles.event_icon} />
       ) : (
-        <img src={imageUrl}
-          className={styles.event_icon} />
+        <ImagePreview className={styles.event_icon} src={imageUrl} alt="Event Icon" />
       )}
       <div className={styles.event_info_column}>
         <div className={styles.event_name}>
@@ -110,32 +110,17 @@ const isBlank = (str: string): boolean => {
 function EventListPage() {
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
-  const [loading, setLoading] = useState(true);////
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
   const [searchValue, setSearchValue] = useState("");
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentSize, setCurrentSize] = useState(15);
-  const [totalItem, setTotalItem] = useState(0);
+  const [pageProps, setPageProps] = useState<PageProps>({ page: 1, size: 5, total: 0 });
   const [itemList, setItemList] = useState<PageEntry[]>([]);
-
-  const [privilegeCreateEvent, setPrivilegeCreateEvent] = useState(false);
-
-  useEffect(() => {
-    if (privilegeContext.isSystemPrivilegesLoaded()) {
-      const privileges = privilegeContext.systemPrivileges!;
-      setPrivilegeCreateEvent(hasAnyPrivilege(privileges, new Set([
-        new PrivilegeData(PrivilegeNames.CREATE_EVENT)
-      ])))
-    } else {
-      setPrivilegeCreateEvent(false);
-    }
-  }, [privilegeContext])
 
   const getEventList = async (page: number = 1, size: number = 5) => {
     try {
-      const response = await api.event.getAllOrFilteredEvents(
+      const { total, items } = await eventService.getFilteredEvents(
+        api,
         page - 1,
         size,
         undefined, //parentId
@@ -145,41 +130,27 @@ function EventListPage() {
         filters.status,
         filters.format
       );
-      if (response.status === 200) {
-        // TODO: don't cast types
-        const { total, items } = response.data;
-        if (total === undefined || items === undefined) throw new Error("Incomplete data received from the server");
-        const data = items as unknown as EventResponse[];
-        const pagesPromises = data.map(async (e) => {
-          let address: string = '';
-          if (e.placeId) {
-            const response = await api.place.placeGet(e.placeId);
-            if (response.status == 200) {
-              const place = response.data;
-              address = place.address !== undefined ? place.address : "null";
-            } else {
-              console.error(response.status);
-            }
-          }
-          return new PageEntry(() => {
-            return (
-              <PageItemStub
-                key={e.id ? e.id : -1}
-                index={e.id ? e.id : -1}
-                title={(e.title !== undefined) ? e.title : 'null'}
-                place={address}
-              />);
-          });
+      if (total === undefined || items === undefined) throw new Error("Incomplete data received from the server");
+      const data = items as unknown as EventResponse[];
+      const pagesPromises = data.map(async (e) => {
+        let address: string = '';
+        if (e.placeId) {
+          const place = await placeService.getPlace(api, e.placeId);
+          if (place) address = place.address !== undefined ? place.address : "null";
+        }
+        return new PageEntry(() => {
+          return (
+            <PageItemStub
+              key={e.id ? e.id : -1}
+              index={e.id ? e.id : -1}
+              title={(e.title !== undefined) ? e.title : 'null'}
+              place={address}
+            />);
         });
-        const pages = await Promise.all(pagesPromises);
-        setCurrentPage(page);
-        setCurrentSize(size);
-        setTotalItem(total);
-        setItemList(pages);
-        setLoading(false);
-      } else {
-        console.error("Error fetching event list:", response.statusText);
-      }
+      });
+      const pages = await Promise.all(pagesPromises);
+      setPageProps({ page: page, size: size, total: total });
+      setItemList(pages);
     } catch (error) {
       console.error("Error fetching event list:", error);
     }
@@ -187,7 +158,6 @@ function EventListPage() {
   useEffect(() => {
     getEventList();
   }, [filters]);
-
   //dialog
   class DialogData {
     heading: string | undefined;
@@ -219,7 +189,7 @@ function EventListPage() {
       case DialogSelected.CREATEEVENT:
         component = <EventCreationPage onSubmit={() => {
           _closeDialog();
-          getEventList(1, currentSize);
+          getEventList(1, pageProps.size);
         }}
           {...dialogData.args}
         />;
@@ -280,11 +250,10 @@ function EventListPage() {
                   onChange={(mode) => { setDisplayMode(mode) }}
                   toText={(input: string) => { return input }} />
               </div>
-              {privilegeCreateEvent ?
+              {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])) &&
                 <div className={styles.button}>
                   <Button onClick={_onCreationPopUp}>Создать</Button>
                 </div>
-                : <></>
               }
             </div>
             <div className={styles.filters}>
@@ -327,13 +296,15 @@ function EventListPage() {
                 </div>
               </div>
             </div>
-            <div className={styles.event_list_container}>
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                //<PagedList page={1} page_size={5} page_step={5} items={events} />
-                <Pagination page={currentPage} size={currentSize} total={totalItem} onPageChange={(page, size) => getEventList(page, size)} items={itemList} />
-              )}
+            <div hidden={displayMode == DisplayModes.MAP}>
+              <div className={styles.event_list_container}>
+                <Pagination pageProps={pageProps} onPageChange={(page, size) => getEventList(page, size)}
+                  items={itemList} pageSpread={1} />
+              </div>
+            </div>
+            <div hidden={displayMode == DisplayModes.LIST}>
+              <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?off_clickable"
+                width="100%" height="420px"></iframe>
             </div>
           </div>
           <Fade

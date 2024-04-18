@@ -42,9 +42,9 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
   const [placeName, setPlaceName] = useState('');
   const [roomName, setRoomName] = useState('');
   const [description, setDescription] = useState('');
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
-  const [address, setAddress] = useState('');
+  const [latitude, setLatitude] = useState(30.3095);
+  const [longitude, setLongitude] = useState(59.9567);
+  const [address, setAddress] = useState('Кронверкский проспект, 49');
   const [showEmptyFieldsMessage, setShowEmptyFieldsMessage] = useState(false);
 
   const createPlace = () => {
@@ -61,11 +61,21 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
       description,
       latitude,
       longitude
-    );
-    onClose();
-    setTimeout(() => { location.reload() }, 500);
+    ).then(() => onClose());
+    // setTimeout(() => { location.reload() }, 500);
   };
-
+  const handleMapClick = (message: any) => {
+    const childWindow = document.querySelector('iframe')?.contentWindow;
+    if (message.source !== childWindow) return;
+    setAddress(message.data.address);
+    setPlaceName(message.data.properties["name"]);
+    setRoomName(message.data.properties["ref"]);
+    setLatitude(message.data.coordinates[0]);
+    setLongitude(message.data.coordinates[1]);
+  }
+  useEffect(() => {
+    window.addEventListener('message', handleMapClick);
+  });
   return (
     <div className={styles.dialog} onClick={onClose}>
       <Dialog className={styles.dialog_content} text={'Создание площадки'}>
@@ -104,7 +114,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               <Label value="Аудитория" />
               <Input
                 type="text"
-                placeholder={'Аудитория'}
+                placeholder={'Выберите на карте'}
                 value={roomName}
                 onChange={(event) => setRoomName(event.target.value)}
               />
@@ -119,31 +129,33 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               />
             </div>
             <div className={styles.place_form_item}>
-              <Label value="Долгота" />
+              {/*<Label value="Долгота" />*/}
               <Input
-                type="number"
+                // type="number"
                 placeholder={'Долгота'}
                 value={String(latitude)}
                 onChange={(event) => {
                   setLatitude(Number(event.target.value));
                 }}
-                step={0.01}
                 min={-180}
                 max={180}
+                hidden={true}
               />
             </div>
             <div className={styles.place_form_item}>
-              <Label value="Широта" />
+              {/*<Label value="Широта" />*/}
               <Input
-                type="number"
+                hidden={true}
+                // type="number"
                 placeholder={'Широта'}
                 value={String(longitude)}
                 onChange={(event) => setLongitude(Number(event.target.value))}
-                step={0.01}
                 min={-90}
                 max={90}
               />
             </div>
+            <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?noscroll&select_only_areas"
+                    width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button onClick={createPlace}>Создать</Button>
               {showEmptyFieldsMessage && (
@@ -161,9 +173,10 @@ function PlaceListPage() {
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
 
-  const { data: allPlaces = [] } = useQuery({
+  const { data: allPlaces = [], refetch } = useQuery({
     queryFn: placeService.getPlaces(api),
     queryKey: ['getPlaces'],
+
   });
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
@@ -190,7 +203,7 @@ function PlaceListPage() {
   };
 
   const closeModalCreate = () => {
-    setCreateModalOpen(false);
+    refetch().then(() => setCreateModalOpen(false));
   };
 
   const openModalUpdate = () => {
@@ -198,7 +211,7 @@ function PlaceListPage() {
   };
 
   const closeModalUpdate = () => {
-    setUpdateModalOpen(false);
+    refetch().then(() => setUpdateModalOpen(false));
   };
 
   const _onSearch = () => {
@@ -232,10 +245,12 @@ function PlaceListPage() {
     });
   });
 
+
+
   function _entryStub(index?: number, name?: string, address?: string) {
     return (
-      <div>
-        <a key={index} className={styles.place_entry}>
+      <div key={index}>
+        <a className={styles.place_entry}>
           <Home className={styles.place_icon} onClick={() => _event(index ?? 0)} />
           <div className={styles.place_info_column} onClick={() => _event(index ?? 0)}>
             <div className={styles.place_name}>
