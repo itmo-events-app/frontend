@@ -351,7 +351,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       );
     if (result.status == 200) {
       onSubmit();
-      setTimeout(() => { location.reload() }, 500);
     } else {
       console.log(result.status);
     }
