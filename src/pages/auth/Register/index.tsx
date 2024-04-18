@@ -128,7 +128,12 @@ function RegisterPage() {
           navigate(RoutePaths.notify, { state: state });
         })
         .catch((e: any) => {
-          setError(e.response.data.errors.join('. '));
+          if (e.response.data.errors) {
+            setError(e.response.data.errors.join('. '));
+          }
+          else {
+            setError(e.response.data);
+          }
         })
     }
   };

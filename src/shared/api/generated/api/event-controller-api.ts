@@ -24,8 +24,6 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, ope
 // @ts-ignore
 import { CreateEventRequest } from '../model';
 // @ts-ignore
-import { EventRequest } from '../model';
-// @ts-ignore
 import { EventResponse } from '../model';
 // @ts-ignore
 import { PaginatedResponse } from '../model';
@@ -469,13 +467,59 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
          * 
          * @summary Обновление мероприятия
          * @param {number} id ID мероприятия
-         * @param {EventRequest} [eventRequest] 
+         * @param {number} placeId 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {string} title 
+         * @param {string} shortDescription 
+         * @param {string} fullDescription 
+         * @param {UpdateEventFormatEnum} format 
+         * @param {UpdateEventStatusEnum} status 
+         * @param {string} registrationStart 
+         * @param {string} registrationEnd 
+         * @param {number} participantLimit 
+         * @param {number} participantAgeLowest 
+         * @param {number} participantAgeHighest 
+         * @param {string} preparingStart 
+         * @param {string} preparingEnd 
+         * @param {number} [parent] 
+         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateEvent: async (id: number, eventRequest?: EventRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateEvent: async (id: number, placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: UpdateEventFormatEnum, status: UpdateEventStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateEvent', 'id', id)
+            // verify required parameter 'placeId' is not null or undefined
+            assertParamExists('updateEvent', 'placeId', placeId)
+            // verify required parameter 'startDate' is not null or undefined
+            assertParamExists('updateEvent', 'startDate', startDate)
+            // verify required parameter 'endDate' is not null or undefined
+            assertParamExists('updateEvent', 'endDate', endDate)
+            // verify required parameter 'title' is not null or undefined
+            assertParamExists('updateEvent', 'title', title)
+            // verify required parameter 'shortDescription' is not null or undefined
+            assertParamExists('updateEvent', 'shortDescription', shortDescription)
+            // verify required parameter 'fullDescription' is not null or undefined
+            assertParamExists('updateEvent', 'fullDescription', fullDescription)
+            // verify required parameter 'format' is not null or undefined
+            assertParamExists('updateEvent', 'format', format)
+            // verify required parameter 'status' is not null or undefined
+            assertParamExists('updateEvent', 'status', status)
+            // verify required parameter 'registrationStart' is not null or undefined
+            assertParamExists('updateEvent', 'registrationStart', registrationStart)
+            // verify required parameter 'registrationEnd' is not null or undefined
+            assertParamExists('updateEvent', 'registrationEnd', registrationEnd)
+            // verify required parameter 'participantLimit' is not null or undefined
+            assertParamExists('updateEvent', 'participantLimit', participantLimit)
+            // verify required parameter 'participantAgeLowest' is not null or undefined
+            assertParamExists('updateEvent', 'participantAgeLowest', participantAgeLowest)
+            // verify required parameter 'participantAgeHighest' is not null or undefined
+            assertParamExists('updateEvent', 'participantAgeHighest', participantAgeHighest)
+            // verify required parameter 'preparingStart' is not null or undefined
+            assertParamExists('updateEvent', 'preparingStart', preparingStart)
+            // verify required parameter 'preparingEnd' is not null or undefined
+            assertParamExists('updateEvent', 'preparingEnd', preparingEnd)
             const localVarPath = `/api/events/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -488,19 +532,88 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
             // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
+            if (placeId !== undefined) { 
+                localVarFormParams.append('placeId', placeId as any);
+            }
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
+            if (startDate !== undefined) { 
+                localVarFormParams.append('startDate', startDate as any);
+            }
+    
+            if (endDate !== undefined) { 
+                localVarFormParams.append('endDate', endDate as any);
+            }
+    
+            if (title !== undefined) { 
+                localVarFormParams.append('title', title as any);
+            }
+    
+            if (shortDescription !== undefined) { 
+                localVarFormParams.append('shortDescription', shortDescription as any);
+            }
+    
+            if (fullDescription !== undefined) { 
+                localVarFormParams.append('fullDescription', fullDescription as any);
+            }
+    
+            if (format !== undefined) { 
+                localVarFormParams.append('format', format as any);
+            }
+    
+            if (status !== undefined) { 
+                localVarFormParams.append('status', status as any);
+            }
+    
+            if (registrationStart !== undefined) { 
+                localVarFormParams.append('registrationStart', registrationStart as any);
+            }
+    
+            if (registrationEnd !== undefined) { 
+                localVarFormParams.append('registrationEnd', registrationEnd as any);
+            }
+    
+            if (parent !== undefined) { 
+                localVarFormParams.append('parent', parent as any);
+            }
+    
+            if (participantLimit !== undefined) { 
+                localVarFormParams.append('participantLimit', participantLimit as any);
+            }
+    
+            if (participantAgeLowest !== undefined) { 
+                localVarFormParams.append('participantAgeLowest', participantAgeLowest as any);
+            }
+    
+            if (participantAgeHighest !== undefined) { 
+                localVarFormParams.append('participantAgeHighest', participantAgeHighest as any);
+            }
+    
+            if (preparingStart !== undefined) { 
+                localVarFormParams.append('preparingStart', preparingStart as any);
+            }
+    
+            if (preparingEnd !== undefined) { 
+                localVarFormParams.append('preparingEnd', preparingEnd as any);
+            }
+    
+            if (image !== undefined) { 
+                localVarFormParams.append('image', image as any);
+            }
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(eventRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = localVarFormParams;
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -636,12 +749,28 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
          * 
          * @summary Обновление мероприятия
          * @param {number} id ID мероприятия
-         * @param {EventRequest} [eventRequest] 
+         * @param {number} placeId 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {string} title 
+         * @param {string} shortDescription 
+         * @param {string} fullDescription 
+         * @param {UpdateEventFormatEnum} format 
+         * @param {UpdateEventStatusEnum} status 
+         * @param {string} registrationStart 
+         * @param {string} registrationEnd 
+         * @param {number} participantLimit 
+         * @param {number} participantAgeLowest 
+         * @param {number} participantAgeHighest 
+         * @param {string} preparingStart 
+         * @param {string} preparingEnd 
+         * @param {number} [parent] 
+         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateEvent(id: number, eventRequest?: EventRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EventResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateEvent(id, eventRequest, options);
+        async updateEvent(id: number, placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: UpdateEventFormatEnum, status: UpdateEventStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EventResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateEvent(id, placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['EventControllerApi.updateEvent']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -754,12 +883,28 @@ export const EventControllerApiFactory = function (configuration?: Configuration
          * 
          * @summary Обновление мероприятия
          * @param {number} id ID мероприятия
-         * @param {EventRequest} [eventRequest] 
+         * @param {number} placeId 
+         * @param {string} startDate 
+         * @param {string} endDate 
+         * @param {string} title 
+         * @param {string} shortDescription 
+         * @param {string} fullDescription 
+         * @param {UpdateEventFormatEnum} format 
+         * @param {UpdateEventStatusEnum} status 
+         * @param {string} registrationStart 
+         * @param {string} registrationEnd 
+         * @param {number} participantLimit 
+         * @param {number} participantAgeLowest 
+         * @param {number} participantAgeHighest 
+         * @param {string} preparingStart 
+         * @param {string} preparingEnd 
+         * @param {number} [parent] 
+         * @param {File} [image] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateEvent(id: number, eventRequest?: EventRequest, options?: any): AxiosPromise<EventResponse> {
-            return localVarFp.updateEvent(id, eventRequest, options).then((request) => request(axios, basePath));
+        updateEvent(id: number, placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: UpdateEventFormatEnum, status: UpdateEventStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: any): AxiosPromise<EventResponse> {
+            return localVarFp.updateEvent(id, placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -883,13 +1028,29 @@ export class EventControllerApi extends BaseAPI {
      * 
      * @summary Обновление мероприятия
      * @param {number} id ID мероприятия
-     * @param {EventRequest} [eventRequest] 
+     * @param {number} placeId 
+     * @param {string} startDate 
+     * @param {string} endDate 
+     * @param {string} title 
+     * @param {string} shortDescription 
+     * @param {string} fullDescription 
+     * @param {UpdateEventFormatEnum} format 
+     * @param {UpdateEventStatusEnum} status 
+     * @param {string} registrationStart 
+     * @param {string} registrationEnd 
+     * @param {number} participantLimit 
+     * @param {number} participantAgeLowest 
+     * @param {number} participantAgeHighest 
+     * @param {string} preparingStart 
+     * @param {string} preparingEnd 
+     * @param {number} [parent] 
+     * @param {File} [image] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
      */
-    public updateEvent(id: number, eventRequest?: EventRequest, options?: AxiosRequestConfig) {
-        return EventControllerApiFp(this.configuration).updateEvent(id, eventRequest, options).then((request) => request(this.axios, this.basePath));
+    public updateEvent(id: number, placeId: number, startDate: string, endDate: string, title: string, shortDescription: string, fullDescription: string, format: UpdateEventFormatEnum, status: UpdateEventStatusEnum, registrationStart: string, registrationEnd: string, participantLimit: number, participantAgeLowest: number, participantAgeHighest: number, preparingStart: string, preparingEnd: string, parent?: number, image?: File, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).updateEvent(id, placeId, startDate, endDate, title, shortDescription, fullDescription, format, status, registrationStart, registrationEnd, participantLimit, participantAgeLowest, participantAgeHighest, preparingStart, preparingEnd, parent, image, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -931,3 +1092,22 @@ export const GetAllOrFilteredEventsFormatEnum = {
     Hybrid: 'HYBRID'
 } as const;
 export type GetAllOrFilteredEventsFormatEnum = typeof GetAllOrFilteredEventsFormatEnum[keyof typeof GetAllOrFilteredEventsFormatEnum];
+/**
+ * @export
+ */
+export const UpdateEventFormatEnum = {
+    Online: 'ONLINE',
+    Offline: 'OFFLINE',
+    Hybrid: 'HYBRID'
+} as const;
+export type UpdateEventFormatEnum = typeof UpdateEventFormatEnum[keyof typeof UpdateEventFormatEnum];
+/**
+ * @export
+ */
+export const UpdateEventStatusEnum = {
+    Draft: 'DRAFT',
+    Published: 'PUBLISHED',
+    Completed: 'COMPLETED',
+    Canceled: 'CANCELED'
+} as const;
+export type UpdateEventStatusEnum = typeof UpdateEventStatusEnum[keyof typeof UpdateEventStatusEnum];
