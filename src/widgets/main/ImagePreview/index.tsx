@@ -25,7 +25,7 @@ function ImagePreview(props: Props) {
           setSource("data:;base64," + base64);
         });
     }
-  });
+  }, [props.src]);
 
   return <img className={props.className} src={source} alt={props.alt}/>;
 }
