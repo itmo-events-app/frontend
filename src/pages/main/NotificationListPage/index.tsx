@@ -213,4 +213,4 @@ export default function NotificationListPage() {
       />
     </div>
   );
-};
+}
