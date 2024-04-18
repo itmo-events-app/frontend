@@ -55,6 +55,19 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
     queryClient.invalidateQueries({ queryKey: ["getPlaces"] });
   };
 
+  const handleMapClick = (message: any) => {
+    const childWindow = document.querySelector('iframe')?.contentWindow;
+    if (message.source !== childWindow) return;
+    setValue("address", message.data.address);
+    setValue("name", message.data.properties["name"]);
+    setValue("roomName", message.data.properties["ref"]);
+    setValue("latitude", message.data.coordinates[0]);
+    setValue("longitude", message.data.coordinates[1]);
+  }
+  useEffect(() => {
+    window.addEventListener('message', handleMapClick);
+  });
+
   useEffect(() => {
     if (foundPlace) {
       const { name, address, longitude, latitude, description, format, room } = foundPlace;

@@ -67,11 +67,11 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
   const handleMapClick = (message: any) => {
     const childWindow = document.querySelector('iframe')?.contentWindow;
     if (message.source !== childWindow) return;
-    setAddress(message.data.address)
-    setPlaceName(message.data.properties["name"])
-    setRoomName(message.data.properties["ref"])
-    setLatitude(message.data.coordinates[0])
-    setLongitude(message.data.coordinates[1])
+    setAddress(message.data.address);
+    setPlaceName(message.data.properties["name"]);
+    setRoomName(message.data.properties["ref"]);
+    setLatitude(message.data.coordinates[0]);
+    setLongitude(message.data.coordinates[1]);
   }
   useEffect(() => {
     window.addEventListener('message', handleMapClick);
