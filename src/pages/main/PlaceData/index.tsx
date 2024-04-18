@@ -72,9 +72,8 @@ function PlaceDataPage() {
             </div>
           </div>
           <div className={styles.label}>Карта:</div>
-          <iframe src="https://trickyfoxy.ru/practice/map.html" width="100%" height="420px">
-            Ваш браузер не поддерживает плавающие фреймы!
-          </iframe>
+          <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html" width="100%"
+                  height="420px"></iframe>
         </Content>
       }
     />

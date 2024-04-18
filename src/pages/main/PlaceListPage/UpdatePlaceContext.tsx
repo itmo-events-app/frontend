@@ -155,8 +155,8 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
 
             <Controller control={control} name={"latitude"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
-                <Label value="Долгота" />
-                <Input type="number" placeholder={"Долгота"} value={String(value)}
+                {/*<Label value="Долгота" />*/}
+                <Input hidden={true} type="number" placeholder={"Долгота"} value={String(value)}
                        onChange={(event) => {
                          onChange(Number(event.target.value));
                        }}
@@ -168,12 +168,12 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
 
             <Controller control={control} name={"longitude"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
-                <Label value="Широта" />
-                <Input type="number" placeholder={"Широта"} value={String(value)}
+                {/*<Label value="Широта" />*/}
+                <Input hidden={true} type="number" placeholder={"Широта"} value={String(value)}
                        onChange={(event) => onChange(Number(event.target.value))} step={0.01} min={-90} max={90} />
               </div>
             )} />
-
+            <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?noscroll&select_only_areas" width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button type="submit">Обновить</Button>
               {showEmptyFieldsMessage &&
