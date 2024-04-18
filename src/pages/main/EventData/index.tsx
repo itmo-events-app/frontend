@@ -31,7 +31,6 @@ import {
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
-import axios from 'axios';
 import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
 
 class EventInfo {
@@ -346,7 +345,7 @@ function EventActivitiesPage() {
       console.error('Error fetching event list:', error);
     }
   };
-  
+
   const [reloadPage, setReloadPage] = useState(0);
 
   useEffect(() => {

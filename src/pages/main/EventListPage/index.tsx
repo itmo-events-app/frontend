@@ -48,7 +48,7 @@ type FilterType = {
   [key: string]: number | string | GetAllOrFilteredEventsStatusEnum | GetAllOrFilteredEventsFormatEnum | undefined;
 }
 
-const initialFilters : FilterType = {
+const initialFilters: FilterType = {
   title: "",
   startDate: "",
   endDate: "",
@@ -69,8 +69,8 @@ const PageItemStub = (props: PageItemStubProps) => {
     });
   }, []);
   const navigate = useNavigate();
-  const _event = (id:number) => {
-    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID,id.toString()));
+  const _event = (id: number) => {
+    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id.toString()));
   }
   const _handleClick = () => {
     _event(props.index);
@@ -81,11 +81,6 @@ const PageItemStub = (props: PageItemStubProps) => {
         <ReactLogo className={styles.event_icon} />
       ) : (
         <ImagePreview className={styles.event_icon} src={imageUrl} alt="Event Icon" />
-      {imageUrl==''?(
-        <ReactLogo className={styles.event_icon}/>
-        ):(
-        <img src={imageUrl}
-             className={styles.event_icon}/>
       )}
       <div className={styles.event_info_column}>
         <div className={styles.event_name}>
@@ -100,12 +95,12 @@ const PageItemStub = (props: PageItemStubProps) => {
 }
 
 function getEnumValueFromString<T>(enumObject: T, value: string): T[keyof T] | undefined {
-    for (const key in enumObject) {
-      if (enumObject[key] === value) {
-          return enumObject[key];
-      }
+  for (const key in enumObject) {
+    if (enumObject[key] === value) {
+      return enumObject[key];
     }
-    return undefined;
+  }
+  return undefined;
 }
 
 const isBlank = (str: string): boolean => {
@@ -119,42 +114,42 @@ function EventListPage() {
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
   const [searchValue, setSearchValue] = useState("");
 
-  const [pageProps, setPageProps] = useState<PageProps>({page:1,size:5,total:0});
+  const [pageProps, setPageProps] = useState<PageProps>({ page: 1, size: 5, total: 0 });
   const [itemList, setItemList] = useState<PageEntry[]>([]);
 
   const getEventList = async (page: number = 1, size: number = 5) => {
     try {
-      const {total, items} = await eventService.getFilteredEvents(
+      const { total, items } = await eventService.getFilteredEvents(
         api,
-        page-1,
+        page - 1,
         size,
         undefined, //parentId
-        !isBlank(filters.title)?filters.title:undefined,
-        !isBlank(filters.startDate)?filters.startDate:undefined,
-        !isBlank(filters.endDate)?filters.endDate:undefined,
+        !isBlank(filters.title) ? filters.title : undefined,
+        !isBlank(filters.startDate) ? filters.startDate : undefined,
+        !isBlank(filters.endDate) ? filters.endDate : undefined,
         filters.status,
         filters.format
       );
-      if (total===undefined||items===undefined) throw new Error("Incomplete data received from the server");
+      if (total === undefined || items === undefined) throw new Error("Incomplete data received from the server");
       const data = items as unknown as EventResponse[];
       const pagesPromises = data.map(async (e) => {
         let address: string = '';
         if (e.placeId) {
-          const place = await placeService.getPlace(api,e.placeId);
-          if (place) address = place.address!==undefined?place.address:"null";
+          const place = await placeService.getPlace(api, e.placeId);
+          if (place) address = place.address !== undefined ? place.address : "null";
         }
         return new PageEntry(() => {
           return (
             <PageItemStub
-              key={e.id?e.id:-1}
-              index={e.id?e.id:-1}
-              title={(e.title!==undefined)?e.title:'null'}
+              key={e.id ? e.id : -1}
+              index={e.id ? e.id : -1}
+              title={(e.title !== undefined) ? e.title : 'null'}
               place={address}
             />);
         });
       });
       const pages = await Promise.all(pagesPromises);
-      setPageProps({page:page,size:size,total:total});
+      setPageProps({ page: page, size: size, total: total });
       setItemList(pages);
     } catch (error) {
       console.error("Error fetching event list:", error);
@@ -192,10 +187,10 @@ function EventListPage() {
     let component = <></>
     switch (dialogData.visible) {
       case DialogSelected.CREATEEVENT:
-        component = <EventCreationPage onSubmit={()=>{
+        component = <EventCreationPage onSubmit={() => {
           _closeDialog();
-          getEventList(1,pageProps.size);
-          }}
+          getEventList(1, pageProps.size);
+        }}
           {...dialogData.args}
         />;
         break;
@@ -225,7 +220,7 @@ function EventListPage() {
 
   //filters
   const _handleFilterChange = (value: string | GetAllOrFilteredEventsStatusEnum | GetAllOrFilteredEventsFormatEnum | undefined, name: string) => {
-    if (value!==null && filters[name] !== value) {
+    if (value !== null && filters[name] !== value) {
       setFilters(prevFilters => ({
         ...prevFilters,
         [name]: value,
@@ -245,15 +240,15 @@ function EventListPage() {
           <div className={styles.events_page}>
             <div className={styles.horizontal_bar}>
               <div className={styles.search}>
-                <Search onSearch={(value)=>_handleFilterChange(value,"title")} placeholder="Поиск" onChange={(e) => setSearchValue(e.target.value)} value={searchValue}/>
+                <Search onSearch={(value) => _handleFilterChange(value, "title")} placeholder="Поиск" onChange={(e) => setSearchValue(e.target.value)} value={searchValue} />
               </div>
               <div className={styles.dropdown}>
                 <Dropdown
                   placeholder="Режим отображения"
                   items={displayModes}
                   value={displayMode}
-                  onChange={(mode) => {setDisplayMode(mode)}}
-                  toText={(input: string) => {return input}} />
+                  onChange={(mode) => { setDisplayMode(mode) }}
+                  toText={(input: string) => { return input }} />
               </div>
               {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])) &&
                 <div className={styles.button}>
@@ -266,8 +261,8 @@ function EventListPage() {
                 <DatePicker
                   placeholderText="Начало проведения"
                   className={styles.filter_element}
-                  onChange={(date)=>_handleFilterChange(date?date.toISOString():"","startDate")}
-                  selected={!isBlank(filters.startDate)?new Date(filters.startDate):null}
+                  onChange={(date) => _handleFilterChange(date ? date.toISOString() : "", "startDate")}
+                  selected={!isBlank(filters.startDate) ? new Date(filters.startDate) : null}
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
                   enableTabLoop={false}
@@ -275,8 +270,8 @@ function EventListPage() {
                 <DatePicker
                   placeholderText="Конец проведения"
                   className={styles.filter_element}
-                  onChange={(date)=>_handleFilterChange(date?date.toISOString():"","endDate")}
-                  selected={!isBlank(filters.endDate)?new Date(filters.endDate):null}
+                  onChange={(date) => _handleFilterChange(date ? date.toISOString() : "", "endDate")}
+                  selected={!isBlank(filters.endDate) ? new Date(filters.endDate) : null}
                   dateFormat="yyyy-MM-dd"
                   popperPlacement="top-start"
                   enableTabLoop={false}
@@ -285,37 +280,37 @@ function EventListPage() {
                   <Dropdown
                     placeholder="Статус"
                     items={eventStatusList}
-                    value={filters.status!==undefined?filters.status:""}
-                    onChange={(status) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsStatusEnum,status),"status")}
-                    onClear={() => _handleFilterChange("","status")}
-                    toText={(input: string) => {return input}} />
+                    value={filters.status !== undefined ? filters.status : ""}
+                    onChange={(status) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsStatusEnum, status), "status")}
+                    onClear={() => _handleFilterChange("", "status")}
+                    toText={(input: string) => { return input }} />
                 </div>
                 <div className={styles.dropdownfilter}>
                   <Dropdown
                     placeholder="Формат"
                     items={eventFormatList}
-                    value={filters.format!==undefined?filters.format:""}
-                    onChange={(format) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsFormatEnum,format),"format")}
-                    onClear={() => _handleFilterChange("","format")}
-                    toText={(input: string) => {return input}} />
+                    value={filters.format !== undefined ? filters.format : ""}
+                    onChange={(format) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsFormatEnum, format), "format")}
+                    onClear={() => _handleFilterChange("", "format")}
+                    toText={(input: string) => { return input }} />
                 </div>
               </div>
             </div>
             <div hidden={displayMode == DisplayModes.MAP}>
               <div className={styles.event_list_container}>
                 <Pagination pageProps={pageProps} onPageChange={(page, size) => getEventList(page, size)}
-                            items={itemList} pageSpread={1} />
+                  items={itemList} pageSpread={1} />
               </div>
             </div>
             <div hidden={displayMode == DisplayModes.LIST}>
               <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?off_clickable"
-                      width="100%" height="420px"></iframe>
+                width="100%" height="420px"></iframe>
             </div>
           </div>
           <Fade
-              className={appendClassName(styles.fade,
-                (dialogData.visible) ? styles.visible : styles.hidden)}>
-              <_Dialog />
+            className={appendClassName(styles.fade,
+              (dialogData.visible) ? styles.visible : styles.hidden)}>
+            <_Dialog />
           </Fade>
         </Content>
       }
