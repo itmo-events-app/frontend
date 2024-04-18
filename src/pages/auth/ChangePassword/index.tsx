@@ -47,31 +47,41 @@ function ChangePasswordPage() {
 
   const _setOldPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length > PWD_MAX_LEN) {
+    const length = value.length;
+
+    if (length > PWD_MAX_LEN) {
       return;
     }
-    setOldPassword(e.target.value);
+
+    setOldPassword(value);
     setOldPasswordError('');
     setError('');
   }
 
   const _setNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length > PWD_MAX_LEN) {
+    const length = value.length;
+
+    if (length > PWD_MAX_LEN) {
       return;
     }
-    setNewPassword(e.target.value);
+
+    setNewPassword(value);
     setNewPasswordError('');
   }
 
   const _setConfirmNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length > PWD_MAX_LEN) {
+    const length = value.length;
+
+    if (length > PWD_MAX_LEN) {
       return;
     }
-    setConfirmNewPassword(e.target.value);
+
+    setConfirmNewPassword(value);
     setConfirmNewPasswordError('');
   }
+
 
   const _change = () => {
     let ok = true;
@@ -102,9 +112,6 @@ function ChangePasswordPage() {
       setNewPasswordError(eCngPwd);
       ok = false;
     }
-
-
-
 
     if (ok) {
       const request: UserChangePasswordRequest = {
