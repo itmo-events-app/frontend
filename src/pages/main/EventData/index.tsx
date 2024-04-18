@@ -865,17 +865,6 @@ function EventActivitiesPage() {
     }
   }
 
-  function fullVisit(persons: Person[]) {
-    for (const person of persons) {
-      if (!person.visited) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  const [allVisit, setAllVisit] = useState(fullVisit(participants));
-
   function createParticipantsTable(persons: Person[]) {
     const items = [];
 
