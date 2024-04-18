@@ -7,13 +7,13 @@ Edit `public/config.js` to pass urls to backends or mount file as a volume.
 ### Build
 
 ```sh
-docker compose build
+docker compose [--profile frontend] build
 ```
 
 ### Deploy
 
 ```sh
-docker compose up [-d]
+docker compose [--profile frontend] up [-d]
 ```
 
 Default port: `5573`
@@ -21,6 +21,6 @@ Default port: `5573`
 ### Down
 
 ```sh
-docker compose down [--volumes]
+docker compose [--profile frontend] down [--volumes]
 ```
 
