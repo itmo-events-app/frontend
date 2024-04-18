@@ -131,13 +131,12 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
             <div className={styles.place_form_item}>
               {/*<Label value="Долгота" />*/}
               <Input
-                type="number"
+                // type="number"
                 placeholder={'Долгота'}
                 value={String(latitude)}
                 onChange={(event) => {
                   setLatitude(Number(event.target.value));
                 }}
-                step={0.01}
                 min={-180}
                 max={180}
                 hidden={true}
@@ -147,11 +146,10 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               {/*<Label value="Широта" />*/}
               <Input
                 hidden={true}
-                type="number"
+                // type="number"
                 placeholder={'Широта'}
                 value={String(longitude)}
                 onChange={(event) => setLongitude(Number(event.target.value))}
-                step={0.01}
                 min={-90}
                 max={90}
               />
