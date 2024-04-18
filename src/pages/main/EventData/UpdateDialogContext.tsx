@@ -429,7 +429,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
                   className={errors.place?styles.input_error:''}>
             {placesLoaded ? (
               placeList.map((p) => {
-                return <option key={p.id} value={p.id}>{p.address}</option>;
+                return <option key={p.id} value={p.id}>{p.address}{p.room ? ", ауд. " + p.room : ""}</option>;
               })
             ) : (
               <option value=""></option>
