@@ -177,18 +177,21 @@ function ChangePasswordPage() {
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Старый пароль"/>
-            <Input value={oldPassword} onChange={_setOldPassword} error={oldPasswordError != ''}
-                   errorText={oldPasswordError}/>
+            <Input type="password"
+                   value={oldPassword} onChange={_setOldPassword}
+                   error={oldPasswordError != ''} errorText={oldPasswordError}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Новый пароль"/>
-            <Input value={newPassword} onChange={_setNewPassword} error={newPasswordError != ''}
-                   errorText={newPasswordError}/>
+            <Input type="password"
+                   value={newPassword} onChange={_setNewPassword}
+                   error={newPasswordError != ''} errorText={newPasswordError}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Подтверждение пароля"/>
-            <Input value={confirmNewPassword} onChange={_setConfirmNewPassword} error={confirmNewPasswordError != ''}
-                   errorText={confirmNewPasswordError}/>
+            <Input type="password"
+                   value={confirmNewPassword} onChange={_setConfirmNewPassword}
+                   error={confirmNewPasswordError != ''} errorText={confirmNewPasswordError}/>
           </div>
         </div>
         <Button onClick={_change}>Отправить</Button>

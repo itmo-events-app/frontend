@@ -157,11 +157,11 @@ function RecoverPasswordPage() {
         {(passwordRestoreToken) && <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Пароль"/>
-            <Input value={passwordValue} onChange={_passwordOnChange}/>
+            <Input type="password" value={passwordValue} onChange={_passwordOnChange}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Подтверждение пароля"/>
-            <Input value={repeatValue} onChange={_repeatOnChange}/>
+            <Input type="password" value={repeatValue} onChange={_repeatOnChange}/>
           </div>
         </div>}
         <Button onClick={_change}>Отправить</Button>
