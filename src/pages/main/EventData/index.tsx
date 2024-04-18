@@ -344,7 +344,7 @@ function EventActivitiesPage() {
       console.error('Error fetching event list:', error);
     }
   };
-  
+
   const [reloadPage, setReloadPage] = useState(0);
 
   useEffect(() => {
