@@ -192,7 +192,7 @@ function ChangePasswordPage() {
                    error={confirmNewPasswordError != ''} errorText={confirmNewPasswordError}/>
           </div>
           <div className={styles.form_item} style={{flexDirection: "row", marginTop: 10}}>
-            <Input type="checkbox" value={passwordVisible} onChange={() => setPasswordVisible(!passwordVisible)}/>
+            <Input type="checkbox" value={passwordVisible.toString()} onChange={() => setPasswordVisible(!passwordVisible)}/>
             <Label value="Показать пароль"/>
           </div>
         </div>
