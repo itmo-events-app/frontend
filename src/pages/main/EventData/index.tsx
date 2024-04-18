@@ -1,10 +1,10 @@
-import { uid } from 'uid';
-import { useContext, useEffect, useRef, useState } from 'react';
-import styles from './index.module.css';
-import BrandLogo from '@widgets/main/BrandLogo';
-import Layout from '@widgets/main/Layout';
-import PageName from '@widgets/main/PageName';
-import SideBar from '@widgets/main/SideBar';
+import { uid } from "uid";
+import { useContext, useEffect, useRef, useState } from "react";
+import styles from "./index.module.css";
+import BrandLogo from "@widgets/main/BrandLogo";
+import Layout from "@widgets/main/Layout";
+import PageName from "@widgets/main/PageName";
+import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
@@ -17,21 +17,20 @@ import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
-import { Gantt, Task } from 'gantt-task-react';
-import { getImageUrl } from '@shared/lib/image.ts';
-import ApiContext from '@features/api-context.ts';
-import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
-import 'gantt-task-react/dist/index.css';
+import { Gantt, Task } from "gantt-task-react";
+import { getImageUrl } from "@shared/lib/image.ts";
+import ApiContext from "@features/api-context.ts";
+import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
+import "gantt-task-react/dist/index.css";
 import {
   EventResponse,
   ParticipantPresenceRequest,
-  ParticipantResponse,
+  ParticipantResponse, SetPartisipantsListRequest,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
-import axios from 'axios';
 
 class EventInfo {
   regDates: string;
@@ -168,6 +167,14 @@ class DialogData {
   }
 }
 
+class ParticipantsListRequest implements SetPartisipantsListRequest {
+  participantsFile: File;
+
+  constructor(file: File) {
+    this.participantsFile = file;
+  }
+}
+
 enum VisitStatusList {
   TRUE = 'Да',
   FALSE = 'Нет'
@@ -276,7 +283,7 @@ function EventActivitiesPage() {
   const [activities, setActivities] = useState([] as Activity[]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
 
-  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
+  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>([]));
 
   const [orgs, setOrgs] = useState([] as OrgPerson[]);
   const [participants, setParticipants] = useState([] as Person[]);
@@ -337,6 +344,8 @@ function EventActivitiesPage() {
       console.error('Error fetching event list:', error);
     }
   };
+  
+  const [reloadPage, setReloadPage] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -434,7 +443,7 @@ function EventActivitiesPage() {
         exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
         importParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])),
         tasksVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)])),
-        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_ACTIVITIES)])),
+        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_INFO)])),
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
@@ -716,7 +725,6 @@ function EventActivitiesPage() {
     );
   }
 
-
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -732,10 +740,12 @@ function EventActivitiesPage() {
                 value={visitStatus.get(person.id)}
                 onChange={(status) => {
                   setVisitStatus(visitStatus.set(person.id, status));
+                  setReloadPage(reloadPage + 1);
+
                   if (id) {
                     api
                       .withReauth(() => api.participants.changePresence(idInt!,
-                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
+                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) === VisitStatusList.TRUE)))
                       .catch((error) => {
                         console.log(error);
                       });
@@ -825,31 +835,29 @@ function EventActivitiesPage() {
     }
   }
 
-  const [participantsFile, setParticipantsFile] = useState(new File([], ""));
 
   function handleFileChange(event: any) {
-    setParticipantsFile(event.target.files[0]);
-  }
+    event.preventDefault();
 
-  function handleFileSubmit(event: any) {
-    if (idInt != null) {
-      event.preventDefault()
-
-      const url = (window as any).ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
-      const formData = new FormData();
-
-      formData.append('file', participantsFile ?? "");
-      formData.append('fileName', participantsFile ? participantsFile.name : "file-not-found");
-
-      const config = {
-        headers: {
-          'content-type': 'multipart/form-data',
-        },
-      };
-
-      axios.post(url, formData, config).then((response) => {
-        console.log(response.data);
-      });
+    if (optionsPrivileges.importParticipants && idInt != null) {
+      api.participants
+        .setPartisipantsList(
+          idInt!,
+          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')),
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'multipart/form-data; boundary=AaBbCc'
+            }
+          }
+        )
+        .then((response) => {
+          console.log(response);
+          setReloadPage(reloadPage + 1);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        });
     }
   }
 
@@ -868,19 +876,22 @@ function EventActivitiesPage() {
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
                   </Button>
-                ) : (
+                 ) : (
                   <></>
                 )
               }
               {optionsPrivileges.importParticipants ?
                 (
-                  <form onSubmit={handleFileSubmit}>
+                  <>
+                    <label className={styles.file_input} htmlFor="uploadParticipants">Загрузить xlsx</label>
                     <input
+                      className={styles.file_input_actual}
                       type="file"
+                      name="participantsFile"
+                      id="uploadParticipants"
                       onChange={handleFileChange}
                     />
-                    <Button type="submit">Загрузить xlsx</Button>
-                  </form>
+                  </>
                 ) : (
                   <></>
                 )
@@ -950,7 +961,7 @@ function EventActivitiesPage() {
           console.log(error.response.data);
         });
     }
-  }, [idInt]);
+  }, [idInt, reloadPage]);
 
   const locc = 'cz';
 

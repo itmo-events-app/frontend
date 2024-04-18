@@ -51,6 +51,10 @@
   flex-wrap: wrap;
 }
 
+.button_reload {
+    margin-top: 8px;
+}
+
 .decline_button {
   background-color: var(--itmo-colors-decline-button-80);
 }

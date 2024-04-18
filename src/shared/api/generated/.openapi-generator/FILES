@@ -21,10 +21,11 @@ model/event-short-data-response.ts
 model/file-data-response.ts
 model/index.ts
 model/login-request.ts
+model/new-password-request.ts
 model/notification-page-response.ts
 model/notification-response.ts
 model/notification-settings-request.ts
-model/paginated-response-user-system-role-response.ts
+model/paginated-response-user-response.ts
 model/paginated-response.ts
 model/participant-presence-request.ts
 model/participant-response.ts
@@ -34,6 +35,7 @@ model/place-short-data-response.ts
 model/privilege-response.ts
 model/privilege-with-has-organizer-roles-response.ts
 model/profile-response.ts
+model/recovery-password-request.ts
 model/registration-request-for-admin.ts
 model/registration-user-request.ts
 model/role-request.ts
@@ -46,6 +48,6 @@ model/user-change-login-request.ts
 model/user-change-name-request.ts
 model/user-change-password-request.ts
 model/user-info-response.ts
+model/user-response.ts
 model/user-role-response.ts
 model/user-short-data-response.ts
-model/user-system-role-response.ts

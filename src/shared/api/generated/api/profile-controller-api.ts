@@ -24,7 +24,7 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, ope
 // @ts-ignore
 import { NotificationSettingsRequest } from '../model';
 // @ts-ignore
-import { PaginatedResponseUserSystemRoleResponse } from '../model';
+import { PaginatedResponseUserResponse } from '../model';
 // @ts-ignore
 import { PrivilegeResponse } from '../model';
 // @ts-ignore
@@ -416,7 +416,7 @@ export const ProfileControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllUsers(searchQuery?: string, page?: number, size?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedResponseUserSystemRoleResponse>> {
+        async getAllUsers(searchQuery?: string, page?: number, size?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedResponseUserResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAllUsers(searchQuery, page, size, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProfileControllerApi.getAllUsers']?.[index]?.url;
@@ -521,7 +521,7 @@ export const ProfileControllerApiFactory = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllUsers(searchQuery?: string, page?: number, size?: number, options?: any): AxiosPromise<PaginatedResponseUserSystemRoleResponse> {
+        getAllUsers(searchQuery?: string, page?: number, size?: number, options?: any): AxiosPromise<PaginatedResponseUserResponse> {
             return localVarFp.getAllUsers(searchQuery, page, size, options).then((request) => request(axios, basePath));
         },
         /**
