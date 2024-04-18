@@ -1,10 +1,10 @@
-import { uid } from 'uid';
-import { useContext, useEffect, useRef, useState } from 'react';
-import styles from './index.module.css';
-import BrandLogo from '@widgets/main/BrandLogo';
-import Layout from '@widgets/main/Layout';
-import PageName from '@widgets/main/PageName';
-import SideBar from '@widgets/main/SideBar';
+import { uid } from "uid";
+import { useContext, useEffect, useRef, useState } from "react";
+import styles from "./index.module.css";
+import BrandLogo from "@widgets/main/BrandLogo";
+import Layout from "@widgets/main/Layout";
+import PageName from "@widgets/main/PageName";
+import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RouteParams, RoutePaths } from "@shared/config/routes";
@@ -17,15 +17,15 @@ import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
-import { Gantt, Task } from 'gantt-task-react';
-import { getImageUrl } from '@shared/lib/image.ts';
-import ApiContext from '@features/api-context.ts';
-import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
-import 'gantt-task-react/dist/index.css';
+import { Gantt, Task } from "gantt-task-react";
+import { getImageUrl } from "@shared/lib/image.ts";
+import ApiContext from "@features/api-context.ts";
+import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
+import "gantt-task-react/dist/index.css";
 import {
   EventResponse,
   ParticipantPresenceRequest,
-  ParticipantResponse,
+  ParticipantResponse, SetPartisipantsListRequest,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
@@ -45,6 +45,7 @@ class EventInfo {
   status: string;
   eventName: string;
   description: string;
+  parent: number | undefined;
 
   constructor(
     regDates: string,
@@ -56,7 +57,8 @@ class EventInfo {
     status: string,
     ageRestriction: string,
     eventName: string,
-    description: string
+    description: string,
+    parent: number|undefined
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -68,6 +70,7 @@ class EventInfo {
     this.status = status;
     this.eventName = eventName;
     this.description = description;
+    this.parent = parent;
   }
 }
 
@@ -166,6 +169,14 @@ class DialogData {
   }
 }
 
+class ParticipantsListRequest implements SetPartisipantsListRequest {
+  participantsFile: File;
+
+  constructor(file: File) {
+    this.participantsFile = file;
+  }
+}
+
 enum VisitStatusList {
   TRUE = 'Да',
   FALSE = 'Нет'
@@ -219,7 +230,10 @@ const colors: string[] = [
   '#CC6666',
 ];
 
-function readDate(dateTime: string) {
+function readDate(dateTime: string | null | undefined) {
+  if(dateTime==undefined || dateTime=="" || dateTime==null){
+    return "";
+  }
   const date = new Date(dateTime);
   const formattedDate = date.toISOString().split('T')[0];
   return formattedDate
@@ -242,6 +256,7 @@ function getTimeOnly(dateTimeString: string) {
   const timeOnly = `${hours}:${minutes}:${seconds}`;
   return timeOnly;
 }
+
 
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
@@ -270,12 +285,69 @@ function EventActivitiesPage() {
   const [activities, setActivities] = useState([] as Activity[]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
 
-  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
+  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>([]));
 
   const [orgs, setOrgs] = useState([] as OrgPerson[]);
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
+  const getEvent = async () => {
+    if(idInt==null){
+      return;
+    }
+    try {
+      const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
+      if (eventResponse.status === 200) {
+        const data = eventResponse.data;
+        let placeAddress = 'Отсутствует'
+        if (data.placeId) {
+          const placeResponse = await api.place.placeGet(data.placeId ?? 0);
+          if (placeResponse.status == 200) {
+            placeAddress = placeResponse.data.address ?? '';
+          } else {
+            console.log(placeResponse.status);
+          }
+        }
+        let parent = undefined;
+        if(data.parent){
+          parent = data.parent;
+        }
+        const info = new EventInfo(
+          getIntervalString(data.registrationStart, data.registrationEnd),
+          getIntervalString(data.preparingStart, data.preparingEnd),
+          getIntervalString(data.startDate, data.endDate),
+          String(data.participantLimit),
+          placeAddress,
+          data.format ?? '',
+          data.status ?? '',
+          data.participantAgeLowest + ' - ' + data.participantAgeHighest,
+          data.title ?? '',
+          data.fullDescription ?? '',
+          parent
+        );
+        setEvent(info);
+        setEventResponse(data);
+        getImageUrl(String(idInt)).then((url) => {
+          if (url == '') {
+            setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
+          } else {
+            setEventImageUrl(url);
+          }
+        });
+        setLoadingEvent(false);
+      } else {
+        console.error('Error fetching event list:', eventResponse.statusText)
+      }
+    } catch (error: any) {
+      if (error.response.status == 404) {
+        navigate(RoutePaths.notFound);
+        return;
+      }
+      console.error('Error fetching event list:', error);
+    }
+  };
+  
+  const [reloadPage, setReloadPage] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -287,48 +359,6 @@ function EventActivitiesPage() {
     if (idInt == null) {
       return;
     }
-
-    const getEvent = async () => {
-      try {
-        const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
-        if (eventResponse.status === 200) {
-          const data = eventResponse.data;
-          let placeAddress = 'Отсутствует'
-          if (data.placeId) {
-            const placeResponse = await api.place.placeGet(data.placeId ?? 0);
-            if (placeResponse.status == 200) {
-              placeAddress = placeResponse.data.address ?? '';
-            } else {
-              console.log(placeResponse.status);
-            }
-          }
-
-          const info = new EventInfo(
-            getIntervalString(data.registrationStart, data.registrationEnd),
-            getIntervalString(data.preparingStart, data.preparingEnd),
-            getIntervalString(data.startDate, data.endDate),
-            String(data.participantLimit),
-            placeAddress,
-            data.format ?? '',
-            data.status ?? '',
-            data.participantAgeLowest + ' - ' + data.participantAgeHighest,
-            data.title ?? '',
-            data.fullDescription ?? ''
-          );
-          setEvent(info);
-          setEventResponse(data);
-        } else {
-          console.error('Error fetching event list:', eventResponse.statusText);
-
-        }
-      } catch (error: any) {
-        if (error.response.status == 404) {
-          navigate(RoutePaths.notFound);
-          return;
-        }
-        console.error('Error fetching event list:', error);
-      }
-    };
     getEvent();
     getImageUrl(String(idInt)).then((url) => {
       if (url == '') {
@@ -423,7 +453,7 @@ function EventActivitiesPage() {
         exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
         importParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])),
         tasksVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)])),
-        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_ACTIVITIES)])),
+        edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_INFO)])),
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
@@ -437,6 +467,7 @@ function EventActivitiesPage() {
     const tabs = [];
 
     tabs.push(new PageTab('Описание'));
+
 
     if (optionsPrivileges.activitiesVisible) {
       tabs.push(new PageTab('Активности'));
@@ -507,6 +538,10 @@ function EventActivitiesPage() {
   };
 
   const _closeDialog = () => {
+    getEvent();
+    if(idInt!=null) {
+      getActivities(idInt);
+    }
     setDialogData(new DialogData());
   };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -628,7 +663,6 @@ function EventActivitiesPage() {
 
   const _event = (id: string) => {
     navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
-    setTimeout(() => { location.reload() }, 500);
   }
 
   function _createActivity(activity: Activity) {
@@ -701,7 +735,6 @@ function EventActivitiesPage() {
     );
   }
 
-
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -717,10 +750,12 @@ function EventActivitiesPage() {
                 value={visitStatus.get(person.id)}
                 onChange={(status) => {
                   setVisitStatus(visitStatus.set(person.id, status));
+                  setReloadPage(reloadPage + 1);
+
                   if (id) {
                     api
                       .withReauth(() => api.participants.changePresence(idInt!,
-                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
+                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) === VisitStatusList.TRUE)))
                       .catch((error) => {
                         console.log(error);
                       });
@@ -810,31 +845,29 @@ function EventActivitiesPage() {
     }
   }
 
-  const [participantsFile, setParticipantsFile] = useState(new File([], ""));
 
   function handleFileChange(event: any) {
-    setParticipantsFile(event.target.files[0]);
-  }
+    event.preventDefault();
 
-  function handleFileSubmit(event: any) {
-    if (idInt != null) {
-      event.preventDefault()
-
-      const url = (window as any).ENV_BACKEND_API_URL + '/events/' + idInt + '/participants';
-      const formData = new FormData();
-
-      formData.append('file', participantsFile ?? "");
-      formData.append('fileName', participantsFile ? participantsFile.name : "file-not-found");
-
-      const config = {
-        headers: {
-          'content-type': 'multipart/form-data',
-        },
-      };
-
-      axios.post(url, formData, config).then((response) => {
-        console.log(response.data);
-      });
+    if (optionsPrivileges.importParticipants && idInt != null) {
+      api.participants
+        .setPartisipantsList(
+          idInt!,
+          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')),
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'multipart/form-data; boundary=AaBbCc'
+            }
+          }
+        )
+        .then((response) => {
+          console.log(response);
+          setReloadPage(reloadPage + 1);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        });
     }
   }
 
@@ -853,19 +886,22 @@ function EventActivitiesPage() {
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
                   </Button>
-                ) : (
+                 ) : (
                   <></>
                 )
               }
               {optionsPrivileges.importParticipants ?
                 (
-                  <form onSubmit={handleFileSubmit}>
+                  <>
+                    <label className={styles.file_input} htmlFor="uploadParticipants">Загрузить xlsx</label>
                     <input
+                      className={styles.file_input_actual}
                       type="file"
+                      name="participantsFile"
+                      id="uploadParticipants"
                       onChange={handleFileChange}
                     />
-                    <Button type="submit">Загрузить xlsx</Button>
-                  </form>
+                  </>
                 ) : (
                   <></>
                 )
@@ -935,7 +971,7 @@ function EventActivitiesPage() {
           console.log(error.response.data);
         });
     }
-  }, [idInt]);
+  }, [idInt, reloadPage]);
 
   const locc = 'cz';
 
@@ -977,7 +1013,7 @@ function EventActivitiesPage() {
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
-          <div className={styles.content}>
+          <div className={styles.content} id={idInt==null?(""):idInt.toString()}>
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}
             {selectedTab == 'Организаторы' && createOrgsTable(orgs)}

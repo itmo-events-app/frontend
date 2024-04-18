@@ -3,7 +3,8 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from '@pages/auth/Login';
 import RegisterPage from '@pages/auth/Register';
 import RestorePage from '@pages/auth/Restore';
-import PasswordPage from '@pages/auth/Password';
+import PasswordPage from '@pages/auth/RecoverPassword';
+import ChangePasswordPage from "@pages/auth/ChangePassword";
 import NotifyPage from '@pages/auth/Notification';
 import RoleListPage from '@pages/main/RoleList';
 import EventListPage from '@pages/main/EventListPage';
@@ -45,9 +46,13 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     path: RoutePaths.restore,
     authenticated: false,
   },
-  [AppRoutes.PASSWORD]: {
-    path: RoutePaths.password,
+  [AppRoutes.RECOVER_PASSWORD]: {
+    path: RoutePaths.recoverPassword,
     authenticated: false,
+  },
+  [AppRoutes.CHANGE_PASSWORD]: {
+    path: RoutePaths.changePassword,
+    authenticated: true,
   },
   [AppRoutes.NOTIFY]: {
     path: RoutePaths.notify,
@@ -56,10 +61,20 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
+      ])
+    ),
   },
   [AppRoutes.EVENT_DATA]: {
     path: RoutePaths.eventData,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
+      ])
+    ),
   },
   [AppRoutes.TASK_LIST]: {
     path: RoutePaths.taskList,
@@ -70,7 +85,7 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authenticated: true,
     authorized: anyPrivilege(
       new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
       ])
     ),
   },
@@ -79,7 +94,8 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authenticated: true,
     authorized: anyPrivilege(
       new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
+        new PrivilegeData(PrivilegeNames.VIEW_ROUTE_BETWEEN_ROOMS)
       ])
     ),
   },
@@ -139,8 +155,11 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.RESTORE]: {
     element: <RestorePage />,
   },
-  [AppRoutes.PASSWORD]: {
-    element: <PasswordPage />,
+  [AppRoutes.RECOVER_PASSWORD]: {
+    element: <PasswordPage/>,
+  },
+  [AppRoutes.CHANGE_PASSWORD]: {
+    element: <ChangePasswordPage/>,
   },
   [AppRoutes.NOTIFY]: {
     element: <NotifyPage />,

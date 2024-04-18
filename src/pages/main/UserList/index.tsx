@@ -11,19 +11,18 @@ import { uid } from 'uid';
 import { appendClassName } from '@shared/util.ts';
 import Search from '@widgets/main/Search';
 import Dialog from '@widgets/main/Dialog';
-import AssignDialogContent from '@pages/main/UserList/AssignDialogContent';
+import DialogContent from '@pages/main/UserList/DialogContent';
 import Fade from '@widgets/main/Fade';
 import ApiContext from '@features/api-context';
-import { toUserModel, UserModel } from '@entities/user';
+import {RoleGroup, toUserModel, UserModel} from '@entities/user';
 import { PrivilegeData } from '@entities/privilege-context';
 import { PrivilegeNames } from '@shared/config/privileges';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { hasAnyPrivilege } from '@features/privileges';
 import PrivilegeContext from '@features/privilege-context';
-import { MenuVertical } from '@shared/ui/icons';
-import RevokeDialogContent from '@pages/main/UserList/RevokeDialogContent';
+import {ArrowDown, MenuVertical} from '@shared/ui/icons';
 import MessageDialogContent from '@pages/main/UserList/MessageDialogContent';
-import {UserSystemRoleResponse} from "@shared/api/generated/model";
+import {UserResponse} from "@shared/api/generated/model";
 
 class ContextMenuData {
   clientX: number;
@@ -40,8 +39,10 @@ class ContextMenuData {
 
 enum DialogSelected {
   NONE,
-  ASSIGN,
-  REVOKE,
+  ASSIGN_SYSTEM,
+  REVOKE_SYSTEM,
+  ASSIGN_EVENT,
+  REVOKE_EVENT,
   MESSAGE,
 }
 
@@ -56,6 +57,16 @@ class DialogData {
   }
 }
 
+class UserElement {
+  entry: UserModel;
+  expanded: boolean;
+
+  constructor(entry: UserModel, expanded: boolean = false) {
+    this.entry = entry;
+    this.expanded = expanded;
+  }
+}
+
 const privilegeOthers = {
   assign: new Set([new PrivilegeData(PrivilegeNames.ASSIGN_SYSTEM_ROLE)]),
   revoke: new Set([new PrivilegeData(PrivilegeNames.REVOKE_SYSTEM_ROLE)]),
@@ -64,7 +75,7 @@ const privilegeOthers = {
 export default function UserListPage() {
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
-  const [users, setUsers] = useState([] as UserModel[]);
+  const [userElements, setUserElements] = useState([] as UserElement[]);
 
   const cmRef = useRef(null);
 
@@ -118,48 +129,179 @@ export default function UserListPage() {
   function _fetchUsers() {
     api.withReauth(() => api.profile.getAllUsers(searchQuery, page, size))
       .then(r => {
-        const l = r.data.items?.map((user: UserSystemRoleResponse) => toUserModel(user)) || [];
-        setUsers(l);
+        const l = r.data.items?.map((user: UserResponse) => new UserElement(toUserModel(user))) || [];
+        setUserElements(l);
       });
   }
 
-  const _renderedUserEntries: any[] = users.map((u) => {
-    return new PageEntry(() => {
-      return _renderUserEntry(u);
-    });
-  });
-
-  function _renderUserEntry(ue: UserModel) {
+  function _createRoleGroup(roleGroup: RoleGroup) {
     return (
-      <div key={uid()} className={styles.user}>
-        <div className={styles.user_entry}>
-          <div className={styles.user_left}>
-            <div className={styles.user_heading}>
-              <div className={styles.user_name}>
-                {ue.name} {ue.surname}
-              </div>
-              <div className={styles.user_role}>{ue.role}</div>
-            </div>
-            <div className={styles.user_login}>
-              {ue.loginType}: {ue.login}
-            </div>
-          </div>
-          <div className={styles.user_right}>
-            <div className={styles.read_button_container}>
-              {menuVisible ? (
-                <MenuVertical onClick={(e) => _onMenuClick(ue, e)} className={styles.icon_dots} />
-              ) : (
-                <div></div>
-              )}
-            </div>
-          </div>
+      <div key={uid()} className={styles.role_group}>
+        <div className={styles.role_group_name}>{roleGroup.name}</div>
+        <div className={styles.role_group_roles}>
+          {roleGroup.roles.map((role, index) => (
+            <div key={index}>{role}</div>
+          ))}
         </div>
       </div>
     );
   }
 
-  const _assignRoleToUser = (userId: number, roleId: number) => {
+  function _createRoleGroupList(roleGroups: RoleGroup[]) {
+    const res = [];
+    for (const group of roleGroups) {
+      res.push(_createRoleGroup(group));
+    }
+    return res;
+  }
+
+  const _renderedUserEntries: any[] = userElements.map((u) => {
+    return new PageEntry(() => {
+      return _renderUserEntry(u);
+    });
+  });
+
+  function _expand(tab: UserElement) {
+    return () => {
+      tab.expanded = !tab.expanded;
+      setUserElements([...userElements]);
+    };
+  }
+
+
+  function _renderUserEntry(ue: UserElement) {
+
+    return (
+      <div key={uid()} className={styles.user}>
+        <div className={styles.user_entry} >
+          <div className={styles.user_left}>
+            <div className={styles.user_heading}>
+              <div className={styles.user_name}>
+                {ue.entry.name} {ue.entry.surname}
+              </div>
+              {/*<div className={styles.user_role}>{ue.systemRoles}</div>*/}
+            </div>
+            <div className={styles.user_login}>
+              {ue.entry.loginType}: {ue.entry.login}
+            </div>
+          </div>
+          <div className={styles.user_right}>
+            <div className={styles.read_button_container}>
+              {menuVisible ? (
+                <MenuVertical onClick={(e) => _onMenuClick(ue.entry, e)} className={styles.icon_dots} />
+              ) : (
+                <div></div>
+              )}
+              <ArrowDown onClick={_expand(ue)} className={appendClassName(styles.icon_expand, ue.expanded ? styles.expanded : null)} />
+            </div>
+          </div>
+        </div>
+        {ue.expanded ? (
+          <div className={styles.role_groups}>{_createRoleGroupList(ue.entry.roleGroups ?? [])}</div>
+        ) : (
+          <></>
+        )}
+      </div>
+    );
+  }
+
+  const _assignRoleToUser = (userId: number, roleId: number, eventId: number) => {
+    if (eventId == 0) {
+      _assignSystemRole(userId, roleId)
+    } else {
+      switch (roleId) {
+        //magic numbers are default role ids
+        case 3:
+          _assignOrganizerRole(userId, eventId);
+          break;
+        case 4:
+          _assignAssistantRole(userId, eventId);
+          break;
+        default:
+          _assignOrganizationalRole(userId, roleId, eventId)
+          break;
+      }
+    }
+  }
+
+  function _assignSystemRole(userId: number, roleId: number) {
     api.withReauth(() => api.role.assignSystemRole(userId, roleId))
+      .then(_ => {
+        _fetchUsers()
+        setDialogData(new DialogData('Операция прошла успешно!',
+          DialogSelected.MESSAGE,
+          { messageText: 'Роль назначена пользователю!' }));
+      }).catch(error => {
+      setDialogData(new DialogData('Некорректная операция!',
+        DialogSelected.MESSAGE,
+        { messageText: error.response.data }));
+    })
+  }
+
+  function _assignOrganizationalRole(userId: number, roleId: number, eventId: number) {
+    api.withReauth(() => api.role.assignOrganizationalRole(userId, eventId, roleId))
+      .then(_ => {
+        _fetchUsers()
+        setDialogData(new DialogData('Операция прошла успешно!',
+          DialogSelected.MESSAGE,
+          { messageText: 'Роль назначена пользователю!' }));
+      }).catch(error => {
+      setDialogData(new DialogData('Некорректная операция!',
+        DialogSelected.MESSAGE,
+        { messageText: error.response.data }));
+    })
+  }
+
+  function _assignOrganizerRole(userId: number, eventId: number) {
+    api.withReauth(() => api.role.assignOrganizerRole(userId, eventId))
+      .then(_ => {
+        _fetchUsers()
+        setDialogData(new DialogData('Операция прошла успешно!',
+          DialogSelected.MESSAGE,
+          { messageText: 'Роль назначена пользователю!' }));
+      }).catch(error => {
+      setDialogData(new DialogData('Некорректная операция!',
+        DialogSelected.MESSAGE,
+        { messageText: error.response.data }));
+    })
+  }
+
+  function _assignAssistantRole(userId: number, eventId: number) {
+    api.withReauth(() => api.role.assignAssistantRole(userId, eventId))
+      .then(_ => {
+        _fetchUsers()
+        setDialogData(new DialogData('Операция прошла успешно!',
+          DialogSelected.MESSAGE,
+          { messageText: 'Роль назначена пользователю!' }));
+      }).catch(error => {
+      setDialogData(new DialogData('Некорректная операция!',
+        DialogSelected.MESSAGE,
+        { messageText: error.response.data }));
+    })
+  }
+
+  const _revokeRoleFromUser = (userId: number, roleId: number, eventId: number) => {
+
+    if (eventId == 0) {
+      _revokeSystemRole(userId, roleId)
+    } else {
+      switch (roleId) {
+        //magic numbers are default role ids
+        case 3:
+          _revokeOrganizerRole(userId, eventId);
+          break;
+        case 4:
+          _revokeAssistantRole(userId, eventId);
+          break;
+        default:
+          _revokeOrganizationalRole(userId, roleId, eventId)
+          break;
+      }
+    }
+  }
+
+  function _revokeSystemRole(userId: number, roleId: number) {
+    api.withReauth(() => api.role.revokeSystemRole(userId, roleId))
       .then(_ => {
         _fetchUsers()
         setDialogData(new DialogData('Операция прошла успешно!',
@@ -172,8 +314,36 @@ export default function UserListPage() {
     })
   }
 
-  const _revokeRoleFromUser = (userId: number) => {
-    api.withReauth(() => api.role.revokeSystemRole(userId))
+  function _revokeOrganizationalRole(userId: number, roleId: number, eventId: number) {
+    api.withReauth(() => api.role.revokeOrganizationalRole(userId, eventId, roleId))
+      .then(_ => {
+        _fetchUsers()
+        setDialogData(new DialogData('Операция прошла успешно!',
+          DialogSelected.MESSAGE,
+          { messageText: 'Роль пользователя отозвана.' }));
+      }).catch(error => {
+      setDialogData(new DialogData('Некорректная операция!',
+        DialogSelected.MESSAGE,
+        { messageText: error.response.data }));
+    })
+  }
+
+  function _revokeOrganizerRole(userId: number, eventId: number) {
+    api.withReauth(() => api.role.revokeOrganizerRole(userId, eventId))
+      .then(_ => {
+        _fetchUsers()
+        setDialogData(new DialogData('Операция прошла успешно!',
+          DialogSelected.MESSAGE,
+          { messageText: 'Роль пользователя отозвана.' }));
+      }).catch(error => {
+      setDialogData(new DialogData('Некорректная операция!',
+        DialogSelected.MESSAGE,
+        { messageText: error.response.data }));
+    })
+  }
+
+  function _revokeAssistantRole(userId: number, eventId: number) {
+    api.withReauth(() => api.role.revokeAssistantRole(userId, eventId))
       .then(_ => {
         _fetchUsers()
         setDialogData(new DialogData('Операция прошла успешно!',
@@ -201,11 +371,17 @@ export default function UserListPage() {
   const _Dialog = () => {
     let component = <></>;
     switch (dialogData.visible) {
-      case DialogSelected.ASSIGN:
-        component = <AssignDialogContent onDone={_assignRoleToUser} {...dialogData.args} />;
+      case DialogSelected.ASSIGN_SYSTEM:
+        component = <DialogContent onDone={_assignRoleToUser} isEvent={false} isRevoke={false} buttonText={"Назначить роль"} {...dialogData.args} />;
         break;
-      case DialogSelected.REVOKE:
-        component = <RevokeDialogContent onDone={_revokeRoleFromUser} {...dialogData.args} />;
+      case DialogSelected.REVOKE_SYSTEM:
+        component = <DialogContent onDone={_revokeRoleFromUser} isEvent={false} isRevoke={true} buttonText={"Отозвать роль"} {...dialogData.args} />;
+        break;
+      case DialogSelected.ASSIGN_EVENT:
+        component = <DialogContent onDone={_assignRoleToUser} isEvent={true} isRevoke={false} buttonText={"Назначить роль"} {...dialogData.args} />;
+        break;
+      case DialogSelected.REVOKE_EVENT:
+        component = <DialogContent onDone={_revokeRoleFromUser} isEvent={true} isRevoke={true} buttonText={"Отозвать роль"} {...dialogData.args} />;
         break;
       case DialogSelected.MESSAGE:
         component = <MessageDialogContent onDone={_closeDialog} {...dialogData.args} />;
@@ -234,14 +410,24 @@ export default function UserListPage() {
 
   const _onMenuClick = (user: UserModel, e: React.MouseEvent) => {
     const contextItems: ContextMenuItem[] = [
-      new ContextMenuItem('Назначить роль', (e: React.MouseEvent) => {
+      new ContextMenuItem('Назначить системную роль', (e: React.MouseEvent) => {
         setCmData({ ...cmData, visible: false });
-        setDialogData(new DialogData('Назначить роль', DialogSelected.ASSIGN, { userId: user.id }));
+        setDialogData(new DialogData('Назначить системную роль', DialogSelected.ASSIGN_SYSTEM, { userId: user.id }));
         e.stopPropagation();
       }),
-      new ContextMenuItem('Отозвать роль', () => {
+      new ContextMenuItem('Отозвать системную роль', () => {
         setCmData({ ...cmData, visible: false });
-        setDialogData(new DialogData('Отозвать роль', DialogSelected.REVOKE, { userId: user.id }));
+        setDialogData(new DialogData('Отозвать системную роль', DialogSelected.REVOKE_SYSTEM, { userId: user.id }));
+        e.stopPropagation();
+      }),
+      new ContextMenuItem('Назначить организационную роль', (e: React.MouseEvent) => {
+        setCmData({ ...cmData, visible: false });
+        setDialogData(new DialogData('Назначить организационную роль', DialogSelected.ASSIGN_EVENT, { userId: user.id }));
+        e.stopPropagation();
+      }),
+      new ContextMenuItem('Отозвать организационную роль', () => {
+        setCmData({ ...cmData, visible: false });
+        setDialogData(new DialogData('Отозвать организационную роль', DialogSelected.REVOKE_EVENT, { userId: user.id }));
         e.stopPropagation();
       }),
     ];
@@ -250,10 +436,14 @@ export default function UserListPage() {
 
     const filteredItems = contextItems.filter((item) => {
       switch (item.text) {
-        case 'Назначить роль':
+        case 'Назначить системную роль':
           return hasAnyPrivilege(mine, privilegeOthers.assign);
-        case 'Отозвать роль':
+        case 'Отозвать системную роль':
           return hasAnyPrivilege(mine, privilegeOthers.revoke);
+        case 'Назначить организационную роль':
+          return true;
+        case 'Отозвать организационную роль':
+          return true;
       }
     });
     e.stopPropagation();

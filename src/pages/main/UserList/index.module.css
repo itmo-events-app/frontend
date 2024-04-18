@@ -33,6 +33,7 @@
   display: flex;
   min-width: 250px;
   width: auto;
+  margin-bottom: 10px;
 }
 
 .dialog {
@@ -145,18 +146,40 @@
   cursor: pointer;
 }
 
-.disabled_button {
-  background-color: var(--itmo-colors-gray);
-  border-radius: 10px;
-  padding: 12px 30px;
-  color: var(--itmo-colors-black);
-  font-size: 16px;
-  font-weight: bold;
-  border-width: 0;
-  white-space: nowrap;
+.icon_expand {
+  width: 24px;
+  height: 24px;
+  user-select: none;
+  cursor: pointer;
 }
 
-.disabled_button {
-  background-color: var(--itmo-colors-gray);
-  cursor: not-allowed;
+.expanded {
+  transform: rotate(180deg);
+}
+
+.role_groups {
+  display: table;
+  table-layout: auto;
+  width: 100%;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.role_group {
+  display: table-row;
+}
+
+.role_group_name {
+  display: table-cell;
+  border-right: 1px solid var(--itmo-colors-border);
+  border-top: 1px solid var(--itmo-colors-border);
+  padding: 5px 10px;
+  width: 50%;
+}
+
+.role_group_roles {
+  display: table-cell;
+  border-top: 1px solid var(--itmo-colors-border);
+  padding: 5px 10px;
+  width: 50%;
 }
