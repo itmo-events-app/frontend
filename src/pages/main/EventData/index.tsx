@@ -31,6 +31,7 @@ import {
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Checkbox from "@widgets/main/Checkbox";
+import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
 
 class EventInfo {
   regDates: string;
@@ -56,7 +57,7 @@ class EventInfo {
     ageRestriction: string,
     eventName: string,
     description: string,
-    parent: number|undefined
+    parent: number | undefined
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -222,7 +223,7 @@ const colors: string[] = [
 ];
 
 function readDate(dateTime: string | null | undefined) {
-  if(dateTime==undefined || dateTime=="" || dateTime==null){
+  if (dateTime == undefined || dateTime == "" || dateTime == null) {
     return "";
   }
   const date = new Date(dateTime);
@@ -284,7 +285,7 @@ function EventActivitiesPage() {
   const [selectedTab, setSelectedTab] = useState('Описание');
 
   const getEvent = async () => {
-    if(idInt==null){
+    if (idInt == null) {
       return;
     }
     try {
@@ -301,7 +302,7 @@ function EventActivitiesPage() {
           }
         }
         let parent = undefined;
-        if(data.parent){
+        if (data.parent) {
           parent = data.parent;
         }
         const info = new EventInfo(
@@ -531,7 +532,7 @@ function EventActivitiesPage() {
 
   const _closeDialog = () => {
     getEvent();
-    if(idInt!=null) {
+    if (idInt != null) {
       getActivities(idInt);
     }
     setDialogData(new DialogData());
@@ -895,7 +896,7 @@ function EventActivitiesPage() {
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
                   </Button>
-                 ) : (
+                ) : (
                   <></>
                 )
               }
@@ -945,7 +946,7 @@ function EventActivitiesPage() {
               '' + user.id,
               user.name ?? '',
               user.surname ?? '',
-            user.login ?? '',
+              user.login ?? '',
               user.roleName ?? ''
             );
           });
@@ -1022,12 +1023,12 @@ function EventActivitiesPage() {
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
-          <div className={styles.content} id={idInt==null?(""):idInt.toString()}>
+          <div className={styles.content} id={idInt == null ? ("") : idInt.toString()}>
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}
             {selectedTab == 'Организаторы' && createOrgsTable(orgs)}
             {selectedTab == 'Участники' && createParticipantsTable(participants.sort(
-              (a: Person, b: Person) => {return (a.name > b.name) ? 1 : -1}
+              (a: Person, b: Person) => { return (a.name > b.name) ? 1 : -1 }
             ))}
             {selectedTab == 'Задачи' && _createTasksTable()}
           </div>
