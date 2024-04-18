@@ -113,7 +113,7 @@ function EventListPage() {
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
   const [searchValue, setSearchValue] = useState("");
-  
+
   const [pageProps, setPageProps] = useState<PageProps>({page:1,size:5,total:0});
   const [itemList, setItemList] = useState<PageEntry[]>([]);
 
@@ -190,7 +190,7 @@ function EventListPage() {
         component = <EventCreationPage onSubmit={()=>{
           _closeDialog();
           getEventList(1,pageProps.size);
-          }} 
+          }}
           {...dialogData.args}
         />;
         break;
@@ -296,8 +296,15 @@ function EventListPage() {
                 </div>
               </div>
             </div>
-            <div className={styles.event_list_container}>
-              <Pagination pageProps={pageProps} onPageChange={(page,size)=>getEventList(page,size)} items={itemList} pageSpread={1}/>
+            <div hidden={displayMode == DisplayModes.MAP}>
+              <div className={styles.event_list_container}>
+                <Pagination pageProps={pageProps} onPageChange={(page, size) => getEventList(page, size)}
+                            items={itemList} pageSpread={1} />
+              </div>
+            </div>
+            <div hidden={displayMode == DisplayModes.LIST}>
+              <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?off_clickable"
+                      width="100%" height="420px"></iframe>
             </div>
           </div>
           <Fade
