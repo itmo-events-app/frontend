@@ -40,24 +40,24 @@ function RecoverPasswordPage() {
   const [passwordValue, setPasswordValue] = useState('');
   const [repeatValue, setRepeatValue] = useState('');
   const [passwordRestoreToken, setPasswordRestoreToken] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
     const token = searchParams.get("token")
 
-    const eEmptyToken = _empty(token);
-    if (eEmptyToken) {
+    if (token == null || token.length == 0) {
       const state: NotifyState = {
-        msg: eEmptyToken
+        msg: NO_TOKEN_ERR_MSG
       };
       navigate(RoutePaths.notify, {state: state});
       return;
     }
 
     api.auth
-      .validateRecoveryToken(token!.toString())
+      .validateRecoveryToken(token)
       .then(() => {
         console.log("Token is valid!");
-        setPasswordRestoreToken(token!);
+        setPasswordRestoreToken(token);
       })
       .catch((e): any => {
         console.log(e.response.data);
@@ -90,17 +90,13 @@ function RecoverPasswordPage() {
     setError('');
 
     const ePassword = _validatePassword(passwordValue);
-    const eRepeat = _validatePassword(repeatValue);
     const eEqls = _validateConfirmation(passwordValue, repeatValue);
 
-    if (eEqls) {
-      setError(eEqls);
-      ok = false;
-    } else if (ePassword) {
+    if (ePassword) {
       setError(ePassword);
       ok = false;
-    } else if (eRepeat) {
-      setError(eRepeat);
+    } else if (eEqls) {
+      setError(eEqls);
       ok = false;
     }
 
@@ -124,13 +120,6 @@ function RecoverPasswordPage() {
           setError(FAIL_MESSAGE);
         });
     }
-  };
-
-  const _empty = (v: string | null) => {
-    if (v == null || v.length == 0) {
-      return NO_TOKEN_ERR_MSG;
-    }
-    return null;
   };
 
   const _validatePassword = (password: string) => {
@@ -165,11 +154,15 @@ function RecoverPasswordPage() {
         {(passwordRestoreToken) && <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Пароль"/>
-            <Input value={passwordValue} onChange={_passwordOnChange}/>
+            <Input type={passwordVisible ? "" : "password"} value={passwordValue} onChange={_passwordOnChange}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Подтверждение пароля"/>
-            <Input value={repeatValue} onChange={_repeatOnChange}/>
+            <Input type={passwordVisible ? "" : "password"} value={repeatValue} onChange={_repeatOnChange}/>
+          </div>
+          <div className={styles.form_item} style={{flexDirection: "row", marginTop: 10}}>
+            <Input type="checkbox" value={passwordVisible.toString()} onChange={() => setPasswordVisible(!passwordVisible)}/>
+            <Label value="Показать пароль"/>
           </div>
         </div>}
         <Button onClick={_change}>Отправить</Button>

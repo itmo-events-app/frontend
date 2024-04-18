@@ -30,7 +30,8 @@ import {
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
-import Dropdown from "@widgets/main/Dropdown";
+import Checkbox from "@widgets/main/Checkbox";
+import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
 
 class EventInfo {
   regDates: string;
@@ -56,7 +57,7 @@ class EventInfo {
     ageRestriction: string,
     eventName: string,
     description: string,
-    parent: number|undefined
+    parent: number | undefined
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -175,13 +176,6 @@ class ParticipantsListRequest implements SetPartisipantsListRequest {
   }
 }
 
-enum VisitStatusList {
-  TRUE = 'Да',
-  FALSE = 'Нет'
-}
-
-const userVisitStatus = Object.values(VisitStatusList);
-
 type OptionsPrivileges = {
   activitiesVisible: boolean,
   orgsVisible: boolean,
@@ -229,7 +223,7 @@ const colors: string[] = [
 ];
 
 function readDate(dateTime: string | null | undefined) {
-  if(dateTime==undefined || dateTime=="" || dateTime==null){
+  if (dateTime == undefined || dateTime == "" || dateTime == null) {
     return "";
   }
   const date = new Date(dateTime);
@@ -283,14 +277,15 @@ function EventActivitiesPage() {
   const [activities, setActivities] = useState([] as Activity[]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
 
-  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>([]));
+  const [visitStatus, setVisitStatus] = useState(new Map<string, boolean>([]));
 
   const [orgs, setOrgs] = useState([] as OrgPerson[]);
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
+
   const getEvent = async () => {
-    if(idInt==null){
+    if (idInt == null) {
       return;
     }
     try {
@@ -307,7 +302,7 @@ function EventActivitiesPage() {
           }
         }
         let parent = undefined;
-        if(data.parent){
+        if (data.parent) {
           parent = data.parent;
         }
         const info = new EventInfo(
@@ -529,7 +524,7 @@ function EventActivitiesPage() {
 
   const _closeDialog = () => {
     getEvent();
-    if(idInt!=null) {
+    if (idInt != null) {
       getActivities(idInt);
     }
     setDialogData(new DialogData());
@@ -545,7 +540,7 @@ function EventActivitiesPage() {
   function _createInfoPage(eventInfo: EventInfo) {
     return (
       <div className={styles.root}>
-        <div className={styles.image_box}>{<img className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
+        <div className={styles.image_box}>{<ImagePreview className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
         {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_updateEvent}>
@@ -725,6 +720,22 @@ function EventActivitiesPage() {
     );
   }
 
+  function setVisited(id: string, status: boolean) {
+    setVisitStatus(visitStatus.set(id, status));
+
+    if (id) {
+      api
+        .withReauth(() => api.participants.changePresence(idInt!,
+          new PersonVisitResponse(+id, visitStatus.get(id) ?? false)))
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
+
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -732,33 +743,19 @@ function EventActivitiesPage() {
         <td>{person.email}</td>
         <td>{person.info}</td>
         {optionsPrivileges.modifyVisitStatus ?
-          (
-            <td>
-              <Dropdown
-                placeholder="Явка"
-                items={userVisitStatus}
+          <td>
+            <div className={styles.visited_checkbox}>
+              <Checkbox
                 value={visitStatus.get(person.id)}
                 onChange={(status) => {
-                  setVisitStatus(visitStatus.set(person.id, status));
+                  setVisited(person.id, status);
                   setReloadPage(reloadPage + 1);
-
-                  if (id) {
-                    api
-                      .withReauth(() => api.participants.changePresence(idInt!,
-                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) === VisitStatusList.TRUE)))
-                      .catch((error) => {
-                        console.log(error);
-                      });
-                  }
-                }}
-                toText={(input: string) => {
-                  return input;
                 }}
               />
-            </td>
-          ) : (
-            <td>{person.visited ? 'Да' : 'Нет'}</td>
-          )
+            </div>
+          </td>
+          :
+          <td>{person.visited ? 'Да' : 'Нет'}</td>
         }
       </tr>
     );
@@ -827,14 +824,27 @@ function EventActivitiesPage() {
   function export_xlsx() {
     if (idInt != null) {
       api
-        .withReauth(() => api.participants.getParticipantsXlsxFile(idInt))
-        // Yars: TODO check if something is needed here
+        .withReauth(() => api.participants.getParticipantsXlsxFile(
+          idInt,
+          {
+            responseType: "arraybuffer"
+          })
+        )
+        .then((response) => {
+          const link = document.createElement("a");
+
+          link.href = window.URL.createObjectURL(new Blob([response.data], { type: "application/zip" }));
+          link.setAttribute("download", "participants_list.xlsx");
+          document.body.appendChild(link);
+          link.click();
+
+          if (link.parentNode) link.parentNode.removeChild(link);
+        })
         .catch((error) => {
           console.log(error);
         });
     }
   }
-
 
   function handleFileChange(event: any) {
     event.preventDefault();
@@ -863,7 +873,9 @@ function EventActivitiesPage() {
 
   function createParticipantsTable(persons: Person[]) {
     const items = [];
+
     for (const person of persons) {
+      visitStatus.set(person.id, person.visited);
       items.push(createPersonRow(person));
     }
     return (
@@ -876,7 +888,7 @@ function EventActivitiesPage() {
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
                   </Button>
-                 ) : (
+                ) : (
                   <></>
                 )
               }
@@ -1003,11 +1015,13 @@ function EventActivitiesPage() {
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
-          <div className={styles.content} id={idInt==null?(""):idInt.toString()}>
+          <div className={styles.content} id={idInt == null ? ("") : idInt.toString()}>
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}
             {selectedTab == 'Организаторы' && createOrgsTable(orgs)}
-            {selectedTab == 'Участники' && createParticipantsTable(participants)}
+            {selectedTab == 'Участники' && createParticipantsTable(participants.sort(
+              (a: Person, b: Person) => { return (a.name > b.name) ? 1 : -1 }
+            ))}
             {selectedTab == 'Задачи' && _createTasksTable()}
           </div>
           <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>

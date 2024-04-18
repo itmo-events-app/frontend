@@ -32,9 +32,16 @@
 .nav_button {
   display: flex;
   text-decoration: none;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   color: var(--itmo-colors-dark-gray);
+}
+
+.current_page {
+  font-weight: bold;
+  color: var(--itmo-colors-dark-gray);
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .nav_info {
@@ -54,14 +61,14 @@
 
 .nav_page_num {
   text-decoration: none;
-  font-size: 16px;
+  font-size: 18px;
   color: var(--itmo-colors-dark-gray);
   cursor: pointer;
 }
 
 .nav_page_num_selected {
   text-decoration: none;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   color: var(--itmo-colors-dark-gray);
 }
