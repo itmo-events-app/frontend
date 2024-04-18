@@ -58,8 +58,7 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authenticated: true,
     authorized: anyPrivilege(
       new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
-        new PrivilegeData(PrivilegeNames.CREATE_EVENT)
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
       ])
     ),
   },
@@ -68,16 +67,7 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authenticated: true,
     authorized: anyPrivilege(
       new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS),
-        new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES),
-        new PrivilegeData(PrivilegeNames.SEARCH_EVENTS_AND_ACTIVITIES),
-        new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS),
-        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS),
-        new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES),
-        new PrivilegeData(PrivilegeNames.EDIT_EVENT_INFO),
-        new PrivilegeData(PrivilegeNames.EDIT_EVENT_ACTIVITIES),
-        new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX),
-        new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
       ])
     ),
   },
@@ -127,11 +117,6 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.USER_LIST]: {
     path: RoutePaths.userList,
     authenticated: true,
-    authorized: anyPrivilege(
-      new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_OTHER_USERS_PROFILE)
-      ])
-    ),
   },
   [AppRoutes.NOTIFICATIONS]: {
     path: RoutePaths.notifications,
