@@ -16,7 +16,8 @@
 
 .notification_titles {
   font-weight: bold;
-  color: var(--itmo-colors-black);
+  color: var(--itmo-colors-blue);
+  cursor: pointer;
 }
 
 .notification_date_time {
@@ -33,8 +34,8 @@
 .notification_text {
   color: #333333;
   overflow-wrap: break-word; /* Ensures the break of long words if necessary */
-  word-wrap: break-word; /* Deprecated version of the above property for older browsers */
-  white-space: normal; /* Allows the text to wrap to the next line */
+  word-wrap: break-word;     /* Deprecated version of the above property for older browsers */
+  white-space: normal;       /* Allows the text to wrap to the next line */
 }
 
 .notification_read {

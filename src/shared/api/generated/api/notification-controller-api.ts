@@ -33,17 +33,47 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
     return {
         /**
          * 
-         * @summary Получение списка всех уведомлений
-         * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число уведомлений на странице
+         * @summary Получение количества уведомлений у пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getNotifications: async (page: number, size: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'page' is not null or undefined
-            assertParamExists('getNotifications', 'page', page)
-            // verify required parameter 'size' is not null or undefined
-            assertParamExists('getNotifications', 'size', size)
+        getNotSeenCountNotification: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/notifications/notSeenCount`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication BearerAuthentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получение списка всех уведомлений
+         * @param {number} [page] Номер страницы, с которой начать показ уведомлений
+         * @param {number} [size] Число уведомлений на странице
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getNotifications: async (page?: number, size?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/notifications`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -56,7 +86,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -82,16 +112,12 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
         /**
          * 
          * @summary Установка статуса прочитано у всех уведомлений
-         * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число уведомлений на странице
+         * @param {number} [page] Номер страницы, с которой начать показ уведомлений
+         * @param {number} [size] Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setAllAsSeenNotifications: async (page: number, size: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'page' is not null or undefined
-            assertParamExists('setAllAsSeenNotifications', 'page', page)
-            // verify required parameter 'size' is not null or undefined
-            assertParamExists('setAllAsSeenNotifications', 'size', size)
+        setAllAsSeenNotifications: async (page?: number, size?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/notifications`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -104,7 +130,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -150,7 +176,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -177,13 +203,25 @@ export const NotificationControllerApiFp = function(configuration?: Configuratio
     return {
         /**
          * 
-         * @summary Получение списка всех уведомлений
-         * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число уведомлений на странице
+         * @summary Получение количества уведомлений у пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getNotifications(page: number, size: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationPageResponse>> {
+        async getNotSeenCountNotification(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getNotSeenCountNotification(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['NotificationControllerApi.getNotSeenCountNotification']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Получение списка всех уведомлений
+         * @param {number} [page] Номер страницы, с которой начать показ уведомлений
+         * @param {number} [size] Число уведомлений на странице
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getNotifications(page?: number, size?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationPageResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getNotifications(page, size, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['NotificationControllerApi.getNotifications']?.[index]?.url;
@@ -192,12 +230,12 @@ export const NotificationControllerApiFp = function(configuration?: Configuratio
         /**
          * 
          * @summary Установка статуса прочитано у всех уведомлений
-         * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число уведомлений на странице
+         * @param {number} [page] Номер страницы, с которой начать показ уведомлений
+         * @param {number} [size] Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async setAllAsSeenNotifications(page: number, size: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<NotificationResponse>>> {
+        async setAllAsSeenNotifications(page?: number, size?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<NotificationResponse>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.setAllAsSeenNotifications(page, size, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['NotificationControllerApi.setAllAsSeenNotifications']?.[index]?.url;
@@ -228,24 +266,33 @@ export const NotificationControllerApiFactory = function (configuration?: Config
     return {
         /**
          * 
-         * @summary Получение списка всех уведомлений
-         * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число уведомлений на странице
+         * @summary Получение количества уведомлений у пользователя
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getNotifications(page: number, size: number, options?: any): AxiosPromise<NotificationPageResponse> {
+        getNotSeenCountNotification(options?: any): AxiosPromise<number> {
+            return localVarFp.getNotSeenCountNotification(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получение списка всех уведомлений
+         * @param {number} [page] Номер страницы, с которой начать показ уведомлений
+         * @param {number} [size] Число уведомлений на странице
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getNotifications(page?: number, size?: number, options?: any): AxiosPromise<NotificationPageResponse> {
             return localVarFp.getNotifications(page, size, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Установка статуса прочитано у всех уведомлений
-         * @param {number} page Номер страницы, с которой начать показ уведомлений
-         * @param {number} size Число уведомлений на странице
+         * @param {number} [page] Номер страницы, с которой начать показ уведомлений
+         * @param {number} [size] Число уведомлений на странице
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setAllAsSeenNotifications(page: number, size: number, options?: any): AxiosPromise<Array<NotificationResponse>> {
+        setAllAsSeenNotifications(page?: number, size?: number, options?: any): AxiosPromise<Array<NotificationResponse>> {
             return localVarFp.setAllAsSeenNotifications(page, size, options).then((request) => request(axios, basePath));
         },
         /**
@@ -270,27 +317,38 @@ export const NotificationControllerApiFactory = function (configuration?: Config
 export class NotificationControllerApi extends BaseAPI {
     /**
      * 
-     * @summary Получение списка всех уведомлений
-     * @param {number} page Номер страницы, с которой начать показ уведомлений
-     * @param {number} size Число уведомлений на странице
+     * @summary Получение количества уведомлений у пользователя
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof NotificationControllerApi
      */
-    public getNotifications(page: number, size: number, options?: AxiosRequestConfig) {
+    public getNotSeenCountNotification(options?: AxiosRequestConfig) {
+        return NotificationControllerApiFp(this.configuration).getNotSeenCountNotification(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получение списка всех уведомлений
+     * @param {number} [page] Номер страницы, с которой начать показ уведомлений
+     * @param {number} [size] Число уведомлений на странице
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NotificationControllerApi
+     */
+    public getNotifications(page?: number, size?: number, options?: AxiosRequestConfig) {
         return NotificationControllerApiFp(this.configuration).getNotifications(page, size, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Установка статуса прочитано у всех уведомлений
-     * @param {number} page Номер страницы, с которой начать показ уведомлений
-     * @param {number} size Число уведомлений на странице
+     * @param {number} [page] Номер страницы, с которой начать показ уведомлений
+     * @param {number} [size] Число уведомлений на странице
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof NotificationControllerApi
      */
-    public setAllAsSeenNotifications(page: number, size: number, options?: AxiosRequestConfig) {
+    public setAllAsSeenNotifications(page?: number, size?: number, options?: AxiosRequestConfig) {
         return NotificationControllerApiFp(this.configuration).setAllAsSeenNotifications(page, size, options).then((request) => request(this.axios, this.basePath));
     }
 
