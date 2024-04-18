@@ -44,20 +44,19 @@ function RecoverPasswordPage() {
   useEffect(() => {
     const token = searchParams.get("token")
 
-    const eEmptyToken = _empty(token);
-    if (eEmptyToken) {
+    if (token == null || token.length == 0) {
       const state: NotifyState = {
-        msg: eEmptyToken
+        msg: NO_TOKEN_ERR_MSG
       };
       navigate(RoutePaths.notify, {state: state});
       return;
     }
 
     api.auth
-      .validateRecoveryToken(token!.toString())
+      .validateRecoveryToken(token)
       .then(() => {
         console.log("Token is valid!");
-        setPasswordRestoreToken(token!);
+        setPasswordRestoreToken(token);
       })
       .catch((e): any => {
         console.log(e.response.data);
@@ -124,13 +123,6 @@ function RecoverPasswordPage() {
           setError(FAIL_MESSAGE);
         });
     }
-  };
-
-  const _empty = (v: string | null) => {
-    if (v == null || v.length == 0) {
-      return NO_TOKEN_ERR_MSG;
-    }
-    return null;
   };
 
   const _validatePassword = (password: string) => {
