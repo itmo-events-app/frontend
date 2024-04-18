@@ -1,6 +1,9 @@
 import styles from './index.module.css';
 import { ArrowDown } from '@shared/ui/icons';
 import { appendClassName } from '@shared/util';
+import { useEffect, useState } from "react";
+import { api } from "@shared/api";
+import { RoutePaths } from "@shared/config/routes.ts";
 
 class SideBarTab {
   text: string;
@@ -59,9 +62,38 @@ function SideBar(props: Props) {
     };
   }
 
+  // Exclusive shit-code for not-seen notifications until ??? (forever!)
+  // ----------
+  const [notSeenNotificationsCount, setNotSeenNotificationsCount] = useState(0)
+  // don't blame me, blame yourself
+  useEffect(() => {
+    api.notification.getNotSeenCountNotification()
+      .then(result => setNotSeenNotificationsCount(result.data));
+  }, []);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      api.notification.getNotSeenCountNotification()
+        .then(result => setNotSeenNotificationsCount(result.data));
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+  // ----------
+
+
   function _createTab(tab: SideBarTab) {
     const entryIcon = tab.icon ? <div className={styles.icon_cnt}>{tab.icon}</div> : <></>;
-    const entryText = <div className={styles.text_cnt}>{tab.text}</div>;
+    let entryText = <div className={styles.text_cnt}>{tab.text}</div>;
+
+    // Exclusive shit-code for not-seen notifications until ??? (forever!)
+    // ----------
+    if (tab.url === RoutePaths.notifications) {
+      if (notSeenNotificationsCount > 0) {
+        entryText = <div className={styles.text_cnt}>{tab.text} ({notSeenNotificationsCount})</div>
+      }
+    }
+    // ----------
+
     const entryArrow =
       tab.children.length > 0 ? (
         <ArrowDown className={appendClassName(styles.arrow, tab.expanded ? styles.arrow_down : styles.arrow_up)} />
