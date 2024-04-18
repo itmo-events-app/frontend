@@ -25,11 +25,11 @@ import "gantt-task-react/dist/index.css";
 import {
   EventResponse,
   ParticipantPresenceRequest,
-  ParticipantResponse,
-  TaskResponse,
-} from "@shared/api/generated/index.ts";
-import PrivilegeContext from "@features/privilege-context.ts";
-import { PrivilegeData } from "@entities/privilege-context.ts";
+  ParticipantResponse, SetPartisipantsListRequest,
+  TaskResponse
+} from '@shared/api/generated/index.ts';
+import PrivilegeContext from '@features/privilege-context.ts';
+import { PrivilegeData } from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
 
 class EventInfo {
@@ -167,6 +167,14 @@ class DialogData {
   }
 }
 
+class ParticipantsListRequest implements SetPartisipantsListRequest {
+  participantsFile: File;
+
+  constructor(file: File) {
+    this.participantsFile = file;
+  }
+}
+
 enum VisitStatusList {
   TRUE = 'Да',
   FALSE = 'Нет'
@@ -275,12 +283,14 @@ function EventActivitiesPage() {
   const [activities, setActivities] = useState([] as Activity[]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
 
-  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>);
+  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>([]));
 
   const [orgs, setOrgs] = useState([] as OrgPerson[]);
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
+  
+  const [reloadPage, setReloadPage] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -711,7 +721,6 @@ function EventActivitiesPage() {
     );
   }
 
-
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -727,10 +736,12 @@ function EventActivitiesPage() {
                 value={visitStatus.get(person.id)}
                 onChange={(status) => {
                   setVisitStatus(visitStatus.set(person.id, status));
+                  setReloadPage(reloadPage + 1);
+
                   if (id) {
                     api
                       .withReauth(() => api.participants.changePresence(idInt!,
-                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) == VisitStatusList.TRUE)))
+                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) === VisitStatusList.TRUE)))
                       .catch((error) => {
                         console.log(error);
                       });
@@ -820,29 +831,28 @@ function EventActivitiesPage() {
     }
   }
 
-  const [participantsFile, setParticipantsFile] = useState(new File([], ""));
 
   function handleFileChange(event: any) {
-    setParticipantsFile(event.target.files[0]);
-  }
+    event.preventDefault();
 
-  function handleFileSubmit(event: any) {
-    if (idInt != null) {
-      event.preventDefault()
-
-      const formData: FormData = new FormData();
-
-      formData.append('participantsFile', participantsFile ?? new File([], ''));
-
-      fetch((window as any).ENV_BACKEND_API_URL + '/api/events/' + idInt + '/participants', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data; boundary=AaBbCc'
-        },
-        body: formData
-      })
-        .then( (res) => {
-          console.log(res);
+    if (optionsPrivileges.importParticipants && idInt != null) {
+      api.participants
+        .setPartisipantsList(
+          idInt!,
+          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')),
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'multipart/form-data; boundary=AaBbCc'
+            }
+          }
+        )
+        .then((response) => {
+          console.log(response);
+          setReloadPage(reloadPage + 1);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
         });
     }
   }
@@ -862,20 +872,22 @@ function EventActivitiesPage() {
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
                   </Button>
-                ) : (
+                 ) : (
                   <></>
                 )
               }
               {optionsPrivileges.importParticipants ?
                 (
-                  <form method="post" onSubmit={handleFileSubmit}>
+                  <>
+                    <label className={styles.file_input} htmlFor="uploadParticipants">Загрузить xlsx</label>
                     <input
+                      className={styles.file_input_actual}
                       type="file"
                       name="participantsFile"
+                      id="uploadParticipants"
                       onChange={handleFileChange}
                     />
-                    <Button type="submit">Загрузить xlsx</Button>
-                  </form>
+                  </>
                 ) : (
                   <></>
                 )
@@ -945,7 +957,7 @@ function EventActivitiesPage() {
           console.log(error.response.data);
         });
     }
-  }, [idInt]);
+  }, [idInt, reloadPage]);
 
   const locc = 'cz';
 
