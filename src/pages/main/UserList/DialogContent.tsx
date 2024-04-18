@@ -9,6 +9,7 @@ import {createRoleRadioElementList, getSelectedRoleId} from "@widgets/main/RoleL
 import {PrivilegeNames} from "@shared/config/privileges";
 import {EventResponse} from "@shared/api/generated/model";
 import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
+import {toRoleModel} from "@entities/role";
 
 
 type AssignProps = {
