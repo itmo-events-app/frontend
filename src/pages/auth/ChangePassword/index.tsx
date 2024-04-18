@@ -101,13 +101,9 @@ function ChangePasswordPage() {
       ok = false;
     }
 
-    const eConfPwd = _validatePassword(confirmNewPassword);
     const eEqlPwd = _validateConfirmation(newPassword, confirmNewPassword);
     const eCngPwd = _validatePwdChange(oldPassword, newPassword);
-    if (eConfPwd) {
-      setConfirmNewPasswordError(eConfPwd);
-      ok = false;
-    } else if (eEqlPwd) {
+    if (eEqlPwd) {
       setConfirmNewPasswordError(eEqlPwd);
       ok = false;
     } else if (eCngPwd) {

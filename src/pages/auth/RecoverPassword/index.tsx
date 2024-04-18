@@ -90,17 +90,13 @@ function RecoverPasswordPage() {
     setError('');
 
     const ePassword = _validatePassword(passwordValue);
-    const eRepeat = _validatePassword(repeatValue);
     const eEqls = _validateConfirmation(passwordValue, repeatValue);
 
-    if (eEqls) {
-      setError(eEqls);
-      ok = false;
-    } else if (ePassword) {
+    if (ePassword) {
       setError(ePassword);
       ok = false;
-    } else if (eRepeat) {
-      setError(eRepeat);
+    } else if (eEqls) {
+      setError(eEqls);
       ok = false;
     }
 
