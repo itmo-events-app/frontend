@@ -32,5 +32,11 @@ export interface FileDataResponse {
      * @memberof FileDataResponse
      */
     'presignedUrl'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FileDataResponse
+     */
+    'unsignedUrl'?: string;
 }
 

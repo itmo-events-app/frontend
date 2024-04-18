@@ -22,7 +22,6 @@ export * from './registration-request-for-admin';
 export * from './registration-user-request';
 export * from './role-request';
 export * from './role-response';
-export * from './set-partisipants-list-request';
 export * from './task-request';
 export * from './task-response';
 export * from './upload-files-request';

@@ -25,13 +25,14 @@ import "gantt-task-react/dist/index.css";
 import {
   EventResponse,
   ParticipantPresenceRequest,
-  ParticipantResponse, SetPartisipantsListRequest,
+  ParticipantResponse,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Checkbox from "@widgets/main/Checkbox";
 import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
+import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partisipants-list-request.ts";
 
 class EventInfo {
   regDates: string;
@@ -572,36 +573,36 @@ function EventActivitiesPage() {
           </div>
           <table className={styles.table}>
             <tbody>
-              <tr>
-                <td>Сроки регистрации</td>
-                <td>
-                  <div>{eventInfo.regDates}</div>
-                </td>
-              </tr>
-              <tr>
-                <td>Сроки проведения</td>
-                <td>{eventInfo.eventDates}</td>
-              </tr>
-              <tr>
-                <td>Сроки подготовки</td>
-                <td>{eventInfo.prepDates}</td>
-              </tr>
-              <tr>
-                <td>Количество мест</td>
-                <td>{eventInfo.vacantSlots}</td>
-              </tr>
-              <tr>
-                <td>Формат проведения</td>
-                <td>{eventInfo.format}</td>
-              </tr>
-              <tr>
-                <td>Статус</td>
-                <td>{eventInfo.status}</td>
-              </tr>
-              <tr>
-                <td>Возрастное ограничение</td>
-                <td>{eventInfo.ageRestriction}</td>
-              </tr>
+            <tr>
+              <td>Сроки регистрации</td>
+              <td>
+                <div>{eventInfo.regDates}</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Сроки проведения</td>
+              <td>{eventInfo.eventDates}</td>
+            </tr>
+            <tr>
+              <td>Сроки подготовки</td>
+              <td>{eventInfo.prepDates}</td>
+            </tr>
+            <tr>
+              <td>Количество мест</td>
+              <td>{eventInfo.vacantSlots}</td>
+            </tr>
+            <tr>
+              <td>Формат проведения</td>
+              <td>{eventInfo.format}</td>
+            </tr>
+            <tr>
+              <td>Статус</td>
+              <td>{eventInfo.status}</td>
+            </tr>
+            <tr>
+              <td>Возрастное ограничение</td>
+              <td>{eventInfo.ageRestriction}</td>
+            </tr>
             </tbody>
           </table>
         </div>
@@ -703,9 +704,9 @@ function EventActivitiesPage() {
           </div>
         ) : (<></>)}
         {activitiesLoaded ? (
-          <div className={styles.data_list}>
-            {items}
-          </div>)
+            <div className={styles.data_list}>
+              {items}
+            </div>)
           :
           (
             <div />
@@ -817,11 +818,11 @@ function EventActivitiesPage() {
         )}
         <table className={styles.table}>
           <thead>
-            <tr>
-              <th>Роль</th>
-              <th>Имя</th>
-              <th>Email</th>
-            </tr>
+          <tr>
+            <th>Роль</th>
+            <th>Имя</th>
+            <th>Email</th>
+          </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>
@@ -861,7 +862,7 @@ function EventActivitiesPage() {
       api.participants
         .setPartisipantsList(
           idInt!,
-          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')),
+          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')).participantsFile,
           {
             method: 'POST',
             headers: {
@@ -923,12 +924,12 @@ function EventActivitiesPage() {
         }
         <table className={styles.table}>
           <thead>
-            <tr>
-              <th>Имя</th>
-              <th>Email</th>
-              <th>Комментарий</th>
-              <th>Явка</th>
-            </tr>
+          <tr>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Комментарий</th>
+            <th>Явка</th>
+          </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>

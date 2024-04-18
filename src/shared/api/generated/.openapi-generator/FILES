@@ -40,7 +40,6 @@ model/registration-request-for-admin.ts
 model/registration-user-request.ts
 model/role-request.ts
 model/role-response.ts
-model/set-partisipants-list-request.ts
 model/task-request.ts
 model/task-response.ts
 model/upload-files-request.ts
