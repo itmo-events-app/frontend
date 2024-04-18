@@ -1,13 +1,12 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from './index.module.css'
 import BrandLogo from "@widgets/main/BrandLogo";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
 import { RoutePaths } from "@shared/config/routes.ts";
 import Content from "@widgets/main/Content";
-import PagedList, { PageEntry } from "@widgets/main/PagedList";
+import { PageEntry } from "@widgets/main/PagedList";
 import Layout from "@widgets/main/Layout";
-import { uid } from "uid";
 import Button from "@widgets/main/Button";
 import { appendClassName, formatDateTime, truncateTextByWords } from "@shared/util.ts";
 import { ArrowDown } from "@shared/ui/icons";
