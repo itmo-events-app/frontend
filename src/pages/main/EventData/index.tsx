@@ -289,6 +289,61 @@ function EventActivitiesPage() {
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
+  const getEvent = async () => {
+    if(idInt==null){
+      return;
+    }
+    try {
+      const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
+      if (eventResponse.status === 200) {
+        const data = eventResponse.data;
+        let placeAddress = 'Отсутствует'
+        if (data.placeId) {
+          const placeResponse = await api.place.placeGet(data.placeId ?? 0);
+          if (placeResponse.status == 200) {
+            placeAddress = placeResponse.data.address ?? '';
+          } else {
+            console.log(placeResponse.status);
+          }
+        }
+        let parent = undefined;
+        if(data.parent){
+          parent = data.parent;
+        }
+        const info = new EventInfo(
+          getIntervalString(data.registrationStart, data.registrationEnd),
+          getIntervalString(data.preparingStart, data.preparingEnd),
+          getIntervalString(data.startDate, data.endDate),
+          String(data.participantLimit),
+          placeAddress,
+          data.format ?? '',
+          data.status ?? '',
+          data.participantAgeLowest + ' - ' + data.participantAgeHighest,
+          data.title ?? '',
+          data.fullDescription ?? '',
+          parent
+        );
+        setEvent(info);
+        setEventResponse(data);
+        getImageUrl(String(idInt)).then((url) => {
+          if (url == '') {
+            setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
+          } else {
+            setEventImageUrl(url);
+          }
+        });
+        setLoadingEvent(false);
+      } else {
+        console.error('Error fetching event list:', eventResponse.statusText)
+      }
+    } catch (error: any) {
+      if (error.response.status == 404) {
+        navigate(RoutePaths.notFound);
+        return;
+      }
+      console.error('Error fetching event list:', error);
+    }
+  };
   
   const [reloadPage, setReloadPage] = useState(0);
 
@@ -302,61 +357,7 @@ function EventActivitiesPage() {
     if (idInt == null) {
       return;
     }
-
-    const getEvent = async () => {
-      try {
-        const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
-        if (eventResponse.status === 200) {
-          const data = eventResponse.data;
-          let placeAddress = 'Отсутствует'
-          if (data.placeId) {
-            const placeResponse = await api.place.placeGet(data.placeId ?? 0);
-            if (placeResponse.status == 200) {
-              placeAddress = placeResponse.data.address ?? '';
-            } else {
-              console.log(placeResponse.status);
-            }
-          }
-          let parent = undefined;
-          if(data.parent){
-            parent = data.parent;
-          }
-          const info = new EventInfo(
-            getIntervalString(data.registrationStart, data.registrationEnd),
-            getIntervalString(data.preparingStart, data.preparingEnd),
-            getIntervalString(data.startDate, data.endDate),
-            String(data.participantLimit),
-            placeAddress,
-            data.format ?? '',
-            data.status ?? '',
-            data.participantAgeLowest + ' - ' + data.participantAgeHighest,
-            data.title ?? '',
-            data.fullDescription ?? '',
-            parent
-          );
-          setEvent(info);
-          setEventResponse(data);
-        } else {
-          console.error('Error fetching event list:', eventResponse.statusText);
-
-        }
-      } catch (error: any) {
-        if (error.response.status == 404) {
-          navigate(RoutePaths.notFound);
-          return;
-        }
-        console.error('Error fetching event list:', error);
-      }
-    };
     getEvent();
-    getImageUrl(String(idInt)).then((url) => {
-      if (url == '') {
-        setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
-      } else {
-        setEventImageUrl(url);
-      }
-    });
-    setLoadingEvent(false);
   }, [idInt]);
 
   useEffect(() => {
@@ -527,6 +528,10 @@ function EventActivitiesPage() {
   };
 
   const _closeDialog = () => {
+    getEvent();
+    if(idInt!=null) {
+      getActivities(idInt);
+    }
     setDialogData(new DialogData());
   };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -648,7 +653,6 @@ function EventActivitiesPage() {
 
   const _event = (id: string) => {
     navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
-    setTimeout(() => { location.reload() }, 500);
   }
 
   function _createActivity(activity: Activity) {
@@ -999,7 +1003,7 @@ function EventActivitiesPage() {
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
-          <div className={styles.content}>
+          <div className={styles.content} id={idInt==null?(""):idInt.toString()}>
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}
             {selectedTab == 'Организаторы' && createOrgsTable(orgs)}

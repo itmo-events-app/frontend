@@ -152,6 +152,10 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       errorsInput ={...errorsInput, participantLowestAge : true};
       readErrorText = {...readErrorText, participantLowestAge: "Минимальный возраст должен быть меньше, чем максимальный"};
       result = false;
+    }else if(participantLowestAge > 150){
+      errorsInput ={...errorsInput, participantLowestAge : true};
+      readErrorText = {...readErrorText, participantLowestAge: "Минимальный возраст участников не может быть больше 150"};
+      result = false;
     }
 
     if(participantHighestAge == null){
@@ -166,6 +170,10 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     }else if(participantLowestAge != null && participantHighestAge<= participantLowestAge){
       errorsInput ={...errorsInput, participantHighestAge : true};
       readErrorText = {...readErrorText, participantHighestAge: "Максимальный возраст должен быть больше, чем минимальный возраст"};
+      result = false;
+    }else if(participantHighestAge>150){
+      errorsInput ={...errorsInput, participantHighestAge : true};
+      readErrorText = {...readErrorText, participantHighestAge: "Максимальный возраст участников не может быть больше 150"};
       result = false;
     }
 
@@ -351,7 +359,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       );
     if (result.status == 200) {
       onSubmit();
-      setTimeout(() => { location.reload() }, 500);
     } else {
       console.log(result.status);
     }
