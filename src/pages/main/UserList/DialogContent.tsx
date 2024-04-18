@@ -3,7 +3,6 @@ import {useContext, useEffect, useState} from 'react';
 
 import styles from './index.module.css'
 import Button from "@widgets/main/Button";
-import {RoleModelType, toRoleModel} from "@entities/role";
 import ApiContext from "@features/api-context";
 import RoleListRadio, {RoleRadioElement} from "@widgets/main/RoleListRadio";
 import {createRoleRadioElementList, getSelectedRoleId} from "@widgets/main/RoleListRadio/common";
