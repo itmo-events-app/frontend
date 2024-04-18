@@ -40,6 +40,7 @@ function RecoverPasswordPage() {
   const [passwordValue, setPasswordValue] = useState('');
   const [repeatValue, setRepeatValue] = useState('');
   const [passwordRestoreToken, setPasswordRestoreToken] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
     const token = searchParams.get("token")
@@ -157,11 +158,15 @@ function RecoverPasswordPage() {
         {(passwordRestoreToken) && <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Пароль"/>
-            <Input type="password" value={passwordValue} onChange={_passwordOnChange}/>
+            <Input type={passwordVisible ? "" : "password"} value={passwordValue} onChange={_passwordOnChange}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Подтверждение пароля"/>
-            <Input type="password" value={repeatValue} onChange={_repeatOnChange}/>
+            <Input type={passwordVisible ? "" : "password"} value={repeatValue} onChange={_repeatOnChange}/>
+          </div>
+          <div className={styles.form_item} style={{flexDirection: "row", marginTop: 10}}>
+            <Input type="checkbox" value={passwordVisible} onChange={() => setPasswordVisible(!passwordVisible)}/>
+            <Label value="Показать пароль"/>
           </div>
         </div>}
         <Button onClick={_change}>Отправить</Button>

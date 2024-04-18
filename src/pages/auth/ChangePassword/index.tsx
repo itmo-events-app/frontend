@@ -44,6 +44,8 @@ function ChangePasswordPage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
 
   const _setOldPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -177,21 +179,25 @@ function ChangePasswordPage() {
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Старый пароль"/>
-            <Input type="password"
+            <Input type={passwordVisible ? "" : "password"}
                    value={oldPassword} onChange={_setOldPassword}
                    error={oldPasswordError != ''} errorText={oldPasswordError}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Новый пароль"/>
-            <Input type="password"
+            <Input type={passwordVisible ? "" : "password"}
                    value={newPassword} onChange={_setNewPassword}
                    error={newPasswordError != ''} errorText={newPasswordError}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Подтверждение пароля"/>
-            <Input type="password"
+            <Input type={passwordVisible ? "" : "password"}
                    value={confirmNewPassword} onChange={_setConfirmNewPassword}
                    error={confirmNewPasswordError != ''} errorText={confirmNewPasswordError}/>
+          </div>
+          <div className={styles.form_item} style={{flexDirection: "row", marginTop: 10}}>
+            <Input type="checkbox" value={passwordVisible} onChange={() => setPasswordVisible(!passwordVisible)}/>
+            <Label value="Показать пароль"/>
           </div>
         </div>
         <Button onClick={_change}>Отправить</Button>
