@@ -81,7 +81,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
       reminderString!
     ).then(()=>onClose());
   }
-
+//
 
   return (
     <div className={styles.dialog_task} onClick={onClose}>
