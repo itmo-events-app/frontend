@@ -121,7 +121,7 @@ function EventListPage() {
   const [pageProps, setPageProps] = useState<PageProps>({ page: 1, size: 5, total: 0 });
   const [itemList, setItemList] = useState<PageEntry[]>([]);
 
-  const [privilegeCreateEvent, setPrivilegeCreateEvent] = useState(false);
+  const [_, setPrivilegeCreateEvent] = useState(false);
 
   useEffect(() => {
     if (privilegeContext.isSystemPrivilegesLoaded()) {

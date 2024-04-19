@@ -210,6 +210,8 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   tasksVisible: false,
   edit: false,
   addOrganizer: false,
+  editOrganizer: false,
+  deleteOrganizer: false,
   addHelper: false,
   addActivity: false,
   deleteActivity: false
@@ -460,6 +462,8 @@ function EventActivitiesPage() {
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
         deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
+        editOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)])),
+        deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)]))
       })
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -568,7 +572,7 @@ function EventActivitiesPage() {
       getActivities(idInt);
     }
     setDialogData(new DialogData());
-   
+
   };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
@@ -857,7 +861,7 @@ function EventActivitiesPage() {
           <></>
         )}
        </div>
-        
+
         <table className={styles.table}>
           <thead>
           <tr>
