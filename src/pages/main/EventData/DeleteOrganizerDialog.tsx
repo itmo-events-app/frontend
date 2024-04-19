@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
 import { RoleResponse, UserResponse } from '@shared/api/generated';
 
-const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: () => void }) => {
+const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelete: () => void }) => {
   const [userList, setUserList] = useState([] as UserResponse[]);
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
@@ -17,8 +17,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
 
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
-    // const getAllRoles = await api.role.getAllRoles();
-    const getAllRoles = await api.role.getOrganizationalRoles();
+    const getAllRoles = await api.role.getAllRoles();
     if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
       const items = getUsersResponse.data.items;
       setUserList(items ?? []);
@@ -40,31 +39,31 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
     setLoaded(true);
   }, []);
 
-  const handleAddOrganizer = async () => {
+  const handleDeleteOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
     if (roleName == 'Организатор') {
-      const result = await api.role.assignOrganizerRole(userId!, eventId);
+      const result = await api.role.revokeOrganizerRole(userId!, eventId);
       if (result.status != 204) {
         console.log(result.status);
       } else {
-        onSubmit();
+        onDelete();
         window.location.reload();
       }
     } else if (roleName == 'Помощник') {
-      const result = await api.role.assignAssistantRole(userId!, eventId);
+      const result = await api.role.revokeAssistantRole(userId!, eventId);
       if (result.status != 204) {
         console.log(result.status);
       } else {
-        onSubmit();
+        onDelete();
         window.location.reload();
       }
     } else {
-      const result = await api.role.assignOrganizationalRole(userId!, eventId, roleId!);
+      const result = await api.role.revokeOrganizationalRole(userId!, eventId, roleId!);
       if (result.status != 204) {
         console.log(result.status);
       } else {
-        onSubmit();
+        onDelete();
         window.location.reload();
       }
     }
@@ -104,9 +103,9 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
           )}
         </select>
       </div>
-      <Button onClick={handleAddOrganizer}>Добавить</Button>
+      <Button onClick={handleDeleteOrganizer}>Удалить</Button>
     </div>
   );
 };
 
-export default AddOrganizerDialog;
+export default DeleteOrganizerDialog;
