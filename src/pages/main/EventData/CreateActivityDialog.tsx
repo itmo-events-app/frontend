@@ -15,8 +15,8 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
   const [title, setTitle] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [fullDescription, setFullDescription] = useState('');
-  const [format, setFormat] = useState<AddActivityFormatEnum>(AddActivityFormatEnum.Offline);
-  const [status, setStatus] = useState<AddActivityStatusEnum>(AddActivityStatusEnum.Published);
+  const [format, setFormat] = useState<AddActivityFormatEnum>(Object.entries(AddActivityFormatEnum)[0][1]);
+  const [status, setStatus] = useState<AddActivityStatusEnum>(Object.entries(AddActivityStatusEnum)[0][1]);
   const [registrationStart, setRegistrationStart] = useState<Date | null>(new Date());
   const [registrationEnd, setRegistrationEnd] = useState<Date | null>(new Date());
   const [participantLimit, setParticipantLimit] = useState(1);
@@ -95,6 +95,10 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
       errorsInput ={...errorsInput, participantLowestAge : true};
       readErrorText = {...readErrorText, participantLowestAge: "Минимальный возраст должен быть меньше, чем максимальный"};
       result = false;
+    }else if(participantLowestAge > 150){
+      errorsInput ={...errorsInput, participantLowestAge : true};
+      readErrorText = {...readErrorText, participantLowestAge: "Минимальный возраст участников не может быть больше 150"};
+      result = false;
     }
 
     if(participantHighestAge == null){
@@ -109,6 +113,10 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
     }else if(participantLowestAge != null && participantHighestAge<= participantLowestAge){
       errorsInput ={...errorsInput, participantHighestAge : true};
       readErrorText = {...readErrorText, participantHighestAge: "Максимальный возраст должен быть больше, чем минимальный возраст"};
+      result = false;
+    }else if(participantHighestAge>150){
+      errorsInput ={...errorsInput, participantHighestAge : true};
+      readErrorText = {...readErrorText, participantHighestAge: "Максимальный возраст участников не может быть больше 150"};
       result = false;
     }
 
@@ -349,21 +357,42 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
           <InputLabel value="Максимальное количество участников" />
           <Input
             value={String(participantLimit) ?? ''}
-            onChange={(e) => setParticipantLimit(parseInt(e.target.value))}
+            onChange={(e) => {
+                if(parseInt(e.target.value)){
+                  setParticipantLimit(parseInt(e.target.value))
+                }else{
+                  setParticipantLimit(1);
+                }
+              }
+            }
             errorText={errorsText.participantLimit??''}/>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
           <Input
             value={String(participantHighestAge)}
-            onChange={(e) => setParticipantHighestAge(parseInt(e.target.value))}
+            onChange={(e) => {
+                if(parseInt(e.target.value)){
+                  setParticipantHighestAge(parseInt(e.target.value))
+                }else{
+                  setParticipantHighestAge(1);
+                }
+              }
+            }
             errorText={errorsText.participantHighestAge??''}/>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
           <Input
             value={String(participantLowestAge)}
-            onChange={(e) => setParticipantLowestAge(parseInt(e.target.value))}
+            onChange={(e) => {
+                if(parseInt(e.target.value)){
+                  setParticipantLowestAge(parseInt(e.target.value))
+                }else{
+                  setParticipantLowestAge(1);
+                }
+              }
+            }
             errorText={errorsText.participantLowestAge??''}/>
         </div>
         <div className={styles.dialog_item}>
@@ -384,7 +413,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
                   className={errors.place?styles.input_error:''}>
             {placesLoaded ? (
               placeList.map((p) => {
-                return <option key={p.id} value={p.id}>{p.address}</option>;
+                return <option key={p.id} value={p.id}>{p.address}{p.room ? ", ауд. " + p.room : ""}</option>;
               })
             ) : (
               <option value=""></option>

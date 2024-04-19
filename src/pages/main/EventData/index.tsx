@@ -354,14 +354,6 @@ function EventActivitiesPage() {
       return;
     }
     getEvent();
-    getImageUrl(String(idInt)).then((url) => {
-      if (url == '') {
-        setEventImageUrl('http://158.160.150.192:9000/hello/Screenshot%20from%202024-04-12%2020-14-41.png');
-      } else {
-        setEventImageUrl(url);
-      }
-    });
-    setLoadingEvent(false);
   }, [idInt]);
 
   useEffect(() => {
