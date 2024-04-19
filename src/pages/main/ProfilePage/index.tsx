@@ -229,7 +229,7 @@ function ProfilePage() {
                   ) : (
                     <Button className={styles.button} onClick={customEditChangeLoginModal}>Сменить логин</Button>
                   )}
-                  <Button className={styles.button} onClick={customEditChangePasswordModal}>Сменить пароль</Button>
+                  <Button className={styles.button} onClick={() => navigate(RoutePaths.changePassword)}>Сменить пароль</Button>
                 </div>
               </div>
               <Button className={styles.exit_button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
