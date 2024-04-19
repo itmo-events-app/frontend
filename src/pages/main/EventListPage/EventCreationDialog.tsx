@@ -15,6 +15,10 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
   useEffect(() => {
     try {
       const fetchUsers = async() => {
+
+        const {total, items} = await eventService.getUsers(api);
+        if (total&&total>0&&items)  {
+          items.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0));
         const response = await api.profile.getAllUsers();
         console.log(response);
         if (response.status == 200) {
@@ -35,6 +39,7 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
       console.error(e);
     }
   }, []);
+
   const _handleChangeDropdown = (value: DropdownOption<string>) => {
     setDropdownValue(value);
   }

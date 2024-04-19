@@ -1,8 +1,14 @@
 import { Api } from '@entities/api';
-import { PaginatedResponse, TaskListShowWhereAssigneeTaskStatusEnum, TaskResponse } from '@shared/api/generated';
+import {
+  PaginatedResponse,
+  TaskListShowWhereAssigneeTaskStatusEnum, TaskRequest, TaskRequestTaskStatusEnum,
+  TaskResponse
+} from '@shared/api/generated';
 import { DropdownOption } from '@widgets/main/Dropdown';
 
 export const taskService = {
+
+
   getAllTasks: (api: Api) => {
     return async (): Promise<TaskResponse[]> => {
       return Promise.resolve(
@@ -10,6 +16,39 @@ export const taskService = {
       );
     };
   },
+
+  createTask: (api: Api, eventId: number, assigneeId: number, title: string, description: string,  placeId: number, deadline: string, reminder: string) => {
+    const taskStatus = TaskRequestTaskStatusEnum.New;
+    const request: TaskRequest = {
+      eventId: eventId,
+      assigneeId: assigneeId,
+      title: title,
+      description: description,
+      taskStatus: taskStatus,
+      placeId: placeId,
+      deadline: deadline,
+      reminder: reminder,
+    };
+    console.log(request)
+    return api.withReauth(() => api.task.taskAdd(request));
+  },
+
+  updateTask: (api: Api, taskId: number, eventId: number, assigneeId: number, title: string, description: string, taskStatus: TaskRequestTaskStatusEnum,  placeId: number, deadline: string, reminder: string) => {
+    const request: TaskRequest = {
+      eventId: eventId,
+      assigneeId: assigneeId,
+      title: title,
+      description: description,
+      taskStatus: taskStatus,
+      placeId: placeId,
+      deadline: deadline,
+      reminder: reminder,
+    };
+    console.log(request)
+    return api.withReauth(() => api.task.taskEdit(taskId, request));
+  },
+
+
 
   getFilteredTasks: (
     api: Api,
