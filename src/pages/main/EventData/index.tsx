@@ -7,7 +7,7 @@ import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import { RouteParams, RoutePaths } from "@shared/config/routes";
+import { RoutePaths } from "@shared/config/routes";
 import Button from "@widgets/main/Button";
 import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
@@ -33,6 +33,9 @@ import { PrivilegeData } from '@entities/privilege-context.ts';
 import Checkbox from "@widgets/main/Checkbox";
 import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
 import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partisipants-list-request.ts";
+import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
+import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
+import ModalBlock from "@widgets/main/Modal";
 
 class EventInfo {
   regDates: string;
@@ -284,6 +287,10 @@ function EventActivitiesPage() {
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
+
+  const [modalActive, setModalActive] = useState(false);
+  const [activityId, setActivityId] = useState('');
+
 
   const getEvent = async () => {
     if (idInt == null) {
@@ -655,65 +662,45 @@ function EventActivitiesPage() {
     }
   }, [idInt]);
 
-  const _event = (id: string) => {
-    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
-  }
+  // const _event = (id: string) => {
+  //   navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
+  // }
 
-  function _createActivity(activity: Activity) {
-    return (
-      <div key={activity.id} className={styles.activity_container} onClick={() => _event(activity.activityId)}>
-        <div className={styles.activity_info_column}>
-          <div className={styles.activity_name}>{activity.name}</div>
-          <div className={styles.activity_place_container}>
-            <div className={styles.activity_place}>{activity.place}</div>
-            <div className={styles.activity_place}>{activity.room}</div>
-          </div>
-          <div className={styles.info_block}>{activity.description}</div>
-        </div>
-        {activity.endDate == '' || activity.endDate == activity.date ? (
-          <div className={styles.activity_time_column}>
-            <div className={styles.activity_time}>{activity.date}</div>
-            <div className={styles.activity_time}>
-              {activity.time} - {activity.endTime}
-            </div>
-          </div>
-        ) : (
-          <div className={styles.activity_time_column}>
-            <div>
-              {activity.date} {activity.time}
-            </div>
-            <div>
-              {activity.endDate} {activity.endTime}
-            </div>
-          </div>
-        )}
-      </div>
-    );
+  const _showActivity = (id: string) => {
+    setActivityId(id);
+    setModalActive(true);
   }
 
   function _createActivityList(activities: Activity[]) {
-    const items = [];
-    for (const activity of activities) {
-      items.push(_createActivity(activity));
-    }
     return (
       <>
-        {optionsPrivileges.addActivity ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-          </div>
-        ) : (<></>)}
-        {activitiesLoaded ? (
-            <div className={styles.data_list}>
-              {items}
-            </div>)
-          :
-          (
-            <div />
-          )}
+        <ModalBlock active={modalActive} setActive={setModalActive}>
+          <ActivityModal
+            activityId={activityId}
+            activities={activities}
+            setActivities={setActivities}
+            setModalActive={setModalActive}/>
+        </ModalBlock>
+        {optionsPrivileges.addActivity &&
+        <div className={styles.button_container}>
+          <Button onClick={_addActivity}>Создать активность</Button>
+        </div>
+        }
+        {activitiesLoaded &&
+        <div className={styles.data_list}>
+          {
+            activities.map(
+              activity => <ActivityElement
+                activity={activity}
+                onClickFun={() => _showActivity(activity.activityId)}
+              />)
+          }
+        </div>
+        }
       </>
     );
   }
+
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();

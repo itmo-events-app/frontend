@@ -146,12 +146,14 @@
 }
 
 .data_list {
-  display: flex;
-  flex-direction: row;
-  flex-flow: row wrap;
-  justify-content: stretch;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 25rem);
+
+  grid-row-gap: 1rem;
+  grid-column-gap: 1.5rem;
+
   padding-bottom: 50px;
-  gap: 30px;
+
 }
 
 .activity_container {
