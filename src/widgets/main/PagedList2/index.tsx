@@ -17,8 +17,10 @@ class PageEntry {
 }
 
 type Props = {
-  pageState: [number, Dispatch<SetStateAction<number>>]
-  pageSizeState: [number, Dispatch<SetStateAction<number>>]
+  page: number,
+  setPage: Dispatch<SetStateAction<number>>,
+  page_size: number
+  setPageSize: Dispatch<SetStateAction<number>>,
   page_step: number,
   className?: string,
   items: PageEntry[],
@@ -27,47 +29,43 @@ type Props = {
 }
 
 function PagedList2(props: Props) {
-
-  const [page, setPage] = props.pageState;
-  const [page_size, setPageSize] = props.pageSizeState;
-
   function _decPage() {
     return () => {
-      if (page > 1) {
-        setPage(page - 1);
+      if (props.page > 1) {
+        props.setPage(props.page - 1);
       }
     }
   }
 
   function _incPage() {
     return () => {
-      if (page < props.total_pages) {
-        setPage(page + 1);
+      if (props.page < props.total_pages) {
+        props.setPage(props.page + 1);
       }
     }
   }
 
   function _decPageSize() {
     return () => {
-      if (page_size > props.page_step) {
-        setPage(Math.floor(((page - 1) * page_size + 1) / (page_size - props.page_step) + 1));
-        setPageSize(page_size - props.page_step);
+      if (props.page_size > props.page_step) {
+        props.setPage(Math.floor(((props.page - 1) * props.page_size + 1) / (props.page_size - props.page_step) + 1));
+        props.setPageSize(props.page_size - props.page_step);
       }
     }
   }
 
   function _incPageSize() {
     return () => {
-      if (page_size < props.total_elements - props.page_step) {
-        setPage(Math.floor(((page - 1) * page_size + 1) / (page_size + props.page_step) + 1));
-        setPageSize(page_size + props.page_step);
+      if (props.page_size < props.total_elements - props.page_step) {
+        props.setPage(Math.floor(((props.page - 1) * props.page_size + 1) / (props.page_size + props.page_step) + 1));
+        props.setPageSize(props.page_size + props.page_step);
       }
     }
   }
 
   function _selectPage(index: number) {
     return () => {
-      setPage(index);
+      props.setPage(index);
     }
   }
 
@@ -94,13 +92,13 @@ function PagedList2(props: Props) {
     return (
       <div className={styles.nav_page_nums}>
         <div className={styles.nav_page_num_selected}>
-          {(page - 1) * page_size + 1}
+          {(props.page - 1) * props.page_size + 1}
         </div>
         <div className={styles.nav_page_num_selected}>
           {"-"}
         </div>
         <div className={styles.nav_page_num_selected}>
-          {(page) * page_size <= props.total_elements ? (page) * page_size : props.total_elements}
+          {(props.page) * props.page_size <= props.total_elements ? (props.page) * props.page_size : props.total_elements}
         </div>
         <div className={styles.nav_page_num}>
           {"из"}
@@ -118,19 +116,19 @@ function PagedList2(props: Props) {
   function _navPageNums() {
     const page_indexes = [];
 
-    page_indexes.push(_navPageNum(page - 2, false));
-    page_indexes.push(_navPageNum(page - 1, false));
-    page_indexes.push(_navPageNum(page, true));
-    page_indexes.push(_navPageNum(page + 1, false));
-    page_indexes.push(_navPageNum(page + 2, false));
+    page_indexes.push(_navPageNum(props.page - 2, false));
+    page_indexes.push(_navPageNum(props.page - 1, false));
+    page_indexes.push(_navPageNum(props.page, true));
+    page_indexes.push(_navPageNum(props.page + 1, false));
+    page_indexes.push(_navPageNum(props.page + 2, false));
 
     return (
       <div className={styles.nav_page_nums}>
-        {page > 3 && _navPageNum(1, false)}
-        {page > 4 && _navPageText(" . . . ")}
+        {props.page > 3 && _navPageNum(1, false)}
+        {props.page > 4 && _navPageText(" . . . ")}
         {page_indexes}
-        {props.total_pages - page > 3 && _navPageText(" . . . ")}
-        {props.total_pages - page > 2 && _navPageNum(props.total_pages, false)}
+        {props.total_pages - props.page > 3 && _navPageText(" . . . ")}
+        {props.total_pages - props.page > 2 && _navPageNum(props.total_pages, false)}
       </div>
     );
   }
@@ -180,14 +178,14 @@ function PagedList2(props: Props) {
             Размер страницы:
           </div>
           <div className={styles.nav_page_num}>
-            {page_size}
+            {props.page_size}
           </div>
           <a onClick={_incPageSize()} className={styles.nav_button}>
             <ArrowRight className={styles.arrow}/>
           </a>
         </div>
       </div>
-      {_createEntries(page)}
+      {_createEntries(props.page)}
     </div>
   )
 }
