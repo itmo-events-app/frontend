@@ -7,7 +7,7 @@ import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import { RouteParams, RoutePaths } from "@shared/config/routes";
+import { RoutePaths } from "@shared/config/routes";
 import Button from "@widgets/main/Button";
 import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
@@ -22,16 +22,23 @@ import { getImageUrl } from "@shared/lib/image.ts";
 import ApiContext from "@features/api-context.ts";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
+import EditOrganizerDialog from '@pages/main/EventData/EditOrganizerDialog.tsx';
+import DeleteOrganizerDialog from '@pages/main/EventData/DeleteOrganizerDialog.tsx';
+import 'gantt-task-react/dist/index.css';
 import {
   EventResponse,
   ParticipantPresenceRequest,
-  ParticipantResponse, SetPartisipantsListRequest,
+  ParticipantResponse,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Checkbox from "@widgets/main/Checkbox";
 import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
+import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partisipants-list-request.ts";
+import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
+import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
+import ModalBlock from "@widgets/main/Modal";
 
 class EventInfo {
   regDates: string;
@@ -155,6 +162,8 @@ enum DialogSelected {
   UPDATE,
   CREATEACTIVITY = 2,
   ADDORGANIZER = 3,
+  EDITORGANIZER = 4,
+  DELETEORGANIZER = 5,
 }
 
 class DialogData {
@@ -185,8 +194,11 @@ type OptionsPrivileges = {
   tasksVisible: boolean,
   edit: boolean,
   addOrganizer: boolean,
+  editOrganizer: boolean,
+  deleteOrganizer: boolean,
   addHelper: boolean,
-  addActivity: boolean
+  addActivity: boolean,
+  deleteActivity: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -198,8 +210,11 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   tasksVisible: false,
   edit: false,
   addOrganizer: false,
+  editOrganizer: false,
+  deleteOrganizer: false,
   addHelper: false,
-  addActivity: false
+  addActivity: false,
+  deleteActivity: false
 } as const;
 
 interface PeopleTasks {
@@ -283,6 +298,10 @@ function EventActivitiesPage() {
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
+
+  const [modalActive, setModalActive] = useState(false);
+  const [activityId, setActivityId] = useState('');
+
 
   const getEvent = async () => {
     if (idInt == null) {
@@ -442,6 +461,9 @@ function EventActivitiesPage() {
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
+        deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
+        editOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)])),
+        deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)]))
       })
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -509,6 +531,28 @@ function EventActivitiesPage() {
           />
         );
         break;
+      case DialogSelected.EDITORGANIZER:
+        component = (
+          <EditOrganizerDialog
+            {...dialogData.args}
+            eventId={idInt}
+            onEdit={() => {
+              _closeDialog();
+            }}
+          />
+        );
+        break;
+        case DialogSelected.DELETEORGANIZER:
+        component = (
+          <DeleteOrganizerDialog
+            {...dialogData.args}
+            eventId={idInt}
+            onDelete={() => {
+              _closeDialog();
+            }}
+          />
+        );
+        break;
     }
     return (
       <Dialog
@@ -528,6 +572,7 @@ function EventActivitiesPage() {
       getActivities(idInt);
     }
     setDialogData(new DialogData());
+
   };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
@@ -564,36 +609,36 @@ function EventActivitiesPage() {
           </div>
           <table className={styles.table}>
             <tbody>
-              <tr>
-                <td>Сроки регистрации</td>
-                <td>
-                  <div>{eventInfo.regDates}</div>
-                </td>
-              </tr>
-              <tr>
-                <td>Сроки проведения</td>
-                <td>{eventInfo.eventDates}</td>
-              </tr>
-              <tr>
-                <td>Сроки подготовки</td>
-                <td>{eventInfo.prepDates}</td>
-              </tr>
-              <tr>
-                <td>Количество мест</td>
-                <td>{eventInfo.vacantSlots}</td>
-              </tr>
-              <tr>
-                <td>Формат проведения</td>
-                <td>{eventInfo.format}</td>
-              </tr>
-              <tr>
-                <td>Статус</td>
-                <td>{eventInfo.status}</td>
-              </tr>
-              <tr>
-                <td>Возрастное ограничение</td>
-                <td>{eventInfo.ageRestriction}</td>
-              </tr>
+            <tr>
+              <td>Сроки регистрации</td>
+              <td>
+                <div>{eventInfo.regDates}</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Сроки проведения</td>
+              <td>{eventInfo.eventDates}</td>
+            </tr>
+            <tr>
+              <td>Сроки подготовки</td>
+              <td>{eventInfo.prepDates}</td>
+            </tr>
+            <tr>
+              <td>Количество мест</td>
+              <td>{eventInfo.vacantSlots}</td>
+            </tr>
+            <tr>
+              <td>Формат проведения</td>
+              <td>{eventInfo.format}</td>
+            </tr>
+            <tr>
+              <td>Статус</td>
+              <td>{eventInfo.status}</td>
+            </tr>
+            <tr>
+              <td>Возрастное ограничение</td>
+              <td>{eventInfo.ageRestriction}</td>
+            </tr>
             </tbody>
           </table>
         </div>
@@ -646,67 +691,56 @@ function EventActivitiesPage() {
     }
   }, [idInt]);
 
-  const _event = (id: string) => {
-    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
-  }
+  // const _event = (id: string) => {
+  //   navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
+  // }
 
-  function _createActivity(activity: Activity) {
-    return (
-      <div key={activity.id} className={styles.activity_container} onClick={() => _event(activity.activityId)}>
-        <div className={styles.activity_info_column}>
-          <div className={styles.activity_name}>{activity.name}</div>
-          <div className={styles.activity_place_container}>
-            <div className={styles.activity_place}>{activity.place}</div>
-            <div className={styles.activity_place}>{activity.room}</div>
-          </div>
-          <div className={styles.info_block}>{activity.description}</div>
-        </div>
-        {activity.endDate == '' || activity.endDate == activity.date ? (
-          <div className={styles.activity_time_column}>
-            <div className={styles.activity_time}>{activity.date}</div>
-            <div className={styles.activity_time}>
-              {activity.time} - {activity.endTime}
-            </div>
-          </div>
-        ) : (
-          <div className={styles.activity_time_column}>
-            <div>
-              {activity.date} {activity.time}
-            </div>
-            <div>
-              {activity.endDate} {activity.endTime}
-            </div>
-          </div>
-        )}
-      </div>
-    );
+  const _showActivity = (id: string) => {
+    setActivityId(id);
+    setModalActive(true);
   }
 
   function _createActivityList(activities: Activity[]) {
-    const items = [];
-    for (const activity of activities) {
-      items.push(_createActivity(activity));
-    }
     return (
       <>
-        {optionsPrivileges.addActivity ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-          </div>
-        ) : (<></>)}
-        {activitiesLoaded ? (
-          <div className={styles.data_list}>
-            {items}
-          </div>)
-          :
-          (
-            <div />
-          )}
+        <ModalBlock active={modalActive} setActive={setModalActive}>
+          <ActivityModal
+            activityId={activityId}
+            activities={activities}
+            setActivities={setActivities}
+            setModalActive={setModalActive}
+            canDelete={optionsPrivileges.deleteActivity}/>
+        </ModalBlock>
+        {optionsPrivileges.addActivity &&
+        <div className={styles.button_container}>
+          <Button onClick={_addActivity}>Создать активность</Button>
+        </div>
+        }
+        {activitiesLoaded &&
+        <div className={styles.data_list}>
+          {
+            activities.map(
+              activity => <ActivityElement
+                activity={activity}
+                onClickFun={() => _showActivity(activity.activityId)}
+              />)
+          }
+        </div>
+        }
       </>
     );
   }
+
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
+    e.stopPropagation();
+  };
+  const _editOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setDialogData(new DialogData('Редактировать организатора', DialogSelected.EDITORGANIZER));
+    e.stopPropagation();
+  };
+  const _deleteOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setDialogData(new DialogData('Удалить организатора', DialogSelected.DELETEORGANIZER));
     e.stopPropagation();
   };
 
@@ -798,7 +832,8 @@ function EventActivitiesPage() {
 
     return (
       <>
-        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+       <div className={styles.button_container}>
+       {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_addOrganizer}>
               Добавить
@@ -807,13 +842,33 @@ function EventActivitiesPage() {
         ) : (
           <></>
         )}
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_editOrganizer}>
+              Редактировать
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_deleteOrganizer}>
+              Удалить
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+       </div>
+
         <table className={styles.table}>
           <thead>
-            <tr>
-              <th>Роль</th>
-              <th>Имя</th>
-              <th>Email</th>
-            </tr>
+          <tr>
+            <th>Роль</th>
+            <th>Имя</th>
+            <th>Email</th>
+          </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>
@@ -853,7 +908,7 @@ function EventActivitiesPage() {
       api.participants
         .setPartisipantsList(
           idInt!,
-          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')),
+          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')).participantsFile,
           {
             method: 'POST',
             headers: {
@@ -915,12 +970,12 @@ function EventActivitiesPage() {
         }
         <table className={styles.table}>
           <thead>
-            <tr>
-              <th>Имя</th>
-              <th>Email</th>
-              <th>Комментарий</th>
-              <th>Явка</th>
-            </tr>
+          <tr>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Комментарий</th>
+            <th>Явка</th>
+          </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>

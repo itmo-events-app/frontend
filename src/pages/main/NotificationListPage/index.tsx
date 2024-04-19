@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from './index.module.css'
 import BrandLogo from "@widgets/main/BrandLogo";
 import PageName from "@widgets/main/PageName";
@@ -10,9 +10,10 @@ import Layout from "@widgets/main/Layout";
 import Button from "@widgets/main/Button";
 import { appendClassName, formatDateTime, truncateTextByWords } from "@shared/util.ts";
 import { ArrowDown } from "@shared/ui/icons";
+import { api } from "@shared/api";
 import { NotificationResponse } from "@shared/api/generated";
-import PagedList2 from "@widgets/main/PagedList2";
-import ApiContext from "@features/api-context";
+import PagedListStupid from "@widgets/main/PagedList2";
+import { useNavigate } from "react-router-dom";
 
 
 class Notification {
@@ -21,6 +22,7 @@ class Notification {
   description: string
   seen: boolean
   sent_time: string
+  link: string
 
 
   constructor(notificationResponse: NotificationResponse) {
@@ -28,15 +30,17 @@ class Notification {
       notificationResponse.title === undefined ||
       notificationResponse.description === undefined ||
       notificationResponse.seen === undefined ||
-      notificationResponse.sent_time === undefined) {
+      notificationResponse.sent_time === undefined ||
+      notificationResponse.link === undefined) {
       console.warn(`One of the fields of NotificationResponse is unidentified - possible errors in render`, notificationResponse)
     }
 
     this.id = notificationResponse.id!
     this.title = notificationResponse.title!
-    this.description = this.title + notificationResponse.description!
+    this.description = notificationResponse.description!
     this.seen = notificationResponse.seen!
     this.sent_time = notificationResponse.sent_time!
+    this.link = notificationResponse.link!
   }
 }
 
@@ -44,27 +48,23 @@ class NotificationEntry {
   data: Notification
   expanded: boolean
 
-  //TODO: delete that
-  eventName: string
-  activityName: string
-  taskName: string
-
   constructor(data: Notification, expanded: boolean) {
     this.data = data;
     this.expanded = expanded;
-
-    // Заглушка до исправления прототипа
-    this.eventName = "Event"
-    this.activityName = "Activity"
-    this.taskName = "Task"
   }
 }
 
 
 export default function NotificationListPage() {
-  const { api } = useContext(ApiContext);
+  const navigate = useNavigate()
+
+  function _navigateToNotification(notificationLink: string) {
+    navigate(notificationLink)
+  }
+
   const [notifications, setNotifications] = useState<Notification[]>(new Array<Notification>())
   const [notificationEntries, setNotificationEntries] = useState<NotificationEntry[]>(new Array<NotificationEntry>())
+  const [renderedNotificationEntries, setRenderedNotificationEntries] = useState<PageEntry[]>(new Array<PageEntry>())
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(5)
@@ -72,16 +72,29 @@ export default function NotificationListPage() {
   const [totalElements, setTotalElements] = useState(1)
 
   useEffect(() => {
-    api.withReauth(() => api.notification.getNotifications(page - 1, pageSize))
+    _updateNotifications()
+  }, [page, pageSize]);
+
+  const _updateNotifications = () => {
+    api.notification.getNotifications(page - 1, pageSize)
       .then(result => {
-        setNotifications(result.data.content!.map(notificationResponse => new Notification(notificationResponse)))
-        setTotalPages(result.data.totalPages!)
-        setTotalElements(result.data.totalElements!)
+        setNotifications((result.data.content!).map(notificationResponse => new Notification(notificationResponse)))
+        setTotalPages((result.data.totalPages)!)
+        setTotalElements((result.data.totalElements)!)
       })
       .catch(reason => {
         console.error("Невозможно получить уведомления:", reason.response.data)
       })
-  }, [page, pageSize]);
+  }
+
+  // update every 5 sec
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      _updateNotifications()
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [page]);
 
   useEffect(() => {
     setNotificationEntries(notifications.map(n => new NotificationEntry(n, false)))
@@ -97,16 +110,21 @@ export default function NotificationListPage() {
       .catch(reason => console.error("Не получилось прочитать все уведомления", reason.response.data))
   }
 
-  const _renderedNotificationEntries: any[] = notificationEntries.map(n => {
-    return new PageEntry(() => { return _renderNotificationEntry(n) })
-  })
+  useEffect(() => {
+    setRenderedNotificationEntries(notificationEntries.map(ne => {
+      return new PageEntry(() => _renderNotificationEntry(ne))
+    }))
+  }, [notificationEntries]);
 
   function _renderNotificationEntry(ne: NotificationEntry) {
     return (
       <div className={styles.notification_entry} key={ne.data.id}>
         <div className={styles.notification_header}>
-          <span className={styles.notification_titles}>
-            {ne.eventName} | {ne.activityName} | {ne.taskName}
+          <span className={styles.notification_titles} onClick={() => {
+            console.log(ne.data.link)
+            _navigateToNotification(ne.data.link)
+          }}>
+            {ne.data.title}
           </span>
 
           <div className={styles.notification_date_and_expand_container}>
@@ -116,10 +134,13 @@ export default function NotificationListPage() {
             </span>
 
             <div>
-              <ArrowDown
-                onClick={() => _expandEntryClick(ne)}
-                className={ne.expanded ? styles.arrow : appendClassName(styles.arrow, styles.arrow_up)}
-              />
+              {
+                ne.data.description.split(" ").length > 10 ?
+                  <ArrowDown
+                    onClick={() => _expandEntryClick(ne)}
+                    className={ne.expanded ? styles.arrow : appendClassName(styles.arrow, styles.arrow_up)}
+                  /> : <div/>
+              }
             </div>
           </div>
         </div>
@@ -130,7 +151,7 @@ export default function NotificationListPage() {
 
         <div className={styles.notification_read}>
           <Button className={ne.data.seen ? styles.read_button : styles.not_read_button}
-            onClick={() => _readEntry(ne)}>
+                  onClick={() => _readEntry(ne)}>
             {ne.data.seen ? 'Прочитано' : 'Прочитать'}
           </Button>
         </div>
@@ -167,30 +188,34 @@ export default function NotificationListPage() {
   }
 
   return (
-    <Layout
-      topLeft={<BrandLogo />}
-      topRight={<PageName text="Уведомления" />}
-      bottomLeft={<SideBar currentPageURL={RoutePaths.notifications} />}
-      bottomRight=
-      {
-        <Content>
-          <PagedList2
-            pageState={[page, setPage]}
-            pageSizeState={[pageSize, setPageSize]}
-            page_step={5}
-            total_pages={totalPages}
-            total_elements={totalElements}
-            items={_renderedNotificationEntries}
-          />
+    <div>
+      <Layout
+        topLeft={<BrandLogo />}
+        topRight={<PageName text="Уведомления" />}
+        bottomLeft={<SideBar currentPageURL={RoutePaths.notifications} />}
+        bottomRight=
+          {
+            <Content>
+              <PagedListStupid
+                page={page}
+                setPage={setPage}
+                page_size={pageSize}
+                setPageSize={setPageSize}
+                page_step={5}
+                total_pages={totalPages}
+                total_elements={totalElements}
+                items={renderedNotificationEntries}
+              />
 
-          <div className={styles.read_all_button_div}>
-            <Button className={styles.not_read_button + styles.read_all_button}
-              onClick={() => _readAllNotReadNotifications()}>
-              Прочитать все
-            </Button>
-          </div>
-        </Content>
-      }
-    />
+              <div className={styles.read_all_button_div}>
+                <Button className={styles.not_read_button + styles.read_all_button}
+                        onClick={() => _readAllNotReadNotifications()}>
+                  Прочитать все
+                </Button>
+              </div>
+            </Content>
+          }
+      />
+    </div>
   );
 }

@@ -1,0 +1,70 @@
+
+.activity_card_row {
+  padding: 1rem 1.5rem;
+  border-color: var(--itmo-colors-dark-gray);
+  line-height: 1.5rem;
+
+  word-wrap: break-word;
+}
+
+.activity_card_header {
+  font-weight: 700;
+  line-height: 2rem;
+  border-bottom: 1px solid var(--itmo-colors-gray);
+}
+
+.activity_card_info {
+  color: var(--itmo-colors-dark-gray);
+}
+
+.activity_card_footer {
+  border-top: 1px solid var(--itmo-colors-gray);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.activity_card_footer Button {
+  background-color: var(--itmo-colors-red);
+}
+
+.activity_initial_row {
+  margin-bottom: 1.5rem;
+}
+
+.activity_secondary_row {
+  margin-top: .35rem;
+}
+
+.activity_card_description {
+  color: var(--itmo-colors-dark-gray);
+  font-size: .8rem;
+}
+
+.activity_card_info {
+  color: var(--itmo-colors-dark-gray);
+  font-size: .9rem;
+}
+
+.activity_card_field {
+  display: flex;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.activity_card_field label {
+  font-weight: 700;
+  color: var(--itmo-colors-black);
+  flex: 0 0 50%;
+  max-width: 50%;
+  margin-right: .5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.activity_card_field .value {
+  flex: 0 0 50%;
+  max-width: 50%;
+  /*padding-left: 0.75rem;*/
+  padding-right: 0.75rem;
+}

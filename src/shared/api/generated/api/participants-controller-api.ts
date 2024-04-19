@@ -25,8 +25,6 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, ope
 import { ParticipantPresenceRequest } from '../model';
 // @ts-ignore
 import { ParticipantResponse } from '../model';
-// @ts-ignore
-import { SetPartisipantsListRequest } from '../model';
 /**
  * ParticipantsControllerApi - axios parameter creator
  * @export
@@ -59,7 +57,7 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -100,7 +98,7 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -138,7 +136,7 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -157,13 +155,15 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
          * 
          * @summary Импорт списка участников мероприятия
          * @param {number} id 
-         * @param {SetPartisipantsListRequest} [setPartisipantsListRequest] 
+         * @param {File} participantsFile 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setPartisipantsList: async (id: number, setPartisipantsListRequest?: SetPartisipantsListRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        setPartisipantsList: async (id: number, participantsFile: File, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('setPartisipantsList', 'id', id)
+            // verify required parameter 'participantsFile' is not null or undefined
+            assertParamExists('setPartisipantsList', 'participantsFile', participantsFile)
             const localVarPath = `/api/events/{id}/participants`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -176,19 +176,24 @@ export const ParticipantsControllerApiAxiosParamCreator = function (configuratio
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
+            if (participantsFile !== undefined) { 
+                localVarFormParams.append('participantsFile', participantsFile as any);
+            }
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(setPartisipantsListRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = localVarFormParams;
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -249,12 +254,12 @@ export const ParticipantsControllerApiFp = function(configuration?: Configuratio
          * 
          * @summary Импорт списка участников мероприятия
          * @param {number} id 
-         * @param {SetPartisipantsListRequest} [setPartisipantsListRequest] 
+         * @param {File} participantsFile 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async setPartisipantsList(id: number, setPartisipantsListRequest?: SetPartisipantsListRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ParticipantResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.setPartisipantsList(id, setPartisipantsListRequest, options);
+        async setPartisipantsList(id: number, participantsFile: File, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ParticipantResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setPartisipantsList(id, participantsFile, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParticipantsControllerApi.setPartisipantsList']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -304,12 +309,12 @@ export const ParticipantsControllerApiFactory = function (configuration?: Config
          * 
          * @summary Импорт списка участников мероприятия
          * @param {number} id 
-         * @param {SetPartisipantsListRequest} [setPartisipantsListRequest] 
+         * @param {File} participantsFile 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setPartisipantsList(id: number, setPartisipantsListRequest?: SetPartisipantsListRequest, options?: any): AxiosPromise<Array<ParticipantResponse>> {
-            return localVarFp.setPartisipantsList(id, setPartisipantsListRequest, options).then((request) => request(axios, basePath));
+        setPartisipantsList(id: number, participantsFile: File, options?: any): AxiosPromise<Array<ParticipantResponse>> {
+            return localVarFp.setPartisipantsList(id, participantsFile, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -362,13 +367,13 @@ export class ParticipantsControllerApi extends BaseAPI {
      * 
      * @summary Импорт списка участников мероприятия
      * @param {number} id 
-     * @param {SetPartisipantsListRequest} [setPartisipantsListRequest] 
+     * @param {File} participantsFile 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ParticipantsControllerApi
      */
-    public setPartisipantsList(id: number, setPartisipantsListRequest?: SetPartisipantsListRequest, options?: AxiosRequestConfig) {
-        return ParticipantsControllerApiFp(this.configuration).setPartisipantsList(id, setPartisipantsListRequest, options).then((request) => request(this.axios, this.basePath));
+    public setPartisipantsList(id: number, participantsFile: File, options?: AxiosRequestConfig) {
+        return ParticipantsControllerApiFp(this.configuration).setPartisipantsList(id, participantsFile, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

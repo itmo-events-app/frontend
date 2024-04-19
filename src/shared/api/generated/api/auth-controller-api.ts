@@ -39,7 +39,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
     return {
         /**
          * 
-         * @summary Одобрение заявки на регистрацию
+         * @summary Утверждение заявки на регистрацию в системе
          * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -60,7 +60,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -77,7 +77,8 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @param {number} requestId 
+         * @summary Отклонение заявки на регистрацию в системе
+         * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -97,7 +98,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -114,6 +115,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
+         * @summary Получение списка всех заявок на регистрацию в системе
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -130,7 +132,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -167,7 +169,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -207,7 +209,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -247,7 +249,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -287,7 +289,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -299,6 +301,86 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(registrationUserRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} returnUrl 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        sendVerificationEmail: async (returnUrl: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'returnUrl' is not null or undefined
+            assertParamExists('sendVerificationEmail', 'returnUrl', returnUrl)
+            const localVarPath = `/sendVerificationEmail`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication BearerAuthentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (returnUrl !== undefined) {
+                localVarQueryParameter['returnUrl'] = returnUrl;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} token 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        validateEmailVerificationToken: async (token: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'token' is not null or undefined
+            assertParamExists('validateEmailVerificationToken', 'token', token)
+            const localVarPath = `/validateEmailVerificationToken`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication BearerAuthentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (token !== undefined) {
+                localVarQueryParameter['token'] = token;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -327,13 +409,46 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
             if (token !== undefined) {
                 localVarQueryParameter['token'] = token;
             }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyEmail: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/verifyEmail`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication BearerAuthentication required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -358,7 +473,7 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Одобрение заявки на регистрацию
+         * @summary Утверждение заявки на регистрацию в системе
          * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -371,7 +486,8 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} requestId 
+         * @summary Отклонение заявки на регистрацию в системе
+         * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -383,6 +499,7 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Получение списка всех заявок на регистрацию в системе
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -446,6 +563,30 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} returnUrl 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async sendVerificationEmail(returnUrl: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.sendVerificationEmail(returnUrl, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthControllerApi.sendVerificationEmail']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} token 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async validateEmailVerificationToken(token: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.validateEmailVerificationToken(token, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthControllerApi.validateEmailVerificationToken']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Запрос на валидацию токена
          * @param {string} token Токен восстановления пароля
          * @param {*} [options] Override http request option.
@@ -455,6 +596,17 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.validateRecoveryToken(token, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AuthControllerApi.validateRecoveryToken']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async verifyEmail(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyEmail(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthControllerApi.verifyEmail']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -469,7 +621,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
     return {
         /**
          * 
-         * @summary Одобрение заявки на регистрацию
+         * @summary Утверждение заявки на регистрацию в системе
          * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -479,7 +631,8 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @param {number} requestId 
+         * @summary Отклонение заявки на регистрацию в системе
+         * @param {number} requestId ID заявки на регистрацию
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -488,6 +641,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @summary Получение списка всех заявок на регистрацию в системе
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -536,6 +690,24 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @param {string} returnUrl 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        sendVerificationEmail(returnUrl: string, options?: any): AxiosPromise<void> {
+            return localVarFp.sendVerificationEmail(returnUrl, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} token 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        validateEmailVerificationToken(token: string, options?: any): AxiosPromise<void> {
+            return localVarFp.validateEmailVerificationToken(token, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Запрос на валидацию токена
          * @param {string} token Токен восстановления пароля
          * @param {*} [options] Override http request option.
@@ -543,6 +715,14 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
          */
         validateRecoveryToken(token: string, options?: any): AxiosPromise<void> {
             return localVarFp.validateRecoveryToken(token, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyEmail(options?: any): AxiosPromise<void> {
+            return localVarFp.verifyEmail(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -556,7 +736,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
 export class AuthControllerApi extends BaseAPI {
     /**
      * 
-     * @summary Одобрение заявки на регистрацию
+     * @summary Утверждение заявки на регистрацию в системе
      * @param {number} requestId ID заявки на регистрацию
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -568,7 +748,8 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} requestId 
+     * @summary Отклонение заявки на регистрацию в системе
+     * @param {number} requestId ID заявки на регистрацию
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthControllerApi
@@ -579,6 +760,7 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Получение списка всех заявок на регистрацию в системе
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthControllerApi
@@ -637,6 +819,28 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
+     * @param {string} returnUrl 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthControllerApi
+     */
+    public sendVerificationEmail(returnUrl: string, options?: AxiosRequestConfig) {
+        return AuthControllerApiFp(this.configuration).sendVerificationEmail(returnUrl, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} token 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthControllerApi
+     */
+    public validateEmailVerificationToken(token: string, options?: AxiosRequestConfig) {
+        return AuthControllerApiFp(this.configuration).validateEmailVerificationToken(token, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Запрос на валидацию токена
      * @param {string} token Токен восстановления пароля
      * @param {*} [options] Override http request option.
@@ -645,6 +849,16 @@ export class AuthControllerApi extends BaseAPI {
      */
     public validateRecoveryToken(token: string, options?: AxiosRequestConfig) {
         return AuthControllerApiFp(this.configuration).validateRecoveryToken(token, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthControllerApi
+     */
+    public verifyEmail(options?: AxiosRequestConfig) {
+        return AuthControllerApiFp(this.configuration).verifyEmail(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
