@@ -58,8 +58,8 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   const [title, setTitle] = useState(eventInfo.title);
   const [shortDescription, setShortDescription] = useState(eventInfo.shortDescription);
   const [fullDescription, setFullDescription] = useState(eventInfo.fullDescription);
-  const [format, setFormat] = useState(getAddActivityFormatEnum(eventInfo.format!));
-  const [status, setStatus] = useState(getAddActivityStatusEnum(eventInfo.status!));
+  const [format, setFormat] = useState(getAddActivityFormatEnum(eventInfo.format!)||Object.entries(AddActivityFormatEnum)[0][1]);
+  const [status, setStatus] = useState(getAddActivityStatusEnum(eventInfo.status!)||Object.entries(AddActivityStatusEnum)[0][1]);
   const [registrationStart, setRegistrationStart] = useState<Date | null>(createDateOrNull(eventInfo.registrationStart));
   const [registrationEnd, setRegistrationEnd] = useState<Date | null>(createDateOrNull(eventInfo.registrationEnd));
   const [participantLimit, setParticipantLimit] = useState(eventInfo.participantLimit!);
@@ -401,21 +401,42 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
           <InputLabel value="Максимальное количество участников" />
           <Input
             value={String(participantLimit) ?? ''}
-            onChange={(e) => setParticipantLimit(parseInt(e.target.value))}
+            onChange={(e) => {
+              if(parseInt(e.target.value)){
+                setParticipantLimit(parseInt(e.target.value))
+              }else{
+                setParticipantLimit(1);
+              }
+            }
+            }
             errorText={errorsText.participantLimit??''}/>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
           <Input
             value={String(participantHighestAge)}
-            onChange={(e) => setParticipantHighestAge(parseInt(e.target.value))}
+            onChange={(e) => {
+                if(parseInt(e.target.value)){
+                  setParticipantHighestAge(parseInt(e.target.value))
+                }else{
+                  setParticipantHighestAge(1);
+                }
+              }
+            }
             errorText={errorsText.participantHighestAge??''}/>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
           <Input
             value={String(participantLowestAge)}
-            onChange={(e) => setParticipantLowestAge(parseInt(e.target.value))}
+            onChange={(e) => {
+              if(parseInt(e.target.value)){
+                setParticipantLowestAge(parseInt(e.target.value))
+              }else{
+                setParticipantLowestAge(1);
+              }
+            }
+            }
             errorText={errorsText.participantLowestAge??''}/>
         </div>
         <div className={styles.dialog_item}>
