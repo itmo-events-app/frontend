@@ -6,8 +6,8 @@ import Layout from "@widgets/main/Layout";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
-import PageTabs, {PageTab} from "@widgets/main/PageTabs";
-import {RouteParams, RoutePaths} from "@shared/config/routes";
+import PageTabs, { PageTab } from "@widgets/main/PageTabs";
+import { RoutePaths } from "@shared/config/routes";
 import Button from "@widgets/main/Button";
 import {hasAnyPrivilege} from "@features/privileges.ts";
 import {PrivilegeNames} from "@shared/config/privileges.ts";
@@ -23,10 +23,14 @@ import ApiContext from "@features/api-context.ts";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 
 import "gantt-task-react/dist/index.css";
+import EditOrganizerDialog from '@pages/main/EventData/EditOrganizerDialog.tsx';
+import DeleteOrganizerDialog from '@pages/main/EventData/DeleteOrganizerDialog.tsx';
+import 'gantt-task-react/dist/index.css';
 import {
   EventResponse,
   ParticipantPresenceRequest,
   ParticipantResponse,
+
   SetPartisipantsListRequest,
   TaskResponse
 } from '@shared/api/generated/index.ts';
@@ -35,6 +39,21 @@ import {PrivilegeData} from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
 import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
 import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
+
+
+  TaskResponse
+} from '@shared/api/generated/index.ts';
+import PrivilegeContext from '@features/privilege-context.ts';
+import { PrivilegeData } from '@entities/privilege-context.ts';
+import Dropdown from "@widgets/main/Dropdown";
+import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
+import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
+import Checkbox from "@widgets/main/Checkbox";
+import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
+import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partisipants-list-request.ts";
+import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
+import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
+import ModalBlock from "@widgets/main/Modal";
 
 
 class EventInfo {
@@ -61,7 +80,7 @@ class EventInfo {
     ageRestriction: string,
     eventName: string,
     description: string,
-    parent: number|undefined
+    parent: number | undefined
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -159,6 +178,8 @@ enum DialogSelected {
   UPDATE,
   CREATEACTIVITY = 2,
   ADDORGANIZER = 3,
+  EDITORGANIZER = 4,
+  DELETEORGANIZER = 5,
 }
 
 class DialogData {
@@ -180,13 +201,6 @@ class ParticipantsListRequest implements SetPartisipantsListRequest {
   }
 }
 
-enum VisitStatusList {
-  TRUE = 'Да',
-  FALSE = 'Нет'
-}
-
-const userVisitStatus = Object.values(VisitStatusList);
-
 type OptionsPrivileges = {
   activitiesVisible: boolean,
   orgsVisible: boolean,
@@ -196,9 +210,12 @@ type OptionsPrivileges = {
   tasksVisible: boolean,
   edit: boolean,
   addOrganizer: boolean,
+  editOrganizer: boolean,
+  deleteOrganizer: boolean,
   addHelper: boolean,
   addActivity: boolean,
   createTask: boolean
+  deleteActivity: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -213,6 +230,7 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   addHelper: false,
   addActivity: false,
   createTask: false
+  deleteActivity: false
 } as const;
 
 interface PeopleTasks {
@@ -236,7 +254,7 @@ const colors: string[] = [
 ];
 
 function readDate(dateTime: string | null | undefined) {
-  if(dateTime==undefined || dateTime=="" || dateTime==null){
+  if (dateTime == undefined || dateTime == "" || dateTime == null) {
     return "";
   }
   const date = new Date(dateTime);
@@ -292,12 +310,73 @@ function EventActivitiesPage() {
   const [activities, setActivities] = useState([] as Activity[]);
   const [activitiesLoaded, setActivitiesLoaded] = useState(false);
 
-  const [visitStatus, setVisitStatus] = useState(new Map<string, VisitStatusList>([]));
+  const [visitStatus, setVisitStatus] = useState(new Map<string, boolean>([]));
 
   const [orgs, setOrgs] = useState([] as OrgPerson[]);
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
+
+
+  const [modalActive, setModalActive] = useState(false);
+  const [activityId, setActivityId] = useState('');
+
+
+  const getEvent = async () => {
+    if (idInt == null) {
+      return;
+    }
+    try {
+      const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
+      if (eventResponse.status === 200) {
+        const data = eventResponse.data;
+        let placeAddress = 'Отсутствует'
+        if (data.placeId) {
+          const placeResponse = await api.place.placeGet(data.placeId ?? 0);
+          if (placeResponse.status == 200) {
+            placeAddress = placeResponse.data.address ?? '';
+          } else {
+            console.log(placeResponse.status);
+          }
+        }
+        let parent = undefined;
+        if (data.parent) {
+          parent = data.parent;
+        }
+        const info = new EventInfo(
+          getIntervalString(data.registrationStart, data.registrationEnd),
+          getIntervalString(data.preparingStart, data.preparingEnd),
+          getIntervalString(data.startDate, data.endDate),
+          String(data.participantLimit),
+          placeAddress,
+          data.format ?? '',
+          data.status ?? '',
+          data.participantAgeLowest + ' - ' + data.participantAgeHighest,
+          data.title ?? '',
+          data.fullDescription ?? '',
+          parent
+        );
+        setEvent(info);
+        setEventResponse(data);
+        getImageUrl(String(idInt)).then((url) => {
+          if (url == '') {
+            setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
+          } else {
+            setEventImageUrl(url);
+          }
+        });
+        setLoadingEvent(false);
+      } else {
+        console.error('Error fetching event list:', eventResponse.statusText)
+      }
+    } catch (error: any) {
+      if (error.response.status == 404) {
+        navigate(RoutePaths.notFound);
+        return;
+      }
+      console.error('Error fetching event list:', error);
+    }
+  };
 
   const [reloadPage, setReloadPage] = useState(0);
 
@@ -311,61 +390,7 @@ function EventActivitiesPage() {
     if (idInt == null) {
       return;
     }
-
-    const getEvent = async () => {
-      try {
-        const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
-        if (eventResponse.status === 200) {
-          const data = eventResponse.data;
-          let placeAddress = 'Отсутствует'
-          if (data.placeId) {
-            const placeResponse = await api.place.placeGet(data.placeId ?? 0);
-            if (placeResponse.status == 200) {
-              placeAddress = placeResponse.data.address ?? '';
-            } else {
-              console.log(placeResponse.status);
-            }
-          }
-          let parent = undefined;
-          if(data.parent){
-            parent = data.parent;
-          }
-          const info = new EventInfo(
-            getIntervalString(data.registrationStart, data.registrationEnd),
-            getIntervalString(data.preparingStart, data.preparingEnd),
-            getIntervalString(data.startDate, data.endDate),
-            String(data.participantLimit),
-            placeAddress,
-            data.format ?? '',
-            data.status ?? '',
-            data.participantAgeLowest + ' - ' + data.participantAgeHighest,
-            data.title ?? '',
-            data.fullDescription ?? '',
-            parent
-          );
-          setEvent(info);
-          setEventResponse(data);
-        } else {
-          console.error('Error fetching event list:', eventResponse.statusText);
-
-        }
-      } catch (error: any) {
-        if (error.response.status == 404) {
-          navigate(RoutePaths.notFound);
-          return;
-        }
-        console.error('Error fetching event list:', error);
-      }
-    };
     getEvent();
-    getImageUrl(String(idInt)).then((url) => {
-      if (url == '') {
-        setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
-      } else {
-        setEventImageUrl(url);
-      }
-    });
-    setLoadingEvent(false);
   }, [idInt]);
 
   useEffect(() => {
@@ -456,6 +481,7 @@ function EventActivitiesPage() {
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
         createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
+        deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
       })
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -523,6 +549,28 @@ function EventActivitiesPage() {
           />
         );
         break;
+      case DialogSelected.EDITORGANIZER:
+        component = (
+          <EditOrganizerDialog
+            {...dialogData.args}
+            eventId={idInt}
+            onEdit={() => {
+              _closeDialog();
+            }}
+          />
+        );
+        break;
+        case DialogSelected.DELETEORGANIZER:
+        component = (
+          <DeleteOrganizerDialog
+            {...dialogData.args}
+            eventId={idInt}
+            onDelete={() => {
+              _closeDialog();
+            }}
+          />
+        );
+        break;
     }
     return (
       <Dialog
@@ -537,7 +585,12 @@ function EventActivitiesPage() {
   };
 
   const _closeDialog = () => {
+    getEvent();
+    if (idInt != null) {
+      getActivities(idInt);
+    }
     setDialogData(new DialogData());
+   
   };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
@@ -550,7 +603,7 @@ function EventActivitiesPage() {
   function _createInfoPage(eventInfo: EventInfo) {
     return (
       <div className={styles.root}>
-        <div className={styles.image_box}>{<img className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
+        <div className={styles.image_box}>{<ImagePreview className={styles.image} src={eventImageUrl} alt="Event image" />}</div>
         {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_updateEvent}>
@@ -574,36 +627,36 @@ function EventActivitiesPage() {
           </div>
           <table className={styles.table}>
             <tbody>
-              <tr>
-                <td>Сроки регистрации</td>
-                <td>
-                  <div>{eventInfo.regDates}</div>
-                </td>
-              </tr>
-              <tr>
-                <td>Сроки проведения</td>
-                <td>{eventInfo.eventDates}</td>
-              </tr>
-              <tr>
-                <td>Сроки подготовки</td>
-                <td>{eventInfo.prepDates}</td>
-              </tr>
-              <tr>
-                <td>Количество мест</td>
-                <td>{eventInfo.vacantSlots}</td>
-              </tr>
-              <tr>
-                <td>Формат проведения</td>
-                <td>{eventInfo.format}</td>
-              </tr>
-              <tr>
-                <td>Статус</td>
-                <td>{eventInfo.status}</td>
-              </tr>
-              <tr>
-                <td>Возрастное ограничение</td>
-                <td>{eventInfo.ageRestriction}</td>
-              </tr>
+            <tr>
+              <td>Сроки регистрации</td>
+              <td>
+                <div>{eventInfo.regDates}</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Сроки проведения</td>
+              <td>{eventInfo.eventDates}</td>
+            </tr>
+            <tr>
+              <td>Сроки подготовки</td>
+              <td>{eventInfo.prepDates}</td>
+            </tr>
+            <tr>
+              <td>Количество мест</td>
+              <td>{eventInfo.vacantSlots}</td>
+            </tr>
+            <tr>
+              <td>Формат проведения</td>
+              <td>{eventInfo.format}</td>
+            </tr>
+            <tr>
+              <td>Статус</td>
+              <td>{eventInfo.status}</td>
+            </tr>
+            <tr>
+              <td>Возрастное ограничение</td>
+              <td>{eventInfo.ageRestriction}</td>
+            </tr>
             </tbody>
           </table>
         </div>
@@ -656,68 +709,56 @@ function EventActivitiesPage() {
     }
   }, [idInt]);
 
-  const _event = (id: string) => {
-    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
-    setTimeout(() => { location.reload() }, 500);
-  }
+  // const _event = (id: string) => {
+  //   navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
+  // }
 
-  function _createActivity(activity: Activity) {
-    return (
-      <div key={activity.id} className={styles.activity_container} onClick={() => _event(activity.activityId)}>
-        <div className={styles.activity_info_column}>
-          <div className={styles.activity_name}>{activity.name}</div>
-          <div className={styles.activity_place_container}>
-            <div className={styles.activity_place}>{activity.place}</div>
-            <div className={styles.activity_place}>{activity.room}</div>
-          </div>
-          <div className={styles.info_block}>{activity.description}</div>
-        </div>
-        {activity.endDate == '' || activity.endDate == activity.date ? (
-          <div className={styles.activity_time_column}>
-            <div className={styles.activity_time}>{activity.date}</div>
-            <div className={styles.activity_time}>
-              {activity.time} - {activity.endTime}
-            </div>
-          </div>
-        ) : (
-          <div className={styles.activity_time_column}>
-            <div>
-              {activity.date} {activity.time}
-            </div>
-            <div>
-              {activity.endDate} {activity.endTime}
-            </div>
-          </div>
-        )}
-      </div>
-    );
+  const _showActivity = (id: string) => {
+    setActivityId(id);
+    setModalActive(true);
   }
 
   function _createActivityList(activities: Activity[]) {
-    const items = [];
-    for (const activity of activities) {
-      items.push(_createActivity(activity));
-    }
     return (
       <>
-        {optionsPrivileges.addActivity ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_addActivity}>Создать активность</Button>
-          </div>
-        ) : (<></>)}
-        {activitiesLoaded ? (
-          <div className={styles.data_list}>
-            {items}
-          </div>)
-          :
-          (
-            <div />
-          )}
+        <ModalBlock active={modalActive} setActive={setModalActive}>
+          <ActivityModal
+            activityId={activityId}
+            activities={activities}
+            setActivities={setActivities}
+            setModalActive={setModalActive}
+            canDelete={optionsPrivileges.deleteActivity}/>
+        </ModalBlock>
+        {optionsPrivileges.addActivity &&
+        <div className={styles.button_container}>
+          <Button onClick={_addActivity}>Создать активность</Button>
+        </div>
+        }
+        {activitiesLoaded &&
+        <div className={styles.data_list}>
+          {
+            activities.map(
+              activity => <ActivityElement
+                activity={activity}
+                onClickFun={() => _showActivity(activity.activityId)}
+              />)
+          }
+        </div>
+        }
       </>
     );
   }
+
   const _addOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
+    e.stopPropagation();
+  };
+  const _editOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setDialogData(new DialogData('Редактировать организатора', DialogSelected.EDITORGANIZER));
+    e.stopPropagation();
+  };
+  const _deleteOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setDialogData(new DialogData('Удалить организатора', DialogSelected.DELETEORGANIZER));
     e.stopPropagation();
   };
 
@@ -731,6 +772,22 @@ function EventActivitiesPage() {
     );
   }
 
+  function setVisited(id: string, status: boolean) {
+    setVisitStatus(visitStatus.set(id, status));
+
+    if (id) {
+      api
+        .withReauth(() => api.participants.changePresence(idInt!,
+          new PersonVisitResponse(+id, visitStatus.get(id) ?? false)))
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
+
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -738,33 +795,19 @@ function EventActivitiesPage() {
         <td>{person.email}</td>
         <td>{person.info}</td>
         {optionsPrivileges.modifyVisitStatus ?
-          (
-            <td>
-              <Dropdown
-                placeholder="Явка"
-                items={userVisitStatus}
+          <td>
+            <div className={styles.visited_checkbox}>
+              <Checkbox
                 value={visitStatus.get(person.id)}
                 onChange={(status) => {
-                  setVisitStatus(visitStatus.set(person.id, status));
+                  setVisited(person.id, status);
                   setReloadPage(reloadPage + 1);
-
-                  if (id) {
-                    api
-                      .withReauth(() => api.participants.changePresence(idInt!,
-                        new PersonVisitResponse(+person.id, visitStatus.get(person.id) === VisitStatusList.TRUE)))
-                      .catch((error) => {
-                        console.log(error);
-                      });
-                  }
-                }}
-                toText={(input: string) => {
-                  return input;
                 }}
               />
-            </td>
-          ) : (
-            <td>{person.visited ? 'Да' : 'Нет'}</td>
-          )
+            </div>
+          </td>
+          :
+          <td>{person.visited ? 'Да' : 'Нет'}</td>
         }
       </tr>
     );
@@ -807,7 +850,8 @@ function EventActivitiesPage() {
 
     return (
       <>
-        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+       <div className={styles.button_container}>
+       {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_addOrganizer}>
               Добавить
@@ -816,13 +860,33 @@ function EventActivitiesPage() {
         ) : (
           <></>
         )}
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_editOrganizer}>
+              Редактировать
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_deleteOrganizer}>
+              Удалить
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+       </div>
+        
         <table className={styles.table}>
           <thead>
-            <tr>
-              <th>Роль</th>
-              <th>Имя</th>
-              <th>Email</th>
-            </tr>
+          <tr>
+            <th>Роль</th>
+            <th>Имя</th>
+            <th>Email</th>
+          </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>
@@ -833,14 +897,27 @@ function EventActivitiesPage() {
   function export_xlsx() {
     if (idInt != null) {
       api
-        .withReauth(() => api.participants.getParticipantsXlsxFile(idInt))
-        // Yars: TODO check if something is needed here
+        .withReauth(() => api.participants.getParticipantsXlsxFile(
+          idInt,
+          {
+            responseType: "arraybuffer"
+          })
+        )
+        .then((response) => {
+          const link = document.createElement("a");
+
+          link.href = window.URL.createObjectURL(new Blob([response.data], { type: "application/zip" }));
+          link.setAttribute("download", "participants_list.xlsx");
+          document.body.appendChild(link);
+          link.click();
+
+          if (link.parentNode) link.parentNode.removeChild(link);
+        })
         .catch((error) => {
           console.log(error);
         });
     }
   }
-
 
   function handleFileChange(event: any) {
     event.preventDefault();
@@ -849,7 +926,7 @@ function EventActivitiesPage() {
       api.participants
         .setPartisipantsList(
           idInt!,
-          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')),
+          new ParticipantsListRequest(event.target.files[0] ?? new File([], '')).participantsFile,
           {
             method: 'POST',
             headers: {
@@ -869,7 +946,9 @@ function EventActivitiesPage() {
 
   function createParticipantsTable(persons: Person[]) {
     const items = [];
+
     for (const person of persons) {
+      visitStatus.set(person.id, person.visited);
       items.push(createPersonRow(person));
     }
     return (
@@ -882,7 +961,7 @@ function EventActivitiesPage() {
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
                   </Button>
-                 ) : (
+                ) : (
                   <></>
                 )
               }
@@ -909,12 +988,12 @@ function EventActivitiesPage() {
         }
         <table className={styles.table}>
           <thead>
-            <tr>
-              <th>Имя</th>
-              <th>Email</th>
-              <th>Комментарий</th>
-              <th>Явка</th>
-            </tr>
+          <tr>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Комментарий</th>
+            <th>Явка</th>
+          </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>
@@ -1078,11 +1157,13 @@ function EventActivitiesPage() {
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
-          <div className={styles.content}>
+          <div className={styles.content} id={idInt == null ? ("") : idInt.toString()}>
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}
             {selectedTab == 'Организаторы' && createOrgsTable(orgs)}
-            {selectedTab == 'Участники' && createParticipantsTable(participants)}
+            {selectedTab == 'Участники' && createParticipantsTable(participants.sort(
+              (a: Person, b: Person) => { return (a.name > b.name) ? 1 : -1 }
+            ))}
             {selectedTab == 'Задачи' && _createTasksTable()}
           </div>
           <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>

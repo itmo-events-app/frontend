@@ -5,7 +5,7 @@ import { useState, useContext, ChangeEvent, useEffect } from "react";
 import ApiContext from '@features/api-context';
 import styles from './dialog.module.css';
 import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
-import { eventService } from '@features/event-service';
+import { UserResponse } from '@shared/api/generated/model';
 
 function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}) {
   const {api} = useContext(ApiContext);
@@ -15,15 +15,23 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
   useEffect(() => {
     try {
       const fetchUsers = async() => {
+
         const {total, items} = await eventService.getUsers(api);
         if (total&&total>0&&items)  {
           items.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0));
+        const response = await api.profile.getAllUsers();
+        console.log(response);
+        if (response.status == 200) {
+          const users = response.data.items as unknown as UserResponse[];
+          users.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0));
           const values: DropdownOption<string>[] = [];
-          items.forEach(user => {
-            values.push(new DropdownOption(user.id+'. '+user.name+' '+user.surname+' ('+user.login+')',(user.id?user.id:0).toString()));
+          users.forEach(user => {
+            values.push(new DropdownOption(user.id+'. '+user.name+' '+user.surname,(user.id?user.id:0).toString()));
           });
           setDropdownValues(values);
           setDropdownValue(values[0]);
+        } else {
+          console.error(response.status);
         }
       }
       fetchUsers();}
@@ -43,8 +51,15 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
     try {
       const userId = parseInt(dropdownValue?.id?dropdownValue.id:'0');
       if (userId<1) return
-      const success = await eventService.createEvent(api,inputValue,userId);
-      if (success&&onSubmit) onSubmit();
+      const response = await api.event.addEventByOrganizer({
+        'userId':userId,
+        'title':inputValue
+      });
+      if (response.status === 201) {
+        if (onSubmit) onSubmit();
+      } else {
+        console.error('Error creating event:', response.statusText);
+      }
     } catch (error) {
       console.error('Error creating event:', error);
     }

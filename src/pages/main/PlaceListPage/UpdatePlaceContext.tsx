@@ -55,6 +55,19 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
     queryClient.invalidateQueries({ queryKey: ["getPlaces"] });
   };
 
+  const handleMapClick = (message: any) => {
+    const childWindow = document.querySelector('iframe')?.contentWindow;
+    if (message.source !== childWindow) return;
+    setValue("address", message.data.address);
+    setValue("name", message.data.properties["name"]);
+    setValue("roomName", message.data.properties["ref"]);
+    setValue("latitude", message.data.coordinates[0]);
+    setValue("longitude", message.data.coordinates[1]);
+  }
+  useEffect(() => {
+    window.addEventListener('message', handleMapClick);
+  });
+
   useEffect(() => {
     if (foundPlace) {
       const { name, address, longitude, latitude, description, format, room } = foundPlace;
@@ -156,25 +169,36 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
 
             <Controller control={control} name={"latitude"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
-                <Label value="Долгота" />
-                <Input type="number" placeholder={"Долгота"} value={String(value)}
+                {/*<Label value="Долгота" />*/}
+                <Input hidden={true}
+                       // type="number"
+                       placeholder={"Долгота"}
+                       value={String(value)}
                        onChange={(event) => {
                          onChange(Number(event.target.value));
                        }}
-                       step={0.01}
                        min={-180}
-                       max={180} />
+                       max={180}
+                />
               </div>
             )} />
 
             <Controller control={control} name={"longitude"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
-                <Label value="Широта" />
-                <Input type="number" placeholder={"Широта"} value={String(value)}
-                       onChange={(event) => onChange(Number(event.target.value))} step={0.01} min={-90} max={90} />
+                {/*<Label value="Широта" />*/}
+                <Input hidden={true}
+                       // type="number"
+                       placeholder={"Широта"}
+                       value={String(value)}
+                       onChange={
+                         (event) => onChange(Number(event.target.value))
+                       }
+                       min={-90}
+                       max={90}
+                />
               </div>
             )} />
-
+            <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?noscroll&select_only_areas" width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button type="submit">Обновить</Button>
               {showEmptyFieldsMessage &&

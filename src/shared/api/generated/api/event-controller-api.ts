@@ -102,7 +102,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarQueryParameter = {} as any;
             const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -210,7 +210,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -252,7 +252,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -273,14 +273,14 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @summary Удаление мероприятия
-         * @param {number} id ID мероприятия
+         * @summary Удаление активности
+         * @param {number} id ID активности
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteEventById: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteActivityById: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteEventById', 'id', id)
+            assertParamExists('deleteActivityById', 'id', id)
             const localVarPath = `/api/events/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -294,7 +294,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -311,7 +311,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @summary Фильрация мероприятий
+         * @summary Фильтрация мероприятий
          * @param {number} [page] Номер страницы, с которой начать показ мероприятий
          * @param {number} [size] Число мероприятий на странице
          * @param {number} [parentId] ID родительского мероприятия
@@ -336,7 +336,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -410,7 +410,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -448,7 +448,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -534,7 +534,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarQueryParameter = {} as any;
             const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
-            // authentication Bearer Authentication required
+            // authentication BearerAuthentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -688,20 +688,20 @@ export const EventControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Удаление мероприятия
-         * @param {number} id ID мероприятия
+         * @summary Удаление активности
+         * @param {number} id ID активности
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteEventById(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteEventById(id, options);
+        async deleteActivityById(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteActivityById(id, options);
             const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['EventControllerApi.deleteEventById']?.[index]?.url;
+            const operationBasePath = operationServerMap['EventControllerApi.deleteActivityById']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
          * 
-         * @summary Фильрация мероприятий
+         * @summary Фильтрация мероприятий
          * @param {number} [page] Номер страницы, с которой начать показ мероприятий
          * @param {number} [size] Число мероприятий на странице
          * @param {number} [parentId] ID родительского мероприятия
@@ -834,17 +834,17 @@ export const EventControllerApiFactory = function (configuration?: Configuration
         },
         /**
          * 
-         * @summary Удаление мероприятия
-         * @param {number} id ID мероприятия
+         * @summary Удаление активности
+         * @param {number} id ID активности
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteEventById(id: number, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteEventById(id, options).then((request) => request(axios, basePath));
+        deleteActivityById(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteActivityById(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary Фильрация мероприятий
+         * @summary Фильтрация мероприятий
          * @param {number} [page] Номер страницы, с которой начать показ мероприятий
          * @param {number} [size] Число мероприятий на странице
          * @param {number} [parentId] ID родительского мероприятия
@@ -971,19 +971,19 @@ export class EventControllerApi extends BaseAPI {
 
     /**
      * 
-     * @summary Удаление мероприятия
-     * @param {number} id ID мероприятия
+     * @summary Удаление активности
+     * @param {number} id ID активности
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof EventControllerApi
      */
-    public deleteEventById(id: number, options?: AxiosRequestConfig) {
-        return EventControllerApiFp(this.configuration).deleteEventById(id, options).then((request) => request(this.axios, this.basePath));
+    public deleteActivityById(id: number, options?: AxiosRequestConfig) {
+        return EventControllerApiFp(this.configuration).deleteActivityById(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @summary Фильрация мероприятий
+     * @summary Фильтрация мероприятий
      * @param {number} [page] Номер страницы, с которой начать показ мероприятий
      * @param {number} [size] Число мероприятий на странице
      * @param {number} [parentId] ID родительского мероприятия

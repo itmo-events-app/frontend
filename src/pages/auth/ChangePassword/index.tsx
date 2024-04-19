@@ -44,34 +44,46 @@ function ChangePasswordPage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
 
   const _setOldPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length > PWD_MAX_LEN) {
+    const length = value.length;
+
+    if (length > PWD_MAX_LEN) {
       return;
     }
-    setOldPassword(e.target.value);
+
+    setOldPassword(value);
     setOldPasswordError('');
     setError('');
   }
 
   const _setNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length > PWD_MAX_LEN) {
+    const length = value.length;
+
+    if (length > PWD_MAX_LEN) {
       return;
     }
-    setNewPassword(e.target.value);
+
+    setNewPassword(value);
     setNewPasswordError('');
   }
 
   const _setConfirmNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length > PWD_MAX_LEN) {
+    const length = value.length;
+
+    if (length > PWD_MAX_LEN) {
       return;
     }
-    setConfirmNewPassword(e.target.value);
+
+    setConfirmNewPassword(value);
     setConfirmNewPasswordError('');
   }
+
 
   const _change = () => {
     let ok = true;
@@ -89,22 +101,15 @@ function ChangePasswordPage() {
       ok = false;
     }
 
-    const eConfPwd = _validatePassword(confirmNewPassword);
     const eEqlPwd = _validateConfirmation(newPassword, confirmNewPassword);
     const eCngPwd = _validatePwdChange(oldPassword, newPassword);
-    if (eConfPwd) {
-      setConfirmNewPasswordError(eConfPwd);
-      ok = false;
-    } else if (eEqlPwd) {
+    if (eEqlPwd) {
       setConfirmNewPasswordError(eEqlPwd);
       ok = false;
     } else if (eCngPwd) {
       setNewPasswordError(eCngPwd);
       ok = false;
     }
-
-
-
 
     if (ok) {
       const request: UserChangePasswordRequest = {
@@ -170,18 +175,25 @@ function ChangePasswordPage() {
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Старый пароль"/>
-            <Input value={oldPassword} onChange={_setOldPassword} error={oldPasswordError != ''}
-                   errorText={oldPasswordError}/>
+            <Input type={passwordVisible ? "" : "password"}
+                   value={oldPassword} onChange={_setOldPassword}
+                   error={oldPasswordError != ''} errorText={oldPasswordError}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Новый пароль"/>
-            <Input value={newPassword} onChange={_setNewPassword} error={newPasswordError != ''}
-                   errorText={newPasswordError}/>
+            <Input type={passwordVisible ? "" : "password"}
+                   value={newPassword} onChange={_setNewPassword}
+                   error={newPasswordError != ''} errorText={newPasswordError}/>
           </div>
           <div className={styles.form_item}>
             <Label value="Подтверждение пароля"/>
-            <Input value={confirmNewPassword} onChange={_setConfirmNewPassword} error={confirmNewPasswordError != ''}
-                   errorText={confirmNewPasswordError}/>
+            <Input type={passwordVisible ? "" : "password"}
+                   value={confirmNewPassword} onChange={_setConfirmNewPassword}
+                   error={confirmNewPasswordError != ''} errorText={confirmNewPasswordError}/>
+          </div>
+          <div className={styles.form_item} style={{flexDirection: "row", marginTop: 10}}>
+            <Input type="checkbox" value={passwordVisible.toString()} onChange={() => setPasswordVisible(!passwordVisible)}/>
+            <Label value="Показать пароль"/>
           </div>
         </div>
         <Button onClick={_change}>Отправить</Button>

@@ -61,10 +61,20 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
+      ])
+    ),
   },
   [AppRoutes.EVENT_DATA]: {
     path: RoutePaths.eventData,
     authenticated: true,
+    authorized: anyPrivilege(
+      new Set([
+        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
+      ])
+    ),
   },
   [AppRoutes.TASK_LIST]: {
     path: RoutePaths.taskList,
@@ -75,7 +85,7 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authenticated: true,
     authorized: anyPrivilege(
       new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
       ])
     ),
   },
@@ -84,7 +94,8 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authenticated: true,
     authorized: anyPrivilege(
       new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)
+        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
+        new PrivilegeData(PrivilegeNames.VIEW_ROUTE_BETWEEN_ROOMS)
       ])
     ),
   },

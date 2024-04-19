@@ -13,30 +13,27 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { UserResponse } from './user-response';
 
 /**
  * 
  * @export
- * @interface FileDataResponse
+ * @interface PaginatedResponseUserResponse
  */
-export interface FileDataResponse {
+export interface PaginatedResponseUserResponse {
     /**
      * 
-     * @type {string}
-     * @memberof FileDataResponse
+     * @type {number}
+     * @memberof PaginatedResponseUserResponse
      */
-    'filename'?: string;
+    'total'?: number;
     /**
      * 
-     * @type {string}
-     * @memberof FileDataResponse
+     * @type {Array<UserResponse>}
+     * @memberof PaginatedResponseUserResponse
      */
-    'presignedUrl'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof FileDataResponse
-     */
-    'unsignedUrl'?: string;
+    'items'?: Array<UserResponse>;
 }
 
