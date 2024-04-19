@@ -19,7 +19,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from '@features/api-context';
 import Pagination, { PageEntry, PageProps } from '@widgets/main/PagedList/pagination';
-import { GetAllOrFilteredEventsFormatEnum, GetAllOrFilteredEventsStatusEnum } from '@shared/api/generated';
+import {
+  GetAllOrFilteredEventsFormatEnum,
+  GetAllOrFilteredEventsStatusEnum,
+  PlaceResponse,
+} from '@shared/api/generated';
 import { EventResponse } from '@shared/api/generated';
 import EventCreationPage from './EventCreationDialog';
 import PrivilegeContext from '@features/privilege-context';
@@ -132,11 +136,13 @@ function EventListPage() {
       );
       if (total === undefined || items === undefined) throw new Error("Incomplete data received from the server");
       const data = items as unknown as EventResponse[];
+      const eventsWithPlaces: { event: EventResponse; place: PlaceResponse; }[] = [];
       const pagesPromises = data.map(async (e) => {
         let address: string = '';
         if (e.placeId) {
           const place = await placeService.getPlace(api, e.placeId);
-          if (place) address = place.address !== undefined ? place.address : "null";
+          eventsWithPlaces.push({event: e, place: place});
+          if (place) address = place.address !== undefined ? place.address + (place.room ? ", ауд. " + place.room : "") : "null";
         }
         return new PageEntry(() => {
           return (
@@ -149,6 +155,7 @@ function EventListPage() {
         });
       });
       const pages = await Promise.all(pagesPromises);
+      document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({type: "eventsLists", events: eventsWithPlaces}, "*");
       setPageProps({ page: page, size: size, total: total });
       setItemList(pages);
     } catch (error) {
