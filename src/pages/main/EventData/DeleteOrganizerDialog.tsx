@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
 import { RoleResponse, UserSystemRoleResponse } from '@shared/api/generated';
 
-const DeleteOrganizerDialog = ({ eventId, organizerId, onSubmit }: { eventId: number; organizerId: number; onSubmit: () => void }) => {
+const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelete: () => void }) => {
   const [userList, setUserList] = useState([] as UserSystemRoleResponse[]);
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
@@ -47,25 +47,25 @@ const DeleteOrganizerDialog = ({ eventId, organizerId, onSubmit }: { eventId: nu
     console.log(roleName);
     console.log(userId);
     if (roleName == 'Организатор') {
-      const result = await api.role.removeOrganizerRole(userId!, eventId);
+      const result = await api.role.revokeOrganizerRole(userId!, eventId);
       if (result.status != 204) {
         console.log(result.status);
       } else {
-        onSubmit();
+        onDelete();
       }
     } else if (roleName == 'Помощник') {
-      const result = await api.role.removeAssistantRole(userId!, eventId);
+      const result = await api.role.revokeAssistantRole(userId!, eventId);
       if (result.status != 204) {
         console.log(result.status);
       } else {
-        onSubmit();
+        onDelete();
       }
     } else {
-      const result = await api.role.removeOrganizationalRole(userId!, eventId, roleId!);
+      const result = await api.role.revokeOrganizationalRole(userId!, eventId, roleId!);
       if (result.status != 204) {
         console.log(result.status);
       } else {
-        onSubmit();
+        onDelete();
       }
     }
   };
