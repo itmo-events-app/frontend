@@ -17,11 +17,21 @@ import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
+<<<<<<< Updated upstream
 import { Gantt, Task } from "gantt-task-react";
 import { getImageUrl } from "@shared/lib/image.ts";
 import ApiContext from "@features/api-context.ts";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
+=======
+import { Gantt, Task } from 'gantt-task-react';
+import { getImageUrl } from '@shared/lib/image.ts';
+import ApiContext from '@features/api-context.ts';
+import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
+import EditOrganizerDialog from '@pages/main/EventData/EditOrganizerDialog.tsx';
+import DeleteOrganizerDialog from '@pages/main/EventData/DeleteOrganizerDialog.tsx';
+import 'gantt-task-react/dist/index.css';
+>>>>>>> Stashed changes
 import {
   EventResponse,
   ParticipantPresenceRequest,
@@ -155,6 +165,8 @@ enum DialogSelected {
   UPDATE,
   CREATEACTIVITY = 2,
   ADDORGANIZER = 3,
+  EDITORGANIZER = 4,
+  DELETEORGANIZER = 5,
 }
 
 class DialogData {
@@ -185,21 +197,25 @@ type OptionsPrivileges = {
   tasksVisible: boolean,
   edit: boolean,
   addOrganizer: boolean,
+  editOrganizer: boolean,
+  deleteOrganizer: boolean,
   addHelper: boolean,
   addActivity: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
-  activitiesVisible: false,
-  orgsVisible: false,
-  modifyVisitStatus: false,
-  exportParticipants: false,
-  importParticipants: false,
-  tasksVisible: false,
-  edit: false,
-  addOrganizer: false,
-  addHelper: false,
-  addActivity: false
+  activitiesVisible: true,
+  orgsVisible: true,
+  modifyVisitStatus: true,
+  exportParticipants: true,
+  importParticipants: true,
+  tasksVisible: true,
+  edit: true,
+  addOrganizer: true,
+  editOrganizer: true,
+  deleteOrganizer: true,
+  addHelper: true,
+  addActivity: true
 } as const;
 
 interface PeopleTasks {
@@ -517,6 +533,28 @@ function EventActivitiesPage() {
           />
         );
         break;
+      case DialogSelected.EDITORGANIZER:
+        component = (
+          <EditOrganizerDialog
+            {...dialogData.args}
+            eventId={idInt}
+            onEdit={() => {
+              _closeDialog();
+            }}
+          />
+        );
+        break;
+        case DialogSelected.DELETEORGANIZER:
+        component = (
+          <DeleteOrganizerDialog
+            {...dialogData.args}
+            eventId={idInt}
+            onDelete={() => {
+              _closeDialog();
+            }}
+          />
+        );
+        break;
     }
     return (
       <Dialog
@@ -717,6 +755,14 @@ function EventActivitiesPage() {
     setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   };
+  const _editOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setDialogData(new DialogData('Редактировать организатора', DialogSelected.EDITORGANIZER));
+    e.stopPropagation();
+  };
+  const _deleteOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setDialogData(new DialogData('Удалить организатора', DialogSelected.DELETEORGANIZER));
+    e.stopPropagation();
+  };
 
   function createOrgPersonRow(person: OrgPerson) {
     return (
@@ -728,6 +774,7 @@ function EventActivitiesPage() {
     );
   }
 
+<<<<<<< Updated upstream
   function setVisited(id: string, status: boolean) {
     setVisitStatus(visitStatus.set(id, status));
 
@@ -744,6 +791,8 @@ function EventActivitiesPage() {
     }
   }
 
+=======
+>>>>>>> Stashed changes
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -815,12 +864,32 @@ function EventActivitiesPage() {
         ) : (
           <></>
         )}
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_editOrganizer}>
+              Редактировать
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_deleteOrganizer}>
+              Удалить
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+        
         <table className={styles.table}>
           <thead>
             <tr>
               <th>Роль</th>
               <th>Имя</th>
               <th>Email</th>
+              {/* <th>Действие</th> */}
             </tr>
           </thead>
           <tbody>{items}</tbody>
