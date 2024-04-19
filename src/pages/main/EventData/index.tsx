@@ -17,21 +17,14 @@ import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
-<<<<<<< Updated upstream
 import { Gantt, Task } from "gantt-task-react";
 import { getImageUrl } from "@shared/lib/image.ts";
 import ApiContext from "@features/api-context.ts";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
-=======
-import { Gantt, Task } from 'gantt-task-react';
-import { getImageUrl } from '@shared/lib/image.ts';
-import ApiContext from '@features/api-context.ts';
-import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
 import EditOrganizerDialog from '@pages/main/EventData/EditOrganizerDialog.tsx';
 import DeleteOrganizerDialog from '@pages/main/EventData/DeleteOrganizerDialog.tsx';
 import 'gantt-task-react/dist/index.css';
->>>>>>> Stashed changes
 import {
   EventResponse,
   ParticipantPresenceRequest,
@@ -574,6 +567,7 @@ function EventActivitiesPage() {
       getActivities(idInt);
     }
     setDialogData(new DialogData());
+   
   };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
@@ -774,7 +768,6 @@ function EventActivitiesPage() {
     );
   }
 
-<<<<<<< Updated upstream
   function setVisited(id: string, status: boolean) {
     setVisitStatus(visitStatus.set(id, status));
 
@@ -791,8 +784,6 @@ function EventActivitiesPage() {
     }
   }
 
-=======
->>>>>>> Stashed changes
   function createPersonRow(person: Person) {
     return (
       <tr key={person.id}>
@@ -855,7 +846,8 @@ function EventActivitiesPage() {
 
     return (
       <>
-        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+       <div className={styles.button_container}>
+       {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_addOrganizer}>
               Добавить
@@ -882,6 +874,7 @@ function EventActivitiesPage() {
         ) : (
           <></>
         )}
+       </div>
         
         <table className={styles.table}>
           <thead>
@@ -889,7 +882,6 @@ function EventActivitiesPage() {
               <th>Роль</th>
               <th>Имя</th>
               <th>Email</th>
-              {/* <th>Действие</th> */}
             </tr>
           </thead>
           <tbody>{items}</tbody>

@@ -117,8 +117,6 @@ function EventListPage() {
   const [pageProps, setPageProps] = useState<PageProps>({ page: 1, size: 5, total: 0 });
   const [itemList, setItemList] = useState<PageEntry[]>([]);
 
-<<<<<<< Updated upstream
-=======
   const [privilegeCreateEvent, setPrivilegeCreateEvent] = useState(false);
 
   useEffect(() => {
@@ -132,7 +130,6 @@ function EventListPage() {
     }
   }, [privilegeContext])
 
->>>>>>> Stashed changes
   const getEventList = async (page: number = 1, size: number = 5) => {
     try {
       const { total, items } = await eventService.getFilteredEvents(
