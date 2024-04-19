@@ -80,6 +80,11 @@ function ProfilePage() {
     setErrorMessageChangingPassword('');
   };
 
+  function formatDate(dateString: string): string {
+    const fmtDate = new Date(dateString).toLocaleDateString('ru-RU');
+    return fmtDate;
+  }
+
   const handleLoginChange = async () => {
     try {
       const userChangeLoginRequest: UserChangeLoginRequest = { login, type: "EMAIL" };
@@ -268,8 +273,8 @@ function ProfilePage() {
                       <td>{userInfo?.surname}</td>
                     </tr>
                     <tr>
-                      <td>Время последнего входа в систему</td>
-                      <td>{userInfo?.lastLoginDate}</td>
+                      <td>Дата последнего входа в систему</td>
+                      <td>{userInfo?.lastLoginDate ? formatDate(userInfo.lastLoginDate) : 'Нет данных'}</td>
                     </tr>
                     <tr>
                       <td>Логин</td>
