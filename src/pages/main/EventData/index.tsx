@@ -190,7 +190,8 @@ type OptionsPrivileges = {
   edit: boolean,
   addOrganizer: boolean,
   addHelper: boolean,
-  addActivity: boolean
+  addActivity: boolean,
+  deleteActivity: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -203,7 +204,8 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   edit: false,
   addOrganizer: false,
   addHelper: false,
-  addActivity: false
+  addActivity: false,
+  deleteActivity: false
 } as const;
 
 interface PeopleTasks {
@@ -458,6 +460,7 @@ function EventActivitiesPage() {
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
+        deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
       })
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -679,7 +682,8 @@ function EventActivitiesPage() {
             activityId={activityId}
             activities={activities}
             setActivities={setActivities}
-            setModalActive={setModalActive}/>
+            setModalActive={setModalActive}
+            canDelete={optionsPrivileges.deleteActivity}/>
         </ModalBlock>
         {optionsPrivileges.addActivity &&
         <div className={styles.button_container}>
