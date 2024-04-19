@@ -56,6 +56,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(result.status);
           } else {
             onEdit();
+            window.location.reload();
           }
         } else if (roleName == 'Помощник') {
           const result = await api.role.assignAssistantRole(userId, eventId);
@@ -63,6 +64,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(result.status);
           } else {
             onEdit();
+            window.location.reload();
           }
         } else {
           const result = await api.role.assignOrganizationalRole(userId, eventId, roleId!);
@@ -70,6 +72,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(result.status);
           } else {
             onEdit();
+            window.location.reload();
           }
         }
       }
@@ -80,7 +83,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
         <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
-          {loaded? (
+          {loaded ? (
             userList.map((u) => {
               return <option value={u.id}>{u.name}</option>;
             })
@@ -96,12 +99,12 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(roleIdString);
             setRoleId(parseInt(roleIdString));
             const foundRole = roleList.find((r) => r.id == parseInt(roleIdString));
-            if (foundRole!= undefined) {
+            if (foundRole != undefined) {
               setRoleName(foundRole.name);
             }
           }}
         >
-          {loaded? (
+          {loaded ? (
             roleList.map((r) => {
               return <option key={r.id} value={r.id}>{r.name}</option>;
             })

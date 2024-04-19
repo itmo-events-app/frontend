@@ -48,6 +48,7 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
         console.log(result.status);
       } else {
         onDelete();
+        window.location.reload();
       }
     } else if (roleName == 'Помощник') {
       const result = await api.role.revokeAssistantRole(userId!, eventId);
@@ -55,6 +56,7 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
         console.log(result.status);
       } else {
         onDelete();
+        window.location.reload();
       }
     } else {
       const result = await api.role.revokeOrganizationalRole(userId!, eventId, roleId!);
@@ -62,6 +64,7 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
         console.log(result.status);
       } else {
         onDelete();
+        window.location.reload();
       }
     }
   };

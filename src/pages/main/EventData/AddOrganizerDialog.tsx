@@ -48,6 +48,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
         console.log(result.status);
       } else {
         onSubmit();
+        window.location.reload();
       }
     } else if (roleName == 'Помощник') {
       const result = await api.role.assignAssistantRole(userId!, eventId);
@@ -55,6 +56,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
         console.log(result.status);
       } else {
         onSubmit();
+        window.location.reload();
       }
     } else {
       const result = await api.role.assignOrganizationalRole(userId!, eventId, roleId!);
@@ -62,6 +64,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
         console.log(result.status);
       } else {
         onSubmit();
+        window.location.reload();
       }
     }
   };
