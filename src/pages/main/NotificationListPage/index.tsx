@@ -64,6 +64,7 @@ export default function NotificationListPage() {
 
   const [notifications, setNotifications] = useState<Notification[]>(new Array<Notification>())
   const [notificationEntries, setNotificationEntries] = useState<NotificationEntry[]>(new Array<NotificationEntry>())
+  const [renderedNotificationEntries, setRenderedNotificationEntries] = useState<PageEntry[]>(new Array<PageEntry>())
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(5)
@@ -93,7 +94,7 @@ export default function NotificationListPage() {
     }, 5000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     setNotificationEntries(notifications.map(n => new NotificationEntry(n, false)))
@@ -109,9 +110,11 @@ export default function NotificationListPage() {
       .catch(reason => console.error("Не получилось прочитать все уведомления", reason.response.data))
   }
 
-  const _renderedNotificationEntries: any[] = notificationEntries.map(n => {
-    return new PageEntry(() => { return _renderNotificationEntry(n) })
-  })
+  useEffect(() => {
+    setRenderedNotificationEntries(notificationEntries.map(ne => {
+      return new PageEntry(() => _renderNotificationEntry(ne))
+    }))
+  }, [notificationEntries]);
 
   function _renderNotificationEntry(ne: NotificationEntry) {
     return (
@@ -194,12 +197,14 @@ export default function NotificationListPage() {
           {
             <Content>
               <PagedListStupid
-                pageState={[page, setPage]}
-                pageSizeState={[pageSize, setPageSize]}
+                page={page}
+                setPage={setPage}
+                page_size={pageSize}
+                setPageSize={setPageSize}
                 page_step={5}
                 total_pages={totalPages}
                 total_elements={totalElements}
-                items={_renderedNotificationEntries}
+                items={renderedNotificationEntries}
               />
 
               <div className={styles.read_all_button_div}>
