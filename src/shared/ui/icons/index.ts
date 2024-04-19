@@ -15,6 +15,8 @@ import UserCard from './svg/UserCard.svg?react';
 import DocumentCheck from './svg/DocumentCheck.svg?react';
 import UserRead from './svg/UserRead.svg?react';
 import Notebook from './svg/Notebook.svg?react';
+import Calendar from './svg/Calendar.svg?react';
+import Location from './svg/Location.svg?react';
 
 export {
   ArrowDown,
@@ -34,4 +36,6 @@ export {
   DocumentCheck,
   UserRead,
   Notebook,
+  Calendar,
+  Location,
 };
