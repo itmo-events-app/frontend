@@ -197,18 +197,18 @@ type OptionsPrivileges = {
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
-  activitiesVisible: false,
-  orgsVisible: false,
-  modifyVisitStatus: false,
-  exportParticipants: false,
-  importParticipants: false,
-  tasksVisible: false,
-  edit: false,
-  addOrganizer: false,
-  editOrganizer: false,
-  deleteOrganizer: false,
-  addHelper: false,
-  addActivity: false
+  activitiesVisible: true,
+  orgsVisible: true,
+  modifyVisitStatus: true,
+  exportParticipants: true,
+  importParticipants: true,
+  tasksVisible: true,
+  edit: true,
+  addOrganizer: true,
+  editOrganizer: true,
+  deleteOrganizer: true,
+  addHelper: true,
+  addActivity: true
 } as const;
 
 interface PeopleTasks {
