@@ -155,6 +155,8 @@ function EventListPage() {
         });
       });
       const pages = await Promise.all(pagesPromises);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({type: "eventsLists", events: eventsWithPlaces}, "*");
       setPageProps({ page: page, size: size, total: total });
       setItemList(pages);
