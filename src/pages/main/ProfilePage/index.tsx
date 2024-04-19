@@ -17,7 +17,7 @@ import {
   ProfileResponse,
   NotificationSettingsRequest,
   UserChangeNameRequest,
-  UserChangeLoginRequest,
+  UserChangePasswordRequest, UserChangeLoginRequest,
 } from "@shared/api/generated";
 import { useState } from "react";
 
@@ -38,6 +38,13 @@ function ProfilePage() {
 
   const [isChangingLogin, setIsChangingLogin] = useState(false);
   const [login, setLogin] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
+  const [errorMessageChangingPassword, setErrorMessageChangingPassword] = useState('');
+  const [successMessageChangingPassword, setSuccessMessageChangingPassword] = useState('');
 
   const [errorMessageEditingName, setErrorMessageEditingName] = useState('');
   const [errorMessageEditingLogin, setErrorMessageEditingLogin] = useState('');
@@ -50,6 +57,10 @@ function ProfilePage() {
     setIsChangingLogin((prev) => !prev);
   };
 
+  const customEditChangePasswordModal = () => {
+    setIsChangingPassword((prev) => !prev);
+  };
+
   const clearFieldsForEditingName = () => {
     setName('');
     setSurname('');
@@ -59,6 +70,14 @@ function ProfilePage() {
   const clearFieldsForChangingLogin = () => {
     setLogin('');
     setIsChangingLogin(false);
+  };
+
+  const clearFieldsForChangingPassword = () => {
+    setOldPassword('');
+    setNewPassword('');
+    setConfirmNewPassword('');
+    setIsChangingPassword(false);
+    setErrorMessageChangingPassword('');
   };
 
   const handleLoginChange = async () => {
@@ -117,6 +136,20 @@ function ProfilePage() {
     refetchUserInfo();
   };
 
+  const handleChangePassword = async () => {
+    try {
+      const userChangePasswordRequest: UserChangePasswordRequest = {oldPassword, newPassword, confirmNewPassword};
+      await profileService.changePassword(api, userChangePasswordRequest);
+      clearFieldsForChangingPassword();
+      setSuccessMessageChangingPassword('Пароль успешно изменён');
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errorMessage = error.response.data.errors.join(', ');
+        setErrorMessageChangingPassword(errorMessage);
+      }
+    }
+  };
+
   function _renderProfileEdit() {
     return (
       <>
@@ -163,6 +196,51 @@ function ProfilePage() {
         <div className={styles.button_row}>
           <Button onClick={handleLoginChange}>Сохранить изменения</Button>
           <Button onClick={clearFieldsForChangingLogin}>Закрыть</Button>
+        </div>
+      </>
+    );
+  }
+
+  function _renderPasswordEdit() {
+    return (
+      <>
+        <div>
+          <Label value="Старый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите старый пароль"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label value="Новый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите новый пароль"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label value="Подтвердите новый пароль " error={false}/>
+          <Input
+            type="password"
+            placeholder="Введите новый пароль"
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+          />
+        </div>
+
+        {errorMessageChangingPassword && <div className={styles.error}>{errorMessageChangingPassword}</div>}
+        {successMessageChangingPassword && <div className={styles.success}>{successMessageChangingPassword}</div>}
+
+        <div className={styles.button_row}>
+          <Button onClick={handleChangePassword}>Сохранить пароль</Button>
+          <Button onClick={() => {
+            clearFieldsForChangingPassword();
+            setSuccessMessageChangingPassword('');
+          }}>Закрыть</Button>
         </div>
       </>
     );
@@ -229,7 +307,11 @@ function ProfilePage() {
                   ) : (
                     <Button className={styles.button} onClick={customEditChangeLoginModal}>Сменить логин</Button>
                   )}
-                  <Button className={styles.button} onClick={() => navigate(RoutePaths.changePassword)}>Сменить пароль</Button>
+                  {isChangingPassword ? (
+                    _renderPasswordEdit()
+                  ) : (
+                    <Button className={styles.button} onClick={customEditChangePasswordModal}>Сменить пароль</Button>
+                  )}
                 </div>
               </div>
               <Button className={styles.exit_button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
