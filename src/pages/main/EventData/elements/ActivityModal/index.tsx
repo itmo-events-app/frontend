@@ -83,6 +83,7 @@ type Props = {
   activities: Activity[];
   setActivities: any;
   setModalActive: any;
+  canDelete: boolean
 };
 
 function ActivityModal(props: Props) {
@@ -130,7 +131,7 @@ function ActivityModal(props: Props) {
         // Удаление активности через пропс
         props.setActivities(props.activities
           .filter((activity) => {
-            return activity.activityId != activityID;
+            return activity.activityId != activityID.toString();
           }));
         // Закрытие модалки
         props.setModalActive(false);
@@ -162,9 +163,9 @@ function ActivityModal(props: Props) {
         </div>
       </div>
 
-      <div className={appendClassName(styles.activity_card_row, styles.activity_card_footer)}>
+      {props.canDelete && <div className={appendClassName(styles.activity_card_row, styles.activity_card_footer)}>
         <Button onClick={_deleteActivity}>Удалить активность</Button>
-      </div>
+      </div>}
     </div>
   );
 }

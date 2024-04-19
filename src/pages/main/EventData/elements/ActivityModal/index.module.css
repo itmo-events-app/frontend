@@ -47,7 +47,6 @@
 
 .activity_card_field {
   display: flex;
-  flex-wrap: wrap;
   align-content: center;
   justify-content: flex-start;
   align-items: center;
