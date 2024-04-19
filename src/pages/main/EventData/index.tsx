@@ -1,36 +1,41 @@
-import { uid } from "uid";
-import { useContext, useEffect, useRef, useState } from "react";
+import {uid} from "uid";
+import {useContext, useEffect, useRef, useState} from "react";
 import styles from "./index.module.css";
 import BrandLogo from "@widgets/main/BrandLogo";
 import Layout from "@widgets/main/Layout";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
-import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import { RouteParams, RoutePaths } from "@shared/config/routes";
+import PageTabs, {PageTab} from "@widgets/main/PageTabs";
+import {RouteParams, RoutePaths} from "@shared/config/routes";
 import Button from "@widgets/main/Button";
-import { hasAnyPrivilege } from "@features/privileges.ts";
-import { PrivilegeNames } from "@shared/config/privileges.ts";
-import { useNavigate, useParams } from "react-router-dom";
-import { appendClassName } from "@shared/util.ts";
+import {hasAnyPrivilege} from "@features/privileges.ts";
+import {PrivilegeNames} from "@shared/config/privileges.ts";
+import {useNavigate, useParams} from "react-router-dom";
+import {appendClassName} from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
-import { Gantt, Task } from "gantt-task-react";
-import { getImageUrl } from "@shared/lib/image.ts";
+import {Gantt, Task} from "gantt-task-react";
+import {getImageUrl} from "@shared/lib/image.ts";
 import ApiContext from "@features/api-context.ts";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
+
 import "gantt-task-react/dist/index.css";
 import {
   EventResponse,
   ParticipantPresenceRequest,
-  ParticipantResponse, SetPartisipantsListRequest,
+  ParticipantResponse,
+  SetPartisipantsListRequest,
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
-import { PrivilegeData } from '@entities/privilege-context.ts';
+import {PrivilegeData} from '@entities/privilege-context.ts';
 import Dropdown from "@widgets/main/Dropdown";
+import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
+import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
+
 
 class EventInfo {
   regDates: string;
@@ -192,7 +197,8 @@ type OptionsPrivileges = {
   edit: boolean,
   addOrganizer: boolean,
   addHelper: boolean,
-  addActivity: boolean
+  addActivity: boolean,
+  createTask: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -205,7 +211,8 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   edit: false,
   addOrganizer: false,
   addHelper: false,
-  addActivity: false
+  addActivity: false,
+  createTask: false
 } as const;
 
 interface PeopleTasks {
@@ -256,6 +263,8 @@ function getTimeOnly(dateTimeString: string) {
 }
 
 
+
+
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
   const navigate = useNavigate();
@@ -289,7 +298,7 @@ function EventActivitiesPage() {
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
-  
+
   const [reloadPage, setReloadPage] = useState(0);
 
   useEffect(() => {
@@ -446,6 +455,7 @@ function EventActivitiesPage() {
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
+        createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
       })
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -961,9 +971,73 @@ function EventActivitiesPage() {
 
   const locc = 'cz';
 
+  // async function _getUserData() {
+  //   try {
+  //     // Вызываем функцию getUserInfo, чтобы получить данные о пользователе
+  //     const userInfo = await profileService.getUserInfo(api);
+  //     //let userId;
+  //
+  //     // Проверяем, что данные успешно получены
+  //     if (userInfo) {
+  //       //userId = userInfo.userId;
+  //       // Выводим данные о пользователе
+  //       console.log(idInt);
+  //     } else {
+  //       // Обработка ситуации, если данные не были получены
+  //       console.log("Данные о пользователе недоступны");
+  //     }
+  //   } catch (error) {
+  //     // Обработка ошибок, возникших при получении данных о пользователе
+  //     console.error("Ошибка при получении данных о пользователе:", error);
+  //   }
+  //
+  // }
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+
+
+  const openModalCreate = () => {
+    setCreateModalOpen(true);
+  };
+
+  const closeModalCreate = () => {
+    setCreateModalOpen(false);
+    refetch();
+  };
+
+  const openModalUpdate = () => {
+    setUpdateModalOpen(true);
+  };
+
+  const closeModalUpdate = () => {
+   setUpdateModalOpen(false);
+    refetch()
+  };
+
+  const _onCreate = () => {
+    openModalCreate();
+  };
+
+  const _onUpdate = () => {
+    openModalUpdate();
+  };
+
   function _createTasksTable() {
     return (
+      <>
       <div className={styles.tasks}>
+        {optionsPrivileges.createTask ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_onCreate}>
+              Создать
+            </Button>
+            <Button className={styles.button} onClick={_onUpdate}>
+              Изменить / Удалить
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
         {
           tasks.length > 0 ?
             <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
@@ -978,8 +1052,13 @@ function EventActivitiesPage() {
           ))}
         </div>
       </div>
+        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
+      </>
     );
   }
+
+
 
   function pageTabHandler(tab_name: string) {
     setSelectedTab(tab_name);
