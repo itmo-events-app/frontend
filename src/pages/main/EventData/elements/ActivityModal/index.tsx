@@ -130,7 +130,7 @@ function ActivityModal(props: Props) {
         // Удаление активности через пропс
         props.setActivities(props.activities
           .filter((activity) => {
-            return activity.activityId != activityID;
+            return activity.activityId != activityID.toString();
           }));
         // Закрытие модалки
         props.setModalActive(false);
