@@ -38,7 +38,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
     initDialog();
     setLoaded(true);
   }, []);
-//
+
   const handleAddOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
