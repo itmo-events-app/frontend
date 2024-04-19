@@ -17,7 +17,8 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
 
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
-    const getAllRoles = await api.role.getAllRoles();
+    // const getAllRoles = await api.role.getAllRoles();
+    const getAllRoles = await api.role.getOrganizationalRoles();
     if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
       const items = getUsersResponse.data.items;
       setUserList(items ?? []);
