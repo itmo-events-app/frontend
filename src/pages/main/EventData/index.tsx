@@ -1,5 +1,5 @@
-import {uid} from "uid";
-import {useContext, useEffect, useRef, useState} from "react";
+import { uid } from "uid";
+import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
 import BrandLogo from "@widgets/main/BrandLogo";
 import Layout from "@widgets/main/Layout";
@@ -9,19 +9,18 @@ import Content from "@widgets/main/Content";
 import PageTabs, { PageTab } from "@widgets/main/PageTabs";
 import { RoutePaths } from "@shared/config/routes";
 import Button from "@widgets/main/Button";
-import {hasAnyPrivilege} from "@features/privileges.ts";
-import {PrivilegeNames} from "@shared/config/privileges.ts";
-import {useNavigate, useParams} from "react-router-dom";
-import {appendClassName} from "@shared/util.ts";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
+import { useNavigate, useParams } from "react-router-dom";
+import { appendClassName } from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
-import {Gantt, Task} from "gantt-task-react";
-import {getImageUrl} from "@shared/lib/image.ts";
+import { Gantt, Task } from "gantt-task-react";
+import { getImageUrl } from "@shared/lib/image.ts";
 import ApiContext from "@features/api-context.ts";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
-
 import "gantt-task-react/dist/index.css";
 import EditOrganizerDialog from '@pages/main/EventData/EditOrganizerDialog.tsx';
 import DeleteOrganizerDialog from '@pages/main/EventData/DeleteOrganizerDialog.tsx';
@@ -30,31 +29,16 @@ import {
   EventResponse,
   ParticipantPresenceRequest,
   ParticipantResponse,
-
-  SetPartisipantsListRequest,
-  TaskResponse
-} from '@shared/api/generated/index.ts';
-import PrivilegeContext from '@features/privilege-context.ts';
-import {PrivilegeData} from '@entities/privilege-context.ts';
-import Dropdown from "@widgets/main/Dropdown";
-import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
-import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
-
-
   TaskResponse
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
-import Dropdown from "@widgets/main/Dropdown";
-import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
-import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
 import Checkbox from "@widgets/main/Checkbox";
 import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
 import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partisipants-list-request.ts";
 import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
 import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
 import ModalBlock from "@widgets/main/Modal";
-
 
 class EventInfo {
   regDates: string;
@@ -214,7 +198,6 @@ type OptionsPrivileges = {
   deleteOrganizer: boolean,
   addHelper: boolean,
   addActivity: boolean,
-  createTask: boolean
   deleteActivity: boolean
 }
 
@@ -229,7 +212,6 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   addOrganizer: false,
   addHelper: false,
   addActivity: false,
-  createTask: false
   deleteActivity: false
 } as const;
 
@@ -281,8 +263,6 @@ function getTimeOnly(dateTimeString: string) {
 }
 
 
-
-
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
   const navigate = useNavigate();
@@ -316,7 +296,6 @@ function EventActivitiesPage() {
   const [participants, setParticipants] = useState([] as Person[]);
 
   const [selectedTab, setSelectedTab] = useState('Описание');
-
 
   const [modalActive, setModalActive] = useState(false);
   const [activityId, setActivityId] = useState('');
@@ -480,7 +459,6 @@ function EventActivitiesPage() {
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
-        createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
         deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
       })
     } else {
@@ -1050,73 +1028,9 @@ function EventActivitiesPage() {
 
   const locc = 'cz';
 
-  // async function _getUserData() {
-  //   try {
-  //     // Вызываем функцию getUserInfo, чтобы получить данные о пользователе
-  //     const userInfo = await profileService.getUserInfo(api);
-  //     //let userId;
-  //
-  //     // Проверяем, что данные успешно получены
-  //     if (userInfo) {
-  //       //userId = userInfo.userId;
-  //       // Выводим данные о пользователе
-  //       console.log(idInt);
-  //     } else {
-  //       // Обработка ситуации, если данные не были получены
-  //       console.log("Данные о пользователе недоступны");
-  //     }
-  //   } catch (error) {
-  //     // Обработка ошибок, возникших при получении данных о пользователе
-  //     console.error("Ошибка при получении данных о пользователе:", error);
-  //   }
-  //
-  // }
-  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
-
-
-  const openModalCreate = () => {
-    setCreateModalOpen(true);
-  };
-
-  const closeModalCreate = () => {
-    setCreateModalOpen(false);
-    refetch();
-  };
-
-  const openModalUpdate = () => {
-    setUpdateModalOpen(true);
-  };
-
-  const closeModalUpdate = () => {
-   setUpdateModalOpen(false);
-    refetch()
-  };
-
-  const _onCreate = () => {
-    openModalCreate();
-  };
-
-  const _onUpdate = () => {
-    openModalUpdate();
-  };
-
   function _createTasksTable() {
     return (
-      <>
       <div className={styles.tasks}>
-        {optionsPrivileges.createTask ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_onCreate}>
-              Создать
-            </Button>
-            <Button className={styles.button} onClick={_onUpdate}>
-              Изменить / Удалить
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
         {
           tasks.length > 0 ?
             <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
@@ -1131,13 +1045,8 @@ function EventActivitiesPage() {
           ))}
         </div>
       </div>
-        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
-        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
-      </>
     );
   }
-
-
 
   function pageTabHandler(tab_name: string) {
     setSelectedTab(tab_name);

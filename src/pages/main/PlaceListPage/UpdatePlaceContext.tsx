@@ -109,7 +109,6 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
       address,
       room: roomName,
     });
-    console.log(format)
     onClose();
   };
 
