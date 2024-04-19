@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
 import { RoleResponse, UserResponse } from '@shared/api/generated';
 
-const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: () => void }) => {
+const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () => void }) => {
   const [userList, setUserList] = useState([] as UserResponse[]);
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
@@ -17,12 +17,11 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
 
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
-    // const getAllRoles = await api.role.getAllRoles();
-    const getAllRoles = await api.role.getOrganizationalRoles();
+    const getAllRoles = await api.role.getAllRoles();
     if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
       const items = getUsersResponse.data.items;
-      setUserList(items ?? []);
-      if (items != null && items.length > 0) {
+      setUserList(items?? []);
+      if (items!= null && items.length > 0) {
         setUserId(items[0].id)
       } else {
         setUserId(undefined);
@@ -40,32 +39,42 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
     setLoaded(true);
   }, []);
 
-  const handleAddOrganizer = async () => {
+  const handleEditOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
-    if (roleName == 'Организатор') {
-      const result = await api.role.assignOrganizerRole(userId!, eventId);
-      if (result.status != 204) {
-        console.log(result.status);
+    if (userId) {
+      // First, delete the existing role of the user
+      const deleteUserRoleResponse = await api.role.revokeAssistantRole(userId, eventId);
+      // onSubmit();
+      if (deleteUserRoleResponse.status!= 204) {
+        console.log(deleteUserRoleResponse.status);
       } else {
-        onSubmit();
-        window.location.reload();
-      }
-    } else if (roleName == 'Помощник') {
-      const result = await api.role.assignAssistantRole(userId!, eventId);
-      if (result.status != 204) {
-        console.log(result.status);
-      } else {
-        onSubmit();
-        window.location.reload();
-      }
-    } else {
-      const result = await api.role.assignOrganizationalRole(userId!, eventId, roleId!);
-      if (result.status != 204) {
-        console.log(result.status);
-      } else {
-        onSubmit();
-        window.location.reload();
+        // Then, assign the new role
+        if (roleName == 'Организатор') {
+          const result = await api.role.assignOrganizerRole(userId, eventId);
+          if (result.status!= 204) {
+            console.log(result.status);
+          } else {
+            onEdit();
+            window.location.reload();
+          }
+        } else if (roleName == 'Помощник') {
+          const result = await api.role.assignAssistantRole(userId, eventId);
+          if (result.status!= 204) {
+            console.log(result.status);
+          } else {
+            onEdit();
+            window.location.reload();
+          }
+        } else {
+          const result = await api.role.assignOrganizationalRole(userId, eventId, roleId!);
+          if (result.status!= 204) {
+            console.log(result.status);
+          } else {
+            onEdit();
+            window.location.reload();
+          }
+        }
       }
     }
   };
@@ -73,7 +82,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
     <div className={styles.dialog_content}>
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
-               <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
+        <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
           {loaded ? (
             userList.map((u) => {
               return <option value={u.id}>{u.name}</option>;
@@ -104,9 +113,9 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
           )}
         </select>
       </div>
-      <Button onClick={handleAddOrganizer}>Добавить</Button>
+      <Button onClick={handleEditOrganizer}>Редактировать</Button>
     </div>
   );
 };
 
-export default AddOrganizerDialog;
+export default EditOrganizerDialog;

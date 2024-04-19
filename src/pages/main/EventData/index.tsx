@@ -22,6 +22,9 @@ import { getImageUrl } from "@shared/lib/image.ts";
 import ApiContext from "@features/api-context.ts";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
+import EditOrganizerDialog from '@pages/main/EventData/EditOrganizerDialog.tsx';
+import DeleteOrganizerDialog from '@pages/main/EventData/DeleteOrganizerDialog.tsx';
+import 'gantt-task-react/dist/index.css';
 import {
   EventResponse,
   ParticipantPresenceRequest,
@@ -159,6 +162,8 @@ enum DialogSelected {
   UPDATE,
   CREATEACTIVITY = 2,
   ADDORGANIZER = 3,
+  EDITORGANIZER = 4,
+  DELETEORGANIZER = 5,
 }
 
 class DialogData {
@@ -189,6 +194,8 @@ type OptionsPrivileges = {
   tasksVisible: boolean,
   edit: boolean,
   addOrganizer: boolean,
+  editOrganizer: boolean,
+  deleteOrganizer: boolean,
   addHelper: boolean,
   addActivity: boolean,
   deleteActivity: boolean
@@ -520,6 +527,28 @@ function EventActivitiesPage() {
           />
         );
         break;
+      case DialogSelected.EDITORGANIZER:
+        component = (
+          <EditOrganizerDialog
+            {...dialogData.args}
+            eventId={idInt}
+            onEdit={() => {
+              _closeDialog();
+            }}
+          />
+        );
+        break;
+        case DialogSelected.DELETEORGANIZER:
+        component = (
+          <DeleteOrganizerDialog
+            {...dialogData.args}
+            eventId={idInt}
+            onDelete={() => {
+              _closeDialog();
+            }}
+          />
+        );
+        break;
     }
     return (
       <Dialog
@@ -539,6 +568,7 @@ function EventActivitiesPage() {
       getActivities(idInt);
     }
     setDialogData(new DialogData());
+   
   };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
@@ -701,6 +731,14 @@ function EventActivitiesPage() {
     setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   };
+  const _editOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setDialogData(new DialogData('Редактировать организатора', DialogSelected.EDITORGANIZER));
+    e.stopPropagation();
+  };
+  const _deleteOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setDialogData(new DialogData('Удалить организатора', DialogSelected.DELETEORGANIZER));
+    e.stopPropagation();
+  };
 
   function createOrgPersonRow(person: OrgPerson) {
     return (
@@ -790,7 +828,8 @@ function EventActivitiesPage() {
 
     return (
       <>
-        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+       <div className={styles.button_container}>
+       {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_addOrganizer}>
               Добавить
@@ -799,6 +838,26 @@ function EventActivitiesPage() {
         ) : (
           <></>
         )}
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_editOrganizer}>
+              Редактировать
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+          <div className={styles.button_container}>
+            <Button className={styles.button} onClick={_deleteOrganizer}>
+              Удалить
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+       </div>
+        
         <table className={styles.table}>
           <thead>
           <tr>
