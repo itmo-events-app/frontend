@@ -5,7 +5,7 @@ import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
 import {useContext, useEffect, useState} from "react";
 import DatePicker from "react-datepicker";
-import {PlaceResponse} from "@shared/api/generated";
+import {PlaceResponse, UserResponse} from "@shared/api/generated";
 import ApiContext from "@features/api-context";
 import InputLabel from "@widgets/main/InputLabel";
 import {taskService} from "@features/task-service";
@@ -17,7 +17,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [reminder, setReminder] = useState<Date | null>(null);
 
-  const [usersList, setUsersList] = useState([] as usersResponce[]);
+  const [usersList, setUsersList] = useState([] as UserResponse[]);
   const [usersLoaded, setUsersLoaded] = useState(false);
   const [userId, setUserId] = useState(1);
 

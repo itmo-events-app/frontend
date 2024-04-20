@@ -8,7 +8,7 @@ import DatePicker from "react-datepicker";
 import {
   PlaceResponse,
   TaskRequestTaskStatusEnum,
-  TaskResponse
+  TaskResponse, UserResponse
 } from "@shared/api/generated";
 import ApiContext from "@features/api-context";
 import InputLabel from "@widgets/main/InputLabel";
@@ -22,7 +22,7 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
   const [reminder, setReminder] = useState<Date | null>(null);
   const [status, setStatus] = useState('')
 
-  const [usersList, setUsersList] = useState([] as usersResponce[]);
+  const [usersList, setUsersList] = useState([] as UserResponse[]);
   const [usersLoaded, setUsersLoaded] = useState(false);
   const [userId, setUserId] = useState(1);
 
@@ -37,7 +37,10 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
   // const taskStatus: { taskStatus: "NEW" } = {taskStatus: TaskRequestTaskStatusEnum.New}
 
   const getTasks = async () =>{
-    const tasksResponse = await api.task.taskListShowInEvent(idInt | null);
+    let tasksResponse;
+    if (idInt !== null) {
+      tasksResponse = await api.task.taskListShowInEvent(idInt);
+    }
     if (tasksResponse.status == 200) {
       const tasksData = tasksResponse.data;
       setTasksList(tasksData);
@@ -84,7 +87,6 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     setReminder(reminderObject);
     setUserId(selectedTask.assignee.id);
     setStatus(formatTranslate[selectedTask.taskStatus]);
-
   };
 
 
@@ -105,7 +107,10 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
   }, []);
 
   const getUsers = async () =>{
-    const usersResponse = await api.event.getUsersHavingRoles(idInt | null);
+    let usersResponse;
+    if (idInt !== null) {
+      usersResponse = await api.event.getUsersHavingRoles(idInt);
+    }
     if (usersResponse.status == 200){
       const usersData = usersResponse.data;
       setUsersList(usersData);
