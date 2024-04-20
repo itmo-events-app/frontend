@@ -198,8 +198,8 @@ type OptionsPrivileges = {
   deleteOrganizer: boolean,
   addHelper: boolean,
   addActivity: boolean,
+  deleteActivity: boolean,
   createEvent: boolean,
-  deleteActivity: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -215,7 +215,8 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   deleteOrganizer: false,
   addHelper: false,
   addActivity: false,
-  deleteActivity: false
+  deleteActivity: false,
+  createEvent: false,
 } as const;
 
 interface PeopleTasks {
@@ -478,7 +479,7 @@ function EventActivitiesPage() {
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
         deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
         editOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)])),
-        deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)]))
+        deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)])),
         createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])),
       })
     } else {
