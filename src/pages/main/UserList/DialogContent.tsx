@@ -69,6 +69,7 @@ const DialogContent = (props: AssignProps) => {
         const l = createRoleRadioElementList(r.data.map((role) => toRoleModel(role)));
         setRoles(l);
       });
+    setEventId( -1);
   }
 
   function _fetchSystemRoles() {
@@ -78,6 +79,7 @@ const DialogContent = (props: AssignProps) => {
         const l = createRoleRadioElementList(r.data.map((role) => toRoleModel(role)));
         setRoles(l)
       });
+    setEventId( -1);
   }
 
   function _fetchOrganizationalRoles() {

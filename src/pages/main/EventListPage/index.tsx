@@ -121,6 +121,19 @@ function EventListPage() {
   const [pageProps, setPageProps] = useState<PageProps>({ page: 1, size: 5, total: 0 });
   const [itemList, setItemList] = useState<PageEntry[]>([]);
 
+  const [_, setPrivilegeCreateEvent] = useState(false);
+
+  useEffect(() => {
+    if (privilegeContext.isSystemPrivilegesLoaded()) {
+      const privileges = privilegeContext.systemPrivileges!;
+      setPrivilegeCreateEvent(hasAnyPrivilege(privileges, new Set([
+        new PrivilegeData(PrivilegeNames.CREATE_EVENT)
+      ])))
+    } else {
+      setPrivilegeCreateEvent(true);
+    }
+  }, [privilegeContext])
+
   const getEventList = async (page: number = 1, size: number = 5) => {
     try {
       const { total, items } = await eventService.getFilteredEvents(

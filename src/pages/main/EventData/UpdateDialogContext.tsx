@@ -337,6 +337,8 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     if(!checkInputs()){
       return;
     }
+    console.log(startDateString);
+    console.log(startDate);
     const result = await api.event.updateEvent(
       eventId,
       place,
@@ -365,8 +367,13 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   }
   function convertToLocaleDateTime(date: Date | null) {
     if (date) {
-      const isoDateTime = date.toISOString();
-      return isoDateTime.slice(0, -1);
+      const localDateTime = date.getFullYear() + '-' +
+        ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+        ('0' + date.getDate()).slice(-2) + 'T' +
+        ('0' + date.getHours()).slice(-2) + ':' +
+        ('0' + date.getMinutes()).slice(-2) + ':' +
+        ('0' + date.getSeconds()).slice(-2);
+      return localDateTime
     }
     return null;
   }
