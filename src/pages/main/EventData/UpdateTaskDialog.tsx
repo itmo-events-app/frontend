@@ -75,7 +75,10 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
   };
 
 
-  const handleTaskChange = (selectedTask: TaskResponse) => {
+  const handleTaskChange = (selectedTask: TaskResponse | undefined) => {
+    if (!selectedTask) {
+      return;
+    }
     if (selectedTask.id !== undefined) {
       setTaskId(selectedTask.id);
     }
