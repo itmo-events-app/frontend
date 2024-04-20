@@ -36,19 +36,18 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
   const [tasksLoaded, setTasksLoaded] = useState(false);
   // const taskStatus: { taskStatus: "NEW" } = {taskStatus: TaskRequestTaskStatusEnum.New}
 
-  const getTasks = async () =>{
+  const getTasks = async () => {
     let tasksResponse;
     if (idInt !== null) {
       tasksResponse = await api.task.taskListShowInEvent(idInt);
+      if (tasksResponse.status == 200) {
+        const tasksData = tasksResponse.data;
+        setTasksList(tasksData);
+        setTasksLoaded(true);
+      }
     }
-    if (tasksResponse.status == 200) {
-      const tasksData = tasksResponse.data;
-      setTasksList(tasksData);
-      setTasksLoaded(true);
-    } else {
-      console.log(tasksResponse.status);
-    }
-  }
+  };
+
   useEffect(() => {
     getTasks();
   }, []);
@@ -110,11 +109,11 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     let usersResponse;
     if (idInt !== null) {
       usersResponse = await api.event.getUsersHavingRoles(idInt);
-    }
-    if (usersResponse.status == 200){
-      const usersData = usersResponse.data;
-      setUsersList(usersData);
-      setUsersLoaded(true);
+      if (usersResponse.status == 200){
+        const usersData = usersResponse.data;
+        setUsersList(usersData);
+        setUsersLoaded(true);
+      }
     }
   }
   useEffect(() => {
@@ -221,7 +220,7 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
               <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
                 {usersLoaded ? (
                   usersList.map((p) => {
-                    return <option key={p.id} value={p.id} >{p.name} {p.surname} {p.roleName}</option>;
+                    return <option key={p.id} value={p.id} >{p.name} {p.surname}</option>;
                   })
                 ) : (
                   <option value=""></option>

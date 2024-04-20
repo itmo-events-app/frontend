@@ -121,7 +121,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
                 {usersLoaded ? (
                   usersList.map((p) => {
-                    return <option key={p.id} value={p.id}>{p.name} {p.surname} {p.roleName}</option>;
+                    return <option key={p.id} value={p.id}>{p.name} {p.surname}</option>;
                   })
                 ) : (
                   <option value=""></option>
