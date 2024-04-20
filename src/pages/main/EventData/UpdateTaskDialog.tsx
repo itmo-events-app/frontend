@@ -75,16 +75,34 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
   };
 
 
-  const handleTaskChange = (selectedTask) => {
-    setTaskId(selectedTask.id);
-    setTitle(selectedTask.title);
-    setDescription(selectedTask.description);
-    setPlace(selectedTask.place.id);
-    const deadlineObject = convertToDate(selectedTask.deadline)
-    setDeadline(deadlineObject)
-    const reminderObject = convertToDate(selectedTask.reminder)
-    setReminder(reminderObject);
-    setUserId(selectedTask.assignee.id);
+  const handleTaskChange = (selectedTask: TaskResponse) => {
+    if (selectedTask.id !== undefined) {
+      setTaskId(selectedTask.id);
+    }
+    if (selectedTask.title !== undefined) {
+      setTitle(selectedTask.title);
+    }
+    if (selectedTask.description !== undefined) {
+      setDescription(selectedTask.description);
+    }
+    if (selectedTask.place?.id !== undefined) {
+      setPlace(selectedTask.place.id);
+    }
+
+    if (selectedTask.deadline !== undefined) {
+      const deadlineObject = convertToDate(selectedTask.deadline)
+      setDeadline(deadlineObject)
+    }
+    if (selectedTask.reminder !== undefined) {
+      const reminderObject = convertToDate(selectedTask.reminder)
+      setReminder(reminderObject);
+    }
+    if (selectedTask.assignee?.id !== undefined) {
+      setUserId(selectedTask.assignee.id);
+    }
+    if (selectedTask.assignee?.id !== undefined) {
+      setUserId(selectedTask.assignee.id);
+    }
     setStatus(formatTranslate[selectedTask.taskStatus]);
   };
 
