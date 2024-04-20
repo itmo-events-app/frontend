@@ -106,7 +106,9 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     if (selectedTask.assignee?.id !== undefined) {
       setUserId(selectedTask.assignee.id);
     }
-    setStatus(formatTranslate[selectedTask.taskStatus]);
+    if (selectedTask.taskStatus !== undefined) {
+      setStatus(formatTranslate[selectedTask.taskStatus]);
+    }
   };
 
 
