@@ -358,4 +358,11 @@
   flex-direction: column;
   width: 10rem;
   margin: 0.5rem;
+
+.copy {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
 }

@@ -201,7 +201,8 @@ type OptionsPrivileges = {
   addHelper: boolean,
   addActivity: boolean,
   deleteActivity: boolean,
-  createTask: boolean
+  createTask: boolean,
+  createEvent: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -218,7 +219,9 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   addHelper: false,
   addActivity: false,
   deleteActivity: false,
-  createTask: false
+  createTask: false,
+  createEvent: false
+
 } as const;
 
 interface PeopleTasks {
@@ -273,7 +276,7 @@ function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
   const navigate = useNavigate();
 
-  const { privilegeContext, updateEventPrivileges } = useContext(PrivilegeContext);
+  const { privilegeContext, updateEventPrivileges, updateSystemPrivileges } = useContext(PrivilegeContext);
 
   const { id } = useParams();
   const [idInt, setIdInt] = useState<number | null>(null)
@@ -455,9 +458,19 @@ function EventActivitiesPage() {
     return new Set();
   }
 
+  function _getSystemPrivileges(): Set<PrivilegeData> {
+    if (privilegeContext.isSystemPrivilegesLoaded()) {
+      return privilegeContext.systemPrivileges!;
+    } else {
+      updateSystemPrivileges();
+    }
+    return new Set();
+  }
+
   useEffect(() => {
     if (idInt != null) {
       const privileges = _getPrivileges(idInt);
+      const systemPrivileges = _getSystemPrivileges();
       setOptionsPrivileges({
         activitiesVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
         orgsVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])),
@@ -472,7 +485,9 @@ function EventActivitiesPage() {
         deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
         editOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)])),
         deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)])),
-        createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)]))
+        createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
+        createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)]))
+
       })
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -497,6 +512,10 @@ function EventActivitiesPage() {
 
     if (optionsPrivileges.tasksVisible) {
       tabs.push(new PageTab('Задачи'));
+    }
+
+    if (optionsPrivileges.createEvent) {
+      tabs.push(new PageTab('Копирование'));
     }
 
     setPageTabs(tabs);
@@ -1106,6 +1125,15 @@ function EventActivitiesPage() {
     );
   }
 
+  function _createCopyButtons() { // MARK: Buttons
+    return (
+      <div className={styles.copy}>
+        <Button onClick={() => api.event.copyEvent(idInt!, false)}>Скопировать мероприятие без задач</Button>
+        <Button onClick={() => api.event.copyEvent(idInt!, true)}>Скопировать мероприятие вместе с задачами</Button>
+      </div>
+    );
+  }
+
   function pageTabHandler(tab_name: string) {
     setSelectedTab(tab_name);
   }
@@ -1132,6 +1160,7 @@ function EventActivitiesPage() {
               (a: Person, b: Person) => { return (a.name > b.name) ? 1 : -1 }
             ))}
             {selectedTab == 'Задачи' && _createTasksTable()}
+            {selectedTab == 'Копирование' && _createCopyButtons()}
           </div>
           <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>
             <_Dialog />
