@@ -300,3 +300,10 @@
   display: flex;
   justify-content: center;
 }
+
+.copy {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
