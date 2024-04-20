@@ -315,7 +315,11 @@ function EventActivitiesPage() {
         if (data.placeId) {
           const placeResponse = await api.place.placeGet(data.placeId ?? 0);
           if (placeResponse.status == 200) {
-            placeAddress = placeResponse.data.address ?? '';
+            if (placeResponse.data.address) {
+              placeAddress = placeResponse.data.address + (placeResponse.data.room ? ", ауд. " + placeResponse.data.room : "");
+            } else {
+              placeAddress = "";
+            }
           } else {
             console.log(placeResponse.status);
           }
