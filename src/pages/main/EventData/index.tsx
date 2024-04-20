@@ -1051,7 +1051,6 @@ function EventActivitiesPage() {
 
   const closeModalCreate = () => {
     setCreateModalOpen(false);
-    refetch();
   };
 
   const openModalUpdate = () => {
@@ -1060,7 +1059,6 @@ function EventActivitiesPage() {
 
   const closeModalUpdate = () => {
     setUpdateModalOpen(false);
-    refetch()
   };
 
   const _onCreate = () => {
