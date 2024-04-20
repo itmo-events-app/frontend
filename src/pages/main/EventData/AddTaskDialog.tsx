@@ -43,9 +43,9 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
   }, []);
 
   const getUsers = async () =>{
-    const usersResponce = await api.event.getUsersHavingRoles(idInt | null);
-    if (usersResponce.status == 200){
-      const usersData = usersResponce.data;
+    const usersResponse = await api.event.getUsersHavingRoles(idInt | null);
+    if (usersResponse.status == 200){
+      const usersData = usersResponse.data;
       setUsersList(usersData);
       setUsersLoaded(true);
     }
