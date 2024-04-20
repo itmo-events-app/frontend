@@ -43,13 +43,17 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
   }, []);
 
   const getUsers = async () =>{
-    const usersResponse = await api.event.getUsersHavingRoles(idInt | null);
-    if (usersResponse.status == 200){
-      const usersData = usersResponse.data;
-      setUsersList(usersData);
-      setUsersLoaded(true);
+    let usersResponse;
+    if (idInt !== null) {
+      usersResponse = await api.event.getUsersHavingRoles(idInt);
+      if (usersResponse.status == 200){
+        const usersData = usersResponse.data;
+        setUsersList(usersData);
+        setUsersLoaded(true);
+      }
     }
   }
+
   useEffect(() => {
     getUsers();
   }, []);
