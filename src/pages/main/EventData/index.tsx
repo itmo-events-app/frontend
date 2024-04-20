@@ -39,6 +39,8 @@ import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partis
 import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
 import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
 import ModalBlock from "@widgets/main/Modal";
+import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
+import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
 
 class EventInfo {
   regDates: string;
@@ -199,7 +201,8 @@ type OptionsPrivileges = {
   addHelper: boolean,
   addActivity: boolean,
   deleteActivity: boolean,
-  createEvent: boolean,
+  createTask: boolean,
+  createEvent: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -216,7 +219,9 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   addHelper: false,
   addActivity: false,
   deleteActivity: false,
-  createEvent: false,
+  createTask: false,
+  createEvent: false
+
 } as const;
 
 interface PeopleTasks {
@@ -480,7 +485,9 @@ function EventActivitiesPage() {
         deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
         editOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)])),
         deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)])),
-        createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])),
+        createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
+        createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)]))
+
       })
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -1053,23 +1060,68 @@ function EventActivitiesPage() {
 
   const locc = 'cz';
 
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+
+
+  const openModalCreate = () => {
+    setCreateModalOpen(true);
+  };
+
+  const closeModalCreate = () => {
+    setCreateModalOpen(false);
+  };
+
+  const openModalUpdate = () => {
+    setUpdateModalOpen(true);
+  };
+
+  const closeModalUpdate = () => {
+    setUpdateModalOpen(false);
+  };
+
+  const _onCreate = () => {
+    openModalCreate();
+  };
+
+  const _onUpdate = () => {
+    openModalUpdate();
+  };
+
   function _createTasksTable() {
     return (
-      <div className={styles.tasks}>
-        {
-          tasks.length > 0 ?
-            <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
-            : <></>
-        }
-        <div className={styles.tasks__people}>
-          {eventTasksPeople.map((human) => (
-            <div key={human.color} className={styles.tasks__human}>
-              <span style={{ background: human.color }}></span>
-              {human.name} {human.lastname}
+      <>
+        <div className={styles.tasks}>
+          {optionsPrivileges.createTask ? (
+            <div className={styles.button_container}>
+              <Button className={styles.button} onClick={_onCreate}>
+                Создать
+              </Button>
+              <Button className={styles.button} onClick={_onUpdate}>
+                Изменить / Удалить
+              </Button>
             </div>
-          ))}
+          ) : (
+            <></>
+          )}
+          {
+            tasks.length > 0 ?
+              <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
+              : <></>
+          }
+          <div className={styles.tasks__people}>
+            {eventTasksPeople.map((human) => (
+              <div key={human.color} className={styles.tasks__human}>
+                <span style={{ background: human.color }}></span>
+                {human.name} {human.lastname}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
+      </>
+
     );
   }
 
