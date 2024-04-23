@@ -17,6 +17,11 @@ import UserRead from './svg/UserRead.svg?react';
 import Notebook from './svg/Notebook.svg?react';
 import Calendar from './svg/Calendar.svg?react';
 import Location from './svg/Location.svg?react';
+import Cross from './svg/Cross.svg?react';
+import Check from './svg/Check.svg?react';
+import Edit from './svg/Edit.svg?react';
+import Book from './svg/Book.svg?react';
+import Pencil from './svg/Pencil.svg?react';
 
 export {
   ArrowDown,
@@ -38,4 +43,9 @@ export {
   Notebook,
   Calendar,
   Location,
+  Cross,
+  Check,
+  Edit,
+  Book,
+  Pencil
 };
