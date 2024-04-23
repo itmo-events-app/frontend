@@ -200,9 +200,9 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
             <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?noscroll&select_only_areas" width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button type="submit">Обновить</Button>
-              {showEmptyFieldsMessage &&
-                <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>}
             </div>
+            {showEmptyFieldsMessage &&
+              <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>}
           </form>
         </div>
       </Dialog>

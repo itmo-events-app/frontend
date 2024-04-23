@@ -158,10 +158,10 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
                     width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button onClick={createPlace}>Создать</Button>
-              {showEmptyFieldsMessage && (
-                <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>
-              )}
             </div>
+            {showEmptyFieldsMessage && (
+              <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>
+            )}
           </div>
         </div>
       </Dialog>
