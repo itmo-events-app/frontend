@@ -212,7 +212,7 @@ function TaskListPage() {
   //tabs
   const pageTabs : PageTab[] = [];
   pageTabs.push(new PageTab("Текущие"));
-  pageTabs.push(new PageTab("Прошение"));
+  pageTabs.push(new PageTab("Прошедшие"));
   const [selectedTab, setSelectedTab] = useState(pageTabs[0].text);
   const [pageProps, setPageProps] = useState<PageProps>({page:1,size:5,total:0});
   const [itemList, setItemList] = useState<PageEntry[]>([]);
@@ -230,7 +230,7 @@ function TaskListPage() {
           const event = new DropdownOption<string>(task.event.eventTitle?task.event.eventTitle:"",task.event.eventId.toString())
           eventActivities = { event: event, activities: [], tasks: [] };
           result.push(eventActivities);
-        } 
+        }
         if (task.event?.activityId) {
           let activityTasks: ActivityTasks | undefined = eventActivities?.activities.find(activityDropdown => activityDropdown.activity.id === task.event?.activityId?.toString());
           if (!activityTasks && task.event && task.event.activityId) {
@@ -267,7 +267,7 @@ function TaskListPage() {
               filteredTasks.push(...activityTasks.tasks);
               break;
             }
-          } 
+          }
           else {
             if (eventActivities.event.id === filters.eventId) {
               eventActivities.activities.forEach(activityTasks => {
@@ -287,7 +287,7 @@ function TaskListPage() {
       console.error("Error fetching event list:", error);
     }
   };
-  
+
   useEffect(() => {
     getTaskList();
   }, [filters]);
@@ -315,7 +315,7 @@ function TaskListPage() {
         ...prev,
         activityId: event?.id,
       }))
-    } 
+    }
   }
 
   const activityOptions = dropdownOptions.find(obj => obj.event.id === selectedEvent?.id)?.activities;
