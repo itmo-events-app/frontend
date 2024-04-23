@@ -129,10 +129,10 @@ function RegisterPage() {
         })
         .catch((e: any) => {
           if (e.response.data.errors) {
-            setError(e.response.data.errors.join('. '));
+            setEmailError(e.response.data.errors.join('. '));
           }
           else {
-            setError(e.response.data);
+            setPasswordError(e.response.data);
           }
         })
     }
