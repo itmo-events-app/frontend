@@ -41,6 +41,7 @@ import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
 import ModalBlock from "@widgets/main/Modal";
 import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
 import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
+import CopyTasksDialog from "@pages/main/EventData/CopyTasksDialog.tsx";
 
 
 class EventInfo {
@@ -575,7 +576,7 @@ function EventActivitiesPage() {
           />
         );
         break;
-        case DialogSelected.DELETEORGANIZER:
+      case DialogSelected.DELETEORGANIZER:
         component = (
           <DeleteOrganizerDialog
             {...dialogData.args}
@@ -871,35 +872,35 @@ function EventActivitiesPage() {
 
     return (
       <>
-       <div className={styles.button_container}>
-       {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_addOrganizer}>
-              Добавить
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
-        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_editOrganizer}>
-              Редактировать
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
-        {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
-          <div className={styles.button_container}>
-            <Button className={styles.button} onClick={_deleteOrganizer}>
-              Удалить
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
-       </div>
+        <div className={styles.button_container}>
+          {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+            <div className={styles.button_container}>
+              <Button className={styles.button} onClick={_addOrganizer}>
+                Добавить
+              </Button>
+            </div>
+          ) : (
+            <></>
+          )}
+          {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+            <div className={styles.button_container}>
+              <Button className={styles.button} onClick={_editOrganizer}>
+                Редактировать
+              </Button>
+            </div>
+          ) : (
+            <></>
+          )}
+          {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
+            <div className={styles.button_container}>
+              <Button className={styles.button} onClick={_deleteOrganizer}>
+                Удалить
+              </Button>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
 
         <table className={styles.table}>
           <thead>
@@ -1073,6 +1074,7 @@ function EventActivitiesPage() {
 
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isCopyModalOpen, setCopyModalOpen] = useState(false);
 
 
   const openModalCreate = () => {
@@ -1091,6 +1093,14 @@ function EventActivitiesPage() {
     setUpdateModalOpen(false);
   };
 
+  const openModalCopy = () => {
+    setCopyModalOpen(true);
+  }
+
+  const closeModalCopy = () => {
+    setCopyModalOpen(false);
+  }
+
   const _onCreate = () => {
     openModalCreate();
   };
@@ -1098,6 +1108,10 @@ function EventActivitiesPage() {
   const _onUpdate = () => {
     openModalUpdate();
   };
+
+  const _onCopy = () => {
+    openModalCopy();
+  }
 
   function _createTasksTable() {
     return (
@@ -1110,6 +1124,9 @@ function EventActivitiesPage() {
               </Button>
               <Button className={styles.button} onClick={_onUpdate}>
                 Изменить / Удалить
+              </Button>
+              <Button className={styles.button} onClick={_onCopy}>
+                Копировать с другого мероприятия
               </Button>
             </div>
           ) : (
@@ -1131,6 +1148,7 @@ function EventActivitiesPage() {
         </div>
         {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
         {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
+        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
       </>
 
     );

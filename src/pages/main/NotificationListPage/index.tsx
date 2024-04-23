@@ -13,7 +13,6 @@ import { ArrowDown } from "@shared/ui/icons";
 import { api } from "@shared/api";
 import { NotificationResponse } from "@shared/api/generated";
 import PagedListStupid from "@widgets/main/PagedList2";
-import { useNavigate } from "react-router-dom";
 
 
 class Notification {
@@ -56,10 +55,8 @@ class NotificationEntry {
 
 
 export default function NotificationListPage() {
-  const navigate = useNavigate()
-
   function _navigateToNotification(notificationLink: string) {
-    navigate(notificationLink)
+    window.location.href = notificationLink;
   }
 
   const [notifications, setNotifications] = useState<Notification[]>(new Array<Notification>())

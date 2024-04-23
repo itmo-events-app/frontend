@@ -366,3 +366,16 @@
   flex-direction: column;
   gap: 16px;
 }
+
+.copy_tasks_entry {
+  border: 1px solid black;
+  border-radius: 10px;
+  font-size: 20px;
+  padding: 10px;
+  margin: 10px;
+  margin-left: 0px;
+}
+
+.selected_task_for_copy {
+  background-color: rgba(0, 0, 255, 0.4);
+}
