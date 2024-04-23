@@ -183,8 +183,8 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
       readErrorText = {...readErrorText, registrationEnd: "Регистрация на мероприятие не может заканчиваться в прошлом"};
       result = false;
     }else if(registrationStart!=null && registrationStart.getTime()>= registrationEnd.getTime()){
-      errorsInput ={...errorsInput, endDate : true};
-      readErrorText = {...readErrorText, endDate: "Время начала регистрации на мероприятие не может быть после времени конца регистрации на мероприятие"};
+      errorsInput ={...errorsInput, registrationEnd : true};
+      readErrorText = {...readErrorText, registrationEnd: "Время начала регистрации на мероприятие не может быть после времени конца регистрации на мероприятие"};
       result = false;
     }
 
