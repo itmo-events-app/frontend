@@ -3,7 +3,6 @@ import { useContext, useState } from 'react';
 import styles from './index.module.css';
 import { ITMO } from '@widgets/auth/ITMO';
 import Block from '@widgets/Block';
-import Error from '@widgets/auth/Error';
 import Label from '@widgets/auth/InputLabel';
 import Input from '@widgets/auth/Input';
 import Button from '@widgets/auth/Button';
@@ -39,8 +38,6 @@ const errorValidators = {
 function RegisterPage() {
   const { api } = useContext(ApiContext);
   const navigate = useNavigate();
-
-  const [error, setError] = useState('');
 
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
@@ -144,7 +141,6 @@ function RegisterPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Регистрация</span>
-        <Error value={error} isError={error != ''} />
         <div className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Имя" />
