@@ -149,7 +149,7 @@
 
 .data_list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 25rem);
+  grid-template-columns: repeat(auto-fill, 29rem);
 
   grid-row-gap: 1rem;
   grid-column-gap: 1.5rem;
