@@ -41,7 +41,6 @@ export const placeService = {
       latitude: lat,
       longitude: long,
     };
-
     return api.withReauth(() => api.place.placeAdd(request));
   },
 
@@ -65,7 +64,6 @@ export const placeService = {
       latitude,
       longitude,
     };
-
     return api.withReauth(() => api.place.placeEdit(id, request));
   },
 };

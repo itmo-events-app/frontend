@@ -5,7 +5,7 @@ import PageName from '@widgets/main/PageName';
 import SideBar from '@widgets/main/SideBar';
 import { RoutePaths } from '@shared/config/routes.ts';
 import Content from '@widgets/main/Content';
-import PagedList, { PageEntry } from '@widgets/main/PagedList';
+import { PageEntry } from '@widgets/main/PagedList';
 import Layout from '@widgets/main/Layout';
 import { uid } from 'uid';
 import { appendClassName } from '@shared/util.ts';
@@ -23,6 +23,7 @@ import PrivilegeContext from '@features/privilege-context';
 import {ArrowDown, MenuVertical} from '@shared/ui/icons';
 import MessageDialogContent from '@pages/main/UserList/MessageDialogContent';
 import {UserResponse} from "@shared/api/generated/model";
+import PagedList2 from "@widgets/main/PagedList2";
 
 class ContextMenuData {
   clientX: number;
@@ -68,32 +69,34 @@ class UserElement {
 }
 
 const privilegeOthers = {
-  assign: new Set([new PrivilegeData(PrivilegeNames.ASSIGN_SYSTEM_ROLE)]),
-  revoke: new Set([new PrivilegeData(PrivilegeNames.REVOKE_SYSTEM_ROLE)]),
+  assign_system: new Set([new PrivilegeData(PrivilegeNames.ASSIGN_SYSTEM_ROLE)]),
+  revoke_system: new Set([new PrivilegeData(PrivilegeNames.REVOKE_SYSTEM_ROLE)]),
+  // assign_event: new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)]),
+  // revoke_event: new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)]),
 };
 
 export default function UserListPage() {
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
   const [userElements, setUserElements] = useState([] as UserElement[]);
+  const [userElementPage, setUserElementPage] = useState([] as PageEntry[])
 
   const cmRef = useRef(null);
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [page] = useState(0)
-  const [size] = useState(10)
-  //todo use when new paging is done
-  // const [page, setPage] = useState(0)
-  // const [size, setSize] = useState(10)
-  // const [total, setTotal] = useState(10)
+  const [page, setPage] = useState(1)
+  const [size, setSize] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalElements, setTotalElements] = useState(1)
 
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
 
-  const menuVisible = hasAnyPrivilege(
-    privilegeContext.systemPrivileges,
-    new Set([...privilegeOthers.assign, ...privilegeOthers.revoke])
-  );
+  // const menuVisible = hasAnyPrivilege(
+  //   privilegeContext.systemPrivileges,
+  //   new Set([...privilegeOthers.assign_system, ...privilegeOthers.revoke_system,
+  //     ...privilegeOthers.assign_event, ...privilegeOthers.revoke_event])
+  // );
 
   // set context menu position. not using transform(-100%, 0%) to handle content bounds
   // NOTE: COPIED FROM ROLE LIST PAGE
@@ -124,13 +127,15 @@ export default function UserListPage() {
   // fill users on startup
   useEffect(() => {
     _fetchUsers();
-  }, []);
+  }, [page, size]);
 
   function _fetchUsers() {
-    api.withReauth(() => api.profile.getAllUsers(searchQuery, page, size))
+    api.withReauth(() => api.profile.getAllUsers(searchQuery, page - 1, size))
       .then(r => {
         const l = r.data.items?.map((user: UserResponse) => new UserElement(toUserModel(user))) || [];
         setUserElements(l);
+        setTotalElements(r.data.total || 0)
+        setTotalPages(Math.ceil(totalElements / size))
       });
   }
 
@@ -155,12 +160,6 @@ export default function UserListPage() {
     return res;
   }
 
-  const _renderedUserEntries: any[] = userElements.map((u) => {
-    return new PageEntry(() => {
-      return _renderUserEntry(u);
-    });
-  });
-
   function _expand(tab: UserElement) {
     return () => {
       tab.expanded = !tab.expanded;
@@ -168,6 +167,11 @@ export default function UserListPage() {
     };
   }
 
+  useEffect(() => {
+    setUserElementPage(userElements.map(ne => {
+      return new PageEntry(() => _renderUserEntry(ne))
+    }))
+  }, [userElements]);
 
   function _renderUserEntry(ue: UserElement) {
 
@@ -187,11 +191,7 @@ export default function UserListPage() {
           </div>
           <div className={styles.user_right}>
             <div className={styles.read_button_container}>
-              {menuVisible ? (
-                <MenuVertical onClick={(e) => _onMenuClick(ue.entry, e)} className={styles.icon_dots} />
-              ) : (
-                <div></div>
-              )}
+              <MenuVertical onClick={(e) => _onMenuClick(ue.entry, e)} className={styles.icon_dots} />
               <ArrowDown onClick={_expand(ue)} className={appendClassName(styles.icon_expand, ue.expanded ? styles.expanded : null)} />
             </div>
           </div>
@@ -206,9 +206,15 @@ export default function UserListPage() {
   }
 
   const _assignRoleToUser = (userId: number, roleId: number, eventId: number) => {
-    if (eventId == 0) {
+    if (eventId == -1) {
       _assignSystemRole(userId, roleId)
     } else {
+      if (eventId == 0) {
+        setDialogData(new DialogData('Некорректная операция!',
+          DialogSelected.MESSAGE,
+          { messageText: "Вы должны выбрать мероприятие!" }));
+        return;
+      }
       switch (roleId) {
         //magic numbers are default role ids
         case 3:
@@ -285,6 +291,12 @@ export default function UserListPage() {
     if (eventId == 0) {
       _revokeSystemRole(userId, roleId)
     } else {
+      if (eventId == 0) {
+        setDialogData(new DialogData('Некорректная операция!',
+          DialogSelected.MESSAGE,
+          { messageText: "Вы должны выбрать мероприятие!" }));
+        return;
+      }
       switch (roleId) {
         //magic numbers are default role ids
         case 3:
@@ -437,9 +449,9 @@ export default function UserListPage() {
     const filteredItems = contextItems.filter((item) => {
       switch (item.text) {
         case 'Назначить системную роль':
-          return hasAnyPrivilege(mine, privilegeOthers.assign);
+          return hasAnyPrivilege(mine, privilegeOthers.assign_system);
         case 'Отозвать системную роль':
-          return hasAnyPrivilege(mine, privilegeOthers.revoke);
+          return hasAnyPrivilege(mine, privilegeOthers.revoke_system);
         case 'Назначить организационную роль':
           return true;
         case 'Отозвать организационную роль':
@@ -460,8 +472,16 @@ export default function UserListPage() {
           <div className={styles.search}>
             <Search value={searchQuery} onChange={_onSearchChange} onSearch={_fetchUsers} placeholder="Поиск пользователей" />
           </div>
-          {/*//todo apply new pagination when done*/}
-          <PagedList page={page + 1} page_size={size} page_step={10} items={_renderedUserEntries} />
+          <PagedList2
+            page={page}
+            setPage={setPage}
+            page_size={size}
+            setPageSize={setSize}
+            page_step={5}
+            total_pages={totalPages}
+            total_elements={totalElements}
+            items={userElementPage}
+          />
           <_ContextMenu/>
           <Fade
             className={appendClassName(styles.fade,

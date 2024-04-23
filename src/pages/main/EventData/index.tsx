@@ -39,6 +39,8 @@ import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partis
 import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
 import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
 import ModalBlock from "@widgets/main/Modal";
+import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
+import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
 
 
 class EventInfo {
@@ -203,7 +205,9 @@ type OptionsPrivileges = {
   deleteOrganizer: boolean,
   addHelper: boolean,
   addActivity: boolean,
-  deleteActivity: boolean
+  deleteActivity: boolean,
+  createTask: boolean,
+  createEvent: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -219,7 +223,10 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   deleteOrganizer: false,
   addHelper: false,
   addActivity: false,
-  deleteActivity: false
+  deleteActivity: false,
+  createTask: false,
+  createEvent: false
+
 } as const;
 
 interface PeopleTasks {
@@ -274,7 +281,7 @@ function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
   const navigate = useNavigate();
 
-  const { privilegeContext, updateEventPrivileges } = useContext(PrivilegeContext);
+  const { privilegeContext, updateEventPrivileges, updateSystemPrivileges } = useContext(PrivilegeContext);
 
   const { id } = useParams();
   const [idInt, setIdInt] = useState<number | null>(null)
@@ -320,7 +327,11 @@ function EventActivitiesPage() {
         if (data.placeId) {
           const placeResponse = await api.place.placeGet(data.placeId ?? 0);
           if (placeResponse.status == 200) {
-            placeAddress = placeResponse.data.address ?? '';
+            if (placeResponse.data.address) {
+              placeAddress = placeResponse.data.address + (placeResponse.data.room ? ", ауд. " + placeResponse.data.room : "");
+            } else {
+              placeAddress = "";
+            }
           } else {
             console.log(placeResponse.status);
           }
@@ -452,11 +463,21 @@ function EventActivitiesPage() {
     return new Set();
   }
 
+  function _getSystemPrivileges(): Set<PrivilegeData> {
+    if (privilegeContext.isSystemPrivilegesLoaded()) {
+      return privilegeContext.systemPrivileges!;
+    } else {
+      updateSystemPrivileges();
+    }
+    return new Set();
+  }
+
   useEffect(() => {
     if (idInt != null) {
       const privileges = _getPrivileges(idInt);
+      const systemPrivileges = _getSystemPrivileges();
       setOptionsPrivileges({
-        activitiesVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
+        activitiesVisible: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
         orgsVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])),
         modifyVisitStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])),
         exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
@@ -468,7 +489,10 @@ function EventActivitiesPage() {
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
         deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
         editOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)])),
-        deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)]))
+        deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)])),
+        createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
+        createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)]))
+
       })
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -493,6 +517,10 @@ function EventActivitiesPage() {
 
     if (optionsPrivileges.tasksVisible) {
       tabs.push(new PageTab('Задачи'));
+    }
+
+    if (optionsPrivileges.createEvent) {
+      tabs.push(new PageTab('Копирование'));
     }
 
     setPageTabs(tabs);
@@ -1043,22 +1071,76 @@ function EventActivitiesPage() {
 
   const locc = 'cz';
 
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+
+
+  const openModalCreate = () => {
+    setCreateModalOpen(true);
+  };
+
+  const closeModalCreate = () => {
+    setCreateModalOpen(false);
+  };
+
+  const openModalUpdate = () => {
+    setUpdateModalOpen(true);
+  };
+
+  const closeModalUpdate = () => {
+    setUpdateModalOpen(false);
+  };
+
+  const _onCreate = () => {
+    openModalCreate();
+  };
+
+  const _onUpdate = () => {
+    openModalUpdate();
+  };
+
   function _createTasksTable() {
     return (
-      <div className={styles.tasks}>
-        {
-          tasks.length > 0 ?
-            <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
-            : <></>
-        }
-        <div className={styles.tasks__people}>
-          {eventTasksPeople.map((human) => (
-            <div key={human.color} className={styles.tasks__human}>
-              <span style={{ background: human.color }}></span>
-              {human.name} {human.lastname}
+      <>
+        <div className={styles.tasks}>
+          {optionsPrivileges.createTask ? (
+            <div className={styles.button_container}>
+              <Button className={styles.button} onClick={_onCreate}>
+                Создать
+              </Button>
+              <Button className={styles.button} onClick={_onUpdate}>
+                Изменить / Удалить
+              </Button>
             </div>
-          ))}
+          ) : (
+            <></>
+          )}
+          {
+            tasks.length > 0 ?
+              <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
+              : <></>
+          }
+          <div className={styles.tasks__people}>
+            {eventTasksPeople.map((human) => (
+              <div key={human.color} className={styles.tasks__human}>
+                <span style={{ background: human.color }}></span>
+                {human.name} {human.lastname}
+              </div>
+            ))}
+          </div>
         </div>
+        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
+      </>
+
+    );
+  }
+
+  function _createCopyButtons() { // MARK: Buttons
+    return (
+      <div className={styles.copy}>
+        <Button onClick={() => api.event.copyEvent(idInt!, false)}>Скопировать мероприятие без задач</Button>
+        <Button onClick={() => api.event.copyEvent(idInt!, true)}>Скопировать мероприятие вместе с задачами</Button>
       </div>
     );
   }
@@ -1089,6 +1171,7 @@ function EventActivitiesPage() {
               (a: Person, b: Person) => { return (a.name > b.name) ? 1 : -1 }
             ))}
             {selectedTab == 'Задачи' && _createTasksTable()}
+            {selectedTab == 'Копирование' && _createCopyButtons()}
           </div>
           <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>
             <_Dialog />

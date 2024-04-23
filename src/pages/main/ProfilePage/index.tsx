@@ -44,8 +44,8 @@ const MAIL_DOMAIN_ERR_MSG = 'Некорректный Email. Поддержив�
 
 function ProfilePage() {
   const navigate = useNavigate();
-  const {api} = useContext(ApiContext);
-  const {data: userInfo, refetch: refetchUserInfo} = useQuery<ProfileResponse>({
+  const { api } = useContext(ApiContext);
+  const { data: userInfo, refetch: refetchUserInfo } = useQuery<ProfileResponse>({
     queryFn: () => profileService.getUserInfo(api),
     enabled: true,
     queryKey: ['userInfo'],
@@ -95,16 +95,17 @@ function ProfilePage() {
     }
 
     try {
-      const userChangeLoginRequest: UserChangeLoginRequest = {login, type: "EMAIL"};
+      const userChangeLoginRequest: UserChangeLoginRequest = { login, type: "EMAIL" };
       await profileService.changeLogin(api, userChangeLoginRequest);
       clearFieldsForChangingLogin();
       setErrorMessageEditingLogin('');
-      await refetchUserInfo();
+      refetchUserInfo();
     } catch (error: any) {
       if (error.response.data.errors) {
         const errorMessage = error.response.data.errors.join(', ');
         setErrorMessageEditingLogin(errorMessage);
-      } else {
+      }
+      else {
         const errorMessage = error.response.data;
         setErrorMessageEditingLogin(errorMessage);
       }
@@ -124,18 +125,18 @@ function ProfilePage() {
     }
 
     try {
-      const userChangeNameRequest: UserChangeNameRequest = {name, surname};
+      const userChangeNameRequest: UserChangeNameRequest = { name, surname };
       await profileService.changeName(api, userChangeNameRequest);
       clearFieldsForEditingName();
       setErrorMessageEditingName('');
-      await refetchUserInfo();
+      refetchUserInfo();
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.errors) {
         const errorMessage = error.response.data.errors.join(', ');
         setErrorMessageEditingName(errorMessage);
       }
     }
-  }
+  };
 
   const handleEmailNotificationChange = async (enableEmail: boolean) => {
     const newSettings: NotificationSettingsRequest = {
@@ -145,7 +146,7 @@ function ProfilePage() {
     console.log(newSettings);
     await profileService.updateNotifications(api, newSettings);
     setIsEditingMode(false);
-    await refetchUserInfo();
+    refetchUserInfo();
   };
 
   const handlePushNotificationChange = async (enablePush: boolean) => {
@@ -156,7 +157,7 @@ function ProfilePage() {
     console.log(newSettings);
     await profileService.updateNotifications(api, newSettings);
     setIsEditingMode(false);
-    await refetchUserInfo();
+    refetchUserInfo();
   };
 
 
@@ -209,7 +210,7 @@ function ProfilePage() {
       <div className={appendClassName(styles.form, isEditing ? styles.visible : styles.hidden)}>
         {errorMessageEditingName && <div className={styles.form_error}>{errorMessageEditingName}</div>}
         <div>
-          <Label value="Имя " error={false}/>
+          <Label value="Имя " error={false} />
           <Input
             type="text"
             placeholder="Введите имя"
@@ -218,7 +219,7 @@ function ProfilePage() {
           />
         </div>
         <div>
-          <Label value="Фамилия " error={false}/>
+          <Label value="Фамилия " error={false} />
           <Input
             type="text"
             placeholder="Введите фамилию"
@@ -248,7 +249,7 @@ function ProfilePage() {
       <div className={appendClassName(styles.form, isChangingLogin ? styles.visible : styles.hidden)}>
         {errorMessageEditingLogin && <div className={styles.form_error}>{errorMessageEditingLogin}</div>}
         <div>
-          <Label value="Новый логин " error={false}/>
+          <Label value="Новый логин " error={false} />
           <Input
             type="text"
             placeholder="Введите новый логин"

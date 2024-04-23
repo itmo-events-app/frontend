@@ -31,3 +31,7 @@ body,
   width: 100%;
   margin: 0px;
 }
+
+#itmo-map-iframe {
+  border: none;
+}

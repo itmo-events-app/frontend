@@ -11,7 +11,7 @@ async function getImageUrl(prefix: string) {
   let foundImageUrl = '';
 
   for (const type of types) {
-    foundImageUrl = `http://localhost:9000/event-images/${prefix}.${type}`;
+    foundImageUrl = `${(window as any).ENV_MIMIO_URL}/event-images/${prefix}.${type}`;
     const found = await checkImageExists(foundImageUrl);
     if (found) {
       return foundImageUrl;

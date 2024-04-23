@@ -72,8 +72,8 @@ function PlaceDataPage() {
             </div>
           </div>
           <div className={styles.label}>Карта:</div>
-          <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html" width="100%"
-                  height="420px"></iframe>
+          <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?fullscreen" width="100%"
+                  height="420px" allow="fullscreen"></iframe>
         </Content>
       }
     />
