@@ -1,25 +1,45 @@
-import styles from './index.module.css';
-import BrandLogo from '@widgets/main/BrandLogo';
-import Layout from '@widgets/main/Layout';
-import PageName from '@widgets/main/PageName';
+import Layout from "@widgets/main/Layout";
+import BrandLogo from "@widgets/main/BrandLogo";
+import PageName from "@widgets/main/PageName";
+import SideBar from "@widgets/main/SideBar";
+import {RoutePaths} from "@shared/config/routes";
 import Content from '@widgets/main/Content';
-import SideBar from '@widgets/main/SideBar';
-import Button from '@widgets/auth/Button';
-import Label from '@widgets/auth/InputLabel';
-import Input from '@widgets/main/Input';
-import { RoutePaths } from '@shared/config/routes';
-import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import ApiContext from '@features/api-context.ts';
-import profileService from '@features/profile-service.ts';
+import styles from "./index.module.css";
+import Button from "@widgets/auth/Button";
+import {appendClassName} from "@shared/util";
+import {useContext, useState} from "react";
+import ApiContext from "@features/api-context";
+import {useQuery} from "@tanstack/react-query";
 import {
-  ProfileResponse,
   NotificationSettingsRequest,
-  UserChangeNameRequest,
-  UserChangePasswordRequest, UserChangeLoginRequest,
-} from "@shared/api/generated";
-import { useState } from "react";
+  ProfileResponse,
+  UserChangeLoginRequest,
+  UserChangeNameRequest
+} from "@shared/api/generated/index";
+import profileService from "@features/profile-service";
+import Label from "@widgets/auth/InputLabel";
+import Input from "@widgets/main/Input";
+import {useNavigate} from "react-router-dom";
+import {uid} from "uid";
+import {Check, Pencil} from "@shared/ui/icons";
+import {getDataTimeLine} from "@shared/lib/dates";
+import ModalBlock from "@widgets/main/Modal";
+
+
+const EMAIL_CONFIRM_RETURN_URL = window.location.protocol + "//" + window.location.host + RoutePaths.confirmEmail;
+const MAIL_RECONFIRM_MSG = 'Письмо со ссылкой для подтверждения почты отправлено.';
+const MAIL_RECONFIRM_FAIL_MSG = 'Не удалось отправить письмо со ссылкой для подтверждения почты.';
+
+const NAME_MAX_LENGTH = 64;
+const SURNAME_MAX_LENGTH = 64;
+const EMAIL_MAX_LENGTH = 128;
+
+const MAIL_REGEX = "^\\w[\\w\\-.]*@(niu|idu.)?itmo\\.ru$"
+
+const EMPTY_ERR_MSG = 'Поля не должны быть пустыми';
+const NON_CYRILLIC_SYM_NAME_ERR_MSG = 'Имя должно содержать только буквы кириллицы без цифр и специальных символов';
+const NON_CYRILLIC_SYM_SURNAME_ERR_MSG = 'Фамилия должна содержать только буквы кириллицы без цифр и специальных символов';
+const MAIL_DOMAIN_ERR_MSG = 'Некорректный Email. Поддерживаемые домены: @itmo.ru, @idu.itmo.ru и @niuitmo.ru';
 
 
 function ProfilePage() {
@@ -33,21 +53,17 @@ function ProfilePage() {
 
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
-  const [notificationSettings, setNotificationSettings] = useState<NotificationSettingsRequest | null>(null);
   const [isEditing, setIsEditingMode] = useState(false);
 
   const [isChangingLogin, setIsChangingLogin] = useState(false);
   const [login, setLogin] = useState('');
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-
-  const [errorMessageChangingPassword, setErrorMessageChangingPassword] = useState('');
-  const [successMessageChangingPassword, setSuccessMessageChangingPassword] = useState('');
 
   const [errorMessageEditingName, setErrorMessageEditingName] = useState('');
   const [errorMessageEditingLogin, setErrorMessageEditingLogin] = useState('');
+
+  const [modalBlockActive, setModalBlockActive] = useState(false);
+  const [modalBlockText, setModalBlockText] = useState('');
+
 
   const customEditRenameModal = () => {
     setIsEditingMode((prev) => !prev);
@@ -57,35 +73,27 @@ function ProfilePage() {
     setIsChangingLogin((prev) => !prev);
   };
 
-  const customEditChangePasswordModal = () => {
-    setIsChangingPassword((prev) => !prev);
-  };
-
   const clearFieldsForEditingName = () => {
+    setIsEditingMode(false);
     setName('');
     setSurname('');
-    setIsEditingMode(false);
   };
 
   const clearFieldsForChangingLogin = () => {
-    setLogin('');
     setIsChangingLogin(false);
+    setLogin('');
   };
 
-  const clearFieldsForChangingPassword = () => {
-    setOldPassword('');
-    setNewPassword('');
-    setConfirmNewPassword('');
-    setIsChangingPassword(false);
-    setErrorMessageChangingPassword('');
-  };
-
-  function formatDate(dateString: string): string {
-    const fmtDate = new Date(dateString).toLocaleDateString('ru-RU');
-    return fmtDate;
-  }
 
   const handleLoginChange = async () => {
+    if (login.trim().length == 0) {
+      setErrorMessageEditingLogin(EMPTY_ERR_MSG);
+      return;
+    } else if (!new RegExp(MAIL_REGEX).test(login)) {
+      setErrorMessageEditingLogin(MAIL_DOMAIN_ERR_MSG);
+      return;
+    }
+
     try {
       const userChangeLoginRequest: UserChangeLoginRequest = { login, type: "EMAIL" };
       await profileService.changeLogin(api, userChangeLoginRequest);
@@ -105,6 +113,17 @@ function ProfilePage() {
   };
 
   const handleNameChange = async () => {
+    if (name.trim().length == 0 || surname.trim().length == 0) {
+      setErrorMessageEditingName(EMPTY_ERR_MSG);
+      return;
+    } else if (!/^[а-яё]*$/i.test(name)) {
+      setErrorMessageEditingName(NON_CYRILLIC_SYM_NAME_ERR_MSG);
+      return;
+    } else if (!/^[а-яё]*$/i.test(surname)) {
+      setErrorMessageEditingName(NON_CYRILLIC_SYM_SURNAME_ERR_MSG);
+      return;
+    }
+
     try {
       const userChangeNameRequest: UserChangeNameRequest = { name, surname };
       await profileService.changeName(api, userChangeNameRequest);
@@ -122,49 +141,81 @@ function ProfilePage() {
   const handleEmailNotificationChange = async (enableEmail: boolean) => {
     const newSettings: NotificationSettingsRequest = {
       enableEmail,
-      enablePush: notificationSettings ? notificationSettings.enablePush : false
+      enablePush: userInfo?.enablePushNotifications ? userInfo.enablePushNotifications : false,
     };
+    console.log(newSettings);
     await profileService.updateNotifications(api, newSettings);
-    setNotificationSettings(newSettings);
     setIsEditingMode(false);
     refetchUserInfo();
   };
 
   const handlePushNotificationChange = async (enablePush: boolean) => {
     const newSettings: NotificationSettingsRequest = {
-      enableEmail: notificationSettings ? notificationSettings.enableEmail : false,
-      enablePush
+      enableEmail: userInfo?.enableEmailNotifications ? userInfo.enableEmailNotifications : false,
+      enablePush,
     };
+    console.log(newSettings);
     await profileService.updateNotifications(api, newSettings);
-    setNotificationSettings(newSettings);
     setIsEditingMode(false);
     refetchUserInfo();
   };
 
-  const handleChangePassword = async () => {
-    try {
-      const userChangePasswordRequest: UserChangePasswordRequest = { oldPassword, newPassword, confirmNewPassword };
-      await profileService.changePassword(api, userChangePasswordRequest);
-      clearFieldsForChangingPassword();
-      setSuccessMessageChangingPassword('Пароль успешно изменён');
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.errors) {
-        const errorMessage = error.response.data.errors.join(', ');
-        setErrorMessageChangingPassword(errorMessage);
-      }
+
+  const _resend = () => {
+    api.auth
+      .sendVerificationEmail(EMAIL_CONFIRM_RETURN_URL)
+      .then(() => {
+        console.log("Email confirmation message sent!");
+        // const state: NotifyState = {
+        //   msg: MAIL_RECONFIRM_MSG
+        // };
+        // navigate(RoutePaths.notify, {state: state});
+        _openModalBlock(MAIL_RECONFIRM_MSG);
+      })
+      .catch((e) => {
+        console.log(MAIL_RECONFIRM_FAIL_MSG);
+        console.log(e.response.data);
+        // const state: NotifyState = {
+        //   msg: e.response.data
+        // };
+        // navigate(RoutePaths.notify, {state: state});
+
+        // setModalBlockText(e.response.data);
+
+        _openModalBlock(e.response.data);
+      });
+  }
+
+
+  const _setName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length > NAME_MAX_LENGTH) {
+      return;
     }
-  };
+    setName(value);
+    setErrorMessageEditingName('');
+  }
+
+  const _setSurname = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length > SURNAME_MAX_LENGTH) {
+      return;
+    }
+    setSurname(value);
+    setErrorMessageEditingName('');
+  }
 
   function _renderProfileEdit() {
     return (
-      <>
+      <div className={appendClassName(styles.form, isEditing ? styles.visible : styles.hidden)}>
+        {errorMessageEditingName && <div className={styles.form_error}>{errorMessageEditingName}</div>}
         <div>
           <Label value="Имя " error={false} />
           <Input
             type="text"
             placeholder="Введите имя"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={_setName}
           />
         </div>
         <div>
@@ -173,161 +224,177 @@ function ProfilePage() {
             type="text"
             placeholder="Введите фамилию"
             value={surname}
-            onChange={(e) => setSurname(e.target.value)}
+            onChange={_setSurname}
           />
         </div>
-        {errorMessageEditingName && <div className={styles.error}>{errorMessageEditingName}</div>}
-        <div className={styles.button_row}>
-          <Button onClick={handleNameChange}>Сохранить изменения</Button>
-          <Button onClick={clearFieldsForEditingName}>Закрыть</Button>
+        <div>
+          <Button className={styles.form_btn} onClick={handleNameChange}>Сохранить</Button>
+          <Button className={styles.form_btn} onClick={clearFieldsForEditingName}>Закрыть</Button>
         </div>
-      </>
+      </div>
     );
+  }
+
+  const _setLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length > EMAIL_MAX_LENGTH) {
+      return;
+    }
+    setLogin(value);
+    setErrorMessageEditingLogin('');
   }
 
   function _renderLoginEdit() {
     return (
-      <>
+      <div className={appendClassName(styles.form, isChangingLogin ? styles.visible : styles.hidden)}>
+        {errorMessageEditingLogin && <div className={styles.form_error}>{errorMessageEditingLogin}</div>}
         <div>
           <Label value="Новый логин " error={false} />
           <Input
             type="text"
             placeholder="Введите новый логин"
             value={login}
-            onChange={(e) => setLogin(e.target.value)}
+            onChange={_setLogin}
           />
         </div>
-        {errorMessageEditingLogin && <div className={styles.error}>{errorMessageEditingLogin}</div>}
-        <div className={styles.button_row}>
-          <Button onClick={handleLoginChange}>Сохранить изменения</Button>
-          <Button onClick={clearFieldsForChangingLogin}>Закрыть</Button>
+        <div>
+          <Button className={styles.form_btn} onClick={handleLoginChange}>Сохранить</Button>
+          <Button className={styles.form_btn} onClick={clearFieldsForChangingLogin}>Закрыть</Button>
         </div>
-      </>
+      </div>
     );
   }
 
-  function _renderPasswordEdit() {
-    return (
-      <>
-        <div>
-          <Label value="Старый пароль " error={false} />
-          <Input
-            type="password"
-            placeholder="Введите старый пароль"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-          />
-        </div>
-        <div>
-          <Label value="Новый пароль " error={false} />
-          <Input
-            type="password"
-            placeholder="Введите новый пароль"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-        </div>
-        <div>
-          <Label value="Подтвердите новый пароль " error={false} />
-          <Input
-            type="password"
-            placeholder="Введите новый пароль"
-            value={confirmNewPassword}
-            onChange={(e) => setConfirmNewPassword(e.target.value)}
-          />
-        </div>
+  const _getInitials = () => {
+    const char1 = userInfo?.name ? userInfo?.name.charAt(0) : '';
+    const char2 = userInfo?.surname ? userInfo?.surname.charAt(0) : '';
 
-        {errorMessageChangingPassword && <div className={styles.error}>{errorMessageChangingPassword}</div>}
-        {successMessageChangingPassword && <div className={styles.success}>{successMessageChangingPassword}</div>}
+    return char1 + char2;
+  }
 
-        <div className={styles.button_row}>
-          <Button onClick={handleChangePassword}>Сохранить пароль</Button>
-          <Button onClick={() => {
-            clearFieldsForChangingPassword();
-            setSuccessMessageChangingPassword('');
-          }}>Закрыть</Button>
-        </div>
-      </>
-    );
+  const _getEmptyStringIfUndef = (str: string | undefined) => {
+    if (!str) {
+      return '';
+    } else {
+      return str;
+    }
+  }
+
+
+  const _openModalBlock = (text: string) => {
+    setModalBlockText(text);
+    setModalBlockActive(true);
+  }
+
+  const _closeModalBlock = () => {
+    setModalBlockActive(false);
+    // setModalBlockText('');
   }
 
   return (
     <Layout
-      topLeft={<BrandLogo />}
-      topRight={<PageName text="Профиль" />}
-      bottomLeft={<SideBar currentPageURL={RoutePaths.profile} />}
-      bottomRight=
-      {
+      topLeft={<BrandLogo/>}
+      topRight={<PageName text="Профиль"/>}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.profile}/>}
+      bottomRight={
         <Content>
-          <div className={styles.root}>
-            <div className={styles.profile}>
-              <div className={styles.profile_col}>
-                <table className={styles.table}>
-                  <tbody>
-                    <tr>
-                      <td>Имя</td>
-                      <td>{userInfo?.name}</td>
-                    </tr>
-                    <tr>
-                      <td>Фамилия</td>
-                      <td>{userInfo?.surname}</td>
-                    </tr>
-                    <tr>
-                      <td>Дата последнего входа в систему</td>
-                      <td>{userInfo?.lastLoginDate ? formatDate(userInfo.lastLoginDate) : 'Нет данных'}</td>
-                    </tr>
-                    <tr>
-                      <td>Логин</td>
-                      <td>{userInfo?.userInfo && userInfo.userInfo.length > 0 ? userInfo.userInfo[0].login : 'Нет данных'}</td>
-                    </tr>
-                    <tr>
-                      <td>Уведомления почта</td>
-                      <td>{userInfo?.enableEmailNotifications === true ? 'Включены' : 'Выключены'}</td>
-                    </tr>
-                    <tr>
-                      <td>Уведомления пуш</td>
-                      <td>{userInfo?.enablePushNotifications === true ? 'Включены' : 'Выключены'}</td>
-                    </tr>
-                    <tr>
-                      <td>Устройства</td>
-                      {userInfo?.devices ? (
-                        <td>{userInfo.devices.join(', ')}</td>
-                      ) : (
-                        <td>Нет устройств</td>
-                      )}
-                    </tr>
-                  </tbody>
-                </table>
+
+          <ModalBlock active={modalBlockActive} closeModal={_closeModalBlock}>
+            <div className={appendClassName(styles.modal_container, styles.block)}>
+              <span className={styles.header}>{'Подтверждение почты'}</span>
+              <div className={appendClassName(styles.row, styles.success_message)}>
+                <span>{modalBlockText}</span>
+                <Check className={styles.success_check}/>
               </div>
-              <div className={styles.profile_col}>
-                <Button className={styles.button} onClick={() => handleEmailNotificationChange(!notificationSettings?.enableEmail)}>
-                  {notificationSettings?.enableEmail ? 'Отключить уведомления по почте' : 'Включить уведомления по почте'}
-                </Button>
-                <Button className={styles.button} onClick={() => handlePushNotificationChange(!notificationSettings?.enablePush)}>
-                  {notificationSettings?.enablePush ? 'Отключить пуш-уведомления' : 'Включить пуш-уведомления'}
-                </Button>
-                {isEditing ? (
-                  _renderProfileEdit()
-                ) : (
-                  <Button className={styles.button} onClick={customEditRenameModal}>Редактировать имя и фамилию</Button>
-                )}
-                {isChangingLogin ? (
-                  _renderLoginEdit()
-                ) : (
-                  <Button className={styles.button} onClick={customEditChangeLoginModal}>Сменить логин</Button>
-                )}
-                {isChangingPassword ? (
-                  _renderPasswordEdit()
-                ) : (
-                  <Button className={styles.button} onClick={customEditChangePasswordModal}>Сменить пароль</Button>
-                )}
+              <Button onClick={_closeModalBlock}>
+                Закрыть
+              </Button>
+            </div>
+          </ModalBlock>
+
+          <div className={styles.root}>
+            <div className={appendClassName(styles.grid_column, styles.grid_column_profile)}>
+              <div className={styles.profile}>
+                <div className={styles.profile_initials}>{_getInitials()}</div>
+
+                <div className={styles.row}>
+                  <div
+                    className={styles.profile_name}>{_getEmptyStringIfUndef(userInfo?.name) + " " + _getEmptyStringIfUndef(userInfo?.surname)}</div>
+                  <Pencil className={styles.icon} onClick={customEditRenameModal}/>
+                </div>
+                {_renderProfileEdit()}
+
+
+                <div className={styles.row}>
+                  <div className={styles.profile_login}>{userInfo?.userInfo && userInfo?.userInfo[0].login}</div>
+                  <Pencil className={styles.icon} onClick={customEditChangeLoginModal}/>
+                </div>
+                {_renderLoginEdit()}
+
+                <div className={styles.profile_online}>Последний
+                  вход: {getDataTimeLine(_getEmptyStringIfUndef(userInfo?.lastLoginDate))}</div>
+              </div>
+              <div className={styles.controls}>
+                <Button className={styles.btn} onClick={_resend}>Подтверждение почты</Button>
+                <Button className={styles.btn} onClick={() => navigate(RoutePaths.changePassword)}>Сменить
+                  пароль</Button>
+                <Button className={appendClassName(styles.red_btn, styles.btn)}
+                        onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
               </div>
             </div>
-            <Button className={styles.exit_button} onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
+            <div className={appendClassName(styles.grid_column, styles.grid_column_settings)}>
+              <div className={appendClassName(styles.settings_initial, styles.settings)}>
+                <div className={styles.settings_title}>Уведомления</div>
+                <div className={styles.settings_content}>
+                  <_ToggleSwitch label={'Получать уведомления по почте'}
+                                 value={userInfo?.enableEmailNotifications}
+                                 onChange={() => handleEmailNotificationChange(!userInfo?.enableEmailNotifications)}/>
+                  <_ToggleSwitch label={'Получать пуш-уведомления'}
+                                 value={userInfo?.enablePushNotifications}
+                                 onChange={() => handlePushNotificationChange(!userInfo?.enablePushNotifications)}/>
+                </div>
+              </div>
+              <div className={styles.settings}>
+                <div className={styles.settings_title}>Устройства</div>
+                <div className={styles.settings_content}>
+                  {userInfo?.devices && userInfo?.devices.length > 0
+                    ?
+                    userInfo?.devices.map(device => <div className={styles.field}><span>{device}</span></div>)
+                    :
+                    <div className={styles.field}><span>Нет устройств</span></div>}
+                </div>
+              </div>
+            </div>
           </div>
         </Content>
       }
     />
+  );
+}
+
+type _ToggleSwitchProps = {
+  label: string | undefined;
+  value: boolean | undefined;
+  onChange: any;
+};
+
+function _ToggleSwitch(props: _ToggleSwitchProps) {
+  const id = uid();
+
+  return (
+    <div className={styles.field}>
+      <span>{props.label}</span>
+      <div className={styles.toggle_container}>
+        <input type={'checkbox'}
+               onChange={() => {
+                 props.onChange()
+               }}
+               checked={props.value ? props.value : false}
+               id={id}
+               className={styles.toggle}/>
+        <label htmlFor={id} className={styles.toggle_label}/>
+      </div>
+    </div>
   );
 }
 
