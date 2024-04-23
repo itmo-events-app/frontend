@@ -42,6 +42,7 @@ import ModalBlock from "@widgets/main/Modal";
 import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
 import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
 
+
 class EventInfo {
   regDates: string;
   prepDates: string;
@@ -82,13 +83,14 @@ class EventInfo {
   }
 }
 
-class Activity {
+export class Activity {
   id: string
   activityId: string
   name: string
   place: string
   room: string
   description: string
+  status: string
   date: string
   time: string
   endDate: string
@@ -99,6 +101,7 @@ class Activity {
     place: string,
     room: string,
     description: string,
+    status: string,
     date: string,
     time: string,
     endDate: string,
@@ -110,12 +113,14 @@ class Activity {
     this.place = place;
     this.room = room;
     this.description = description;
+    this.status = status;
     this.date = date;
     this.time = time;
     this.endDate = endDate;
     this.endTime = endTime;
   }
 }
+
 
 class OrgPerson {
   id: string;
@@ -249,7 +254,7 @@ function readDate(dateTime: string | null | undefined) {
     return "";
   }
   const date = new Date(dateTime);
-  const formattedDate = date.toISOString().split('T')[0];
+  const formattedDate = date.toLocaleDateString().split('T')[0];
   return formattedDate
 }
 
@@ -676,6 +681,7 @@ function EventActivitiesPage() {
 
   const getActivities = async (id: number) => {
     const response = await api.event.getAllOrFilteredEvents(undefined, undefined, id);
+
     if (response.status == 200) {
       const items = (response.data.items ?? []) as EventResponse[];
       const activities = items.map(async (a) => {
@@ -699,6 +705,7 @@ function EventActivitiesPage() {
           place,
           room,
           a.shortDescription ?? '',
+          a.status ?? '',
           a.startDate ? readDate(a.startDate) : '',
           a.startDate ? getTimeOnly(a.startDate) : '',
           a.endDate ? readDate(a.endDate) : '',
@@ -719,42 +726,46 @@ function EventActivitiesPage() {
     }
   }, [idInt]);
 
-  // const _event = (id: string) => {
-  //   navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, id));
-  // }
 
-  const _showActivity = (id: string) => {
+  const _showActivityModal = (id: string) => {
     setActivityId(id);
     setModalActive(true);
+  }
+
+  const _hideActivityModal = () => {
+    setActivityId('');
+    setModalActive(false);
   }
 
   function _createActivityList(activities: Activity[]) {
     return (
       <>
-        <ModalBlock active={modalActive} setActive={setModalActive}>
+        <ModalBlock active={modalActive} closeModal={_hideActivityModal}>
           <ActivityModal
             activityId={activityId}
             activities={activities}
             setActivities={setActivities}
-            setModalActive={setModalActive}
+            closeActivityModal={_hideActivityModal}
             canDelete={optionsPrivileges.deleteActivity}/>
         </ModalBlock>
+
         {optionsPrivileges.addActivity &&
         <div className={styles.button_container}>
           <Button onClick={_addActivity}>Создать активность</Button>
-        </div>
-        }
+        </div>}
+
+
         {activitiesLoaded &&
         <div className={styles.data_list}>
           {
             activities.map(
               activity => <ActivityElement
                 activity={activity}
-                onClickFun={() => _showActivity(activity.activityId)}
+                onClickFun={() => _showActivityModal(activity.activityId)}
               />)
           }
-        </div>
-        }
+        </div> }
+
       </>
     );
   }

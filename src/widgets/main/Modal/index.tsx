@@ -5,7 +5,7 @@ import {appendClassName} from '@shared/util';
 
 type Props = {
   active: boolean;
-  setActive: any;
+  closeModal: any;
   children: any
 };
 
@@ -14,7 +14,7 @@ function ModalBlock(props: Props) {
 
   const _onEscape = (event: any) => {
     if (event.key == 'Escape') {
-      props.setActive(false);
+      props.closeModal();
     }
   }
 
@@ -30,7 +30,7 @@ function ModalBlock(props: Props) {
 
   return (
     <div className={props.active ? appendClassName(styles.modal, styles.active) : styles.modal}
-         onClick={() => props.setActive(false)}
+         onClick={() => props.closeModal()}
          >
       <div className={props.active ? appendClassName(styles.modal__content, styles.active) : styles.modal__content}
            onClick={event => event.stopPropagation()}>
