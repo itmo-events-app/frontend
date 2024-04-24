@@ -331,7 +331,7 @@ function EventActivitiesPage() {
 
   const [nobodyTasks, setNobodyTasks] = useState(0);
   const [stepTasks, setStepTasks] = useState(0);
-
+  const [participantVisibility, setParticipantVisibility] = useState(true);
   const getEvent = async () => {
     if (idInt == null) {
       return;
@@ -538,6 +538,7 @@ function EventActivitiesPage() {
       });
       if(event?.parent){
         setOptionsPrivileges({...optionsPrivileges,activitiesVisible: false});
+        setParticipantVisibility(false);
       }
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
@@ -557,9 +558,9 @@ function EventActivitiesPage() {
     if (optionsPrivileges.orgsVisible) {
       tabs.push(new PageTab('Организаторы'));
     }
-
-    tabs.push(new PageTab('Участники'));
-
+    if(participantVisibility) {
+      tabs.push(new PageTab('Участники'));
+    }
     if (optionsPrivileges.tasksVisible) {
       tabs.push(new PageTab('Задачи'));
     }
