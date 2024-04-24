@@ -158,18 +158,12 @@ function StolenEventListForTasksCopying(props: StolenAndSimplifiedEventListProps
       });
       const pages = await Promise.all(pagesPromises);
       try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
+        (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({
           type: "eventsLists",
           events: eventsWithPlaces
         }, "*");
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        document.getElementById("itmo-map-iframe").onload = () => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
+        (document.getElementById("itmo-map-iframe") as HTMLIFrameElement).onload = () => {
+          (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({
             type: "eventsLists",
             events: eventsWithPlaces
           }, "*");
