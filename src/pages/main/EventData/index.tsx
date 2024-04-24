@@ -1279,8 +1279,8 @@ function EventActivitiesPage() {
               toText={(item) => item.value}
               value={selectedTaskUser}
               onChange={(sel) => {
-                updateTaskAssignee({assigneeId: Number(sel.id), taskId: taskId});
                 setTaskUser(sel);
+                updateTaskAssignee({assigneeId: Number(sel.id), taskId: taskId});
               }}
               onClear={() => {
                 setTaskUser(new DropdownOption("Не назначено"))
