@@ -381,3 +381,69 @@
 .selected_task_for_copy {
   background-color: rgba(0, 0, 255, 0.4);
 }
+
+.popup__wrapper {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 4px solid var(--itmo-colors-dark-gray);
+  padding: 30px;
+  min-width: 25%;
+  max-width: 80%;
+  border-radius: 40px;
+}
+
+.popupContent {
+  margin-bottom: 10px;
+  text-align: justify;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.popupContentBold {
+  margin-bottom: 20px;
+  text-align: justify;
+  font-weight: bold;
+  font-size: x-large;
+}
+
+.popupButton {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.color_blue {
+  color: var(--itmo-colors-blue);
+}
+.color_lime {
+  color: var(--itmo-colors-lime);
+}
+.color_red {
+  color: var(--itmo-colors-red);
+}
+
+
+.task_table {
+  width: 100%;
+  margin: 0 0;
+  border: 1px solid var(--itmo-colors-gray);
+  border-collapse: collapse;
+  border-radius: 10px;
+}
+
+.task_table th {
+  font-weight: bold;
+  padding: 10px 20px;
+  background: var(--itmo-colors-gray);
+  text-align: left;
+  border: 1px solid var(--itmo-colors-gray);
+}
+
+.task_table td {
+  border: 1px solid var(--itmo-colors-gray);
+  padding: 10px 20px;
+}
