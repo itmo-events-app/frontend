@@ -113,4 +113,15 @@ export const taskService = {
       return await (response.data as Promise<unknown>);
     };
   },
+
+  updateTaskAssignee: (api: Api) => {
+    return async ({ assigneeId, taskId }: { assigneeId: number; taskId: number }) => {
+      const response = await api.withReauth(() => api.task.taskSetAssignee(taskId, assigneeId));
+      return await (response.data as Promise<unknown>);
+    };
+  },
+
+  deleteTaskAssignee: (api: Api, taskId: number) => {
+    return api.withReauth(() => api.task.taskDeleteAssignee(taskId));
+  },
 };
