@@ -32,6 +32,21 @@ function PlaceDataPage() {
     }
   }, [failureReason])
 
+  useEffect(() => {
+    if (!foundPlace) return;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    document.getElementById("itmo-map-iframe").onload = () => {
+      setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
+          type: "showMarker", place: foundPlace,
+        }, "*");
+      }, 0);
+    };
+  }, [foundPlace]);
+
   const formatTranslation: Record<string, string> = {
     ONLINE: "Онлайн",
     OFFLINE: "Офлайн",
@@ -72,7 +87,7 @@ function PlaceDataPage() {
             </div>
           </div>
           <div className={styles.label}>Карта:</div>
-          <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?fullscreen" width="100%"
+          <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?fullscreen"} width="100%"
                   height="420px" allow="fullscreen"></iframe>
         </Content>
       }

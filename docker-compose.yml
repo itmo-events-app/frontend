@@ -39,6 +39,16 @@ services:
       - '9001:9001'
       - '9000:9000'
 
+  geo:
+    image: trickyfoxy/itmo_pracice_geo
+    profiles:
+      - frontend
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - '9999:80'
+
   frontend:
     image: zubrailx/itmo-events-app-frontend:latest
     profiles:
