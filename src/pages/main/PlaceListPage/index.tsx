@@ -68,7 +68,6 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
     const childWindow = document.querySelector('iframe')?.contentWindow;
     if (message.source !== childWindow) return;
     setAddress(message.data.address);
-    setPlaceName(message.data.properties["name"]);
     setRoomName(message.data.properties["ref"]);
     setLatitude(message.data.coordinates[0]);
     setLongitude(message.data.coordinates[1]);
@@ -116,7 +115,13 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
                 type="text"
                 placeholder={'Выберите на карте'}
                 value={roomName}
-                onChange={(event) => setRoomName(event.target.value)}
+                onChange={(event) => {
+                    setRoomName(event.target.value);
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({type: "roomHighlight", room: event.target.value}, "*");
+                  }
+                }
               />
             </div>
             <div className={styles.place_form_item}>
@@ -154,7 +159,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
                 max={90}
               />
             </div>
-            <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?noscroll&select_only_areas"
+            <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?noscroll&select_only_areas"}
                     width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button onClick={createPlace}>Создать</Button>

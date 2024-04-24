@@ -59,7 +59,6 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
     const childWindow = document.querySelector('iframe')?.contentWindow;
     if (message.source !== childWindow) return;
     setValue("address", message.data.address);
-    setValue("name", message.data.properties["name"]);
     setValue("roomName", message.data.properties["ref"]);
     setValue("latitude", message.data.coordinates[0]);
     setValue("longitude", message.data.coordinates[1]);
@@ -152,8 +151,18 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
             <Controller control={control} name={"roomName"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
                 <Label value="Аудитория" />
-                <Input type="text" placeholder={"Аудитория"} value={value}
-                       onChange={(event) => onChange(event.target.value)} />
+                <Input type="text" placeholder={"Выберите на карте"} value={value}
+                       onChange={
+                         (event) => {
+                           onChange(event.target.value);
+                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                           // @ts-expect-error
+                           document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
+                             type: "roomHighlight",
+                             room: event.target.value,
+                           }, "*");
+                         }
+                       } />
               </div>
             )}
             />
@@ -197,7 +206,7 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
                 />
               </div>
             )} />
-            <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?noscroll&select_only_areas" width="100%" height="420px"></iframe>
+            <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?noscroll&select_only_areas"} width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button type="submit">Обновить</Button>
             </div>

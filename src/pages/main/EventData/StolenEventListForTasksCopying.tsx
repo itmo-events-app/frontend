@@ -157,9 +157,24 @@ function StolenEventListForTasksCopying(props: StolenAndSimplifiedEventListProps
         });
       });
       const pages = await Promise.all(pagesPromises);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({type: "eventsLists", events: eventsWithPlaces}, "*");
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
+          type: "eventsLists",
+          events: eventsWithPlaces
+        }, "*");
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        document.getElementById("itmo-map-iframe").onload = () => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
+            type: "eventsLists",
+            events: eventsWithPlaces
+          }, "*");
+        }
+      } catch (_) { /* empty */ }
       setPageProps({ page: page, size: size, total: total });
       setItemList(pages);
     } catch (error) {
