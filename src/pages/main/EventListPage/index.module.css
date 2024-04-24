@@ -63,6 +63,7 @@
 .event_icon {
   width: 75px;
   height: 75px;
+  object-fit: cover;
 }
 
 .event_info_column {

@@ -225,7 +225,9 @@
 .hidden {
   visibility: hidden;
 }
-
+._25P-K {
+  display: none;
+}
 .dialog {
   margin-left: auto;
   margin-right: auto;

@@ -35,14 +35,13 @@ import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
 import Checkbox from "@widgets/main/Checkbox";
 import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
-import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partisipants-list-request.ts";
+import { SetPartisipantsListRequest } from "@shared/api/generated/model/set-partisipants-list-request.ts";
 import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
 import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
 import ModalBlock from "@widgets/main/Modal";
 import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
 import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
 import CopyTasksDialog from "@pages/main/EventData/CopyTasksDialog.tsx";
-
 
 class EventInfo {
   regDates: string;
@@ -235,13 +234,13 @@ interface PeopleTasks {
   lastname: string | undefined;
   color: string | undefined;
 }
-const colors: string[] = [
-  '#663333',
+const colorsList: string[] = [
   '#0069FF',
+  '#663333',
   '#ff9933',
   '#990066',
   '#006633',
-  '#000000',
+  '#75151e',
   '#666600',
   '#336666',
   '#000099',
@@ -249,6 +248,7 @@ const colors: string[] = [
   '#CCCC00',
   '#CC6666',
 ];
+let colors: string[] = [...colorsList];
 
 function readDate(dateTime: string | null | undefined) {
   if (dateTime == undefined || dateTime == "" || dateTime == null) {
@@ -315,6 +315,8 @@ function EventActivitiesPage() {
   const [modalActive, setModalActive] = useState(false);
   const [activityId, setActivityId] = useState('');
 
+  const [nobodyTasks, setNobodyTasks] = useState(0);
+  const [stepTasks, setStepTasks] = useState(0);
 
   const getEvent = async () => {
     if (idInt == null) {
@@ -405,13 +407,14 @@ function EventActivitiesPage() {
       .catch((error) => {
         console.log(error.response.data);
       });
-  }, [idInt]);
+  }, [idInt, stepTasks]);
 
 
   useEffect(() => {
     const peopleForTasks = new Map<number, PeopleTasks>();
     const curTasks = [];
     let persColor;
+    colors = [...colorsList];
     // peopleForTasks.set(1, {
     //   name: "asd",
     //   lastname: "asd",
@@ -429,6 +432,9 @@ function EventActivitiesPage() {
         if (peopleForTasks.get(et.assignee.id)) {
           persColor = peopleForTasks.get(et.assignee.id)?.color;
         } else {
+          if (colors.length == 0) {
+            colors = [...colorsList];
+          }
           const stepColor = colors.shift();
           peopleForTasks.set(et.assignee.id, {
             name: et.assignee.name,
@@ -450,6 +456,26 @@ function EventActivitiesPage() {
         };
         curTasks.push(newTask);
         setEventTasksPeople(Array.from(peopleForTasks, ([_, peopleTasks]) => peopleTasks));
+        setTasks(curTasks);
+      } else if (
+        et.deadline != undefined &&
+        et.creationTime != undefined &&
+        et.title != undefined &&
+        et.id != undefined
+      ) {
+        setNobodyTasks(1);
+        const newTask: Task = {
+          start: new Date(et.creationTime),
+          end: new Date(et.deadline),
+          name: et.title,
+          id: '' + et.id,
+          type: 'task',
+          progress: 100,
+          isDisabled: false,
+          styles: { progressColor: "#000", progressSelectedColor: "#000" },
+          hideChildren: false,
+        };
+        curTasks.push(newTask);
         setTasks(curTasks);
       }
     }
@@ -643,36 +669,36 @@ function EventActivitiesPage() {
           </div>
           <table className={styles.table}>
             <tbody>
-            <tr>
-              <td>Сроки регистрации</td>
-              <td>
-                <div>{eventInfo.regDates}</div>
-              </td>
-            </tr>
-            <tr>
-              <td>Сроки проведения</td>
-              <td>{eventInfo.eventDates}</td>
-            </tr>
-            <tr>
-              <td>Сроки подготовки</td>
-              <td>{eventInfo.prepDates}</td>
-            </tr>
-            <tr>
-              <td>Количество мест</td>
-              <td>{eventInfo.vacantSlots}</td>
-            </tr>
-            <tr>
-              <td>Формат проведения</td>
-              <td>{eventInfo.format}</td>
-            </tr>
-            <tr>
-              <td>Статус</td>
-              <td>{eventInfo.status}</td>
-            </tr>
-            <tr>
-              <td>Возрастное ограничение</td>
-              <td>{eventInfo.ageRestriction}</td>
-            </tr>
+              <tr>
+                <td>Сроки регистрации</td>
+                <td>
+                  <div>{eventInfo.regDates}</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Сроки проведения</td>
+                <td>{eventInfo.eventDates}</td>
+              </tr>
+              <tr>
+                <td>Сроки подготовки</td>
+                <td>{eventInfo.prepDates}</td>
+              </tr>
+              <tr>
+                <td>Количество мест</td>
+                <td>{eventInfo.vacantSlots}</td>
+              </tr>
+              <tr>
+                <td>Формат проведения</td>
+                <td>{eventInfo.format}</td>
+              </tr>
+              <tr>
+                <td>Статус</td>
+                <td>{eventInfo.status}</td>
+              </tr>
+              <tr>
+                <td>Возрастное ограничение</td>
+                <td>{eventInfo.ageRestriction}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -747,25 +773,25 @@ function EventActivitiesPage() {
             activities={activities}
             setActivities={setActivities}
             closeActivityModal={_hideActivityModal}
-            canDelete={optionsPrivileges.deleteActivity}/>
+            canDelete={optionsPrivileges.deleteActivity} />
         </ModalBlock>
 
         {optionsPrivileges.addActivity &&
-        <div className={styles.button_container}>
-          <Button onClick={_addActivity}>Создать активность</Button>
-        </div>}
+          <div className={styles.button_container}>
+            <Button onClick={_addActivity}>Создать активность</Button>
+          </div>}
 
 
         {activitiesLoaded &&
-        <div className={styles.data_list}>
-          {
-            activities.map(
-              activity => <ActivityElement
-                activity={activity}
-                onClickFun={() => _showActivityModal(activity.activityId)}
-              />)
-          }
-        </div> }
+          <div className={styles.data_list}>
+            {
+              activities.map(
+                activity => <ActivityElement
+                  activity={activity}
+                  onClickFun={() => _showActivityModal(activity.activityId)}
+                />)
+            }
+          </div>}
 
       </>
     );
@@ -904,11 +930,11 @@ function EventActivitiesPage() {
 
         <table className={styles.table}>
           <thead>
-          <tr>
-            <th>Роль</th>
-            <th>Имя</th>
-            <th>Email</th>
-          </tr>
+            <tr>
+              <th>Роль</th>
+              <th>Имя</th>
+              <th>Email</th>
+            </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>
@@ -1010,12 +1036,12 @@ function EventActivitiesPage() {
         }
         <table className={styles.table}>
           <thead>
-          <tr>
-            <th>Имя</th>
-            <th>Email</th>
-            <th>Комментарий</th>
-            <th>Явка</th>
-          </tr>
+            <tr>
+              <th>Имя</th>
+              <th>Email</th>
+              <th>Комментарий</th>
+              <th>Явка</th>
+            </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>
@@ -1070,7 +1096,7 @@ function EventActivitiesPage() {
     }
   }, [idInt, reloadPage]);
 
-  const locc = 'cz';
+  const locc = 'ru-RU';
 
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
@@ -1083,6 +1109,7 @@ function EventActivitiesPage() {
 
   const closeModalCreate = () => {
     setCreateModalOpen(false);
+    setStepTasks(stepTasks + 1);
   };
 
   const openModalUpdate = () => {
@@ -1091,6 +1118,7 @@ function EventActivitiesPage() {
 
   const closeModalUpdate = () => {
     setUpdateModalOpen(false);
+    setStepTasks(stepTasks + 1);
   };
 
   const openModalCopy = () => {
@@ -1099,6 +1127,7 @@ function EventActivitiesPage() {
 
   const closeModalCopy = () => {
     setCopyModalOpen(false);
+    setStepTasks(stepTasks + 1);
   }
 
   const _onCreate = () => {
@@ -1132,9 +1161,10 @@ function EventActivitiesPage() {
           ) : (
             <></>
           )}
+          <style>{` ._25P-K { display: none; } `}</style>
           {
             tasks.length > 0 ?
-              <Gantt tasks={tasks} listCellWidth={''} locale={locc} />
+              <Gantt tasks={tasks} TooltipContent={undefined} listCellWidth={''} locale={locc} />
               : <></>
           }
           <div className={styles.tasks__people}>
@@ -1144,10 +1174,15 @@ function EventActivitiesPage() {
                 {human.name} {human.lastname}
               </div>
             ))}
+
+            <div key="0" style={{ opacity: nobodyTasks }} className={styles.tasks__human}>
+              <span style={{ background: "#000" }}></span>
+              Не назначено
+            </div>
           </div>
         </div>
-        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
-        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
+        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate} />}
         {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
       </>
 
