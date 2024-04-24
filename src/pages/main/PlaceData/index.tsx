@@ -34,13 +34,9 @@ function PlaceDataPage() {
 
   useEffect(() => {
     if (!foundPlace) return;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    document.getElementById("itmo-map-iframe").onload = () => {
+    (document.getElementById("itmo-map-iframe") as HTMLIFrameElement).onload = () => {
       setTimeout(() => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
+        (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({
           type: "showMarker", place: foundPlace,
         }, "*");
       }, 0);

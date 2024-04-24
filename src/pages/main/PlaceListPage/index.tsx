@@ -117,9 +117,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
                 value={roomName}
                 onChange={(event) => {
                     setRoomName(event.target.value);
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({type: "roomHighlight", room: event.target.value}, "*");
+                  (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({type: "roomHighlight", room: event.target.value}, "*");
                   }
                 }
               />
