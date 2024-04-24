@@ -40,7 +40,7 @@ services:
       - '9000:9000'
 
   geo:
-    image: trickyfoxy/itmo_pracice_geo
+    image: trickyfoxy/itmo_practice_geo
     profiles:
       - frontend
     deploy:
