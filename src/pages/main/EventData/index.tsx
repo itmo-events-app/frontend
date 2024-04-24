@@ -42,7 +42,7 @@ import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
 import ModalBlock from "@widgets/main/Modal";
 import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
 import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
-import CopyTasksDialog from "@pages/main/EventData/CopyTasksDialog.tsx";
+import CopyTasksDialog from "@pages/main/EventData/CopyTasksDialog";
 import {Api} from "@entities/api.ts";
 import Popup from "reactjs-popup";
 import {format} from "date-fns";
@@ -535,7 +535,10 @@ function EventActivitiesPage() {
         createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])),
         changeTaskStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CHANGE_TASK_STATUS)])),
         changeAsignee: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR)]))
-      })
+      });
+      if(event?.parent){
+        setOptionsPrivileges({...optionsPrivileges,activitiesVisible: false});
+      }
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
     }
@@ -566,7 +569,7 @@ function EventActivitiesPage() {
     }
 
     setPageTabs(tabs);
-  }, [optionsPrivileges])
+  }, [optionsPrivileges, event])
 
 
   const _Dialog = () => {
