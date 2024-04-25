@@ -3,11 +3,13 @@ import styles from "@pages/main/EventData/index.module.css";
 import {useContext, useEffect, useState} from "react";
 import ApiContext from "@features/api-context.ts";
 import {
+  EventResponse,
   TaskResponse
 } from "@shared/api/generated";
 import StolenEventListForTasksCopying from "@pages/main/EventData/StolenEventListForTasksCopying.tsx";
 import {appendClassName} from "@shared/util.ts";
 import Button from "@widgets/main/Button";
+import Dropdown from "@widgets/main/Dropdown";
 
 enum DialogTextVariants {
   EVENT_CHOOSING = "Копирование задач: выбор мероприятия",
@@ -24,7 +26,7 @@ class TaskEntry {
   }
 }
 
-const TasksList = ({items, onClose, idInt} : {items: TaskResponse[], onClose: () => void, idInt: number}) => {
+const TasksList = ({items, onClose, idInt, whereToCopyId} : {items: TaskResponse[], onClose: () => void, idInt: number, whereToCopyId: number}) => {
   const {api} = useContext(ApiContext);
 
   const [taskEntries, setTaskEntries] = useState<TaskEntry[]>(items.map(task => {
@@ -72,7 +74,7 @@ const TasksList = ({items, onClose, idInt} : {items: TaskResponse[], onClose: ()
       .map(te => te.task.id!)
 
     console.log(idInt, ids)
-    api.task.taskListCopy(idInt, ids)
+    api.task.taskListCopy(whereToCopyId, ids)
 
     onClose();
     // location.reload()
@@ -94,6 +96,32 @@ const CopyTasksDialog = ({onClose, idInt}: { onClose: () => void, idInt: number 
   const [chosenEventId, setChosenEventId] = useState<number | undefined>(undefined)
   const [dialogText, setDialogText] = useState(DialogTextVariants.EVENT_CHOOSING)
   const [tasksToChooseFrom, setTasksToChooseFrom] = useState<TaskResponse[] | undefined>(undefined)
+  const [possibleActivitiesToCopyTo, setPossibleActivitiesToCopyTo] = useState<TaskResponse[] | undefined>(undefined)
+  const [selectedEventValue, setSelectedEventValue] = useState<EventResponse | undefined>(undefined)
+
+
+  useEffect(() => {
+    console.log("Where to copy:")
+    api.event.getAllOrFilteredEvents(
+      0,
+      25,
+      idInt!,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined)
+      .then(response => {
+        api.event.getEventById(idInt!)
+          .then(eventResponse => {
+            const currentEvent = eventResponse.data;
+            setPossibleActivitiesToCopyTo([currentEvent, ...response.data.items!])
+            setSelectedEventValue(currentEvent)
+            console.log([eventResponse, ...response.data.items!])
+          })
+      })
+  }, [])
 
   useEffect(() => {
     if (chosenEventId === undefined) {
@@ -113,19 +141,31 @@ const CopyTasksDialog = ({onClose, idInt}: { onClose: () => void, idInt: number 
       <Dialog className={styles.dialog_content_task} text={dialogText}>
         <div onClick={e => e.stopPropagation()}>
 
+          {possibleActivitiesToCopyTo !== undefined && chosenEventId === undefined &&
+          <div>
+            Выберите место, куда копировать:
+            <Dropdown
+              items={possibleActivitiesToCopyTo}
+              toText={(act) => act.title!}
+              value={selectedEventValue}
+              onChange={(sel) => {
+                setSelectedEventValue(sel)
+              }}
+            />
+            <br/>
+          </div>
+          }
+
           {chosenEventId === undefined &&
           <StolenEventListForTasksCopying onClick={(id:number) => {
-            if(id == idInt) {
-              alert("Нельзя скопировать с текущего мероприятия!")
-              return;
-            }
-
             setChosenEventId(id)
           }}/>
           }
 
           {chosenEventId !== undefined && tasksToChooseFrom !== undefined &&
-          <TasksList items={tasksToChooseFrom} onClose={onClose} idInt={idInt!}/>
+          <TasksList items={tasksToChooseFrom} onClose={onClose} idInt={idInt!} whereToCopyId={
+            selectedEventValue === undefined ? idInt! : selectedEventValue.id!
+          }/>
           }
 
         </div>
