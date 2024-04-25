@@ -28,6 +28,10 @@
 }
 
 .activity_card_footer Button {
+  margin-left: 1rem;
+}
+
+.redBtn {
   background-color: var(--itmo-colors-red);
 }
 
