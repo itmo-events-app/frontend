@@ -9,6 +9,8 @@ import {EventResponseStatusEnum} from "@shared/api/generated/model";
 import {Activity} from "@pages/main/EventData";
 import {ArrowDown, Book, Check, Cross, Edit} from "@shared/ui/icons";
 import {getDataTimeLine} from "@shared/lib/dates";
+import {RouteParams, RoutePaths} from "@shared/config/routes";
+import {useNavigate} from "react-router-dom";
 
 
 type ActivityDTO = {
@@ -60,6 +62,7 @@ type Props = {
 };
 
 function ActivityModal(props: Props) {
+  const navigate = useNavigate();
   const {api} = useContext(ApiContext);
   const [activity, setActivity] = useState<ActivityDTO>(placeholderActivity);
   const [additionalInfoVisible, setAdditionalInfoVisible] = useState(false);
@@ -117,6 +120,13 @@ function ActivityModal(props: Props) {
       });
   }
 
+  const _goToEventPage = (eventId: number) => {
+    console.log(eventId);
+    props.closeActivityModal();
+    navigate(RoutePaths.eventData.replace(RouteParams.EVENT_ID, eventId.toString()), {});
+    navigate(0);
+  }
+
   return (
     <div>
       {/*Заголовок карточки активности: название и статус*/}
@@ -157,7 +167,8 @@ function ActivityModal(props: Props) {
       </div>
       {/*Панель управления карточки активности: кнопка удаления*/}
       {props.canDelete && <div className={appendClassName(styles.activity_card_row, styles.activity_card_footer)}>
-        <Button onClick={_deleteActivity}>Удалить активность</Button>
+        <Button onClick={() => _goToEventPage(activity.id)} >На страницу</Button>
+        <Button className={styles.redBtn} onClick={_deleteActivity}>Удалить активность</Button>
       </div>}
 
     </div>
