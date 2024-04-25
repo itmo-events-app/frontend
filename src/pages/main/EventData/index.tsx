@@ -523,7 +523,7 @@ function EventActivitiesPage() {
       const privileges = _getPrivileges(privilegeId);
       const systemPrivileges = _getSystemPrivileges();
       setOptionsPrivileges({
-        activitiesVisible: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
+        activitiesVisible: event?.parent ? false : hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
         orgsVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])),
         modifyVisitStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])),
         exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
@@ -542,7 +542,6 @@ function EventActivitiesPage() {
         changeAsignee: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR)]))
       });
       if(event?.parent){
-        setOptionsPrivileges({...optionsPrivileges,activitiesVisible: false});
         setParticipantVisibility(false);
       }
     } else {
