@@ -738,15 +738,19 @@ function EventActivitiesPage() {
     if (response.status == 200) {
       const items = (response.data.items ?? []) as EventResponse[];
       const activities = items.map(async (a) => {
-        const placeResponse = await api.place.placeGet(a.placeId!);
         let place = '';
         let room = '';
-        if (placeResponse.status == 200) {
-          const data = placeResponse.data;
-          place = data.address ?? '';
-          room = data.room ?? '';
-        } else {
-          console.log(response.status);
+        try {
+          const placeResponse = await api.place.placeGet(a.placeId!);
+          if (placeResponse.status == 200) {
+            const data = placeResponse.data;
+            place = data.address ?? '';
+            room = data.room ?? '';
+          } else {
+            console.log(response.status);
+          }
+        }catch (error){
+          console.log(error);
         }
         let idString = '';
         if (a.id != null) {
