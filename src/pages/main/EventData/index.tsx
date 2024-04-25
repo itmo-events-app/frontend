@@ -336,10 +336,6 @@ function EventActivitiesPage() {
 
   const [reloadPage, setReloadPage] = useState(0);
 
-  useEffect(() => {
-    console.log(event);
-  }, [event])
-
   const getEvent = async () => {
     if (idInt == null) {
       return;
