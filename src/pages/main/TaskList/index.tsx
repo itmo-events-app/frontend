@@ -69,6 +69,14 @@ type TaskTableRowProps = {
   activityTitle?: string;
 }
 
+type OptionsPrivileges = {
+  changeTaskStatus: boolean,
+}
+
+const optionsPrivilegesInitial: OptionsPrivileges = {
+  changeTaskStatus: false,
+} as const;
+
 const TaskTableRow: FC<TaskTableRowProps> = ({
                                                taskId,
                                                title,
@@ -80,14 +88,34 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                                                activityTitle,
                                              }) => {
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
+  const [idInt] = useState<number>(eventId)
+
   const navigate = useNavigate();
-  const { privilegeContext } = useContext(PrivilegeContext);
-  const canChangeTaskStatus = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
-    new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
-  ]));
+
+  const {privilegeContext, updateEventPrivileges} = useContext(PrivilegeContext);
+  const [optionsPrivileges, setOptionsPrivileges] = useState<OptionsPrivileges>(optionsPrivilegesInitial);
+
+  function _getPrivileges(id: number): Set<PrivilegeData> {
+    if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
+      return privilegeContext.getPrivilegesForEvent(id)!;
+    } else {
+      updateEventPrivileges(id);
+    }
+    return new Set();
+  }
+
+  useEffect(() => {
+    if (idInt != null) {
+      const privileges = _getPrivileges(idInt);
+      setOptionsPrivileges({
+        changeTaskStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS)])),
+      })
+    } else {
+      setOptionsPrivileges(optionsPrivilegesInitial)
+    }
+  }, [idInt, privilegeContext]);
 
   const { api } = useContext(ApiContext);
-
 
   const { mutate: updateTaskStatus } = useMutation({
     mutationFn: taskService.updateTaskStatus(api),
@@ -135,7 +163,7 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
           <div className={`${styles.popupContent} ${styles.bold}`}>Описание: </div>
           <div className={styles.popupContent}>{description}</div>
           <div className={`${styles.popupContent} ${styles.bold}`}>Статус: </div>
-          {canChangeTaskStatus ? (
+          {optionsPrivileges.changeTaskStatus ? (
           <Dropdown
             placeholder={statusTranslation[taskStatus]}
             items={newTaskOptions}
@@ -209,6 +237,7 @@ type EventActivities = {
 
 function TaskListPage() {
   const { api } = useContext(ApiContext);
+
   //tabs
   const pageTabs : PageTab[] = [];
   pageTabs.push(new PageTab("Текущие"));
@@ -253,10 +282,6 @@ function TaskListPage() {
   const [filters, setFilters] = useState(initialFilters);
   const getTaskList = async(page: number = 1, size: number = 15) => {
     try {
-      //fetch all tasks in the first mount
-      // if (allTasks.current.length===0) {
-      //   await fetchFirstData();
-      // }
       await fetchFirstData();
       let filteredTasks: TaskResponse[] = [];
       if (filters.eventId) {
