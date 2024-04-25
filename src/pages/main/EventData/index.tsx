@@ -308,6 +308,7 @@ function EventActivitiesPage() {
   const [eventTasks, setEventTasks] = useState<TaskResponse[]>([]);
   const [eventTasksPeople, setEventTasksPeople] = useState<PeopleTasks[]>([]);
 
+  const [privilegeId, setPrivilegeId] = useState<number | null>(null);
   const [optionsPrivileges, setOptionsPrivileges] = useState<OptionsPrivileges>(optionsPrivilegesInitial);
   const [tasks, setTasks] = useState([] as Task[]);
 
@@ -332,6 +333,13 @@ function EventActivitiesPage() {
   const [nobodyTasks, setNobodyTasks] = useState(0);
   const [stepTasks, setStepTasks] = useState(0);
   const [participantVisibility, setParticipantVisibility] = useState(true);
+
+  const [reloadPage, setReloadPage] = useState(0);
+
+  useEffect(() => {
+    console.log(event);
+  }, [event])
+
   const getEvent = async () => {
     if (idInt == null) {
       return;
@@ -356,6 +364,9 @@ function EventActivitiesPage() {
         let parent = undefined;
         if (data.parent) {
           parent = data.parent;
+          setPrivilegeId(parent);
+        } else {
+          setPrivilegeId(idInt);
         }
         const info = new EventInfo(
           getIntervalString(data.registrationStart, data.registrationEnd),
@@ -391,8 +402,6 @@ function EventActivitiesPage() {
       console.error('Error fetching event list:', error);
     }
   };
-
-  const [reloadPage, setReloadPage] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -514,8 +523,8 @@ function EventActivitiesPage() {
   }
 
   useEffect(() => {
-    if (idInt != null) {
-      const privileges = _getPrivileges(idInt);
+    if (privilegeId != null) {
+      const privileges = _getPrivileges(privilegeId);
       const systemPrivileges = _getSystemPrivileges();
       setOptionsPrivileges({
         activitiesVisible: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
@@ -543,7 +552,7 @@ function EventActivitiesPage() {
     } else {
       setOptionsPrivileges(optionsPrivilegesInitial)
     }
-  }, [idInt, privilegeContext]);
+  }, [privilegeId, privilegeContext]);
 
   useEffect(() => {
     const tabs = [];
@@ -570,7 +579,7 @@ function EventActivitiesPage() {
     }
 
     setPageTabs(tabs);
-  }, [optionsPrivileges, event])
+  }, [optionsPrivileges])
 
 
   const _Dialog = () => {
