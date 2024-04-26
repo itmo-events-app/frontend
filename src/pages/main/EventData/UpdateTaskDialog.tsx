@@ -6,6 +6,7 @@ import Button from "@widgets/main/Button";
 import {useContext, useEffect, useState} from "react";
 import DatePicker from "react-datepicker";
 import {
+  EventResponse,
   PlaceResponse,
   TaskRequestTaskStatusEnum,
   TaskResponse, UserResponse
@@ -17,6 +18,8 @@ import {taskService} from "@features/task-service";
 const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | null }) => {
   const { api } = useContext(ApiContext);
   const [title, setTitle] = useState('');
+
+  const currentDate: Date = new Date();
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [reminder, setReminder] = useState<Date | null>(null);
@@ -24,17 +27,26 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
 
   const [usersList, setUsersList] = useState([] as UserResponse[]);
   const [usersLoaded, setUsersLoaded] = useState(false);
-  const [userId, setUserId] = useState(1);
+  const [userId, setUserId] = useState(0);
 
   const [place, setPlace] = useState(1);
   const [placesLoaded, setPlacesLoaded] = useState(false);
   const [placeList, setPlaceList] = useState([] as PlaceResponse[]);
-  const [showEmptyFieldsMessage, setShowEmptyFieldsMessage] = useState(false);
+
+
+  const [activity, setActivity] = useState(0);
+  const [activityLoaded, setActivityLoaded] = useState(false);
+  const [activityList, setActivityList] = useState([] as EventResponse[]);
 
   const [taskId, setTaskId] = useState(1);
   const [tasksList, setTasksList] = useState([] as TaskResponse[]);
   const [tasksLoaded, setTasksLoaded] = useState(false);
-  // const taskStatus: { taskStatus: "NEW" } = {taskStatus: TaskRequestTaskStatusEnum.New}
+
+  const [showEmptyTitleMessage, setShowEmptyTitleMessage] = useState(false);
+  const [showEmptyDescriptionMessage, setShowEmptyDescriptionMessage] = useState(false);
+  const [showDeadlineMessage, setShowDeadlineMessage] = useState(false);
+  const [showReminderMessage, setShowReminderMessage] = useState(false);
+  const [showReminderAfterDeadlineMessage, setShowReminderAfterDeadlineMessage] = useState(false);
 
   const getTasks = async () => {
     let tasksResponse;
@@ -42,6 +54,14 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
       tasksResponse = await api.task.taskListShowInEvent(idInt);
       if (tasksResponse.status == 200) {
         const tasksData = tasksResponse.data;
+        setTaskId(tasksResponse.data[0].id);
+        setTitle(tasksResponse.data[0].title);
+        setDescription(tasksResponse.data[0].description);
+        const deadlineObject = convertToDate(tasksResponse.data[0].deadline)
+        setDeadline(deadlineObject)
+        const reminderObject = convertToDate(tasksResponse.data[0].reminder)
+        setReminder(reminderObject)
+        setPlace(tasksResponse.data[0].place.id)
         setTasksList(tasksData);
         setTasksLoaded(true);
       }
@@ -50,6 +70,25 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
 
   useEffect(() => {
     getTasks();
+  }, []);
+
+
+  const getActivities = async () => {
+    let activitiesResponse;
+    if (idInt !== null) {
+      activitiesResponse = await api.event.getAllOrFilteredEvents(undefined, undefined, idInt)
+      if (activitiesResponse.status == 200) {
+        const activitiesData = activitiesResponse.data.items;
+        setActivityList(activitiesData);
+        setActivityLoaded(true);
+      } else {
+        console.log(activitiesResponse.status);
+      }
+    }
+  }
+
+  useEffect(() => {
+    getActivities();
   }, []);
 
 
@@ -82,6 +121,9 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     if (selectedTask.id !== undefined) {
       setTaskId(selectedTask.id);
     }
+    if(selectedTask.event?.eventId !== undefined){
+      setActivity(selectedTask.event.eventId)
+    }
     if (selectedTask.title !== undefined) {
       setTitle(selectedTask.title);
     }
@@ -102,10 +144,7 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     }
     if (selectedTask.assignee?.id !== undefined) {
       setUserId(selectedTask.assignee.id);
-    }
-    if (selectedTask.assignee?.id !== undefined) {
-      setUserId(selectedTask.assignee.id);
-    }
+    }else setUserId(0);
     if (selectedTask.taskStatus !== undefined) {
       setStatus(formatTranslate[selectedTask.taskStatus]);
     }
@@ -134,7 +173,13 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
       usersResponse = await api.event.getUsersHavingRoles(idInt);
       if (usersResponse.status == 200){
         const usersData = usersResponse.data;
-        setUsersList(usersData);
+        const updatedUsersList = [...usersData];
+        updatedUsersList.push({
+          id: 0,
+          name: "Назначить",
+          surname: "позже"
+        });
+        setUsersList(updatedUsersList);
         setUsersLoaded(true);
       }
     }
@@ -153,18 +198,80 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
 
   const deleteTask = async () =>{
     const tasksResponse = await api.task.taskDelete(taskId);
+    console.log(taskId)
     if (tasksResponse.status == 200) {
+      onClose();
       console.log("Успешно")
     } else {
+      onClose();
       console.log(tasksResponse.status);
     }
   }
 
+  function updateUserId(userId){
+    if (userId === 0) {
+      return null;
+    }else return userId;
+  }
+
+  function checkEmptyTitleMessage(){
+    if(!title){
+      setShowEmptyTitleMessage(true);
+      return true;
+    }else return false;
+  }
+
+  function checkEmptyDescriptionMessage(){
+    if(!description){
+      setShowEmptyDescriptionMessage(true);
+      return true;
+    }else return false;
+  }
+
+  function checkEmptyDeadlineMessage(){
+    if(deadline < currentDate){
+      setShowDeadlineMessage(true);
+      return true;
+    }else return false;
+  }
+
+  function checkEmptyReminderMessage(){
+    if(reminder < currentDate){
+      setShowReminderMessage(true);
+      return true;
+    }else return false;
+  }
+
+  function checkEmptyReminderAfterDeadlineMessage(){
+    if (reminder < currentDate){
+      return false
+    }else if(reminder>=deadline){
+      setShowReminderAfterDeadlineMessage(true);
+      return true;
+    }else return false;
+  }
+
   const editTask = () => {
-    if (!idInt || !userId || !title || !description || !place || !deadline || !reminder)  {
-      setShowEmptyFieldsMessage(true);
-      return;
+
+    setShowEmptyTitleMessage(false);
+    setShowEmptyDescriptionMessage(false);
+    setShowDeadlineMessage(false);
+    setShowReminderMessage(false);
+    setShowReminderAfterDeadlineMessage(false);
+
+    const emptyTitleMessage = checkEmptyTitleMessage();
+    const emptyDescriptionMessage = checkEmptyDescriptionMessage();
+    const emptyDeadlineMessage = checkEmptyDeadlineMessage();
+    const emptyReminderMessage = checkEmptyReminderMessage();
+    const emptyReminderAfterDeadlineMessage = checkEmptyReminderAfterDeadlineMessage();
+
+    if (emptyTitleMessage || emptyDescriptionMessage || emptyDeadlineMessage ||
+      emptyReminderMessage || emptyReminderAfterDeadlineMessage){
+      return
     }
+    const newUserId = updateUserId(userId);
+    console.log(newUserId)
+
     const taskStatus = formatEnum[status];
     const deadlineString = convertToLocaleDateTime(deadline);
     const reminderString = convertToLocaleDateTime(reminder);
@@ -172,8 +279,8 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     taskService.updateTask(
       api,
       taskId,
-      idInt,
-      userId,
+      activity,
+      newUserId,
       title,
       description,
       taskStatus,
@@ -207,6 +314,9 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
                 value={String(title)}
                 onChange={(e) => setTitle(e.target.value)}
               />
+              {showEmptyTitleMessage && (
+                <span className={styles.emptyFieldsMessage}>Поле не может быть пустым</span>
+              )}
             </div>
             <div className={styles.place_form_item}>
               <Label value="Описание"/>
@@ -215,6 +325,9 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
                 value={String(description)}
                 onChange={(e) => setDescription(e.target.value)}
               />
+              {showEmptyDescriptionMessage && (
+                <span className={styles.emptyFieldsMessage}>Поле не может быть пустым</span>
+              )}
             </div>
             <div className={styles.place_form_item}>
               <InputLabel value="Место" />
@@ -239,9 +352,23 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
               </select>
             </div>
             <div className={styles.place_form_item}>
-              <InputLabel value="Пользователи" />
-              <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
-                {usersLoaded ? (
+              <InputLabel value="Активность"/>
+              <select value={activity} onChange={(e) => setActivity(parseInt(e.target.value))}>
+                <option value={''}>Это мероприятие</option>
+                {activityLoaded ? (
+                  activityList.map((p) => {
+                    return <option key={p.id} value={p.id}>{p.title}</option>;
+                  })
+                ) : (
+                  <option value=""></option>
+                )}
+              </select>
+            </div>
+            <div className={styles.place_form_item}>
+              <InputLabel value="Ответственный" />
+              <select value={userId} onChange={(e) => setUserId( parseInt(e.target.value))}>
+                {
+                  usersLoaded ? (
                   usersList.map((p) => {
                     return <option key={p.id} value={p.id} >{p.name} {p.surname}</option>;
                   })
@@ -251,7 +378,7 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
               </select>
             </div>
             <div className={styles.place_form_item}>
-              <Label value="Крайний срок"/>
+              <Label value="Дедлайн"/>
               <DatePicker
                 selected={deadline}
                 onChange={(date) => setDeadline(date)}
@@ -261,6 +388,9 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
                 dateFormat="yyyy-MM-dd HH:mm"
                 popperPlacement="top-start"
               />
+              {showDeadlineMessage && (
+                <span className={styles.emptyFieldsMessage}>Крайний срок не может быть в прошлом</span>
+              )}
             </div>
             <div className={styles.place_form_item}>
               <Label value="Напоминание"/>
@@ -273,13 +403,16 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
                 dateFormat="yyyy-MM-dd HH:mm"
                 popperPlacement="top-start"
               />
+              {showReminderMessage && (
+                <span className={styles.emptyFieldsMessage}>Напоминание не может быть в прошлом</span>
+              )}
+              {showReminderAfterDeadlineMessage && (
+                <span className={styles.emptyFieldsMessage}>Напоминание не может быть позже крайнего срока</span>
+              )}
             </div>
             <div className={styles.button_container}>
               <div className={styles.place_form_button}>
                 <Button onClick={editTask}>Изменить</Button>
-                {showEmptyFieldsMessage && (
-                  <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>
-                )}
               </div>
               <div className={styles.place_form_button}>
                 <Button onClick={deleteTask}>Удалить</Button>
