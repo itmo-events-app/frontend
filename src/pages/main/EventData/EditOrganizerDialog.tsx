@@ -46,8 +46,8 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
       // First, delete the existing role of the user
       const deleteUserRoleResponse = await api.role.revokeAssistantRole(userId, eventId);
       // onSubmit();
-      if (deleteUserRoleResponse.status!= 204) {
-        console.log(deleteUserRoleResponse.status);
+      if (deleteUserRoleResponse.status != 204 ) {
+        console.log(deleteUserRoleResponse.status );
       } else {
         // Then, assign the new role
         if (roleName == 'Организатор') {
