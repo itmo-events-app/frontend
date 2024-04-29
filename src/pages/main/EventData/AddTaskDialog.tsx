@@ -106,7 +106,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
     }else return userId;
   }
 
-  function updateActivity(activity){
+  function updateActivity(activity: number){
     if (activity === 0) {
       setActivity(idInt)
       return idInt;
@@ -128,26 +128,32 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
   }
 
   function checkEmptyDeadlineMessage(){
-    if(deadline < currentDate){
-      setShowDeadlineMessage(true);
-      return true;
-    }else return false;
+    if (deadline !== null){
+      if(deadline < currentDate){
+        setShowDeadlineMessage(true);
+        return true;
+      }else return false;
+    }
   }
 
   function checkEmptyReminderMessage(){
-    if(reminder < currentDate){
-      setShowReminderMessage(true);
-      return true;
-    }else return false;
+    if (reminder !== null){
+      if(reminder < currentDate){
+        setShowReminderMessage(true);
+        return true;
+      }else return false;
+    }
   }
 
   function checkEmptyReminderAfterDeadlineMessage(){
-    if (reminder < currentDate){
-      return false
-    }else if(reminder>=deadline){
-      setShowReminderAfterDeadlineMessage(true);
-      return true;
-    }else return false;
+    if(reminder !== null & deadline !== null){
+      if (reminder < currentDate){
+        return false
+      }else if(reminder>=deadline){
+        setShowReminderAfterDeadlineMessage(true);
+        return true;
+      }else return false;
+    }
   }
 
   function createTask() {
@@ -290,6 +296,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               {showReminderMessage && (
                 <span className={styles.emptyFieldsMessage}>Напоминание не может быть в прошлом</span>
               )}
+
               {showReminderAfterDeadlineMessage && (
                 <span className={styles.emptyFieldsMessage}>Напоминание не может быть позже крайнего срока</span>
               )}
