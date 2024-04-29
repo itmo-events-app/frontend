@@ -108,8 +108,10 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
 
   function updateActivity(activity: number){
     if (activity === 0) {
-      setActivity(idInt)
-      return idInt;
+      if (idInt !== null){
+        setActivity(idInt)
+        return idInt;
+      }
     }else return activity;
   }
 
