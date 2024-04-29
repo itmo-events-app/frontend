@@ -191,17 +191,18 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
 
     console.log("userId после проверки: " + newUserId)
     console.log("activity после проверки: " + newActivity)
-
-    taskService.createTask(
-      api,
-      newActivity,
-      newUserId,
-      title,
-      description,
-      place,
-      deadlineString!,
-      reminderString!
-    ).then(() => onClose());
+    if(newActivity !== undefined){
+      taskService.createTask(
+        api,
+        newActivity,
+        newUserId,
+        title,
+        description,
+        place,
+        deadlineString!,
+        reminderString!
+      ).then(() => onClose());
+    }
   }
 
   return (
