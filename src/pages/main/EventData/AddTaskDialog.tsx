@@ -146,7 +146,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
   }
 
   function checkEmptyReminderAfterDeadlineMessage(){
-    if(reminder !== null & deadline !== null){
+    if(reminder !== null && deadline !== null){
       if (reminder < currentDate){
         return false
       }else if(reminder>=deadline){
