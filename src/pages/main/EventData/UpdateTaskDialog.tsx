@@ -60,7 +60,7 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
         if (tasksResponse.data[0].title !== undefined){
           setTitle(tasksResponse.data[0].title);
         }
-        if(tasksResponse.data[0].description !== description){
+        if(tasksResponse.data[0].description !== undefined){
           setDescription(tasksResponse.data[0].description);
         }
         if(tasksResponse.data[0].deadline !== undefined){
@@ -71,7 +71,7 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
           const reminderObject = convertToDate(tasksResponse.data[0].reminder)
           setReminder(reminderObject)
         }
-        if(tasksResponse.data[0].place.id !== undefined){
+        if(tasksResponse.data[0].place?.id !== undefined){
           setPlace(tasksResponse.data[0].place.id)
         }
         setTasksList(tasksData);
@@ -91,7 +91,7 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
       activitiesResponse = await api.event.getAllOrFilteredEvents(undefined, undefined, idInt)
       if (activitiesResponse.status == 200) {
         const activitiesData = activitiesResponse.data.items;
-        setActivityList(activitiesData);
+        setActivityList(activitiesData as EventResponse[]);
         setActivityLoaded(true);
       } else {
         console.log(activitiesResponse.status);
@@ -220,9 +220,9 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     }
   }
 
-  function updateUserId(userId){
+  function updateUserId(userId: number){
     if (userId === 0) {
-      return null;
+      return undefined;
     }else return userId;
   }
 
@@ -241,26 +241,32 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
   }
 
   function checkEmptyDeadlineMessage(){
-    if(deadline < currentDate){
-      setShowDeadlineMessage(true);
-      return true;
-    }else return false;
+    if (deadline !== null){
+      if(deadline < currentDate){
+        setShowDeadlineMessage(true);
+        return true;
+      }else return false;
+    }
   }
 
   function checkEmptyReminderMessage(){
-    if(reminder < currentDate){
-      setShowReminderMessage(true);
-      return true;
-    }else return false;
+    if (reminder !== null){
+      if(reminder < currentDate){
+        setShowReminderMessage(true);
+        return true;
+      }else return false;
+    }
   }
 
   function checkEmptyReminderAfterDeadlineMessage(){
-    if (reminder < currentDate){
-      return false
-    }else if(reminder>=deadline){
-      setShowReminderAfterDeadlineMessage(true);
-      return true;
-    }else return false;
+    if(reminder !== null && deadline !== null){
+      if (reminder < currentDate){
+        return false
+      }else if(reminder>=deadline){
+        setShowReminderAfterDeadlineMessage(true);
+        return true;
+      }else return false;
+    }
   }
 
   const editTask = () => {

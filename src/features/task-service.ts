@@ -32,7 +32,7 @@ export const taskService = {
     return api.withReauth(() => api.task.taskAdd(request));
   },
 
-  updateTask: (api: Api, taskId: number, eventId: number, assigneeId: number, title: string, description: string, taskStatus: TaskRequestTaskStatusEnum,  placeId: number, deadline: string, reminder: string) => {
+  updateTask: (api: Api, taskId: number, eventId: number, assigneeId: undefined | number, title: string, description: string, taskStatus: TaskRequestTaskStatusEnum,  placeId: number, deadline: string, reminder: string) => {
     const request: TaskRequest = {
       eventId: eventId,
       assigneeId: assigneeId,
