@@ -49,7 +49,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
       activitiesResponse = await api.event.getAllOrFilteredEvents(undefined, undefined, idInt)
       if (activitiesResponse.status == 200) {
         const activitiesData = activitiesResponse.data.items;
-        setActivityList(activitiesData);
+        setActivityList(activitiesData as EventResponse[]);
         setActivityLoaded(true);
       } else {
         console.log(activitiesResponse.status);
@@ -100,9 +100,9 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
     return null;
   }
 
-  function updateUserId(userId){
+  function updateUserId(userId: number){
     if (userId === 0) {
-      return null;
+      return undefined;
     }else return userId;
   }
 

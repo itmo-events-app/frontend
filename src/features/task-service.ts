@@ -16,7 +16,7 @@ export const taskService = {
     };
   },
 
-  createTask: (api: Api, eventId: number, assigneeId: number, title: string, description: string,  placeId: number, deadline: string, reminder: string) => {
+  createTask: (api: Api, eventId: number, assigneeId: undefined | number, title: string, description: string, placeId: number, deadline: string, reminder: string) => {
     const taskStatus = TaskRequestTaskStatusEnum.New;
     const request: TaskRequest = {
       eventId: eventId,
