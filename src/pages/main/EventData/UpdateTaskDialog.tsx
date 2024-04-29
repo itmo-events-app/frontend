@@ -54,14 +54,26 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
       tasksResponse = await api.task.taskListShowInEvent(idInt);
       if (tasksResponse.status == 200) {
         const tasksData = tasksResponse.data;
-        setTaskId(tasksResponse.data[0].id);
-        setTitle(tasksResponse.data[0].title);
-        setDescription(tasksResponse.data[0].description);
-        const deadlineObject = convertToDate(tasksResponse.data[0].deadline)
-        setDeadline(deadlineObject)
-        const reminderObject = convertToDate(tasksResponse.data[0].reminder)
-        setReminder(reminderObject)
-        setPlace(tasksResponse.data[0].place.id)
+        if(tasksResponse.data[0].id !== undefined){
+          setTaskId(tasksResponse.data[0].id);
+        }
+        if (tasksResponse.data[0].title !== undefined){
+          setTitle(tasksResponse.data[0].title);
+        }
+        if(tasksResponse.data[0].description !== description){
+          setDescription(tasksResponse.data[0].description);
+        }
+        if(tasksResponse.data[0].deadline !== undefined){
+          const deadlineObject = convertToDate(tasksResponse.data[0].deadline)
+          setDeadline(deadlineObject)
+        }
+        if(tasksResponse.data[0].reminder !== undefined){
+          const reminderObject = convertToDate(tasksResponse.data[0].reminder)
+          setReminder(reminderObject)
+        }
+        if(tasksResponse.data[0].place.id !== undefined){
+          setPlace(tasksResponse.data[0].place.id)
+        }
         setTasksList(tasksData);
         setTasksLoaded(true);
       }
