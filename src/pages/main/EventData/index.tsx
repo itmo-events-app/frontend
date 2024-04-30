@@ -576,6 +576,30 @@ function EventActivitiesPage() {
     setPageTabs(tabs);
   }, [optionsPrivileges])
 
+  function _closeOrganizerDialog(){
+    if (optionsPrivileges.orgsVisible && idInt != null) {
+      api
+        .withReauth(() => api.event.getUsersHavingRoles(idInt))
+        .then((response) => {
+          const list = response.data.map((user) => {
+            return new OrgPerson(
+              '' + user.id,
+              user.name ?? '',
+              user.surname ?? '',
+              user.login ?? '',
+              user.roleName ?? ''
+            );
+          });
+
+          setOrgs(list);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        });
+    }
+    setDialogData(new DialogData());
+  }
+
 
   const _Dialog = () => {
     let component = <></>;
@@ -609,7 +633,7 @@ function EventActivitiesPage() {
             {...dialogData.args}
             eventId={idInt}
             onSubmit={() => {
-              _closeDialog();
+              _closeOrganizerDialog();
             }}
           />
         );
@@ -620,7 +644,7 @@ function EventActivitiesPage() {
             {...dialogData.args}
             eventId={idInt}
             onEdit={() => {
-              _closeDialog();
+              _closeOrganizerDialog();
             }}
           />
         );
@@ -631,7 +655,7 @@ function EventActivitiesPage() {
             {...dialogData.args}
             eventId={idInt}
             onDelete={() => {
-              _closeDialog();
+              _closeOrganizerDialog();
             }}
           />
         );

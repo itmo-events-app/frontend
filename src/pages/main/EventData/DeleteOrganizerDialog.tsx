@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
 import { RoleResponse, UserResponse } from '@shared/api/generated';
 
-const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelete: () => void }) => {
+const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete: () => void }) => {
   const [userList, setUserList] = useState([] as UserResponse[]);
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
@@ -17,7 +17,8 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
 
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
-    const getAllRoles = await api.role.getAllRoles();
+    // const getAllRoles = await api.role.getAllRoles();
+    const getAllRoles = await api.role.getOrganizationalRoles();
     if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
       const items = getUsersResponse.data.items;
       setUserList(items ?? []);
@@ -48,7 +49,6 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
         console.log(result.status);
       } else {
         onDelete();
-        window.location.reload();
       }
     } else if (roleName == 'Помощник') {
       const result = await api.role.revokeAssistantRole(userId!, eventId);
@@ -56,7 +56,6 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
         console.log(result.status);
       } else {
         onDelete();
-        window.location.reload();
       }
     } else {
       const result = await api.role.revokeOrganizationalRole(userId!, eventId, roleId!);
@@ -64,7 +63,6 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
         console.log(result.status);
       } else {
         onDelete();
-        window.location.reload();
       }
     }
   };

@@ -17,7 +17,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
 
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
-    const getAllRoles = await api.role.getAllRoles();
+    const getAllRoles = await api.role.getOrganizationalRoles();
     if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
       const items = getUsersResponse.data.items;
       setUserList(items?? []);
@@ -34,21 +34,21 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
       console.log(getUsersResponse.status);
     }
   };
-  useEffect(() => {
-    initDialog();
-    setLoaded(true);
-  }, []);
 
   const handleEditOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
+
     if (userId) {
-      // First, delete the existing role of the user
-      const deleteUserRoleResponse = await api.role.revokeAssistantRole(userId, eventId);
-      // onSubmit();
-      if (deleteUserRoleResponse.status!= 204) {
-        console.log(deleteUserRoleResponse.status);
-      } else {
+      //const revokeRole = async () => {
+      // First, revoke the current role
+      if (roleName == 'Организатор') {
+         await api.role.revokeAssistantRole(userId, eventId);
+      }else{await api.role.revokeOrganizerRole(userId, eventId);}
+      //const revokeResponse = await api.role.revokeOrganizationalRole(userId, eventId, roleId!);
+      //  if (revokeRole.status!= 204) {
+      //    console.log(revokeRole.status);
+      //  } else {
         // Then, assign the new role
         if (roleName == 'Организатор') {
           const result = await api.role.assignOrganizerRole(userId, eventId);
@@ -56,7 +56,6 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(result.status);
           } else {
             onEdit();
-            window.location.reload();
           }
         } else if (roleName == 'Помощник') {
           const result = await api.role.assignAssistantRole(userId, eventId);
@@ -64,7 +63,6 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(result.status);
           } else {
             onEdit();
-            window.location.reload();
           }
         } else {
           const result = await api.role.assignOrganizationalRole(userId, eventId, roleId!);
@@ -72,18 +70,23 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(result.status);
           } else {
             onEdit();
-            window.location.reload();
           }
         }
-      }
+      //}
     }
   };
+
+  useEffect(() => {
+    initDialog();
+    setLoaded(true);
+  }, []);
+
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
         <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
-          {loaded ? (
+          {loaded? (
             userList.map((u) => {
               return <option value={u.id}>{u.name}</option>;
             })
@@ -99,12 +102,12 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(roleIdString);
             setRoleId(parseInt(roleIdString));
             const foundRole = roleList.find((r) => r.id == parseInt(roleIdString));
-            if (foundRole != undefined) {
+            if (foundRole!= undefined) {
               setRoleName(foundRole.name);
             }
           }}
         >
-          {loaded ? (
+          {loaded? (
             roleList.map((r) => {
               return <option key={r.id} value={r.id}>{r.name}</option>;
             })
