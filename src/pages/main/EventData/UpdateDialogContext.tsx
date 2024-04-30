@@ -52,7 +52,6 @@ function createDateOrNull(str: string | undefined | null) {
 }
 
 const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
-  console.log(eventInfo);
   const [startDate, setStartDate] = useState<Date | null>(createDateOrNull(eventInfo.startDate));
   const [endDate, setEndDate] = useState<Date | null>(createDateOrNull(eventInfo.endDate));
   const [title, setTitle] = useState(eventInfo.title);
@@ -67,7 +66,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   const [participantLowestAge, setParticipantLowestAge] = useState(eventInfo.participantAgeLowest);
   const [preparingStart, setPreparingStart] = useState<Date | null>(createDateOrNull(eventInfo.preparingStart));
   const [preparingEnd, setPreparingEnd] = useState<Date | null>(createDateOrNull(eventInfo.preparingEnd));
-  const [place, setPlace] = useState(1);
+  const [place, setPlace] = useState(0);
   const [placeList, setPlaceList] = useState([] as PlaceResponse[]);
   const [placesLoaded, setPlacesLoaded] = useState(false);
   const [image, setImage] = useState<File | undefined>(undefined);
@@ -111,6 +110,9 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     if (placesResponse.status == 200) {
       const placesData = placesResponse.data;
       setPlaceList(placesData);
+      if(placesData[0] && placesData[0].id) {
+        setPlace(placesData[0].id);
+      }
       setPlacesLoaded(true);
     } else {
       console.log(placesResponse.status);
@@ -120,8 +122,40 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     getPlaces();
   }, []);
   function checkInputs(){
-    let errorsInput = {};
-    let readErrorText = {};
+    let errorsInput = {
+      startDate : false,
+      endDate : false,
+      title : false,
+      shortDescription : false,
+      fullDescription : false,
+      format : false,
+      status : false,
+      registrationStart : false,
+      registrationEnd : false,
+      participantLimit : false,
+      participantHighestAge : false,
+      participantLowestAge : false,
+      preparingEnd : false,
+      preparingStart : false,
+      place : false,
+    };
+    let readErrorText = {
+      startDate : "",
+      endDate : "",
+      title : "",
+      shortDescription : "",
+      fullDescription : "",
+      format : "",
+      status : "",
+      registrationStart : "",
+      registrationEnd : "",
+      participantLimit : "",
+      participantHighestAge : "",
+      participantLowestAge : "",
+      preparingEnd : "",
+      preparingStart : "",
+      place : "",
+    };
     let result = true;
     if(title == "" || title == null){
       errorsInput = {...errorsInput, title:true};
@@ -288,40 +322,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       readErrorText = {...readErrorText, place: "Поле не может быть пустым"};
       result = false;
     }
-    setErrors({
-      startDate : false,
-      endDate : false,
-      title : false,
-      shortDescription : false,
-      fullDescription : false,
-      format : false,
-      status : false,
-      registrationStart : false,
-      registrationEnd : false,
-      participantLimit : false,
-      participantHighestAge : false,
-      participantLowestAge : false,
-      preparingEnd : false,
-      preparingStart : false,
-      place : false,
-    });
-    setErrorsText({
-      startDate : "",
-      endDate : "",
-      title : "",
-      shortDescription : "",
-      fullDescription : "",
-      format : "",
-      status : "",
-      registrationStart : "",
-      registrationEnd : "",
-      participantLimit : "",
-      participantHighestAge : "",
-      participantLowestAge : "",
-      preparingEnd : "",
-      preparingStart : "",
-      place : "",
-    });
     setErrors({...errors,...errorsInput});
     setErrorsText({...errorsText, ...readErrorText});
     return result;
@@ -337,8 +337,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     if(!checkInputs()){
       return;
     }
-    console.log(startDateString);
-    console.log(startDate);
     const result = await api.event.updateEvent(
       eventId,
       place,

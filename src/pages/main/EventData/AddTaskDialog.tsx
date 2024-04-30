@@ -307,6 +307,9 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
             <div className={styles.place_form_button}>
               <Button onClick={createTask}>Создать</Button>
             </div>
+            {showEmptyFieldsMessage && (
+              <span className={styles.emptyFieldsMessage}>Пожалуйста, заполните все поля</span>
+            )}
           </div>
         </div>
       </Dialog>

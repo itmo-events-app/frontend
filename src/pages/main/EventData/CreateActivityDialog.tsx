@@ -24,7 +24,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
   const [participantLowestAge, setParticipantLowestAge] = useState(1);
   const [preparingStart, setPreparingStart] = useState<Date | null>(new Date());
   const [preparingEnd, setPreparingEnd] = useState<Date | null>(new Date());
-  const [place, setPlace] = useState(1);
+  const [place, setPlace] = useState(0);
   const [placeList, setPlaceList] = useState([] as PlaceResponse[]);
   const [placesLoaded, setPlacesLoaded] = useState(false);
   const [errors, setErrors] = useState({
@@ -63,8 +63,40 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
   })
   const [image, setImage] = useState<File | undefined>(undefined);
   function checkInputs(){
-    let errorsInput = {};
-    let readErrorText = {};
+    let errorsInput = {
+      startDate : false,
+      endDate : false,
+      title : false,
+      shortDescription : false,
+      fullDescription : false,
+      format : false,
+      status : false,
+      registrationStart : false,
+      registrationEnd : false,
+      participantLimit : false,
+      participantHighestAge : false,
+      participantLowestAge : false,
+      preparingEnd : false,
+      preparingStart : false,
+      place : false,
+    };
+    let readErrorText = {
+      startDate : "",
+      endDate : "",
+      title : "",
+      shortDescription : "",
+      fullDescription : "",
+      format : "",
+      status : "",
+      registrationStart : "",
+      registrationEnd : "",
+      participantLimit : "",
+      participantHighestAge : "",
+      participantLowestAge : "",
+      preparingEnd : "",
+      preparingStart : "",
+      place : "",
+    };
     let result = true;
     if(title == "" || title == null){
       errorsInput = {...errorsInput, title:true};
@@ -231,40 +263,6 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
       readErrorText = {...readErrorText, place: "Поле не может быть пустым"};
       result = false;
     }
-    setErrors({
-      startDate : false,
-      endDate : false,
-      title : false,
-      shortDescription : false,
-      fullDescription : false,
-      format : false,
-      status : false,
-      registrationStart : false,
-      registrationEnd : false,
-      participantLimit : false,
-      participantHighestAge : false,
-      participantLowestAge : false,
-      preparingEnd : false,
-      preparingStart : false,
-      place : false,
-    });
-    setErrorsText({
-      startDate : "",
-      endDate : "",
-      title : "",
-      shortDescription : "",
-      fullDescription : "",
-      format : "",
-      status : "",
-      registrationStart : "",
-      registrationEnd : "",
-      participantLimit : "",
-      participantHighestAge : "",
-      participantLowestAge : "",
-      preparingEnd : "",
-      preparingStart : "",
-      place : "",
-    });
     setErrors({...errors,...errorsInput});
     setErrorsText({...errorsText, ...readErrorText});
     return result;
@@ -274,6 +272,9 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
     const placesResponse = await api.place.getAllOrFilteredPlaces();
     if (placesResponse.status == 200) {
       const placesData = placesResponse.data;
+      if(placesData[0] && placesData[0].id) {
+        setPlace(placesData[0].id);
+      }
       setPlaceList(placesData);
       setPlacesLoaded(true);
     } else {
