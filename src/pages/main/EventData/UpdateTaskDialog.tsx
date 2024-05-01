@@ -74,6 +74,9 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
         if(tasksResponse.data[0].place?.id !== undefined){
           setPlace(tasksResponse.data[0].place.id)
         }
+        if(tasksResponse.data[0].taskStatus !== undefined){
+          setStatus(formatTranslate[tasksResponse.data[0].taskStatus])
+        }
         setTasksList(tasksData);
         setTasksLoaded(true);
       }
@@ -157,6 +160,7 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     if (selectedTask.assignee?.id !== undefined) {
       setUserId(selectedTask.assignee.id);
     }else setUserId(0);
+
     if (selectedTask.taskStatus !== undefined) {
       setStatus(formatTranslate[selectedTask.taskStatus]);
     }
@@ -218,6 +222,15 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
       onClose();
       console.log(tasksResponse.status);
     }
+  }
+
+  function updateActivity(activity: number){
+    if (activity === 0) {
+      if (idInt !== null){
+        setActivity(idInt)
+        return idInt;
+      }
+    }else return activity;
   }
 
   function updateUserId(userId: number){
@@ -288,16 +301,20 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
       return
     }
     const newUserId = updateUserId(userId);
-    console.log(newUserId)
+    console.log("USerId: " + newUserId)
 
+
+    let newActivity
+    if(idInt !== null){
+      newActivity = updateActivity(activity);
+    }
     const taskStatus = formatEnum[status];
     const deadlineString = convertToLocaleDateTime(deadline);
     const reminderString = convertToLocaleDateTime(reminder);
-
     taskService.updateTask(
       api,
       taskId,
-      activity,
+      newActivity,
       newUserId,
       title,
       description,
