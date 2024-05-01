@@ -311,18 +311,20 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
     const taskStatus = formatEnum[status];
     const deadlineString = convertToLocaleDateTime(deadline);
     const reminderString = convertToLocaleDateTime(reminder);
-    taskService.updateTask(
-      api,
-      taskId,
-      newActivity,
-      newUserId,
-      title,
-      description,
-      taskStatus,
-      place,
-      deadlineString!,
-      reminderString!
-    ).then(()=>onClose());
+    if(newActivity !== undefined) {
+      taskService.updateTask(
+        api,
+        taskId,
+        newActivity,
+        newUserId,
+        title,
+        description,
+        taskStatus,
+        place,
+        deadlineString!,
+        reminderString!
+      ).then(() => onClose());
+    }
   }
 
   return (
