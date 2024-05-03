@@ -5,11 +5,7 @@ import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
 import {useContext, useEffect, useState} from "react";
 import DatePicker from "react-datepicker";
-import {
-  EventResponse,
-  PlaceResponse,
-  UserResponse
-} from "@shared/api/generated";
+import {EventResponse, PlaceResponse, UserResponse} from "@shared/api/generated";
 import ApiContext from "@features/api-context";
 import InputLabel from "@widgets/main/InputLabel";
 import {taskService} from "@features/task-service";
@@ -42,6 +38,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
   const [showReminderMessage, setShowReminderMessage] = useState(false);
   const [showReminderAfterDeadlineMessage, setShowReminderAfterDeadlineMessage] = useState(false);
 
+  const [file, setFile] = useState<File | undefined>(undefined);
 
   const getActivities = async () => {
     let activitiesResponse;
@@ -87,8 +84,6 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               t.id === user.id
             ))
         );
-        // Устанавливаем список уникальных пользователей
-        console.log(uniqueUsers);
         setUsersList(uniqueUsers);
         setUsersLoaded(true);
       }
@@ -107,68 +102,65 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
     return null;
   }
 
-  function updateUserId(userId: number){
+  function updateUserId(userId: number) {
     if (userId === 0) {
       return undefined;
-    }else return userId;
+    } else return userId;
   }
 
-  function updateActivity(activity: number){
+  function updateActivity(activity: number) {
     if (activity === 0) {
-      if (idInt !== null){
+      if (idInt !== null) {
         setActivity(idInt)
         return idInt;
       }
-    }else return activity;
+    } else return activity;
   }
 
-  function checkEmptyTitleMessage(){
-    if(!title){
+  function checkEmptyTitleMessage() {
+    if (!title) {
       setShowEmptyTitleMessage(true);
       return true;
-    }else return false;
+    } else return false;
   }
 
-  function checkEmptyDescriptionMessage(){
-    if(!description){
+  function checkEmptyDescriptionMessage() {
+    if (!description) {
       setShowEmptyDescriptionMessage(true);
       return true;
-    }else return false;
+    } else return false;
   }
 
-  function checkEmptyDeadlineMessage(){
-    if (deadline !== null){
-      if(deadline < currentDate){
+  function checkEmptyDeadlineMessage() {
+    if (deadline !== null) {
+      if (deadline < currentDate) {
         setShowDeadlineMessage(true);
         return true;
-      }else return false;
+      } else return false;
     }
   }
 
-  function checkEmptyReminderMessage(){
-    if (reminder !== null){
-      if(reminder < currentDate){
+  function checkEmptyReminderMessage() {
+    if (reminder !== null) {
+      if (reminder < currentDate) {
         setShowReminderMessage(true);
         return true;
-      }else return false;
+      } else return false;
     }
   }
 
-  function checkEmptyReminderAfterDeadlineMessage(){
-    if(reminder !== null && deadline !== null){
-      if (reminder < currentDate){
+  function checkEmptyReminderAfterDeadlineMessage() {
+    if (reminder !== null && deadline !== null) {
+      if (reminder < currentDate) {
         return false
-      }else if(reminder>=deadline){
+      } else if (reminder >= deadline) {
         setShowReminderAfterDeadlineMessage(true);
         return true;
-      }else return false;
+      } else return false;
     }
   }
 
   function createTask() {
-    console.log("userId до проверки: " + userId)
-    console.log("activity до проверки: " + activity)
-
     setShowEmptyTitleMessage(false);
     setShowEmptyDescriptionMessage(false);
     setShowDeadlineMessage(false);
@@ -182,7 +174,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
     const emptyReminderAfterDeadlineMessage = checkEmptyReminderAfterDeadlineMessage();
 
     if (emptyTitleMessage || emptyDescriptionMessage || emptyDeadlineMessage ||
-      emptyReminderMessage || emptyReminderAfterDeadlineMessage){
+      emptyReminderMessage || emptyReminderAfterDeadlineMessage) {
       return
     }
 
@@ -192,23 +184,35 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
     const newUserId = updateUserId(userId);
 
     let newActivity
-    if(idInt !== null){
+    if (idInt !== null) {
       newActivity = updateActivity(activity);
     }
 
-    console.log("userId после проверки: " + newUserId)
-    console.log("activity после проверки: " + newActivity)
-    if(newActivity !== undefined){
-      taskService.createTask(
-        api,
-        newActivity,
-        newUserId,
-        title,
-        description,
-        place,
-        deadlineString!,
-        reminderString!
-      ).then(() => onClose());
+    if (newActivity !== undefined) {
+      if (file) {
+        taskService.createTask(
+          api,
+          newActivity,
+          newUserId,
+          title,
+          description,
+          place,
+          deadlineString!,
+          reminderString!,
+          file
+        ).then(() => onClose());
+      } else {
+        taskService.createTask(
+          api,
+          newActivity,
+          newUserId,
+          title,
+          description,
+          place,
+          deadlineString!,
+          reminderString!
+        ).then(() => onClose());
+      }
     }
   }
 
@@ -310,6 +314,19 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               {showReminderAfterDeadlineMessage && (
                 <span className={styles.emptyFieldsMessage}>Напоминание не может быть позже крайнего срока</span>
               )}
+            </div>
+            <div className={styles.place_form_item}>
+              <InputLabel value="Файл"/>
+              <input
+                type="file"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    const chosenFile = e.target.files[0];
+                    setFile(chosenFile);
+                  }
+                }}
+              />
+              {file && <p>Selected file: {file.name}</p>}
             </div>
             <div className={styles.place_form_button}>
               <Button onClick={createTask}>Создать</Button>

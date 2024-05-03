@@ -42,7 +42,6 @@ model/role-request.ts
 model/role-response.ts
 model/task-request.ts
 model/task-response.ts
-model/upload-files-request.ts
 model/user-change-login-request.ts
 model/user-change-name-request.ts
 model/user-change-password-request.ts

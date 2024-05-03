@@ -33,7 +33,6 @@
 }
 
 
-
 .file_input_actual {
   opacity: 0;
   position: absolute;
@@ -225,9 +224,11 @@
 .hidden {
   visibility: hidden;
 }
+
 ._25P-K {
   display: none;
 }
+
 .dialog {
   margin-left: auto;
   margin-right: auto;
@@ -257,6 +258,7 @@
 .tasks {
   display: block;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 
 .tasks__people {
@@ -313,7 +315,7 @@
   right: 0;
   bottom: 0;
   width: 100%;
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   z-index: 500;
   position: fixed;
   display: flex;
@@ -421,20 +423,27 @@
 }
 
 .color_blue {
-  background-color: var(--itmo-colors-blue);
-  width: 150px;
+  cursor: pointer;
+  color: var(--itmo-colors-blue);
+  font-weight: bold;
 }
+
 .color_lime {
-  background-color: var(--itmo-colors-lime);
-  width: 150px;
+  cursor: pointer;
+  color: var(--itmo-colors-lime);
+  font-weight: bold;
 }
+
 .color_red {
-  background-color: var(--itmo-colors-red);
-  width: 150px;
+  cursor: pointer;
+  color: var(--itmo-colors-red);
+  font-weight: bold;
 }
 
 .task_table {
   width: 100%;
+  table-layout: fixed;
+  overflow-wrap: break-word;
   margin: 0 0;
   border: 1px solid var(--itmo-colors-gray);
   border-collapse: collapse;
@@ -446,13 +455,14 @@
   padding: 10px 20px;
   background: var(--itmo-colors-gray);
   text-align: left;
-  border: 1px solid var(--itmo-colors-gray);
+  border: 1px solid var(--itmo-colors-dark-gray);
 }
 
 .task_table td {
   border: 1px solid var(--itmo-colors-gray);
   padding: 10px 20px;
 }
+
 .disabled-button {
   opacity: 0.5;
   background-color: #cccccc;

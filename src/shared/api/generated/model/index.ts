@@ -24,7 +24,6 @@ export * from './role-request';
 export * from './role-response';
 export * from './task-request';
 export * from './task-response';
-export * from './upload-files-request';
 export * from './user-change-login-request';
 export * from './user-change-name-request';
 export * from './user-change-password-request';

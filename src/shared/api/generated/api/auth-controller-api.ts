@@ -60,7 +60,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -98,7 +98,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -132,7 +132,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -169,7 +169,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -209,7 +209,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -249,7 +249,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -289,7 +289,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -309,6 +309,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
+         * @summary Отправка запроса на верификацию email
          * @param {string} returnUrl 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -328,7 +329,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -349,6 +350,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
+         * @summary Запрос на валидацию токена при верификации
          * @param {string} token 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -368,7 +370,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -389,7 +391,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
-         * @summary Запрос на валидацию токена
+         * @summary Запрос на валидацию токена при восстановлении пароля
          * @param {string} token Токен восстановления пароля
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -409,7 +411,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -430,6 +432,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
         },
         /**
          * 
+         * @summary Запрос на верификацию email
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -446,7 +449,7 @@ export const AuthControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -563,6 +566,7 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Отправка запроса на верификацию email
          * @param {string} returnUrl 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -575,6 +579,7 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Запрос на валидацию токена при верификации
          * @param {string} token 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -587,7 +592,7 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Запрос на валидацию токена
+         * @summary Запрос на валидацию токена при восстановлении пароля
          * @param {string} token Токен восстановления пароля
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -600,6 +605,7 @@ export const AuthControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Запрос на верификацию email
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -690,6 +696,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @summary Отправка запроса на верификацию email
          * @param {string} returnUrl 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -699,6 +706,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @summary Запрос на валидацию токена при верификации
          * @param {string} token 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -708,7 +716,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
-         * @summary Запрос на валидацию токена
+         * @summary Запрос на валидацию токена при восстановлении пароля
          * @param {string} token Токен восстановления пароля
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -718,6 +726,7 @@ export const AuthControllerApiFactory = function (configuration?: Configuration,
         },
         /**
          * 
+         * @summary Запрос на верификацию email
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -819,6 +828,7 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Отправка запроса на верификацию email
      * @param {string} returnUrl 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -830,6 +840,7 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Запрос на валидацию токена при верификации
      * @param {string} token 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -841,7 +852,7 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
-     * @summary Запрос на валидацию токена
+     * @summary Запрос на валидацию токена при восстановлении пароля
      * @param {string} token Токен восстановления пароля
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -853,6 +864,7 @@ export class AuthControllerApi extends BaseAPI {
 
     /**
      * 
+     * @summary Запрос на верификацию email
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthControllerApi

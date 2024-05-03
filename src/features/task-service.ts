@@ -16,7 +16,7 @@ export const taskService = {
     };
   },
 
-  createTask: (api: Api, eventId: number, assigneeId: undefined | number, title: string, description: string, placeId: number, deadline: string, reminder: string) => {
+  createTask: async (api: Api, eventId: number, assigneeId: undefined | number, title: string, description: string, placeId: number, deadline: string, reminder: string, file?: File) => {
     const taskStatus = TaskRequestTaskStatusEnum.New;
     const request: TaskRequest = {
       eventId: eventId,
@@ -28,8 +28,18 @@ export const taskService = {
       deadline: deadline,
       reminder: reminder,
     };
-    console.log(request)
-    return api.withReauth(() => api.task.taskAdd(request));
+    const taskId = await api.withReauth(() => api.task.taskAdd(request)).then((response) => response.data);
+    if (file) {
+      const files: Array<File> = new Array(file);
+      await api.withReauth(() => api.task.uploadFiles(taskId,
+        files,
+        {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'multipart/form-data; boundary=AaBbCc'
+        }
+      }))
+    }
   },
 
   updateTask: (api: Api, taskId: number, eventId: number, assigneeId: undefined | number, title: string, description: string, taskStatus: TaskRequestTaskStatusEnum,  placeId: number, deadline: string, reminder: string) => {

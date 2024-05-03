@@ -27,6 +27,7 @@ import DeleteOrganizerDialog from '@pages/main/EventData/DeleteOrganizerDialog.t
 import 'gantt-task-react/dist/index.css';
 import {
   EventResponse,
+  FileDataResponse,
   ParticipantPresenceRequest,
   ParticipantResponse,
   TaskResponse,
@@ -1211,6 +1212,7 @@ function EventActivitiesPage() {
     activityTitle?: string;
     assigneeId: number;
     activityId?: number;
+    files?: FileDataResponse[];
   }
 
   const TaskTableRow: FC<TaskTableRowProps> = ({
@@ -1220,7 +1222,7 @@ function EventActivitiesPage() {
                                                  deadline,
                                                  assigneeName,
                                                  taskStatus,
-                                                 activityTitle, activityId
+                                                 activityTitle, activityId, files
                                                }) => {
     const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
     const [selectedTaskUser, setTaskUser] = useState<DropdownOption<string> | undefined>();
@@ -1339,12 +1341,14 @@ function EventActivitiesPage() {
             <div>{assigneeName}</div>
           )}
       </td>
-      <td hidden={event?.parent !== undefined}>{activityId ? <Button onClick={() => redirectToEvent(activityId)}>{activityTitle}</Button> :
-        <div>-</div>}</td>
+      <td hidden={event?.parent !== undefined}>
+        {activityId ?
+          <div style={{cursor: 'pointer'}} onClick={() => redirectToEvent(activityId)}>{activityTitle}</div> :
+          '-'}</td>
       <td>
         <Popup
           trigger={
-            <Button className={statusColorClass[status]}>{status}</Button>
+            <div className={statusColorClass[status]}>{status}</div>
           }
           modal
           nested
@@ -1381,6 +1385,9 @@ function EventActivitiesPage() {
           }
         </Popup>
       </td>
+      <td>
+        {files?.length ? files?.map(file => <a href={file.presignedUrl} download>{file.filename}</a>) : '–'}
+      </td>
     </tr>);
   };
 
@@ -1394,9 +1401,10 @@ function EventActivitiesPage() {
             <th>Название</th>
             <th>Описание</th>
             <th>Дедлайн</th>
-            <th>Ответственный</th>
+            <th>Исполнитель</th>
             <th hidden={event?.parent !== undefined}>Активность</th>
             <th>Статус</th>
+            <th>Файлы</th>
           </tr>
           </thead>
           <tbody>
@@ -1410,7 +1418,8 @@ function EventActivitiesPage() {
                           activityId={Number(task.event?.activityId)}
                           eventName={task.event?.eventTitle}
                           taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
-                          activityTitle={task.event?.activityTitle}/>
+                          activityTitle={task.event?.activityTitle}
+                          files={task.fileData}/>
           ))}
           </tbody>
         </table>

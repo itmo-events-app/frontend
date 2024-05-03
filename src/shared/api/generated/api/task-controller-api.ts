@@ -27,8 +27,6 @@ import { FileDataResponse } from '../model';
 import { TaskRequest } from '../model';
 // @ts-ignore
 import { TaskResponse } from '../model';
-// @ts-ignore
-import { UploadFilesRequest } from '../model';
 /**
  * TaskControllerApi - axios parameter creator
  * @export
@@ -61,7 +59,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -102,7 +100,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -139,7 +137,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -180,7 +178,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -218,7 +216,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -259,7 +257,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -300,7 +298,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -341,7 +339,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -385,7 +383,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -435,7 +433,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -516,7 +514,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -590,7 +588,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -631,7 +629,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -672,7 +670,7 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -691,13 +689,15 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
          * 
          * @summary Добавление файлов к задаче
          * @param {number} id ID задачи
-         * @param {UploadFilesRequest} [uploadFilesRequest] 
+         * @param {Array<File>} files 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        uploadFiles: async (id: number, uploadFilesRequest?: UploadFilesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        uploadFiles: async (id: number, files: Array<File>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('uploadFiles', 'id', id)
+            // verify required parameter 'files' is not null or undefined
+            assertParamExists('uploadFiles', 'files', files)
             const localVarPath = `/api/tasks/{id}/files`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -710,19 +710,26 @@ export const TaskControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+            if (files) {
+                files.forEach((element) => {
+                    localVarFormParams.append('files', element as any);
+                })
+            }
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(uploadFilesRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = localVarFormParams;
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -946,12 +953,12 @@ export const TaskControllerApiFp = function(configuration?: Configuration) {
          * 
          * @summary Добавление файлов к задаче
          * @param {number} id ID задачи
-         * @param {UploadFilesRequest} [uploadFilesRequest] 
+         * @param {Array<File>} files 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async uploadFiles(id: number, uploadFilesRequest?: UploadFilesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<FileDataResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.uploadFiles(id, uploadFilesRequest, options);
+        async uploadFiles(id: number, files: Array<File>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<FileDataResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.uploadFiles(id, files, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TaskControllerApi.uploadFiles']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -1131,12 +1138,12 @@ export const TaskControllerApiFactory = function (configuration?: Configuration,
          * 
          * @summary Добавление файлов к задаче
          * @param {number} id ID задачи
-         * @param {UploadFilesRequest} [uploadFilesRequest] 
+         * @param {Array<File>} files 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        uploadFiles(id: number, uploadFilesRequest?: UploadFilesRequest, options?: any): AxiosPromise<Array<FileDataResponse>> {
-            return localVarFp.uploadFiles(id, uploadFilesRequest, options).then((request) => request(axios, basePath));
+        uploadFiles(id: number, files: Array<File>, options?: any): AxiosPromise<Array<FileDataResponse>> {
+            return localVarFp.uploadFiles(id, files, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1341,13 +1348,13 @@ export class TaskControllerApi extends BaseAPI {
      * 
      * @summary Добавление файлов к задаче
      * @param {number} id ID задачи
-     * @param {UploadFilesRequest} [uploadFilesRequest] 
+     * @param {Array<File>} files 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TaskControllerApi
      */
-    public uploadFiles(id: number, uploadFilesRequest?: UploadFilesRequest, options?: AxiosRequestConfig) {
-        return TaskControllerApiFp(this.configuration).uploadFiles(id, uploadFilesRequest, options).then((request) => request(this.axios, this.basePath));
+    public uploadFiles(id: number, files: Array<File>, options?: AxiosRequestConfig) {
+        return TaskControllerApiFp(this.configuration).uploadFiles(id, files, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
