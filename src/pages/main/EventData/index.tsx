@@ -302,7 +302,7 @@ function EventActivitiesPage() {
   const [idInt, setIdInt] = useState<number | null>(null)
   const [event, setEvent] = useState<EventInfo | undefined>(undefined);
   const [loadingEvent, setLoadingEvent] = useState(true);
-  const [eventImageUrl, setEventImageUrl] = useState('');
+  const [eventImageUrl, setEventImageUrl] = useState('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
   const [eventResponse, setEventResponse] = useState({});
 
   const [eventTasks, setEventTasks] = useState<TaskResponse[]>([]);
@@ -380,8 +380,8 @@ function EventActivitiesPage() {
         setEvent(info);
         setEventResponse(data);
         getImageUrl(String(idInt)).then((url) => {
-          if (url == '') {
-            setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
+          if (!url || url == "") {
+            setEventImageUrl('data:image/png;base64,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');
           } else {
             setEventImageUrl(url);
           }
@@ -686,7 +686,7 @@ function EventActivitiesPage() {
     e.stopPropagation();
   };
   const _addActivity = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setDialogData(new DialogData('Создать активность', DialogSelected.CREATEACTIVITY));
+    setDialogData(new DialogData('Создание активности', DialogSelected.CREATEACTIVITY));
     e.stopPropagation();
   };
 
