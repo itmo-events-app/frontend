@@ -1,24 +1,24 @@
-import {uid} from "uid";
-import {FC, ReactNode, useContext, useEffect, useRef, useState} from "react";
+import { uid } from "uid";
+import { FC, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
 import BrandLogo from "@widgets/main/BrandLogo";
 import Layout from "@widgets/main/Layout";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
 import Content from "@widgets/main/Content";
-import PageTabs, {PageTab} from "@widgets/main/PageTabs";
-import {RoutePaths} from "@shared/config/routes";
+import PageTabs, { PageTab } from "@widgets/main/PageTabs";
+import { RoutePaths } from "@shared/config/routes";
 import Button from "@widgets/main/Button";
-import {hasAnyPrivilege} from "@features/privileges.ts";
-import {PrivilegeNames} from "@shared/config/privileges.ts";
-import {useNavigate, useParams} from "react-router-dom";
-import {appendClassName} from "@shared/util.ts";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
+import { useNavigate, useParams } from "react-router-dom";
+import { appendClassName } from "@shared/util.ts";
 import Fade from "@widgets/main/Fade";
 import UpdateDialogContent from "./UpdateDialogContext.tsx";
 import Dialog from "@widgets/main/Dialog";
 import CreateActivityDialog from "./CreateActivityDialog.tsx";
-import {Gantt, Task} from "gantt-task-react";
-import {getImageUrl} from "@shared/lib/image.ts";
+import { Gantt, Task } from "gantt-task-react";
+import { getImageUrl } from "@shared/lib/image.ts";
 import ApiContext from "@features/api-context.ts";
 import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
 import "gantt-task-react/dist/index.css";
@@ -33,23 +33,23 @@ import {
   TaskResponseTaskStatusEnum
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
-import {PrivilegeData} from '@entities/privilege-context.ts';
+import { PrivilegeData } from '@entities/privilege-context.ts';
 import Checkbox from "@widgets/main/Checkbox";
 import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
-import {SetPartisipantsListRequest} from "@shared/api/generated/model/set-partisipants-list-request.ts";
+import { SetPartisipantsListRequest } from "@shared/api/generated/model/set-partisipants-list-request.ts";
 import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
 import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
 import ModalBlock from "@widgets/main/Modal";
 import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
 import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
 import CopyTasksDialog from "@pages/main/EventData/CopyTasksDialog";
-import {Api} from "@entities/api.ts";
+import { Api } from "@entities/api.ts";
 import Popup from "reactjs-popup";
-import {format} from "date-fns";
-import {ru} from "date-fns/locale/ru";
-import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
-import {taskService} from "@features/task-service.ts";
-import {useMutation} from "@tanstack/react-query";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale/ru";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { taskService } from "@features/task-service.ts";
+import { useMutation } from "@tanstack/react-query";
 
 class EventInfo {
   regDates: string;
@@ -293,12 +293,12 @@ function getTimeOnly(dateTimeString: string) {
 
 
 function EventActivitiesPage() {
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
   const navigate = useNavigate();
 
-  const {privilegeContext, updateEventPrivileges, updateSystemPrivileges} = useContext(PrivilegeContext);
+  const { privilegeContext, updateEventPrivileges, updateSystemPrivileges } = useContext(PrivilegeContext);
 
-  const {id} = useParams();
+  const { id } = useParams();
   const [idInt, setIdInt] = useState<number | null>(null)
   const [event, setEvent] = useState<EventInfo | undefined>(undefined);
   const [loadingEvent, setLoadingEvent] = useState(true);
@@ -417,7 +417,7 @@ function EventActivitiesPage() {
       return;
     }
     api
-      .withReauth(() => api.task.taskListShowInEvent(idInt))
+      .withReauth(() => api.task.taskListShowInEvent(idInt, undefined, undefined, undefined, undefined, undefined, true))
       .then((response) => {
         if (response.data != undefined) {
           setEventTasks(response.data);
@@ -470,7 +470,7 @@ function EventActivitiesPage() {
           type: 'task',
           progress: 100,
           isDisabled: false,
-          styles: {progressColor: persColor, progressSelectedColor: persColor},
+          styles: { progressColor: persColor, progressSelectedColor: persColor },
           hideChildren: false,
         };
         curTasks.push(newTask);
@@ -491,14 +491,14 @@ function EventActivitiesPage() {
           type: 'task',
           progress: 100,
           isDisabled: false,
-          styles: {progressColor: "#000", progressSelectedColor: "#000"},
+          styles: { progressColor: "#000", progressSelectedColor: "#000" },
           hideChildren: false,
         };
         curTasks.push(newTask);
         setTasks(curTasks);
       }
     }
-  }, [eventTasks, ]);
+  }, [eventTasks,]);
 
   function _getPrivileges(id: number): Set<PrivilegeData> {
     if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
@@ -541,7 +541,7 @@ function EventActivitiesPage() {
         changeTaskStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CHANGE_TASK_STATUS)])),
         changeAsignee: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR)]))
       });
-      if(event?.parent){
+      if (event?.parent) {
         setParticipantVisibility(false);
       }
     } else {
@@ -562,7 +562,7 @@ function EventActivitiesPage() {
     if (optionsPrivileges.orgsVisible) {
       tabs.push(new PageTab('Организаторы'));
     }
-    if(participantVisibility) {
+    if (participantVisibility) {
       tabs.push(new PageTab('Участники'));
     }
     if (optionsPrivileges.tasksVisible) {
@@ -576,7 +576,7 @@ function EventActivitiesPage() {
     setPageTabs(tabs);
   }, [optionsPrivileges])
 
-  function _closeOrganizerDialog(){
+  function _closeOrganizerDialog() {
     if (optionsPrivileges.orgsVisible && idInt != null) {
       api
         .withReauth(() => api.event.getUsersHavingRoles(idInt))
@@ -694,7 +694,7 @@ function EventActivitiesPage() {
     return (
       <div className={styles.root}>
         <div className={styles.image_box}>{<ImagePreview className={styles.image} src={eventImageUrl}
-                                                         alt="Event image"/>}</div>
+          alt="Event image" />}</div>
         {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_updateEvent}>
@@ -718,36 +718,36 @@ function EventActivitiesPage() {
           </div>
           <table className={styles.table}>
             <tbody>
-            <tr>
-              <td>Сроки регистрации</td>
-              <td>
-                <div>{eventInfo.regDates}</div>
-              </td>
-            </tr>
-            <tr>
-              <td>Сроки проведения</td>
-              <td>{eventInfo.eventDates}</td>
-            </tr>
-            <tr>
-              <td>Сроки подготовки</td>
-              <td>{eventInfo.prepDates}</td>
-            </tr>
-            <tr>
-              <td>Количество мест</td>
-              <td>{eventInfo.vacantSlots}</td>
-            </tr>
-            <tr>
-              <td>Формат проведения</td>
-              <td>{eventInfo.format}</td>
-            </tr>
-            <tr>
-              <td>Статус</td>
-              <td>{eventInfo.status}</td>
-            </tr>
-            <tr>
-              <td>Возрастное ограничение</td>
-              <td>{eventInfo.ageRestriction}</td>
-            </tr>
+              <tr>
+                <td>Сроки регистрации</td>
+                <td>
+                  <div>{eventInfo.regDates}</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Сроки проведения</td>
+                <td>{eventInfo.eventDates}</td>
+              </tr>
+              <tr>
+                <td>Сроки подготовки</td>
+                <td>{eventInfo.prepDates}</td>
+              </tr>
+              <tr>
+                <td>Количество мест</td>
+                <td>{eventInfo.vacantSlots}</td>
+              </tr>
+              <tr>
+                <td>Формат проведения</td>
+                <td>{eventInfo.format}</td>
+              </tr>
+              <tr>
+                <td>Статус</td>
+                <td>{eventInfo.status}</td>
+              </tr>
+              <tr>
+                <td>Возрастное ограничение</td>
+                <td>{eventInfo.ageRestriction}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -772,7 +772,7 @@ function EventActivitiesPage() {
           } else {
             console.log(response.status);
           }
-        }catch (error){
+        } catch (error) {
           console.log(error);
         }
         let idString = '';
@@ -826,7 +826,7 @@ function EventActivitiesPage() {
             activities={activities}
             setActivities={setActivities}
             closeActivityModal={_hideActivityModal}
-            canDelete={optionsPrivileges.deleteActivity}/>
+            canDelete={optionsPrivileges.deleteActivity} />
         </ModalBlock>
 
         {optionsPrivileges.addActivity &&
@@ -983,11 +983,11 @@ function EventActivitiesPage() {
 
         <table className={styles.table}>
           <thead>
-          <tr>
-            <th>Роль</th>
-            <th>Имя</th>
-            <th>Email</th>
-          </tr>
+            <tr>
+              <th>Роль</th>
+              <th>Имя</th>
+              <th>Email</th>
+            </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>
@@ -1007,7 +1007,7 @@ function EventActivitiesPage() {
         .then((response) => {
           const link = document.createElement("a");
 
-          link.href = window.URL.createObjectURL(new Blob([response.data], {type: "application/zip"}));
+          link.href = window.URL.createObjectURL(new Blob([response.data], { type: "application/zip" }));
           link.setAttribute("download", "participants_list.xlsx");
           document.body.appendChild(link);
           link.click();
@@ -1089,12 +1089,12 @@ function EventActivitiesPage() {
         }
         <table className={styles.table}>
           <thead>
-          <tr>
-            <th>Имя</th>
-            <th>Email</th>
-            <th>Комментарий</th>
-            <th>Явка</th>
-          </tr>
+            <tr>
+              <th>Имя</th>
+              <th>Email</th>
+              <th>Комментарий</th>
+              <th>Явка</th>
+            </tr>
           </thead>
           <tbody>{items}</tbody>
         </table>
@@ -1180,7 +1180,9 @@ function EventActivitiesPage() {
 
   const closeModalCopy = () => {
     setCopyModalOpen(false);
-    setStepTasks(stepTasks + 1);
+    setTimeout(() => {
+      setStepTasks(stepTasks + 1);
+    }, 500);
   }
 
   const _onCreate = () => {
@@ -1214,25 +1216,25 @@ function EventActivitiesPage() {
   }
 
   const TaskTableRow: FC<TaskTableRowProps> = ({
-                                                 taskId,
-                                                 title,
-                                                 description,
-                                                 deadline,
-                                                 assigneeName,
-                                                 taskStatus,
-                                                 activityTitle
-                                               }) => {
+    taskId,
+    title,
+    description,
+    deadline,
+    assigneeName,
+    taskStatus,
+    activityTitle
+  }) => {
     const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
     const [selectedTaskUser, setTaskUser] = useState<DropdownOption<string> | undefined>();
 
-    const {api} = useContext(ApiContext);
+    const { api } = useContext(ApiContext);
 
-    const {mutate: updateTaskStatus} = useMutation({
+    const { mutate: updateTaskStatus } = useMutation({
       mutationFn: taskService.updateTaskStatus(api),
       mutationKey: ["updateTaskStatus"],
     });
 
-    const {mutate: updateTaskAssignee} = useMutation({
+    const { mutate: updateTaskAssignee } = useMutation({
       mutationFn: taskService.updateTaskAssignee(api),
       mutationKey: ["updateTaskAssignee"],
     });
@@ -1276,7 +1278,7 @@ function EventActivitiesPage() {
               <div className={styles.popup__wrapper}>
                 <div className={styles.popupContentBold}>
                   {title}
-                  <br/>
+                  <br />
                 </div>
                 <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
                 <div className={styles.popupContent}>{description}</div>
@@ -1288,7 +1290,7 @@ function EventActivitiesPage() {
                     toText={(item) => item.value}
                     value={selectedStatus}
                     onChange={(sel) => {
-                      updateTaskStatus({newStatus: sel.value, id: taskId});
+                      updateTaskStatus({ newStatus: sel.value, id: taskId });
                       setStatus(sel);
                     }}
                   />
@@ -1304,26 +1306,29 @@ function EventActivitiesPage() {
         </Popup>
       </td>
       <td>
-        {format(deadline, "H:mm")} <br/>
-        {format(deadline, "do MMMM, yyyy", {locale: ru})}
+        {format(deadline, "H:mm")} <br />
+        {format(deadline, "do MMMM, yyyy", { locale: ru })}
       </td>
       <td>
         {(optionsPrivileges.changeAsignee) ? (
-            <Dropdown
-              placeholder={assigneeName}
-              items={orgs.map((el) => new DropdownOption<string>(el.name! + " " + el.surname!, String(el.id!)))}
-              toText={(item) => item.value}
-              value={selectedTaskUser}
-              onChange={(sel) => {
-                setTaskUser(sel);
-                updateTaskAssignee({assigneeId: Number(sel.id), taskId: taskId});
-              }}
-              onClear={() => {
-                setTaskUser(new DropdownOption("Не назначено"))
-                taskService.deleteTaskAssignee(api, Number(taskId))
-              }}
-            />
-          ) :
+          <Dropdown
+            placeholder={assigneeName}
+            items={orgs.map((el) => new DropdownOption<string>(el.name! + " " + el.surname!, String(el.id!)))}
+            toText={(item) => item.value}
+            value={selectedTaskUser}
+            onChange={(sel) => {
+              setTaskUser(sel);
+              updateTaskAssignee({ assigneeId: Number(sel.id), taskId: taskId });
+              setTimeout(() => {
+                setStepTasks(stepTasks + 1);
+              }, 500);
+            }}
+            onClear={() => {
+              setTaskUser(new DropdownOption("Не назначено"))
+              taskService.deleteTaskAssignee(api, Number(taskId))
+            }}
+          />
+        ) :
           (
             <div>{assigneeName}</div>
           )}
@@ -1337,7 +1342,7 @@ function EventActivitiesPage() {
             toText={(item) => item.value}
             value={selectedStatus}
             onChange={(sel) => {
-              updateTaskStatus({newStatus: sel.value, id: taskId});
+              updateTaskStatus({ newStatus: sel.value, id: taskId });
               setStatus(sel);
             }}
           />
@@ -1349,11 +1354,11 @@ function EventActivitiesPage() {
   };
 
 
-  const TaskTable: FC<TaskTableProps> = ({tasks}) =>
-    (
-      <div className={styles.content}>
-        <table className={styles.task_table}>
-          <thead>
+  const TaskTable: FC<TaskTableProps> = ({ tasks }) =>
+  (
+    <div className={styles.content}>
+      <table className={styles.task_table}>
+        <thead>
           <tr>
             <th>Название</th>
             <th>Описание</th>
@@ -1362,23 +1367,23 @@ function EventActivitiesPage() {
             <th>Активность*</th>
             <th>Статус</th>
           </tr>
-          </thead>
-          <tbody>
+        </thead>
+        <tbody>
           {tasks.map((task) => (
             <TaskTableRow key={task.id}
-                          taskId={Number(task.id)} title={String(task.title)} description={task.description || ""}
-                          deadline={task.deadline || ""}
-                          assigneeName={task.assignee != undefined ? `${task.assignee?.name} ${task.assignee?.surname}` : "Не назначено"}
-                          assigneeId={Number(task.assignee?.id)}
-                          eventId={Number(task.event?.eventId)}
-                          eventName={task.event?.eventTitle}
-                          taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
-                          activityTitle={task.event?.activityTitle}/>
+              taskId={Number(task.id)} title={String(task.title)} description={task.description || ""}
+              deadline={task.deadline || ""}
+              assigneeName={task.assignee != undefined ? `${task.assignee?.name} ${task.assignee?.surname}` : "Не назначено"}
+              assigneeId={Number(task.assignee?.id)}
+              eventId={Number(task.event?.eventId)}
+              eventName={task.event?.eventTitle}
+              taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
+              activityTitle={task.event?.activityTitle} />
           ))}
-          </tbody>
-        </table>
-      </div>
-    );
+        </tbody>
+      </table>
+    </div>
+  );
 
   function _createTasksTable() {
     return (
@@ -1402,29 +1407,29 @@ function EventActivitiesPage() {
           <style>{` ._25P-K { display: none; } `}</style>
           {
             tasks.length > 0 ?
-              <Gantt tasks={tasks} TooltipContent={undefined} listCellWidth={''} locale={locc}/>
+              <Gantt tasks={tasks} TooltipContent={undefined} listCellWidth={''} locale={locc} />
               : <></>
           }
           <div className={styles.tasks__people}>
             {eventTasksPeople.map((human) => (
               <div key={human.color} className={styles.tasks__human}>
-                <span style={{background: human.color}}></span>
+                <span style={{ background: human.color }}></span>
                 {human.name} {human.lastname}
               </div>
             ))}
 
-            <div key="0" style={{opacity: nobodyTasks}} className={styles.tasks__human}>
-              <span style={{background: "#000"}}></span>
+            <div key="0" style={{ opacity: nobodyTasks }} className={styles.tasks__human}>
+              <span style={{ background: "#000" }}></span>
               Не назначено
             </div>
           </div>
 
-          <TaskTable tasks={eventTasks} api={api}/>
+          <TaskTable tasks={eventTasks} api={api} />
 
         </div>
-        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
-        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
-        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy}/>}
+        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate} />}
+        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
       </>
 
     );
@@ -1445,16 +1450,16 @@ function EventActivitiesPage() {
 
   return (
     <Layout
-      topLeft={<BrandLogo/>}
+      topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={event?.eventName ?? ''}/>
+          <PageName text={event?.eventName ?? ''} />
           <div className={styles.tabs}>
-            <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs}/>
+            <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
           </div>
         </div>
       }
-      bottomLeft={<SideBar currentPageURL={RoutePaths.eventData}/>}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
           <div className={styles.content} id={idInt == null ? ("") : idInt.toString()}>
@@ -1470,7 +1475,7 @@ function EventActivitiesPage() {
             {selectedTab == 'Копирование' && _createCopyButtons()}
           </div>
           <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>
-            <_Dialog/>
+            <_Dialog />
           </Fade>
         </Content>
       }
