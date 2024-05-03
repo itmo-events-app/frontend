@@ -13,6 +13,7 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
   const [roleId, setRoleId] = useState<number | undefined>(undefined);
   const [roleName, setRoleName] = useState<string | undefined>('');
   const [loaded, setLoaded] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { api } = useContext(ApiContext);
 
   const initDialog = async () => {
@@ -35,14 +36,40 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
       console.log(getUsersResponse.status);
     }
   };
+  const getCurrentUserId = async () => {
+    const userInfoResponse = await api.profile.getUserInfo();
+    if (userInfoResponse.status == 200) {
+      const userInfo = userInfoResponse.data;
+      return userInfo.userId;
+    } else {
+      console.log(userInfoResponse.status);
+      return null;
+    }
+  };
   useEffect(() => {
     initDialog();
+    getCurrentUserId();
     setLoaded(true);
   }, []);
 
   const handleDeleteOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
+    if (userId && eventId) {
+      const userEventRoles = await api.role.getUserEventRoles(userId!, eventId);
+      if (userEventRoles.status == 200) {
+        const hasRole = userEventRoles.data.some(r => r.name != roleName);
+        if (hasRole) {
+          setErrorMessage("У этого пользователя нет такой роли!");
+          return;
+        }
+      }
+    }
+    const currentUserId = await getCurrentUserId();
+    if (userId === currentUserId  && roleName === 'Организатор') {
+      setErrorMessage('Вы не можете отозвать свою собственную роль организатора!');
+      return;
+    }
     if (roleName == 'Организатор') {
       const result = await api.role.revokeOrganizerRole(userId!, eventId);
       if (result.status != 204) {
@@ -101,6 +128,7 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
           )}
         </select>
       </div>
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <Button onClick={handleDeleteOrganizer}>Удалить</Button>
     </div>
   );

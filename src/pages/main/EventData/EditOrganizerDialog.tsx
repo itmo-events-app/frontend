@@ -13,6 +13,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
   const [roleId, setRoleId] = useState<number | undefined>(undefined);
   const [roleName, setRoleName] = useState<string | undefined>('');
   const [loaded, setLoaded] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { api } = useContext(ApiContext);
 
   const initDialog = async () => {
@@ -34,17 +35,44 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
       console.log(getUsersResponse.status);
     }
   };
+  const getCurrentUserId = async () => {
+    const userInfoResponse = await api.profile.getUserInfo();
+    if (userInfoResponse.status == 200) {
+      const userInfo = userInfoResponse.data;
+      return userInfo.userId;
+    } else {
+      console.log(userInfoResponse.status);
+      return null;
+    }
+  };
 
   const handleEditOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
-
+    if (userId && eventId) {
+      const userEventRoles = await api.role.getUserEventRoles(userId!, eventId);
+      if (userEventRoles.status == 200) {
+        const hasRole = userEventRoles.data.some(r => r.name == roleName);
+        if (hasRole) {
+          setErrorMessage("У этого пользователя уже есть эта роль!");
+          return;
+        }else{
+          setErrorMessage("У этого пользователя нет (такой) роли!");
+          return;
+        }
+      }
+    }
+    const currentUserId = await getCurrentUserId();
     if (userId) {
       //const revokeRole = async () => {
       // First, revoke the current role
       if (roleName == 'Организатор') {
          await api.role.revokeAssistantRole(userId, eventId);
-      }else{await api.role.revokeOrganizerRole(userId, eventId);}
+      }else if (userId === currentUserId  && roleName === 'Помощник') {
+        setErrorMessage('Вы не можете отозвать свою собственную роль организатора!');
+        return;
+      }
+      else{await api.role.revokeOrganizerRole(userId, eventId);}
       //const revokeResponse = await api.role.revokeOrganizationalRole(userId, eventId, roleId!);
       //  if (revokeRole.status!= 204) {
       //    console.log(revokeRole.status);
@@ -78,6 +106,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
 
   useEffect(() => {
     initDialog();
+    getCurrentUserId();
     setLoaded(true);
   }, []);
 
@@ -116,6 +145,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
           )}
         </select>
       </div>
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <Button onClick={handleEditOrganizer}>Редактировать</Button>
     </div>
   );

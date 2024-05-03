@@ -12,6 +12,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
   const [roleId, setRoleId] = useState<number | undefined>(undefined);
   const [roleName, setRoleName] = useState<string | undefined>('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
   const { api } = useContext(ApiContext);
 
@@ -43,6 +44,16 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
   const handleAddOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
+    if (userId && eventId) {
+      const userEventRoles = await api.role.getUserEventRoles(userId!, eventId);
+      if (userEventRoles.status == 200) {
+        const hasRole = userEventRoles.data.some(r => r.name == roleName);
+        if (hasRole) {
+          setErrorMessage("У этого пользователя уже есть эта роль!");
+          return;
+        }
+      }
+    }
     if (roleName == 'Организатор') {
       const result = await api.role.assignOrganizerRole(userId!, eventId);
       if (result.status != 204) {
@@ -101,6 +112,7 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
           )}
         </select>
       </div>
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <Button onClick={handleAddOrganizer}>Добавить</Button>
     </div>
   );
