@@ -363,7 +363,11 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
             value={String(participantLimit) ?? ''}
             onChange={(e) => {
                 if(parseInt(e.target.value)){
-                  setParticipantLimit(parseInt(e.target.value))
+                  if(parseInt(e.target.value)>1000000) {
+                    setParticipantLimit(1000000);
+                  }else {
+                    setParticipantLimit(parseInt(e.target.value));
+                  }
                 }else{
                   setParticipantLimit(1);
                 }
