@@ -380,8 +380,8 @@ function EventActivitiesPage() {
         setEvent(info);
         setEventResponse(data);
         getImageUrl(String(idInt)).then((url) => {
-          if (url == '') {
-            setEventImageUrl('http://s1.1zoom.ru/big7/280/Spain_Fields_Sky_Roads_488065.jpg');
+          if (!url || url == "") {
+            setEventImageUrl(`${(window as any).ENV_MINIO_URL}/event-images/default.jpg`);
           } else {
             setEventImageUrl(url);
           }
@@ -686,7 +686,7 @@ function EventActivitiesPage() {
     e.stopPropagation();
   };
   const _addActivity = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setDialogData(new DialogData('Создать активность', DialogSelected.CREATEACTIVITY));
+    setDialogData(new DialogData('Создание активности', DialogSelected.CREATEACTIVITY));
     e.stopPropagation();
   };
 

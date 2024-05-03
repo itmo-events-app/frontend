@@ -88,7 +88,7 @@ const PageItemStub = (props: PageItemStubProps) => {
       )}
       <div className={styles.event_info_column}>
         <div className={styles.event_name}>
-          {"Event " + props.index + ": " + props.title}
+          {props.title}
         </div>
         <div className={styles.event_place}>
           {props.place}

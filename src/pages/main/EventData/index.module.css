@@ -279,6 +279,10 @@
 }
 
 .input_error {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 16px;
   border-color: var(--itmo-colors-red);
 }
 
@@ -446,4 +450,9 @@
 .task_table td {
   border: 1px solid var(--itmo-colors-gray);
   padding: 10px 20px;
+}
+.disabled-button {
+  opacity: 0.5;
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
