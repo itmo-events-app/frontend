@@ -1313,7 +1313,8 @@ function EventActivitiesPage() {
         {(optionsPrivileges.changeAsignee) ? (
           <Dropdown
             placeholder={assigneeName}
-            items={orgs.map((el) => new DropdownOption<string>(el.name! + " " + el.surname!, String(el.id!)))}
+            items={orgs.filter((value, index, self) => self.findIndex((el) => el.id === value.id) === index)
+              .map((el) => new DropdownOption<string>(el.name! + " " + el.surname!, String(el.id!)))}
             toText={(item) => item.value}
             value={selectedTaskUser}
             onChange={(sel) => {
