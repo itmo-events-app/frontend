@@ -67,6 +67,7 @@ type TaskTableRowProps = {
   eventName?: string;
   taskStatus: TaskResponseTaskStatusEnum;
   activityTitle?: string;
+  activityId?: number;
 }
 
 type OptionsPrivileges = {
@@ -86,6 +87,7 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                                                eventId, eventName,
                                                taskStatus,
                                                activityTitle,
+                                                activityId
                                              }) => {
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
   const [idInt] = useState<number>(eventId)
@@ -144,9 +146,9 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
         <td>
           <Button onClick={() => redirectToEvent(eventId)}>{eventName}</Button>
         </td>
-        <td>{activityTitle ?? "-"}</td>
-        <td className={statusColorClass[status]}>
-          <h3>{status}</h3>
+        <td>{activityId ? <Button onClick={() => redirectToEvent(activityId)}>{activityTitle}</Button> : <div>-</div>}</td>
+        <td>
+          <Button className={statusColorClass[status]}>{status}</Button>
         </td>
       </tr>
     }
@@ -197,7 +199,7 @@ const ListWrapper: FC<{child?:ReactNode[]}> = ({child}) => {
       <th>Дедлайн</th>
       <th>Ответственный</th>
       <th>Мероприятие</th>
-      <th>Активность*</th>
+      <th>Активность</th>
       <th>Статус</th>
     </tr>
     </thead>
@@ -217,6 +219,7 @@ const taskResponsesToPageEntries = (tasks: TaskResponse[]) => {
                       deadline={task.deadline || ""}
                       assigneeName={`${task.assignee?.name} ${task.assignee?.surname}`}
                       eventId={Number(task.event?.eventId)}
+                      activityId={Number(task.event?.activityId)}
                       eventName={task.event?.eventTitle}
                       taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
                       activityTitle={task.event?.activityTitle} />);
@@ -320,7 +323,7 @@ function TaskListPage() {
   const _pageTabHandler = (tab_name: string) => {
     setFilters((prev)=>({
       ...prev,
-      expired: (tab_name==="Прошение"),
+      expired: (tab_name==="Прошедшие"),
     }));
     setSelectedTab(tab_name);
   }

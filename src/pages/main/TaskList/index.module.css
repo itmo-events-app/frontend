@@ -108,11 +108,14 @@
 }
 
 .color_blue {
-  color: var(--itmo-colors-blue);
+  background-color: var(--itmo-colors-blue);
+  width: 150px;
 }
 .color_lime {
-  color: var(--itmo-colors-lime);
+  background-color: var(--itmo-colors-lime);
+  width: 150px;
 }
 .color_red {
-  color: var(--itmo-colors-red);
+  background-color: var(--itmo-colors-red);
+  width: 150px;
 }
