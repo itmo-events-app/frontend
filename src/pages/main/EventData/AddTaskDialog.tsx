@@ -82,7 +82,14 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
       usersResponse = await api.event.getUsersHavingRoles(idInt);
       if (usersResponse.status == 200) {
         const usersData = usersResponse.data;
-        setUsersList(usersData);
+        const uniqueUsers = usersData.filter((user, index, self) =>
+            index === self.findIndex((t) => (
+              t.id === user.id
+            ))
+        );
+        // Устанавливаем список уникальных пользователей
+        console.log(uniqueUsers);
+        setUsersList(uniqueUsers);
         setUsersLoaded(true);
       }
     }

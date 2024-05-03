@@ -189,7 +189,12 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
       usersResponse = await api.event.getUsersHavingRoles(idInt);
       if (usersResponse.status == 200){
         const usersData = usersResponse.data;
-        const updatedUsersList = [...usersData];
+        const uniqueUsers = usersData.filter((user, index, self) =>
+            index === self.findIndex((t) => (
+              t.id === user.id
+            ))
+        );
+        const updatedUsersList = [...uniqueUsers];
         updatedUsersList.push({
           id: 0,
           name: "Назначить",
