@@ -55,16 +55,6 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
   const handleDeleteOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
-    if (userId && eventId) {
-      const userEventRoles = await api.role.getUserEventRoles(userId!, eventId);
-      if (userEventRoles.status == 200) {
-        const hasRole = userEventRoles.data.some(r => r.name != roleName);
-        if (hasRole) {
-          setErrorMessage("У этого пользователя нет такой роли!");
-          return;
-        }
-      }
-    }
     const currentUserId = await getCurrentUserId();
     if (userId === currentUserId  && roleName === 'Организатор') {
       setErrorMessage('Вы не можете отозвать свою собственную роль организатора!');
