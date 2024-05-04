@@ -18,6 +18,7 @@ async function getImageUrl(prefix: string) {
         return foundImageUrl;
       }
     }catch (error){
+      console.log(error);
       return ''
     }
   }
