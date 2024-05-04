@@ -1056,7 +1056,7 @@ function EventActivitiesPage() {
         {(optionsPrivileges.exportParticipants || optionsPrivileges.importParticipants) ?
           (
             <div className={styles.button_container}>
-              {optionsPrivileges.exportParticipants ?
+              {optionsPrivileges.exportParticipants && items.length > 0 ?
                 (
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
