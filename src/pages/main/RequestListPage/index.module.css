@@ -1,8 +1,8 @@
 :root {
-  --itmo-colors-decline-button-80: rgba(200, 1, 83, 0.8);
-  --itmo-colors-decline-button: rgba(200, 1, 83, 1);
+  --itmo-colors-decline-button: #A52019;
 }
 
+/* #008000 */
 .request_entry {
   padding: 16px;
   border: 1px solid var(--itmo-colors-gray);
@@ -29,9 +29,12 @@
 
 .request_text {
   color: #333333;
-  overflow-wrap: break-word; /* Ensures the break of long words if necessary */
-  word-wrap: break-word;     /* Deprecated version of the above property for older browsers */
-  white-space: normal;       /* Allows the text to wrap to the next line */
+  overflow-wrap: break-word;
+  /* Ensures the break of long words if necessary */
+  word-wrap: break-word;
+  /* Deprecated version of the above property for older browsers */
+  white-space: normal;
+  /* Allows the text to wrap to the next line */
 }
 
 .request_respond {
@@ -40,7 +43,14 @@
   margin-top: 8px;
 }
 
-.button, .label {
+.label {
+  display: flex;
+  justify-content: center;
+  width: 34px;
+}
+
+.button,
+.label {
   margin: 0;
 }
 
@@ -52,19 +62,30 @@
 }
 
 .button_reload {
-    margin-top: 8px;
+  margin-top: 8px;
+}
+
+.button {
+  background-color: #008000;
+  transition: all 0.3s;
+}
+
+.button:hover {
+  background-color: #008000;
+  opacity: 0.8;
 }
 
 .decline_button {
-  background-color: var(--itmo-colors-decline-button-80);
+  background-color: var(--itmo-colors-decline-button);
+  transition: all 0.3s;
 }
 
 .decline_button:hover {
   cursor: pointer;
+  opacity: 0.8;
   background-color: var(--itmo-colors-decline-button);
 }
 
 .no_requests {
   justify-content: center;
 }
-

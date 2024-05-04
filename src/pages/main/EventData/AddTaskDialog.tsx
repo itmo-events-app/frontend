@@ -3,15 +3,15 @@ import Dialog from "@widgets/main/Dialog";
 import Label from "@widgets/auth/InputLabel";
 import Input from "@widgets/main/Input";
 import Button from "@widgets/main/Button";
-import {useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
-import {EventResponse, PlaceResponse, UserResponse} from "@shared/api/generated";
+import { EventResponse, PlaceResponse, UserResponse } from "@shared/api/generated";
 import ApiContext from "@features/api-context";
 import InputLabel from "@widgets/main/InputLabel";
-import {taskService} from "@features/task-service";
+import { taskService } from "@features/task-service";
 
-const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | null }) => {
-  const {api} = useContext(ApiContext);
+const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number | null }) => {
+  const { api } = useContext(ApiContext);
   const [title, setTitle] = useState('');
 
   const currentDate: Date = new Date();
@@ -78,9 +78,9 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
       if (usersResponse.status == 200) {
         const usersData = usersResponse.data;
         const uniqueUsers = usersData.filter((user, index, self) =>
-            index === self.findIndex((t) => (
-              t.id === user.id
-            ))
+          index === self.findIndex((t) => (
+            t.id === user.id
+          ))
         );
         setUsersList(uniqueUsers);
         setUsersLoaded(true);
@@ -201,12 +201,12 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
   }
 
   return (
-    <div className={styles.dialog_task} onClick={onClose}>
+    <div className={styles.dialog_task} onMouseDown={onClose}>
       <Dialog className={styles.dialog_content_task} text={'Создание задачи'}>
-        <div onClick={(e) => e.stopPropagation()}>
+        <div onMouseDown={(e) => e.stopPropagation()}>
           <div className={styles.place_form}>
             <div className={styles.place_form_item}>
-              <Label value="Название"/>
+              <Label value="Название" />
               <Input
                 type="text"
                 value={String(title)}
@@ -217,7 +217,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               )}
             </div>
             <div className={styles.place_form_item}>
-              <Label value="Описание"/>
+              <Label value="Описание" />
               <Input
                 type="text"
                 value={String(description)}
@@ -228,7 +228,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               )}
             </div>
             <div className={styles.place_form_item}>
-              <InputLabel value="Место"/>
+              <InputLabel value="Место" />
               <select value={place} onChange={(e) => setPlace(parseInt(e.target.value))}>
                 {placesLoaded ? (
                   placeList.map((p) => {
@@ -240,7 +240,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               </select>
             </div>
             <div className={styles.place_form_item}>
-              <InputLabel value="Активность"/>
+              <InputLabel value="Активность" />
               <select value={activity} onChange={(e) => setActivity(parseInt(e.target.value))}>
                 <option value={''}>Это мероприятие</option>
                 {activityLoaded ? (
@@ -253,7 +253,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               </select>
             </div>
             <div className={styles.place_form_item}>
-              <InputLabel value="Ответственный"/>
+              <InputLabel value="Ответственный" />
               <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
                 <option value={''}>Назначить позже</option>
                 {usersLoaded ? (
@@ -266,7 +266,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               </select>
             </div>
             <div className={styles.place_form_item}>
-              <Label value="Дедлайн"/>
+              <Label value="Дедлайн" />
               <DatePicker
                 selected={deadline}
                 onChange={(date) => setDeadline(date)}
@@ -281,7 +281,7 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               )}
             </div>
             <div className={styles.place_form_item}>
-              <Label value="Напоминание"/>
+              <Label value="Напоминание" />
               <DatePicker
                 selected={reminder}
                 onChange={(date) => setReminder(date)}
