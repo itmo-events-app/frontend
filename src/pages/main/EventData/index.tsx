@@ -2,6 +2,7 @@ import {uid} from "uid";
 import {FC, ReactNode, useContext, useEffect, useRef, useState} from "react";
 import styles from "./index.module.css";
 import BrandLogo from "@widgets/main/BrandLogo";
+import DefaultImg from "@shared/assets/default.jpg";
 import Layout from "@widgets/main/Layout";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
@@ -383,7 +384,7 @@ function EventActivitiesPage() {
         setEventResponse(data);
         getImageUrl(String(idInt)).then((url) => {
           if (!url || url == "") {
-            setEventImageUrl(`${(window as any).ENV_MINIO_URL}/event-images/default.jpg`);
+            setEventImageUrl(DefaultImg);
           } else {
             setEventImageUrl(url);
           }
