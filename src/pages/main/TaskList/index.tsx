@@ -228,7 +228,10 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
         </Popup>
       </td>
       <td>
-        {files?.length ? files?.map(file => <a href={file.presignedUrl} download>{file.filename}</a>) : '–'}
+        {files?.length ? files?.map(file => <div key={file.filename}>
+          <a href={file.presignedUrl} download>{file.filename}</a>
+          <br/><br/>
+        </div>) : <></>}
       </td>
     </tr>
   );
