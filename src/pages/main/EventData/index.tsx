@@ -691,7 +691,8 @@ function EventActivitiesPage() {
   function _createInfoPage(eventInfo: EventInfo) {
     return (
       <div className={styles.root}>
-        <div className={styles.image_box}>{<ImagePreview className={styles.image} src={eventImageUrl}
+        <div className={styles.image_box}>
+          {<ImagePreview className={styles.image} src={eventImageUrl}
                                                          alt="Event image"/>}</div>
         {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
