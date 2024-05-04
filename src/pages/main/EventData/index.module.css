@@ -467,3 +467,43 @@
   background-color: #cccccc;
   cursor: not-allowed;
 }
+
+.upload_button {
+  position: relative;
+  width: 30px;
+  height: 20px;
+  border-radius: 25px;
+  border: 2px solid var(--itmo-colors-black);
+  background-color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  transition: .3s;
+}
+
+.upload_button svg {
+  color: var(--itmo-colors-black);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: .3s;
+}
+
+.delete_button {
+  position: relative;
+  width: 30px;
+  height: 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: .3s;
+}
+
+.delete_button svg {
+  color: var(--itmo-colors-black);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: .3s;
+}

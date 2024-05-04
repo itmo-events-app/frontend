@@ -47,11 +47,13 @@ import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
 import CopyTasksDialog from "@pages/main/EventData/CopyTasksDialog";
 import { Api } from "@entities/api.ts";
 import Popup from "reactjs-popup";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale/ru";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
-import { taskService } from "@features/task-service.ts";
-import { useMutation } from "@tanstack/react-query";
+import {format} from "date-fns";
+import {ru} from "date-fns/locale/ru";
+import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
+import {taskService} from "@features/task-service.ts";
+import {useMutation} from "@tanstack/react-query";
+import AddFileDialog from "@pages/main/EventData/AddFileDialog.tsx";
+import {DeleteOutlined, UploadOutlined} from "@ant-design/icons";
 
 class EventInfo {
   regDates: string;
@@ -221,7 +223,8 @@ type OptionsPrivileges = {
   createTask: boolean,
   createEvent: boolean,
   changeTaskStatus: boolean,
-  changeAsignee: boolean
+  changeAsignee: boolean,
+  editTask: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -241,7 +244,8 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   createTask: false,
   createEvent: false,
   changeTaskStatus: false,
-  changeAsignee: false
+  changeAsignee: false,
+  editTask: false
 
 } as const;
 
@@ -303,6 +307,8 @@ function EventActivitiesPage() {
 
   const { id } = useParams();
   const [idInt, setIdInt] = useState<number | null>(null)
+  const [taskId, setTaskId] = useState<number>(0)
+
   const [event, setEvent] = useState<EventInfo | undefined>(undefined);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventImageUrl, setEventImageUrl] = useState('');
@@ -538,7 +544,8 @@ function EventActivitiesPage() {
         createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
         createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])),
         changeTaskStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CHANGE_TASK_STATUS)])),
-        changeAsignee: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR)]))
+        changeAsignee: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR)])),
+        editTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_TASK)]))
       });
       if (event?.parent) {
         setParticipantVisibility(false);
@@ -1154,6 +1161,7 @@ function EventActivitiesPage() {
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isCopyModalOpen, setCopyModalOpen] = useState(false);
+  const [isAddFileModalOpen, setAddFileModalOpen] = useState(false);
 
 
   const openModalCreate = () => {
@@ -1178,8 +1186,19 @@ function EventActivitiesPage() {
     setCopyModalOpen(true);
   }
 
+  const openModalAddFile = () => {
+    setAddFileModalOpen(true);
+  }
+
   const closeModalCopy = () => {
     setCopyModalOpen(false);
+    setTimeout(() => {
+      setStepTasks(stepTasks + 1);
+    }, 500);
+  }
+
+  const closeModalFile = () => {
+    setAddFileModalOpen(false);
     setTimeout(() => {
       setStepTasks(stepTasks + 1);
     }, 500);
@@ -1196,6 +1215,21 @@ function EventActivitiesPage() {
   const _onCopy = () => {
     openModalCopy();
   }
+
+  const _onAddFile = (id: number) => {
+    setTaskId(id);
+    openModalAddFile();
+  };
+
+  const _onDeleteFile = (id: number, fileName: string) => {
+    api.withReauth(() => api.task.deleteFiles(
+      id,
+      new Array(fileName)
+    ));
+    setTimeout(() => {
+      setStepTasks(stepTasks + 1);
+    }, 500);
+  };
 
   type TaskTableProps = {
     tasks: TaskResponse[];
@@ -1388,7 +1422,12 @@ function EventActivitiesPage() {
         </Popup>
       </td>
       <td>
-        {files?.length ? files?.map(file => <a href={file.presignedUrl} download>{file.filename}</a>) : '–'}
+        {(optionsPrivileges.editTask) ? <UploadOutlined className={styles.upload_button} onClick={() => _onAddFile(taskId!)}/> : ''}
+        {files?.length ? files?.map(file => <div key={file.filename}>
+          <a href={file.presignedUrl} download>{file.filename}</a>
+          {(optionsPrivileges.editTask) ? <DeleteOutlined className={styles.delete_button} onClick={() => _onDeleteFile(taskId!, file.filename!)}/> : ''}
+          <br/><br/>
+        </div>) : <></>}
       </td>
     </tr>);
   };
@@ -1470,9 +1509,10 @@ function EventActivitiesPage() {
           <TaskTable tasks={eventTasks} api={api} />
 
         </div>
-        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
-        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate} />}
-        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
+        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
+        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy}/>}
+        {isAddFileModalOpen && <AddFileDialog idInt={taskId} onClose={closeModalFile}/>}
       </>
 
     );
