@@ -38,8 +38,6 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
   const [showReminderMessage, setShowReminderMessage] = useState(false);
   const [showReminderAfterDeadlineMessage, setShowReminderAfterDeadlineMessage] = useState(false);
 
-  const [file, setFile] = useState<File | undefined>(undefined);
-
   const getActivities = async () => {
     let activitiesResponse;
     if (idInt !== null) {
@@ -189,30 +187,16 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
     }
 
     if (newActivity !== undefined) {
-      if (file) {
-        taskService.createTask(
-          api,
-          newActivity,
-          newUserId,
-          title,
-          description,
-          place,
-          deadlineString!,
-          reminderString!,
-          file
-        ).then(() => onClose());
-      } else {
-        taskService.createTask(
-          api,
-          newActivity,
-          newUserId,
-          title,
-          description,
-          place,
-          deadlineString!,
-          reminderString!
-        ).then(() => onClose());
-      }
+      taskService.createTask(
+        api,
+        newActivity,
+        newUserId,
+        title,
+        description,
+        place,
+        deadlineString!,
+        reminderString!
+      ).then(() => onClose());
     }
   }
 
@@ -314,19 +298,6 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number | 
               {showReminderAfterDeadlineMessage && (
                 <span className={styles.emptyFieldsMessage}>Напоминание не может быть позже крайнего срока</span>
               )}
-            </div>
-            <div className={styles.place_form_item}>
-              <InputLabel value="Файл"/>
-              <input
-                type="file"
-                onChange={(e) => {
-                  if (e.target.files) {
-                    const chosenFile = e.target.files[0];
-                    setFile(chosenFile);
-                  }
-                }}
-              />
-              {file && <p>Selected file: {file.name}</p>}
             </div>
             <div className={styles.place_form_button}>
               <Button onClick={createTask}>Создать</Button>
