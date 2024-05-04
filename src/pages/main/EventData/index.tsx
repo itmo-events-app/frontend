@@ -223,7 +223,8 @@ type OptionsPrivileges = {
   createTask: boolean,
   createEvent: boolean,
   changeTaskStatus: boolean,
-  changeAsignee: boolean
+  changeAsignee: boolean,
+  editTask: boolean
 }
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
@@ -243,7 +244,8 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   createTask: false,
   createEvent: false,
   changeTaskStatus: false,
-  changeAsignee: false
+  changeAsignee: false,
+  editTask: false
 
 } as const;
 
@@ -542,7 +544,8 @@ function EventActivitiesPage() {
         createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
         createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])),
         changeTaskStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CHANGE_TASK_STATUS)])),
-        changeAsignee: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR)]))
+        changeAsignee: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR)])),
+        editTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_TASK)]))
       });
       if (event?.parent) {
         setParticipantVisibility(false);
@@ -1419,10 +1422,10 @@ function EventActivitiesPage() {
         </Popup>
       </td>
       <td>
-        <UploadOutlined className={styles.upload_button} onClick={() => _onAddFile(taskId!)}/>
+        {(optionsPrivileges.editTask) ? <UploadOutlined className={styles.upload_button} onClick={() => _onAddFile(taskId!)}/> : ''}
         {files?.length ? files?.map(file => <div key={file.filename}>
           <a href={file.presignedUrl} download>{file.filename}</a>
-          <DeleteOutlined className={styles.delete_button} onClick={() => _onDeleteFile(taskId!, file.filename!)}/>
+          {(optionsPrivileges.editTask) ? <DeleteOutlined className={styles.delete_button} onClick={() => _onDeleteFile(taskId!, file.filename!)}/> : ''}
           <br/><br/>
         </div>) : <></>}
       </td>
