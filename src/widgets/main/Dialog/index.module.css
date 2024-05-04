@@ -10,7 +10,8 @@
 }
 
 .dop__wrap {
-  overflow: auto;
+  overflow-y: scroll;
+  max-height: calc(100vh - 80px);
   padding: 10px;
 }
 
