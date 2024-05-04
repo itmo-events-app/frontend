@@ -83,7 +83,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-width: 38%;
+  min-width: 60%;
   max-width: 62%;
 }
 
@@ -329,7 +329,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-
   background: #ffffff;
   border: 1px solid black;
   border-radius: 16px;

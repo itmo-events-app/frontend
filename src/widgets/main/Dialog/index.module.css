@@ -4,8 +4,15 @@
   border-radius: 10px;
   flex-direction: column;
   width: fit-content;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
+  padding: 0 !important;
+}
+
+.dop__wrap {
+  overflow-y: scroll;
+  max-height: calc(100vh - 80px);
+  padding: 10px;
 }
 
 .header {

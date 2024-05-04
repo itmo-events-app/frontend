@@ -2,6 +2,7 @@ import {uid} from "uid";
 import {FC, ReactNode, useContext, useEffect, useRef, useState} from "react";
 import styles from "./index.module.css";
 import BrandLogo from "@widgets/main/BrandLogo";
+import DefaultImg from "@shared/assets/default.jpg";
 import Layout from "@widgets/main/Layout";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
@@ -383,7 +384,7 @@ function EventActivitiesPage() {
         setEventResponse(data);
         getImageUrl(String(idInt)).then((url) => {
           if (!url || url == "") {
-            setEventImageUrl(`${(window as any).ENV_MINIO_URL}/event-images/default.jpg`);
+            setEventImageUrl(DefaultImg);
           } else {
             setEventImageUrl(url);
           }
@@ -691,7 +692,8 @@ function EventActivitiesPage() {
   function _createInfoPage(eventInfo: EventInfo) {
     return (
       <div className={styles.root}>
-        <div className={styles.image_box}>{<ImagePreview className={styles.image} src={eventImageUrl}
+        <div className={styles.image_box}>
+          {<ImagePreview className={styles.image} src={eventImageUrl}
                                                          alt="Event image"/>}</div>
         {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
@@ -1055,7 +1057,7 @@ function EventActivitiesPage() {
         {(optionsPrivileges.exportParticipants || optionsPrivileges.importParticipants) ?
           (
             <div className={styles.button_container}>
-              {optionsPrivileges.exportParticipants ?
+              {optionsPrivileges.exportParticipants && items.length > 0 ?
                 (
                   <Button className={styles.buttonXlsx} onClick={export_xlsx}>
                     Скачать xlsx
