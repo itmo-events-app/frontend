@@ -175,7 +175,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
 };
 
 function PlaceListPage() {
-  const DEFAULT_PLACES_COUNT = 3; // по-хорошему дефолтность площадки должна хранится в бд
+  const DEFAULT_PLACES_COUNT = 4; // по-хорошему дефолтность площадки должна хранится в бд
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
 
