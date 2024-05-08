@@ -67,7 +67,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
     const childWindow = document.querySelector("iframe")?.contentWindow;
     if (message.source !== childWindow) return;
     setAddress(message.data.address);
-    setRoomName(message.data.properties["ref"]);
+    setRoomName(message.data.properties?.ref ?? "");
     setLatitude(message.data.coordinates[0]);
     setLongitude(message.data.coordinates[1]);
   };
@@ -89,15 +89,6 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               />
             </div>
             <div className={styles.place_form_item}>
-              <Label value="Адрес" />
-              <Input
-                type="text"
-                placeholder={"Адрес"}
-                value={address}
-                onChange={(event) => setAddress(event.target.value)}
-              />
-            </div>
-            <div className={styles.place_form_item}>
               <Label value="Формат" />
               <Dropdown
                 items={placeFormat}
@@ -109,10 +100,28 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               />
             </div>
             <div className={styles.place_form_item}>
+              <Label value="Описание площадки" />
+              <Input
+                type="text"
+                placeholder={"Описание"}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+              />
+            </div>
+            <div className={styles.place_form_item}>
+              <Label value="Адрес" />
+              <Input
+                type="text"
+                placeholder={"Адрес"}
+                value={address}
+                onChange={(event) => setAddress(event.target.value)}
+              />
+            </div>
+            <div className={styles.place_form_item}>
               <Label value="Аудитория" />
               <Input
                 type="text"
-                placeholder={"Выберите на карте"}
+                placeholder={"Можно выбрать на карте"}
                 value={roomName}
                 onChange={(event) => {
                   setRoomName(event.target.value);
@@ -122,15 +131,6 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
                   }, "*");
                 }
                 }
-              />
-            </div>
-            <div className={styles.place_form_item}>
-              <Label value="Описание площадки" />
-              <Input
-                type="text"
-                placeholder={"Описание"}
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
               />
             </div>
             <div className={styles.place_form_item}>

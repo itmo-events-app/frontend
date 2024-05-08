@@ -56,15 +56,15 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
   };
 
   const handleMapClick = (message: any) => {
-    const childWindow = document.querySelector('iframe')?.contentWindow;
+    const childWindow = document.querySelector("iframe")?.contentWindow;
     if (message.source !== childWindow) return;
     setValue("address", message.data.address);
     setValue("roomName", message.data.properties["ref"]);
     setValue("latitude", message.data.coordinates[0]);
     setValue("longitude", message.data.coordinates[1]);
-  }
+  };
   useEffect(() => {
-    window.addEventListener('message', handleMapClick);
+    window.addEventListener("message", handleMapClick);
   });
 
   useEffect(() => {
@@ -126,14 +126,6 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
                         )}>
             </Controller>
 
-            <Controller control={control} render={({ field: { value, onChange } }) => (
-              <div className={styles.place_form_item}>
-                <Label value="Адрес" />
-                <Input type="text" placeholder={"Адрес"} value={value}
-                       onChange={(event) => onChange(event.target.value)} />
-              </div>
-            )} name={"address"} />
-
             <Controller
               control={control}
               name={"format"}
@@ -148,10 +140,26 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
                 </div>)}
             />
 
+            <Controller control={control} name={"description"} render={({ field: { value, onChange } }) => (
+              <div className={styles.place_form_item}>
+                <Label value="Описание площадки" />
+                <Input type="text" placeholder={"Описание"} value={value}
+                       onChange={(event) => onChange(event.target.value)} />
+              </div>
+            )} />
+
+            <Controller control={control} render={({ field: { value, onChange } }) => (
+              <div className={styles.place_form_item}>
+                <Label value="Адрес" />
+                <Input type="text" placeholder={"Адрес"} value={value}
+                       onChange={(event) => onChange(event.target.value)} />
+              </div>
+            )} name={"address"} />
+
             <Controller control={control} name={"roomName"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
                 <Label value="Аудитория" />
-                <Input type="text" placeholder={"Выберите на карте"} value={value}
+                <Input type="text" placeholder={"Можно выбрать на карте"} value={value}
                        onChange={
                          (event) => {
                            onChange(event.target.value);
@@ -167,19 +175,11 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
             )}
             />
 
-            <Controller control={control} name={"description"} render={({ field: { value, onChange } }) => (
-              <div className={styles.place_form_item}>
-                <Label value="Описание площадки" />
-                <Input type="text" placeholder={"Описание"} value={value}
-                       onChange={(event) => onChange(event.target.value)} />
-              </div>
-            )} />
-
             <Controller control={control} name={"latitude"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
                 {/*<Label value="Долгота" />*/}
                 <Input hidden={true}
-                       // type="number"
+                  // type="number"
                        placeholder={"Долгота"}
                        value={String(value)}
                        onChange={(event) => {
@@ -195,7 +195,7 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
               <div className={styles.place_form_item}>
                 {/*<Label value="Широта" />*/}
                 <Input hidden={true}
-                       // type="number"
+                  // type="number"
                        placeholder={"Широта"}
                        value={String(value)}
                        onChange={
@@ -206,7 +206,8 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
                 />
               </div>
             )} />
-            <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?noscroll&select_only_areas"} width="100%" height="420px"></iframe>
+            <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?noscroll&select_only_areas"}
+                    width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button type="submit">Обновить</Button>
             </div>
