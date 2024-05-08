@@ -70,14 +70,14 @@ function SideBar(props: Props) {
     api.notification.getNotSeenCountNotification()
       .then(result => setNotSeenNotificationsCount(result.data));
   }, []);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      api.notification.getNotSeenCountNotification()
-        .then(result => setNotSeenNotificationsCount(result.data));
-    }, 5000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+  // useEffect(() => {
+    // const intervalId = setInterval(() => {
+    //   api.notification.getNotSeenCountNotification()
+    //     .then(result => setNotSeenNotificationsCount(result.data));
+    // }, 1000);
+    //
+    // return () => clearInterval(intervalId);
+  // }, []);
   // ----------
 
 

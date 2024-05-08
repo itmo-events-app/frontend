@@ -33,6 +33,7 @@ import { PrivilegeNames } from '@shared/config/privileges';
 import ImagePreview from "@widgets/main/ImagePreview";
 import { eventService } from '@features/event-service';
 import { placeService } from '@features/place-service';
+import Select from "react-select";
 
 enum DisplayModes {
   LIST = "Показать списком",
@@ -311,13 +312,19 @@ function EventListPage() {
                   enableTabLoop={false}
                 />
                 <div className={styles.dropdownfilter}>
-                  <Dropdown
+                  <Select
                     placeholder="Статус"
-                    items={eventStatusList}
-                    value={filters.status !== undefined ? filters.status : ""}
-                    onChange={(status) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsStatusEnum, status), "status")}
-                    onClear={() => _handleFilterChange("", "status")}
-                    toText={(input: string) => { return input }} />
+                    options={eventStatusList.map(i => {
+                      return { label: i, value: i };
+                    })}
+                    value={{value: filters.status !== undefined ? filters.status: "", label: filters.status !== undefined ? filters.status: ""}}
+                    // inputValue={filters.status !== undefined ? filters.status: ""}
+                    isClearable={filters.status !== undefined}
+                    onChange={(status) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsStatusEnum, status?.value ?? ""), "status")}
+                    // onInputChange={(status) => _handleFilterChange(getEnumValueFromString(GetAllOrFilteredEventsStatusEnum, status ?? ""), "status")}
+                    // onClear={() => _handleFilterChange("", "status")}
+                    // toText={(input: string) => { return input }}
+                  />
                 </div>
                 <div className={styles.dropdownfilter}>
                   <Dropdown
