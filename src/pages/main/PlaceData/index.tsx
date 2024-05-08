@@ -54,7 +54,7 @@ function PlaceDataPage() {
       topLeft={<BrandLogo />}
       topRight={
         <div className={styles.header}>
-          <PageName text={String(foundPlace?.name)} />
+          <PageName text={foundPlace?.name ?? ""} />
         </div>
       }
       bottomLeft={<SideBar currentPageURL={RoutePaths.placeData} />}
@@ -63,18 +63,18 @@ function PlaceDataPage() {
           <div className={styles.place_data}>
             <div className={styles.place_data_list}>
               <div className={styles.place_column}>
-                <div className={styles.label}>Адрес:</div>
+                <div className={styles.label} hidden={foundPlace?.format === "ONLINE"} >Адрес:</div>
                 <div className={styles.label}>Формат:</div>
-                <div className={styles.label}>Аудитория:</div>
-                <div className={styles.label}>Координаты:</div>
+                <div className={styles.label} hidden={foundPlace?.format === "ONLINE"} >Аудитория:</div>
+                <div className={styles.label} hidden={foundPlace?.format === "ONLINE"}>Координаты:</div>
               </div>
               <div className={styles.place_column}>
-                <div className={styles.data}>{foundPlace?.address ?? ""}</div>
+                <div className={styles.data} hidden={foundPlace?.format === "ONLINE"}>{foundPlace?.address ?? ""}</div>
                 <div className={styles.data}>
                   {foundPlace == undefined ? "Неопределен" : formatTranslation[foundPlace!.format!]}
                 </div>
-                <div className={styles.data}>{foundPlace?.room}</div>
-                <div className={styles.data}>{`${foundPlace?.latitude ?? 0}, ${foundPlace?.longitude ?? 0}`}</div>
+                <div className={styles.data} hidden={foundPlace?.format === "ONLINE"} >{foundPlace?.room}</div>
+                <div className={styles.data} hidden={foundPlace?.format === "ONLINE"} >{`${foundPlace?.latitude ?? 0}, ${foundPlace?.longitude ?? 0}`}</div>
               </div>
             </div>
             <div className={styles.place_description}>
@@ -82,9 +82,9 @@ function PlaceDataPage() {
               <div className={styles.data}>{foundPlace?.description}</div>
             </div>
           </div>
-          <div className={styles.label}>Карта:</div>
+          <div className={styles.label} hidden={foundPlace?.format === "ONLINE"}>Карта:</div>
           <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?fullscreen"} width="100%"
-                  height="420px" allow="fullscreen"></iframe>
+                  height="420px" allow="fullscreen" hidden={foundPlace?.format === "ONLINE"}></iframe>
         </Content>
       }
     />
