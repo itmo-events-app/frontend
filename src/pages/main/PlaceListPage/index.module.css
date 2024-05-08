@@ -124,11 +124,20 @@
   transition: .3s;
 }
 
-.delete_button:hover {
+.delete_button[disabled] {
+  border: 2px solid var(--itmo-colors-dark-gray);
+  filter: grayscale(100%);
+  cursor: default;
+}
+
+.delete_button:hover:not([disabled]) {
   background-color: rgb(245, 207, 207);
-  transform: scale(1.2);
   box-shadow: 0 0 4px #111;
   transition: .3s;
+}
+
+.delete_button:hover {
+  background-color: #fff;
 }
 
 .delete_button_svg {

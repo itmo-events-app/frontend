@@ -29,9 +29,9 @@ import UpdatePlaceDialog from "@pages/main/PlaceListPage/UpdatePlaceContext.tsx"
 const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
   const { api } = useContext(ApiContext);
   const placeFormat: DropdownOption<string>[] = [
-    new DropdownOption('Онлайн'),
-    new DropdownOption('Офлайн'),
-    new DropdownOption('Гибрид'),
+    new DropdownOption("Онлайн"),
+    new DropdownOption("Офлайн"),
+    new DropdownOption("Гибрид"),
   ];
   const formatEnum: Record<string, PlaceRequestFormatEnum> = {
     Онлайн: PlaceRequestFormatEnum.Online,
@@ -39,12 +39,12 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
     Гибрид: PlaceRequestFormatEnum.Hybrid,
   };
   const [format, setFormat] = useState<DropdownOption<string>>(placeFormat[1]);
-  const [placeName, setPlaceName] = useState('');
-  const [roomName, setRoomName] = useState('');
-  const [description, setDescription] = useState('');
+  const [placeName, setPlaceName] = useState("");
+  const [roomName, setRoomName] = useState("");
+  const [description, setDescription] = useState("");
   const [latitude, setLatitude] = useState(30.3095);
   const [longitude, setLongitude] = useState(59.9567);
-  const [address, setAddress] = useState('Кронверкский проспект, 49');
+  const [address, setAddress] = useState("Кронверкский проспект, 49");
   const [showEmptyFieldsMessage, setShowEmptyFieldsMessage] = useState(false);
 
   const createPlace = () => {
@@ -60,31 +60,30 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
       roomName,
       description,
       latitude,
-      longitude
+      longitude,
     ).then(() => onClose());
-    // setTimeout(() => { location.reload() }, 500);
   };
   const handleMapClick = (message: any) => {
-    const childWindow = document.querySelector('iframe')?.contentWindow;
+    const childWindow = document.querySelector("iframe")?.contentWindow;
     if (message.source !== childWindow) return;
     setAddress(message.data.address);
     setRoomName(message.data.properties["ref"]);
     setLatitude(message.data.coordinates[0]);
     setLongitude(message.data.coordinates[1]);
-  }
+  };
   useEffect(() => {
-    window.addEventListener('message', handleMapClick);
+    window.addEventListener("message", handleMapClick);
   });
   return (
     <div className={styles.dialog} onClick={onClose}>
-      <Dialog className={styles.dialog_content} text={'Создание площадки'}>
+      <Dialog className={styles.dialog_content} text={"Создание площадки"}>
         <div onClick={(e) => e.stopPropagation()}>
           <div className={styles.place_form}>
             <div className={styles.place_form_item}>
               <Label value="Название" />
               <Input
                 type="text"
-                placeholder={'Название'}
+                placeholder={"Название"}
                 value={placeName}
                 onChange={(event) => setPlaceName(event.target.value)}
               />
@@ -93,7 +92,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               <Label value="Адрес" />
               <Input
                 type="text"
-                placeholder={'Адрес'}
+                placeholder={"Адрес"}
                 value={address}
                 onChange={(event) => setAddress(event.target.value)}
               />
@@ -113,12 +112,15 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               <Label value="Аудитория" />
               <Input
                 type="text"
-                placeholder={'Выберите на карте'}
+                placeholder={"Выберите на карте"}
                 value={roomName}
                 onChange={(event) => {
-                    setRoomName(event.target.value);
-                  (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({type: "roomHighlight", room: event.target.value}, "*");
-                  }
+                  setRoomName(event.target.value);
+                  (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({
+                    type: "roomHighlight",
+                    room: event.target.value,
+                  }, "*");
+                }
                 }
               />
             </div>
@@ -126,7 +128,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               <Label value="Описание площадки" />
               <Input
                 type="text"
-                placeholder={'Описание'}
+                placeholder={"Описание"}
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
               />
@@ -135,7 +137,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               {/*<Label value="Долгота" />*/}
               <Input
                 // type="number"
-                placeholder={'Долгота'}
+                placeholder={"Долгота"}
                 value={String(latitude)}
                 onChange={(event) => {
                   setLatitude(Number(event.target.value));
@@ -150,7 +152,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               <Input
                 hidden={true}
                 // type="number"
-                placeholder={'Широта'}
+                placeholder={"Широта"}
                 value={String(longitude)}
                 onChange={(event) => setLongitude(Number(event.target.value))}
                 min={-90}
@@ -173,12 +175,13 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
 };
 
 function PlaceListPage() {
+  const DEFAULT_PLACES_COUNT = 3; // по-хорошему дефолтность площадки должна хранится в бд
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
 
   const { data: allPlaces = [], refetch } = useQuery({
     queryFn: placeService.getPlaces(api),
-    queryKey: ['getPlaces'],
+    queryKey: ["getPlaces"],
 
   });
 
@@ -194,7 +197,7 @@ function PlaceListPage() {
     mutationKey: ["getFilteredPlaces"],
     onSuccess: (res) => {
       setFilteredPlaces(res);
-    }
+    },
   });
 
   useEffect(() => {
@@ -228,13 +231,15 @@ function PlaceListPage() {
   };
 
   const _onUpdate = (id: number) => {
-    setId(id)
+    setId(id);
     openModalUpdate();
   };
 
   const _onDelete = (id: number) => {
     placeService.deletePlace(api, id);
-    setTimeout(() => { location.reload() }, 500);
+    setTimeout(() => {
+      location.reload();
+    }, 500);
   };
 
   const navigate = useNavigate();
@@ -247,7 +252,6 @@ function PlaceListPage() {
       return _entryStub(place.id, place.name, place.address);
     });
   });
-
 
 
   function _entryStub(index?: number, name?: string, address?: string) {
@@ -267,21 +271,26 @@ function PlaceListPage() {
             {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
               new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
             ])) ? <div className={styles.button}>
-              <Button onClick={() => _onUpdate(index!)}>Редактировать</Button>
-            </div>
+                <Button onClick={() => _onUpdate(index!)}>Редактировать</Button>
+              </div>
               : <></>}
             {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
               new PrivilegeData(PrivilegeNames.DELETE_EVENT_VENUE),
             ])) ? <div>
-              <Button className={styles.delete_button} onClick={() => _onDelete(index!)}>
-                <svg className={styles.delete_button_svg} xmlns="http://www.w3.org/2000/svg" width="25" height="25"
-                  fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </Button>
-            </div>
+                <Button className={styles.delete_button} onClick={() => {
+                  if (window.confirm(`Удалить площадку ${name} ?`)) {
+                    _onDelete(index!);
+                  }
+                }} disabled={(index ?? 0) <= DEFAULT_PLACES_COUNT}
+                        title={(index ?? 0) <= DEFAULT_PLACES_COUNT ? "Эту площадку нельзя удалить" : ""}>
+                  <svg className={styles.delete_button_svg} xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                       fill="none" viewBox="0 0 24 24"
+                       stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </Button>
+              </div>
               : <></>}
           </div>
         </a>
@@ -312,8 +321,8 @@ function PlaceListPage() {
                 {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
                   new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
                 ])) ? <div className={styles.button}>
-                  <Button onClick={_onCreation}>Создать</Button>
-                </div>
+                    <Button onClick={_onCreation}>Создать</Button>
+                  </div>
                   : <></>}
               </div>
               <div className={styles.event_list_container}>
