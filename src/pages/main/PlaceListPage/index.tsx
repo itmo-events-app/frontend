@@ -18,7 +18,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { placeService } from "@features/place-service.ts";
 import ApiContext from "@features/api-context.ts";
 import { PlaceRequestFormatEnum, PlaceResponse } from "@shared/api/generated";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { DropdownOption } from "@widgets/main/Dropdown";
 import { hasAnyPrivilege } from "@features/privileges.ts";
 import { PrivilegeData } from "@entities/privilege-context.ts";
 import { PrivilegeNames } from "@shared/config/privileges.ts";
@@ -38,7 +38,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
     Офлайн: PlaceRequestFormatEnum.Offline,
     Гибрид: PlaceRequestFormatEnum.Hybrid,
   };
-  const [format, setFormat] = useState<DropdownOption<string>>(placeFormat[1]);
+  const [format, _] = useState<DropdownOption<string>>(placeFormat[1]);
   const [placeName, setPlaceName] = useState("");
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
@@ -86,17 +86,6 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
                 placeholder={"Название"}
                 value={placeName}
                 onChange={(event) => setPlaceName(event.target.value)}
-              />
-            </div>
-            <div className={styles.place_form_item}>
-              <Label value="Формат" />
-              <Dropdown
-                items={placeFormat}
-                toText={(item) => item.value}
-                value={format}
-                onChange={(sel) => {
-                  setFormat(sel);
-                }}
               />
             </div>
             <div className={styles.place_form_item}>

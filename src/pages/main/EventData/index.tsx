@@ -1501,7 +1501,7 @@ function EventActivitiesPage() {
             ))}
 
             <div key="0" style={{ opacity: nobodyTasks }} className={styles.tasks__human}>
-              <span style={{ background: "#000" }}></span>
+              <span style={{ background: "black" }}></span>
               Не назначено
             </div>
           </div>

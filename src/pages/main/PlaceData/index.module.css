@@ -34,17 +34,6 @@
   min-width: 200px;
 }
 
-.place_data {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.place_data_list {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
 
 .data_string {
   display: flex;
@@ -57,13 +46,9 @@
   gap: 5px;
 }
 
-.place_description {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
 .label {
+  min-width: 150px;
+  display: inline-block;
   font-weight: bold;
 }
 
