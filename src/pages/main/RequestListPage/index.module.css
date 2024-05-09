@@ -3,6 +3,7 @@
 }
 
 /* #008000 */
+
 .request_entry {
   padding: 16px;
   border: 1px solid var(--itmo-colors-gray);
@@ -30,10 +31,13 @@
 .request_text {
   color: #333333;
   overflow-wrap: break-word;
+
   /* Ensures the break of long words if necessary */
   word-wrap: break-word;
+
   /* Deprecated version of the above property for older browsers */
   white-space: normal;
+
   /* Allows the text to wrap to the next line */
 }
 
