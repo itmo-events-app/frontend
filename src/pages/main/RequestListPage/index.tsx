@@ -170,7 +170,7 @@ export default function RequestListPage() {
           )
           : (
             <Content>
-              <PagedList page={1} page_size={5} page_step={5} items={_renderedRequests} />
+              <PagedList page={1} page_size={5} page_step={1} items={_renderedRequests} />
             </Content>
           )
       }

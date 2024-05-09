@@ -149,7 +149,7 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
               />
             </div>
             <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?noscroll&select_only_areas"}
-                    width="100%" height="420px"></iframe>
+              width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button onClick={createPlace}>Создать</Button>
             </div>
@@ -260,26 +260,26 @@ function PlaceListPage() {
             {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
               new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
             ])) ? <div className={styles.button}>
-                <Button onClick={() => _onUpdate(index!)}>Редактировать</Button>
-              </div>
+              <Button onClick={() => _onUpdate(index!)}>Редактировать</Button>
+            </div>
               : <></>}
             {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
               new PrivilegeData(PrivilegeNames.DELETE_EVENT_VENUE),
             ])) ? <div>
-                <Button className={styles.delete_button} onClick={() => {
-                  if (window.confirm(`Удалить площадку ${name} ?`)) {
-                    _onDelete(index!);
-                  }
-                }} disabled={(index ?? 0) <= DEFAULT_PLACES_COUNT}
-                        title={(index ?? 0) <= DEFAULT_PLACES_COUNT ? "Эту площадку нельзя удалить" : ""}>
-                  <svg className={styles.delete_button_svg} xmlns="http://www.w3.org/2000/svg" width="25" height="25"
-                       fill="none" viewBox="0 0 24 24"
-                       stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </Button>
-              </div>
+              <Button className={styles.delete_button} onClick={() => {
+                if (window.confirm(`Удалить площадку ${name} ?`)) {
+                  _onDelete(index!);
+                }
+              }} disabled={(index ?? 0) <= DEFAULT_PLACES_COUNT}
+                title={(index ?? 0) <= DEFAULT_PLACES_COUNT ? "Эту площадку нельзя удалить" : ""}>
+                <svg className={styles.delete_button_svg} xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                  fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </Button>
+            </div>
               : <></>}
           </div>
         </a>
@@ -310,12 +310,12 @@ function PlaceListPage() {
                 {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
                   new PrivilegeData(PrivilegeNames.CREATE_EVENT_VENUE),
                 ])) ? <div className={styles.button}>
-                    <Button onClick={_onCreation}>Создать</Button>
-                  </div>
+                  <Button onClick={_onCreation}>Создать</Button>
+                </div>
                   : <></>}
               </div>
               <div className={styles.event_list_container}>
-                <PagedList page={1} page_size={5} page_step={5} items={_places} />
+                <PagedList page={1} page_size={5} page_step={1} items={_places} />
               </div>
             </div>
           </Content>
