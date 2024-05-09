@@ -13,12 +13,9 @@
   --itmo-colors-gray-2: #f0f0f0;
   --itmo-colors-blue-selected: #0069ff;
   --itmo-filter-blue-selected: invert(26%) sepia(91%) saturate(4012%) hue-rotate(210deg) brightness(104%) contrast(106%);
-
   --itmo-colors-page-auth: var(--itmo-colors-gray-2);
-
   --itmo-colors-hover-background: var(--itmo-colors-gray-2);
   --itmo-colors-border: rgba(0, 0, 0, 0.3);
-
   --itmo-box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.25);
 
   font-family: 'Open Sans';

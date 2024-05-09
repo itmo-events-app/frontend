@@ -57,7 +57,6 @@
   align-items: center;
 }
 
-/*.controls Button {*/
 
 .btn {
   margin: 1rem;
@@ -69,10 +68,6 @@
   margin: 1rem;
   width: 8rem;
   font-size: 0.85rem;
-}
-
-.settings_initial{
-  /*padding-top: 5rem;*/
 }
 
 .settings {
@@ -118,7 +113,7 @@
   transition: background-color .3s ease;
 }
 
-.toggle_label:after {
+.toggle_label::after {
   content: "";
   position: absolute;
   top: -5px;
@@ -134,13 +129,13 @@
   background: lightblue;
 }
 
-.toggle:checked + .toggle_label:after {
+.toggle:checked + .toggle_label::after {
   left: calc(100%);
   transform: translateX(-100%);
   background-color: var(--itmo-colors-blue);
 }
 
-.toggle_label:active:after {
+.toggle_label:active::after {
   width: 20px;
 }
 
