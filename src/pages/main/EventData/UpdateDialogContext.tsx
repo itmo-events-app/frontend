@@ -53,8 +53,8 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   const [title, setTitle] = useState(eventInfo.title);
   const [shortDescription, setShortDescription] = useState(eventInfo.shortDescription);
   const [fullDescription, setFullDescription] = useState(eventInfo.fullDescription);
-  const [format, setFormat] = useState(getAddActivityFormatEnum(eventInfo.format!)||Object.entries(AddActivityFormatEnum)[0][1]);
-  const [status, setStatus] = useState(getAddActivityStatusEnum(eventInfo.status!)||Object.entries(AddActivityStatusEnum)[0][1]);
+  const [format, setFormat] = useState(getAddActivityFormatEnum(eventInfo.format!) || Object.entries(AddActivityFormatEnum)[0][1]);
+  const [status, setStatus] = useState(getAddActivityStatusEnum(eventInfo.status!) || Object.entries(AddActivityStatusEnum)[0][1]);
   const [registrationStart, setRegistrationStart] = useState<Date | null>(createDateOrNull(eventInfo.registrationStart));
   const [registrationEnd, setRegistrationEnd] = useState<Date | null>(createDateOrNull(eventInfo.registrationEnd));
   const [participantLimit, setParticipantLimit] = useState(eventInfo.participantLimit!);
@@ -66,38 +66,38 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   const [placeList, setPlaceList] = useState([] as PlaceResponse[]);
   const [image, setImage] = useState<File | undefined>(undefined);
   const [errors, setErrors] = useState({
-    startDate : false,
-    endDate : false,
-    title : false,
-    shortDescription : false,
-    fullDescription : false,
-    format : false,
-    status : false,
-    registrationStart : false,
-    registrationEnd : false,
-    participantLimit : false,
-    participantHighestAge : false,
-    participantLowestAge : false,
-    preparingEnd : false,
-    preparingStart : false,
-    place : false,
+    startDate: false,
+    endDate: false,
+    title: false,
+    shortDescription: false,
+    fullDescription: false,
+    format: false,
+    status: false,
+    registrationStart: false,
+    registrationEnd: false,
+    participantLimit: false,
+    participantHighestAge: false,
+    participantLowestAge: false,
+    preparingEnd: false,
+    preparingStart: false,
+    place: false,
   })
   const [errorsText, setErrorsText] = useState({
-    startDate : "",
-    endDate : "",
-    title : "",
-    shortDescription : "",
-    fullDescription : "",
-    format : "",
-    status : "",
-    registrationStart : "",
-    registrationEnd : "",
-    participantLimit : "",
-    participantHighestAge : "",
-    participantLowestAge : "",
-    preparingEnd : "",
-    preparingStart : "",
-    place : "",
+    startDate: "",
+    endDate: "",
+    title: "",
+    shortDescription: "",
+    fullDescription: "",
+    format: "",
+    status: "",
+    registrationStart: "",
+    registrationEnd: "",
+    participantLimit: "",
+    participantHighestAge: "",
+    participantLowestAge: "",
+    preparingEnd: "",
+    preparingStart: "",
+    place: "",
   })
   const { api } = useContext(ApiContext);
   const getPlaces = async () => {
@@ -105,7 +105,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     if (placesResponse.status == 200) {
       const placesData = placesResponse.data;
       setPlaceList(placesData);
-      if(placesData[0] && placesData[0].id) {
+      if (placesData[0] && placesData[0].id) {
         setPlace(placesData[0].id);
       }
     } else {
@@ -115,209 +115,209 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   useEffect(() => {
     getPlaces();
   }, []);
-  function checkInputs(){
+  function checkInputs() {
     let errorsInput = {
-      startDate : false,
-      endDate : false,
-      title : false,
-      shortDescription : false,
-      fullDescription : false,
-      format : false,
-      status : false,
-      registrationStart : false,
-      registrationEnd : false,
-      participantLimit : false,
-      participantHighestAge : false,
-      participantLowestAge : false,
-      preparingEnd : false,
-      preparingStart : false,
-      place : false,
+      startDate: false,
+      endDate: false,
+      title: false,
+      shortDescription: false,
+      fullDescription: false,
+      format: false,
+      status: false,
+      registrationStart: false,
+      registrationEnd: false,
+      participantLimit: false,
+      participantHighestAge: false,
+      participantLowestAge: false,
+      preparingEnd: false,
+      preparingStart: false,
+      place: false,
     };
     let readErrorText = {
-      startDate : "",
-      endDate : "",
-      title : "",
-      shortDescription : "",
-      fullDescription : "",
-      format : "",
-      status : "",
-      registrationStart : "",
-      registrationEnd : "",
-      participantLimit : "",
-      participantHighestAge : "",
-      participantLowestAge : "",
-      preparingEnd : "",
-      preparingStart : "",
-      place : "",
+      startDate: "",
+      endDate: "",
+      title: "",
+      shortDescription: "",
+      fullDescription: "",
+      format: "",
+      status: "",
+      registrationStart: "",
+      registrationEnd: "",
+      participantLimit: "",
+      participantHighestAge: "",
+      participantLowestAge: "",
+      preparingEnd: "",
+      preparingStart: "",
+      place: "",
     };
     let result = true;
-    if(title == "" || title == null){
-      errorsInput = {...errorsInput, title:true};
-      readErrorText = {...readErrorText, title: "Поле не может быть пустым"};
+    if (title == "" || title == null) {
+      errorsInput = { ...errorsInput, title: true };
+      readErrorText = { ...readErrorText, title: "Поле не может быть пустым" };
       result = false;
     }
 
-    if(shortDescription == "" || shortDescription == null){
-      errorsInput = {...errorsInput, shortDescription:true};
-      readErrorText = {...readErrorText, shortDescription: "Поле не может быть пустым"};
+    if (shortDescription == "" || shortDescription == null) {
+      errorsInput = { ...errorsInput, shortDescription: true };
+      readErrorText = { ...readErrorText, shortDescription: "Поле не может быть пустым" };
       result = false;
     }
-    if(fullDescription == "" || shortDescription == null){
-      errorsInput = {...errorsInput, fullDescription:true};
-      readErrorText = {...readErrorText, fullDescription: "Поле не может быть пустым"};
+    if (fullDescription == "" || shortDescription == null) {
+      errorsInput = { ...errorsInput, fullDescription: true };
+      readErrorText = { ...readErrorText, fullDescription: "Поле не может быть пустым" };
       result = false;
     }
-    if(participantLowestAge == null){
-      errorsInput ={...errorsInput, participantLowestAge : true};
-      readErrorText = {...readErrorText, participantLowestAge: "Поле не может быть пустым"};
+    if (participantLowestAge == null) {
+      errorsInput = { ...errorsInput, participantLowestAge: true };
+      readErrorText = { ...readErrorText, participantLowestAge: "Поле не может быть пустым" };
       result = false;
     }
-    else if(participantLowestAge <= 0){
-      errorsInput ={...errorsInput, participantLowestAge : true};
-      readErrorText = {...readErrorText, participantLowestAge: "Минимальный возраст участников должен быть больше 0"};
+    else if (participantLowestAge <= 0) {
+      errorsInput = { ...errorsInput, participantLowestAge: true };
+      readErrorText = { ...readErrorText, participantLowestAge: "Минимальный возраст участников должен быть больше 0" };
       result = false;
-    }else if(participantHighestAge != null && participantHighestAge<= participantLowestAge){
-      errorsInput ={...errorsInput, participantLowestAge : true};
-      readErrorText = {...readErrorText, participantLowestAge: "Минимальный возраст должен быть меньше, чем максимальный"};
+    } else if (participantHighestAge != null && participantHighestAge <= participantLowestAge) {
+      errorsInput = { ...errorsInput, participantLowestAge: true };
+      readErrorText = { ...readErrorText, participantLowestAge: "Минимальный возраст должен быть меньше, чем максимальный" };
       result = false;
-    }else if(participantLowestAge > 150){
-      errorsInput ={...errorsInput, participantLowestAge : true};
-      readErrorText = {...readErrorText, participantLowestAge: "Минимальный возраст участников не может быть больше 150"};
-      result = false;
-    }
-
-    if(participantHighestAge == null){
-      errorsInput ={...errorsInput, participantHighestAge : true};
-      readErrorText = {...readErrorText, participantHighestAge: "Поле не может быть пустым"};
-      result = false;
-    }
-    else if(participantHighestAge <= 0){
-      errorsInput ={...errorsInput, participantHighestAge : true};
-      readErrorText = {...readErrorText, participantHighestAge: "Максимальный возраст участников должен быть больше 0"};
-      result = false;
-    }else if(participantLowestAge != null && participantHighestAge<= participantLowestAge){
-      errorsInput ={...errorsInput, participantHighestAge : true};
-      readErrorText = {...readErrorText, participantHighestAge: "Максимальный возраст должен быть больше, чем минимальный возраст"};
-      result = false;
-    }else if(participantHighestAge>150){
-      errorsInput ={...errorsInput, participantHighestAge : true};
-      readErrorText = {...readErrorText, participantHighestAge: "Максимальный возраст участников не может быть больше 150"};
+    } else if (participantLowestAge > 150) {
+      errorsInput = { ...errorsInput, participantLowestAge: true };
+      readErrorText = { ...readErrorText, participantLowestAge: "Минимальный возраст участников не может быть больше 150" };
       result = false;
     }
 
-    if(participantLimit == null){
-      errorsInput ={...errorsInput, participantLimit : true};
-      readErrorText = {...readErrorText, participantLimit: "Поле не может быть пустым"};
+    if (participantHighestAge == null) {
+      errorsInput = { ...errorsInput, participantHighestAge: true };
+      readErrorText = { ...readErrorText, participantHighestAge: "Поле не может быть пустым" };
       result = false;
     }
-    else if(participantLimit <= 0){
-      errorsInput ={...errorsInput, participantLimit : true};
-      readErrorText = {...readErrorText, participantLimit: "Органичение количества участников должно быть больше 0"};
+    else if (participantHighestAge <= 0) {
+      errorsInput = { ...errorsInput, participantHighestAge: true };
+      readErrorText = { ...readErrorText, participantHighestAge: "Максимальный возраст участников должен быть больше 0" };
+      result = false;
+    } else if (participantLowestAge != null && participantHighestAge <= participantLowestAge) {
+      errorsInput = { ...errorsInput, participantHighestAge: true };
+      readErrorText = { ...readErrorText, participantHighestAge: "Максимальный возраст должен быть больше, чем минимальный возраст" };
+      result = false;
+    } else if (participantHighestAge > 150) {
+      errorsInput = { ...errorsInput, participantHighestAge: true };
+      readErrorText = { ...readErrorText, participantHighestAge: "Максимальный возраст участников не может быть больше 150" };
+      result = false;
+    }
+
+    if (participantLimit == null) {
+      errorsInput = { ...errorsInput, participantLimit: true };
+      readErrorText = { ...readErrorText, participantLimit: "Поле не может быть пустым" };
+      result = false;
+    }
+    else if (participantLimit <= 0) {
+      errorsInput = { ...errorsInput, participantLimit: true };
+      readErrorText = { ...readErrorText, participantLimit: "Органичение количества участников должно быть больше 0" };
       result = false;
     }
 
     const now = new Date().getTime();
-    if(startDate == null){
-      errorsInput ={...errorsInput, startDate : true};
-      readErrorText = {...readErrorText, startDate: "Поле не может быть пустым"};
+    if (startDate == null) {
+      errorsInput = { ...errorsInput, startDate: true };
+      readErrorText = { ...readErrorText, startDate: "Поле не может быть пустым" };
       result = false;
-    }else if(now >= startDate.getTime()){
-      errorsInput ={...errorsInput, startDate : true};
-      readErrorText = {...readErrorText, startDate: "Мероприятие не может начинаться в прошлом"};
+    } else if (now >= startDate.getTime()) {
+      errorsInput = { ...errorsInput, startDate: true };
+      readErrorText = { ...readErrorText, startDate: "Мероприятие не может начинаться в прошлом" };
       result = false;
-    }else if(endDate!=null && startDate.getTime() >= endDate.getTime()){
-      errorsInput ={...errorsInput, startDate : true};
-      readErrorText = {...readErrorText, startDate: "Время начала мероприятия не может быть после времени окончания мероприятия"};
-      result = false;
-    }
-
-    if(endDate == null){
-      errorsInput ={...errorsInput, endDate : true};
-      readErrorText = {...readErrorText, endDate: "Поле не может быть пустым"};
-      result = false;
-    }else if(now >= endDate.getTime()){
-      errorsInput ={...errorsInput, endDate : true};
-      readErrorText = {...readErrorText, endDate: "Мероприятие не может заканчиваться в прошлом"};
-      result = false;
-    }else if(startDate!=null && startDate.getTime()>= endDate.getTime()){
-      errorsInput ={...errorsInput, endDate : true};
-      readErrorText = {...readErrorText, endDate: "Время окончания мероприятия не может быть перед временем начала мероприятия"};
+    } else if (endDate != null && startDate.getTime() >= endDate.getTime()) {
+      errorsInput = { ...errorsInput, startDate: true };
+      readErrorText = { ...readErrorText, startDate: "Время начала мероприятия не может быть после времени окончания мероприятия" };
       result = false;
     }
 
-    if(registrationStart == null){
-      errorsInput ={...errorsInput, registrationStart : true};
-      readErrorText = {...readErrorText, registrationStart: "Поле не может быть пустым"};
+    if (endDate == null) {
+      errorsInput = { ...errorsInput, endDate: true };
+      readErrorText = { ...readErrorText, endDate: "Поле не может быть пустым" };
       result = false;
-    }else if(now >= registrationStart.getTime()){
-      errorsInput ={...errorsInput, registrationStart : true};
-      readErrorText = {...readErrorText, registrationStart: "Регистрация на мероприятие не может начинаться в прошлом"};
+    } else if (now >= endDate.getTime()) {
+      errorsInput = { ...errorsInput, endDate: true };
+      readErrorText = { ...readErrorText, endDate: "Мероприятие не может заканчиваться в прошлом" };
       result = false;
-    }else if(registrationEnd!=null && registrationStart.getTime()>= registrationEnd.getTime()){
-      errorsInput ={...errorsInput, registrationStart : true};
-      readErrorText = {...readErrorText, registrationStart: "Время начала регистрации на мероприятие не может быть после времени окончания регистрации на мероприятие"};
-      result = false;
-    }
-
-    if(registrationEnd == null){
-      errorsInput ={...errorsInput, registrationEnd : true};
-      readErrorText = {...readErrorText, registrationEnd: "Поле не может быть пустым"};
-      result = false;
-    }else if(now >= registrationEnd.getTime()){
-      errorsInput ={...errorsInput, registrationEnd : true};
-      readErrorText = {...readErrorText, registrationEnd: "Регистрация на мероприятие не может заканчиваться в прошлом"};
-      result = false;
-    }else if(registrationStart!=null && registrationStart.getTime()>= registrationEnd.getTime()){
-      errorsInput ={...errorsInput, registrationEnd : true};
-      readErrorText = {...readErrorText, registrationEnd: "Время окончания регистрации на мероприятие не может быть перед временем начала регистрации на мероприятие"};
+    } else if (startDate != null && startDate.getTime() >= endDate.getTime()) {
+      errorsInput = { ...errorsInput, endDate: true };
+      readErrorText = { ...readErrorText, endDate: "Время окончания мероприятия не может быть перед временем начала мероприятия" };
       result = false;
     }
 
-    if(preparingStart == null){
-      errorsInput ={...errorsInput, preparingStart : true};
-      readErrorText = {...readErrorText, preparingStart: "Поле не может быть пустым"};
+    if (registrationStart == null) {
+      errorsInput = { ...errorsInput, registrationStart: true };
+      readErrorText = { ...readErrorText, registrationStart: "Поле не может быть пустым" };
       result = false;
-    }else if(now >= preparingStart.getTime()){
-      errorsInput ={...errorsInput, preparingStart : true};
-      readErrorText = {...readErrorText, preparingStart: "Подготовка к мероприятию не может начинаться в прошлом"};
+    } else if (now >= registrationStart.getTime()) {
+      errorsInput = { ...errorsInput, registrationStart: true };
+      readErrorText = { ...readErrorText, registrationStart: "Регистрация на мероприятие не может начинаться в прошлом" };
       result = false;
-    }else if(preparingEnd!=null && preparingStart.getTime()>= preparingEnd.getTime()){
-      errorsInput ={...errorsInput, preparingStart : true};
-      readErrorText = {...readErrorText, preparingStart: "Время начала подготовки мероприятия не может быть после времени окончания подготовки мероприятия"};
-      result = false;
-    }
-
-    if(preparingEnd == null){
-      errorsInput ={...errorsInput, preparingEnd : true};
-      readErrorText = {...readErrorText, preparingEnd: "Поле не может быть пустым"};
-      result = false;
-    }else if(now >= preparingEnd.getTime()){
-      errorsInput ={...errorsInput, preparingEnd : true};
-      readErrorText = {...readErrorText, preparingEnd: "Подготовка к мероприятию не может заканчиваться в прошлом"};
-      result = false;
-    }else if(preparingStart!=null && preparingStart.getTime()>= preparingEnd.getTime()){
-      errorsInput ={...errorsInput, preparingEnd : true};
-      readErrorText = {...readErrorText, preparingEnd: "Время окончания подготовки мероприятия не может быть перед временем начала подготовки мероприятия"};
+    } else if (registrationEnd != null && registrationStart.getTime() >= registrationEnd.getTime()) {
+      errorsInput = { ...errorsInput, registrationStart: true };
+      readErrorText = { ...readErrorText, registrationStart: "Время начала регистрации на мероприятие не может быть после времени окончания регистрации на мероприятие" };
       result = false;
     }
 
-    if(format==null){
-      errorsInput ={...errorsInput, format : true};
-      readErrorText = {...readErrorText, format: "Поле не может быть пустым"};
+    if (registrationEnd == null) {
+      errorsInput = { ...errorsInput, registrationEnd: true };
+      readErrorText = { ...readErrorText, registrationEnd: "Поле не может быть пустым" };
+      result = false;
+    } else if (now >= registrationEnd.getTime()) {
+      errorsInput = { ...errorsInput, registrationEnd: true };
+      readErrorText = { ...readErrorText, registrationEnd: "Регистрация на мероприятие не может заканчиваться в прошлом" };
+      result = false;
+    } else if (registrationStart != null && registrationStart.getTime() >= registrationEnd.getTime()) {
+      errorsInput = { ...errorsInput, registrationEnd: true };
+      readErrorText = { ...readErrorText, registrationEnd: "Время окончания регистрации на мероприятие не может быть перед временем начала регистрации на мероприятие" };
       result = false;
     }
-    if(status==null){
-      errorsInput ={...errorsInput, status : true};
-      readErrorText = {...readErrorText, status: "Поле не может быть пустым"};
+
+    if (preparingStart == null) {
+      errorsInput = { ...errorsInput, preparingStart: true };
+      readErrorText = { ...readErrorText, preparingStart: "Поле не может быть пустым" };
+      result = false;
+    } else if (now >= preparingStart.getTime()) {
+      errorsInput = { ...errorsInput, preparingStart: true };
+      readErrorText = { ...readErrorText, preparingStart: "Подготовка к мероприятию не может начинаться в прошлом" };
+      result = false;
+    } else if (preparingEnd != null && preparingStart.getTime() >= preparingEnd.getTime()) {
+      errorsInput = { ...errorsInput, preparingStart: true };
+      readErrorText = { ...readErrorText, preparingStart: "Время начала подготовки мероприятия не может быть после времени окончания подготовки мероприятия" };
       result = false;
     }
-    if(place==0 || place==null){
-      errorsInput ={...errorsInput, place : true};
-      readErrorText = {...readErrorText, place: "Поле не может быть пустым"};
+
+    if (preparingEnd == null) {
+      errorsInput = { ...errorsInput, preparingEnd: true };
+      readErrorText = { ...readErrorText, preparingEnd: "Поле не может быть пустым" };
+      result = false;
+    } else if (now >= preparingEnd.getTime()) {
+      errorsInput = { ...errorsInput, preparingEnd: true };
+      readErrorText = { ...readErrorText, preparingEnd: "Подготовка к мероприятию не может заканчиваться в прошлом" };
+      result = false;
+    } else if (preparingStart != null && preparingStart.getTime() >= preparingEnd.getTime()) {
+      errorsInput = { ...errorsInput, preparingEnd: true };
+      readErrorText = { ...readErrorText, preparingEnd: "Время окончания подготовки мероприятия не может быть перед временем начала подготовки мероприятия" };
       result = false;
     }
-    setErrors({...errors,...errorsInput});
-    setErrorsText({...errorsText, ...readErrorText});
+
+    if (format == null) {
+      errorsInput = { ...errorsInput, format: true };
+      readErrorText = { ...readErrorText, format: "Поле не может быть пустым" };
+      result = false;
+    }
+    if (status == null) {
+      errorsInput = { ...errorsInput, status: true };
+      readErrorText = { ...readErrorText, status: "Поле не может быть пустым" };
+      result = false;
+    }
+    if (place == 0 || place == null) {
+      errorsInput = { ...errorsInput, place: true };
+      readErrorText = { ...readErrorText, place: "Поле не может быть пустым" };
+      result = false;
+    }
+    setErrors({ ...errors, ...errorsInput });
+    setErrorsText({ ...errorsText, ...readErrorText });
     return result;
   }
   async function handleSubmit() {
@@ -328,7 +328,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     const preparingStartString = convertToLocaleDateTime(preparingStart);
     const preparingEndString = convertToLocaleDateTime(preparingEnd);
 
-    if(!checkInputs()){
+    if (!checkInputs()) {
       return;
     }
     const result = await api.event.updateEvent(
@@ -350,7 +350,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       preparingEndString!,
       eventInfo.parent,
       image!
-      );
+    );
     if (result.status == 200) {
       onSubmit();
     } else {
@@ -374,7 +374,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
         <div className={styles.dialog_item}>
           <InputLabel value="Название" />
           <Input value={title ?? ''} onChange={(e) => setTitle(e.target.value)}
-          errorText={errorsText.title??''}/>
+            errorText={errorsText.title ?? ''} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Краткое описание" />
@@ -390,9 +390,9 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
         <div className={styles.dialog_item}>
           <InputLabel value="Полное описание" />
           <TextAreaWithError value={fullDescription ?? ''}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFullDescription(e.target.value)}
-                    errorText={errorsText.fullDescription}
-                    error = {errors.fullDescription}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFullDescription(e.target.value)}
+            errorText={errorsText.fullDescription}
+            error={errors.fullDescription}
           />
         </div>
         <div className={styles.dialog_item}>
@@ -400,82 +400,82 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
           <Input
             value={String(participantLimit) ?? ''}
             onChange={(e) => {
-              if(parseInt(e.target.value)){
-                if(parseInt(e.target.value)>1000000) {
+              if (parseInt(e.target.value)) {
+                if (parseInt(e.target.value) > 1000000) {
                   setParticipantLimit(1000000);
-                }else {
+                } else {
                   setParticipantLimit(parseInt(e.target.value));
                 }
-              }else{
+              } else {
                 setParticipantLimit(1);
               }
             }
             }
-            errorText={errorsText.participantLimit??''}/>
+            errorText={errorsText.participantLimit ?? ''} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Максимальный возраст для участия" />
           <Input
             value={String(participantHighestAge)}
             onChange={(e) => {
-                if(parseInt(e.target.value)){
-                  if(parseInt(e.target.value)>150) {
-                    setParticipantHighestAge(150)
-                  }else {
-                    setParticipantHighestAge(parseInt(e.target.value))
-                  }
-                }else{
-                  setParticipantHighestAge(1);
+              if (parseInt(e.target.value)) {
+                if (parseInt(e.target.value) > 150) {
+                  setParticipantHighestAge(150)
+                } else {
+                  setParticipantHighestAge(parseInt(e.target.value))
                 }
+              } else {
+                setParticipantHighestAge(1);
               }
             }
-            errorText={errorsText.participantHighestAge??''}/>
+            }
+            errorText={errorsText.participantHighestAge ?? ''} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Минимальный возраст для участия" />
           <Input
             value={String(participantLowestAge)}
             onChange={(e) => {
-              if(parseInt(e.target.value)){
-                if(parseInt(e.target.value)>150) {
+              if (parseInt(e.target.value)) {
+                if (parseInt(e.target.value) > 150) {
                   setParticipantLowestAge(150)
-                }else {
+                } else {
                   setParticipantLowestAge(parseInt(e.target.value))
                 }
-              }else{
+              } else {
                 setParticipantLowestAge(1);
               }
             }
             }
-            errorText={errorsText.participantLowestAge??''}/>
+            errorText={errorsText.participantLowestAge ?? ''} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Формат" />
-          <Dropdown value={format} onChange={(e) => setFormat(e)}
-                    items={Object.entries(AddActivityFormatEnum).map(([,v])=>{return v})} toText={(o)=>o}/>
+          <Dropdown placeholder="Формат" value={format} onChange={(e) => setFormat(e)}
+            items={Object.entries(AddActivityFormatEnum).map(([, v]) => { return v })} toText={(o) => o} />
           <div>
             {errors.format && <div className={styles.helper_error}>{errorsText.format}</div>}
           </div>
         </div>
-        <div className={errors.place?styles.input_error:''}>
+        <div className={errors.place ? styles.input_error : ''}>
           <InputLabel value="Место" />
-          <Dropdown value={place} onChange={(e) => setPlace(e?e:0)}
-                    items={placeList!=null && placeList.length>0?placeList.map(p=>{return p.id}):[0]} toText={(o)=>{
-            const place = placeList.find(p=>p.id == o)
-            if(place) {
-              const room = place.room ? ", ауд. " + place.room : ""
-              return place.address + " " +room
-            }
-            return ""
-          }}/>
+          <Dropdown placeholder="Место" value={place} onChange={(e) => setPlace(e ? e : 0)}
+            items={placeList != null && placeList.length > 0 ? placeList.map(p => { return p.id }) : [0]} toText={(o) => {
+              const place = placeList.find(p => p.id == o)
+              if (place) {
+                const room = place.room ? ", ауд. " + place.room : ""
+                return place.address + " " + room
+              }
+              return ""
+            }} />
           <div>
             {errors.place && <div className={styles.helper_error}>{errorsText.place}</div>}
           </div>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Состояние" />
-          <Dropdown value={status} onChange={(e) => setStatus(e)}
-                    items={Object.entries(AddActivityStatusEnum).map(([,v])=>{return v})} toText={(o)=>o}/>
+          <Dropdown placeholder="Состояние" value={status} onChange={(e) => setStatus(e)}
+            items={Object.entries(AddActivityStatusEnum).map(([, v]) => { return v })} toText={(o) => o} />
           <div>
             {errors.status && <div className={styles.helper_error}>{errorsText.status}</div>}
           </div>
@@ -484,7 +484,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
         <div className={styles.dialog_item}>
           <InputLabel value="Время начала" />
           <div>
-              <DatePicker
+            <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
               showTimeSelect
@@ -492,7 +492,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
               timeIntervals={15}
               dateFormat="yyyy-MM-dd HH:mm"
               popperPlacement="top-start"
-              className={errors.startDate?styles.input_error:styles.dialog_item}
+              className={errors.startDate ? styles.input_error : styles.dialog_item}
             />
             {errors.startDate && <div className={styles.helper_error}>{errorsText.startDate}</div>}
           </div>
@@ -508,7 +508,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
               timeIntervals={15}
               dateFormat="yyyy-MM-dd HH:mm"
               popperPlacement="top-start"
-              className={errors.endDate?styles.input_error:styles.dialog_item}
+              className={errors.endDate ? styles.input_error : styles.dialog_item}
             />
             {errors.endDate && <div className={styles.helper_error}>{errorsText.endDate}</div>}
           </div>
@@ -524,7 +524,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
               timeIntervals={15}
               dateFormat="yyyy-MM-dd HH:mm"
               popperPlacement="top-start"
-              className={errors.registrationStart?styles.input_error:styles.dialog_item}
+              className={errors.registrationStart ? styles.input_error : styles.dialog_item}
             />
             {errors.registrationStart && <div className={styles.helper_error}>{errorsText.registrationStart}</div>}
           </div>
@@ -540,7 +540,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
               timeIntervals={15}
               dateFormat="yyyy-MM-dd HH:mm"
               popperPlacement="top-start"
-              className={errors.registrationEnd?styles.input_error:styles.dialog_item}
+              className={errors.registrationEnd ? styles.input_error : styles.dialog_item}
             />
             {errors.registrationEnd && <div className={styles.helper_error}>{errorsText.registrationEnd}</div>}
           </div>
@@ -558,7 +558,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
               timeIntervals={15}
               dateFormat="yyyy-MM-dd HH:mm"
               popperPlacement="top-start"
-              className={errors.preparingStart?styles.input_error:styles.dialog_item}
+              className={errors.preparingStart ? styles.input_error : styles.dialog_item}
             />
             {errors.preparingStart && <div className={styles.helper_error}>{errorsText.preparingStart}</div>}
           </div>
@@ -574,7 +574,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
               timeIntervals={15}
               dateFormat="yyyy-MM-dd HH:mm"
               popperPlacement="top-start"
-              className={errors.preparingEnd?styles.input_error:styles.dialog_item}
+              className={errors.preparingEnd ? styles.input_error : styles.dialog_item}
             />
             {errors.preparingEnd && <div className={styles.helper_error}>{errorsText.preparingEnd}</div>}
           </div>

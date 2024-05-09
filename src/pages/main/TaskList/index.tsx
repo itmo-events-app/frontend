@@ -5,22 +5,22 @@ import PageName from "@widgets/main/PageName";
 import Content from "@widgets/main/Content";
 import SideBar from "@widgets/main/SideBar";
 import Button from "@widgets/main/Button";
-import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
-import {RoutePaths} from "@shared/config/routes";
-import {FC, ReactNode, useContext, useEffect, useState} from "react";
-import {useMutation} from "@tanstack/react-query";
-import {taskService} from "@features/task-service.ts";
-import {format} from "date-fns";
-import {ru} from "date-fns/locale/ru";
-import {FileDataResponse, TaskResponse, TaskResponseTaskStatusEnum} from "@shared/api/generated";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { RoutePaths } from "@shared/config/routes";
+import { FC, ReactNode, useContext, useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { taskService } from "@features/task-service.ts";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale/ru";
+import { FileDataResponse, TaskResponse, TaskResponseTaskStatusEnum } from "@shared/api/generated";
 import ApiContext from "@features/api-context";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup";
-import PageTabs, {PageTab} from "@widgets/main/PageTabs";
-import Pagination, {PageEntry, PageProps} from "@widgets/main/PagedList/pagination";
-import {hasAnyPrivilege} from "@features/privileges.ts";
-import {PrivilegeData} from "@entities/privilege-context.ts";
-import {PrivilegeNames} from "@shared/config/privileges.ts";
+import PageTabs, { PageTab } from "@widgets/main/PageTabs";
+import Pagination, { PageEntry, PageProps } from "@widgets/main/PagedList/pagination";
+import { hasAnyPrivilege } from "@features/privileges.ts";
+import { PrivilegeData } from "@entities/privilege-context.ts";
+import { PrivilegeNames } from "@shared/config/privileges.ts";
 import PrivilegeContext from "@features/privilege-context.ts";
 
 const newTaskOptions: DropdownOption<string>[] = [
@@ -80,22 +80,22 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
 } as const;
 
 const TaskTableRow: FC<TaskTableRowProps> = ({
-                                               taskId,
-                                               title,
-                                               description,
-                                               deadline,
-                                               assigneeName,
-                                               eventId, eventName,
-                                               taskStatus,
-                                               activityTitle,
-                                               activityId, files
-                                             }) => {
+  taskId,
+  title,
+  description,
+  deadline,
+  assigneeName,
+  eventId, eventName,
+  taskStatus,
+  activityTitle,
+  activityId, files
+}) => {
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
   const [idInt] = useState<number>(eventId)
 
   const navigate = useNavigate();
 
-  const {privilegeContext, updateEventPrivileges} = useContext(PrivilegeContext);
+  const { privilegeContext, updateEventPrivileges } = useContext(PrivilegeContext);
   const [optionsPrivileges, setOptionsPrivileges] = useState<OptionsPrivileges>(optionsPrivilegesInitial);
 
   function _getPrivileges(id: number): Set<PrivilegeData> {
@@ -118,9 +118,9 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
     }
   }, [idInt, privilegeContext]);
 
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
 
-  const {mutate: updateTaskStatus} = useMutation({
+  const { mutate: updateTaskStatus } = useMutation({
     mutationFn: taskService.updateTaskStatus(api),
     mutationKey: ["updateTaskStatus"],
   });
@@ -149,7 +149,7 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
               <div className={styles.popup__wrapper}>
                 <div className={styles.popupContentBold}>
                   {title}
-                  <br/>
+                  <br />
                 </div>
                 <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
                 <div className={styles.popupContent}>{description}</div>
@@ -161,7 +161,7 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                     toText={(item) => item.value}
                     value={selectedStatus}
                     onChange={(sel) => {
-                      updateTaskStatus({newStatus: sel.value, id: taskId});
+                      updateTaskStatus({ newStatus: sel.value, id: taskId });
                       setStatus(sel);
                     }}
                   />
@@ -177,15 +177,15 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
         </Popup>
       </td>
       <td>
-        {format(deadline, "H:mm")} <br/>
-        {format(deadline, "do MMMM, yyyy", {locale: ru})}
+        {format(deadline, "H:mm")} <br />
+        {format(deadline, "do MMMM, yyyy", { locale: ru })}
       </td>
       <td>{assigneeName}</td>
       <td>
         <div onClick={() => redirectToEvent(eventId)}>{eventName}</div>
       </td>
       <td>{activityId ?
-        <div style={{cursor: 'pointer'}} onClick={() => redirectToEvent(activityId)}>{activityTitle}</div> :
+        <div style={{ cursor: 'pointer' }} onClick={() => redirectToEvent(activityId)}>{activityTitle}</div> :
         <div>-</div>}</td>
       <td>
         <Popup
@@ -200,7 +200,7 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
               <div className={styles.popup__wrapper}>
                 <div className={styles.popupContentBold}>
                   {title}
-                  <br/>
+                  <br />
                 </div>
                 <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
                 <div className={styles.popupContent}>{description}</div>
@@ -212,7 +212,7 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                     toText={(item) => item.value}
                     value={selectedStatus}
                     onChange={(sel) => {
-                      updateTaskStatus({newStatus: sel.value, id: taskId});
+                      updateTaskStatus({ newStatus: sel.value, id: taskId });
                       setStatus(sel);
                     }}
                   />
@@ -230,30 +230,30 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
       <td>
         {files?.length ? files?.map(file => <div key={file.filename}>
           <a href={file.presignedUrl} download>{file.filename}</a>
-          <br/><br/>
+          <br /><br />
         </div>) : <></>}
       </td>
     </tr>
   );
 };
 
-const ListWrapper: FC<{ child?: ReactNode[] }> = ({child}) => {
+const ListWrapper: FC<{ child?: ReactNode[] }> = ({ child }) => {
   return <div className={styles.content}>
     <table className={styles.task_table}>
       <thead>
-      <tr>
-        <th>Название</th>
-        <th>Описание</th>
-        <th>Дедлайн</th>
-        <th>Исполнитель</th>
-        <th>Мероприятие</th>
-        <th>Активность</th>
-        <th>Статус</th>
-        <th>Файлы</th>
-      </tr>
+        <tr>
+          <th>Название</th>
+          <th>Описание</th>
+          <th>Дедлайн</th>
+          <th>Исполнитель</th>
+          <th>Мероприятие</th>
+          <th>Активность</th>
+          <th>Статус</th>
+          <th>Файлы</th>
+        </tr>
       </thead>
       <tbody>
-      {child}
+        {child}
       </tbody>
     </table>
   </div>
@@ -264,15 +264,15 @@ const taskResponsesToPageEntries = (tasks: TaskResponse[]) => {
     return new PageEntry(() => {
       return (
         <TaskTableRow key={task.id}
-                      taskId={Number(task.id)} title={String(task.title)} description={task.description || ""}
-                      deadline={task.deadline || ""}
-                      assigneeName={`${task.assignee?.name} ${task.assignee?.surname}`}
-                      eventId={Number(task.event?.eventId)}
-                      activityId={Number(task.event?.activityId)}
-                      eventName={task.event?.eventTitle}
-                      taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
-                      activityTitle={task.event?.activityTitle}
-                      files={task.fileData}/>);
+          taskId={Number(task.id)} title={String(task.title)} description={task.description || ""}
+          deadline={task.deadline || ""}
+          assigneeName={`${task.assignee?.name} ${task.assignee?.surname}`}
+          eventId={Number(task.event?.eventId)}
+          activityId={Number(task.event?.activityId)}
+          eventName={task.event?.eventTitle}
+          taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
+          activityTitle={task.event?.activityTitle}
+          files={task.fileData} />);
     });
   })
 }
@@ -289,18 +289,18 @@ type EventActivities = {
 }
 
 function TaskListPage() {
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
 
   //tabs
   const pageTabs: PageTab[] = [];
   pageTabs.push(new PageTab("Текущие"));
   pageTabs.push(new PageTab("Прошедшие"));
   const [selectedTab, setSelectedTab] = useState(pageTabs[0].text);
-  const [pageProps, setPageProps] = useState<PageProps>({page: 1, size: 5, total: 0});
+  const [pageProps, setPageProps] = useState<PageProps>({ page: 1, size: 5, total: 0 });
   const [itemList, setItemList] = useState<PageEntry[]>([]);
   const [dropdownOptions, setDropdownOptions] = useState<EventActivities[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<DropdownOption<string> | undefined>();
-  const [selectedActivity, setSelectedActivity] = useState<DropdownOption<string> | undefined>();
+  const [selectedEvent, setSelectedEvent] = useState<string | undefined>();
+  const [selectedActivity, setSelectedActivity] = useState<string | undefined>();
   let allTasks: TaskResponse[] = [];
   const fetchFirstData = async () => {
     try {
@@ -310,14 +310,14 @@ function TaskListPage() {
         let eventActivities: EventActivities | undefined = result.find(eventDropdown => eventDropdown.event.id === task.event?.eventId?.toString());
         if (!eventActivities && task.event && task.event.eventId) {
           const event = new DropdownOption<string>(task.event.eventTitle ? task.event.eventTitle : "", task.event.eventId.toString())
-          eventActivities = {event: event, activities: [], tasks: []};
+          eventActivities = { event: event, activities: [], tasks: [] };
           result.push(eventActivities);
         }
         if (task.event?.activityId) {
           let activityTasks: ActivityTasks | undefined = eventActivities?.activities.find(activityDropdown => activityDropdown.activity.id === task.event?.activityId?.toString());
           if (!activityTasks && task.event && task.event.activityId) {
             const activity = new DropdownOption<string>(task.event.activityTitle ? task.event.activityTitle : "", task.event.activityId.toString())
-            activityTasks = {activity: activity, tasks: []};
+            activityTasks = { activity: activity, tasks: [] };
             eventActivities?.activities.push(activityTasks);
           }
           activityTasks?.tasks.push(task);
@@ -358,7 +358,7 @@ function TaskListPage() {
       filteredTasks = filteredTasks.filter((task) => ((task.taskStatus === TaskResponseTaskStatusEnum.Expired) === filters.expired));
       const total = filteredTasks.length;
       filteredTasks = filteredTasks.slice((page - 1) * size, page * size);
-      setPageProps({page: page, size: size, total: total});
+      setPageProps({ page: page, size: size, total: total });
       setItemList(taskResponsesToPageEntries(filteredTasks));
     } catch (error) {
       console.error("Error fetching event list:", error);
@@ -376,20 +376,21 @@ function TaskListPage() {
     }));
     setSelectedTab(tab_name);
   }
-  const _dropdownHandler = (event: DropdownOption<string> | undefined, isEvent: boolean) => {
+  const _dropdownHandler = (event: string | undefined, isEvent: boolean) => {
+    console.log(event)
     if (isEvent) {
       setSelectedEvent(event);
       setSelectedActivity(undefined);
       setFilters((prev) => ({
         ...prev,
-        eventId: event?.id,
+        eventId: event,
         activityId: undefined,
       }))
     } else {
       setSelectedActivity(event);
       setFilters((prev) => ({
         ...prev,
-        activityId: event?.id,
+        activityId: event,
       }))
     }
   }
@@ -397,14 +398,14 @@ function TaskListPage() {
   const activityOptions = dropdownOptions.find(obj => obj.event.id === selectedEvent?.id)?.activities;
   return (
     <Layout
-      topLeft={<BrandLogo/>}
-      topRight={<PageName text="Мои задачи"/>
+      topLeft={<BrandLogo />}
+      topRight={<PageName text="Мои задачи" />
       }
-      bottomLeft={<SideBar currentPageURL={RoutePaths.taskList}/>}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.taskList} />}
       bottomRight={
         <>
           <div className={styles.tabs}>
-            <PageTabs value={selectedTab} handler={_pageTabHandler} items={pageTabs}/>
+            <PageTabs value={selectedTab} handler={_pageTabHandler} items={pageTabs} />
           </div>
           <Content>
             <div className={styles.events_page}>
@@ -419,7 +420,7 @@ function TaskListPage() {
                       onClear={() => _dropdownHandler(undefined, true)}
                       toText={(item) => {
                         return item.value
-                      }}/>
+                      }} />
                   </div>
                   <div className={styles.dropdownfilter}>
                     <Dropdown
@@ -430,13 +431,13 @@ function TaskListPage() {
                       onClear={() => _dropdownHandler(undefined, false)}
                       toText={(item) => {
                         return item.value
-                      }}/>
+                      }} />
                   </div>
                 </div>
               </div>
               <div className={styles.event_list_container}>
                 <Pagination pageProps={pageProps} onPageChange={(page, size) => getTaskList(page, size)}
-                            items={itemList} pageSpread={1} listWrapper={<ListWrapper/>}/>
+                  items={itemList} pageSpread={1} listWrapper={<ListWrapper />} />
               </div>
             </div>
           </Content>

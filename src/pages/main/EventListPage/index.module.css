@@ -28,8 +28,9 @@
 
 .filter_element {
   min-width: 200px;
-  border: 1px solid var(--itmo-colors-black);
-  border-radius: 10px;
+  width: 200px;
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 4px;
   padding: 10px 10px;
   font-size: 16px;
 }
@@ -81,6 +82,7 @@
 .event_place {
   color: var(--itmo-colors-dark-gray);
 }
+
 /* dialog */
 .fade {
   position: fixed;
@@ -89,12 +91,15 @@
   z-index: 200;
   padding-top: 30px;
 }
+
 .visible {
   visibility: visible;
 }
+
 .hidden {
   visibility: hidden;
 }
+
 .dialog {
   margin-left: auto;
   margin-right: auto;

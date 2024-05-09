@@ -35,9 +35,12 @@ const CreateDialogContent = (props: CreateProps) => {
 
   // NOTE: maybe cache privilege list results?
   useEffect(() => {
+    console.log(prevType);
+    console.log(type == RoleModelType.SYSTEM);
     if (prevType == type) {
       return;
     }
+
 
     const queryType = fromRoleModelType(type);
 
@@ -123,7 +126,9 @@ const CreateDialogContent = (props: CreateProps) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
-          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} value={type} onChange={(e) => setType(e)} />
+          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} placeholder={type} value={type} onChange={(e: RoleModelType) => {
+            setType(e)
+          }} />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />
