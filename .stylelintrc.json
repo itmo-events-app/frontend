@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "rule-empty-line-before": ["always"]
+  },
+  "ignoreFiles": [
+    "dist/**",
+    "node_modules/**"
+  ]
+}
