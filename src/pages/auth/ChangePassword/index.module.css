@@ -31,3 +31,24 @@
   gap: 10px;
   flex-direction: column;
 }
+
+.form_item__checkbox {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.form_item__checkbox>div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form_item__checkbox>span {
+  padding-bottom: 1px;
+}
+
+.form_item__checkbox input {
+  width: 14px;
+  height: 14px;
+}
