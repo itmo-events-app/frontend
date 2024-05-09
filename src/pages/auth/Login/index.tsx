@@ -66,7 +66,8 @@ function LoginPage() {
     }
   };
 
-  const _enterOnClick = () => {
+  const _enterOnClick = (e) => {
+    e.preventDefault();
     let ok = true;
     const login = _validateLogin(loginValue);
     const password = _validatePassword(passwordValue);
@@ -119,7 +120,7 @@ function LoginPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Войти</span>
-        <div className={styles.form}>
+        <form onSubmit={_enterOnClick} className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Логин" />
             <Input
@@ -143,8 +144,8 @@ function LoginPage() {
             <Error value={errorText} isError={isError} />
             <Link onClick={_forgotPassword} value="Забыли пароль?" />
           </div>
-        </div>
-        <Button onClick={_enterOnClick}>Войти</Button>
+          <Button className={styles.btn}>Войти</Button>
+        </form>
         <Link className={styles.register} onClick={_register} value="Нет учетной записи? Зарегистрироваться" />
       </Block>
     </div>

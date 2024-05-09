@@ -88,7 +88,8 @@ function ChangePasswordPage() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const _change = () => {
+  const _change = (e) => {
+    e.preventDefault();
     let ok = true;
     setError('');
 
@@ -169,7 +170,7 @@ function ChangePasswordPage() {
       <Block className={styles.block}>
         <span className={styles.header}>Смена пароля</span>
         <Error value={error} isError={error != ''} />
-        <div className={styles.form}>
+        <form onSubmit={_change} className={styles.form}>
           <label className={styles.form_item}>
             <Label value="Старый пароль" />
             <Input type={passwordVisible ? "" : "password"}
@@ -192,8 +193,8 @@ function ChangePasswordPage() {
             <Input type="checkbox" value={passwordVisible.toString()} onChange={_setPasswordVisibility} />
             <Label value="Показать пароль" />
           </label>
-        </div>
-        <Button onClick={_change}>Отправить</Button>
+          <Button className={styles.btn}>Отправить</Button>
+        </form>
       </Block>
     </div>
   );
