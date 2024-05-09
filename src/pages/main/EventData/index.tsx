@@ -968,15 +968,7 @@ function EventActivitiesPage() {
           ) : (
             <></>
           )}
-          {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
-            <div className={styles.button_container}>
-              <Button className={styles.button} onClick={_editOrganizer}>
-                Редактировать
-              </Button>
-            </div>
-          ) : (
-            <></>
-          )}
+         
           {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
             <div className={styles.button_container}>
               <Button className={styles.button} onClick={_deleteOrganizer}>
