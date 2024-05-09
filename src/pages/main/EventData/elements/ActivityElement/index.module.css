@@ -75,6 +75,7 @@
 .status_DRAFT {
   background: #e7e7e7;
 }
+
 .status_DRAFT .icon {
   stroke: #5c5c5c;
 }
@@ -82,6 +83,7 @@
 .status_PUBLISHED {
   background: #fef8e5;
 }
+
 .status_PUBLISHED .icon {
   stroke: #f7b500;
 }
@@ -89,6 +91,7 @@
 .status_COMPLETED {
   background: #e9f7e8;
 }
+
 .status_COMPLETED .icon{
   stroke: #22b217;
 }
@@ -96,6 +99,7 @@
 .status_CANCELED {
   background: #fceaea;
 }
+
 .status_CANCELED .icon{
   fill: #e02e2e;
 }

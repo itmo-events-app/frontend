@@ -82,6 +82,7 @@
   color: var(--itmo-colors-dark-gray);
 }
 /* dialog */
+
 .fade {
   position: fixed;
   top: 0;
@@ -89,12 +90,15 @@
   z-index: 200;
   padding-top: 30px;
 }
+
 .visible {
   visibility: visible;
 }
+
 .hidden {
   visibility: hidden;
 }
+
 .dialog {
   margin-left: auto;
   margin-right: auto;
