@@ -861,10 +861,10 @@ function EventActivitiesPage() {
     setDialogData(new DialogData('Добавить организатора', DialogSelected.ADDORGANIZER));
     e.stopPropagation();
   };
-  const _editOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setDialogData(new DialogData('Редактировать организатора', DialogSelected.EDITORGANIZER));
-    e.stopPropagation();
-  };
+  // const _editOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  //   setDialogData(new DialogData('Редактировать организатора', DialogSelected.EDITORGANIZER));
+  //   e.stopPropagation();
+  // };
   const _deleteOrganizer = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Удалить организатора', DialogSelected.DELETEORGANIZER));
     e.stopPropagation();
@@ -968,15 +968,7 @@ function EventActivitiesPage() {
           ) : (
             <></>
           )}
-          {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
-            <div className={styles.button_container}>
-              <Button className={styles.button} onClick={_editOrganizer}>
-                Редактировать
-              </Button>
-            </div>
-          ) : (
-            <></>
-          )}
+         
           {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
             <div className={styles.button_container}>
               <Button className={styles.button} onClick={_deleteOrganizer}>

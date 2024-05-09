@@ -88,7 +88,8 @@ function ChangePasswordPage() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const _change = () => {
+  const _change = (e: any) => {
+    e.preventDefault();
     let ok = true;
     setError('');
 
@@ -169,31 +170,31 @@ function ChangePasswordPage() {
       <Block className={styles.block}>
         <span className={styles.header}>Смена пароля</span>
         <Error value={error} isError={error != ''} />
-        <div className={styles.form}>
-          <div className={styles.form_item}>
+        <form onSubmit={_change} className={styles.form}>
+          <label className={styles.form_item}>
             <Label value="Старый пароль" />
             <Input type={passwordVisible ? "" : "password"}
               value={oldPassword} onChange={_setOldPassword}
               error={oldPasswordError != ''} errorText={oldPasswordError} />
-          </div>
-          <div className={styles.form_item}>
+          </label>
+          <label className={styles.form_item}>
             <Label value="Новый пароль" />
             <Input type={passwordVisible ? "" : "password"}
               value={newPassword} onChange={_setNewPassword}
               error={newPasswordError != ''} errorText={newPasswordError} />
-          </div>
-          <div className={styles.form_item}>
+          </label>
+          <label className={styles.form_item}>
             <Label value="Подтверждение пароля" />
             <Input type={passwordVisible ? "" : "password"}
               value={confirmNewPassword} onChange={_setConfirmNewPassword}
               error={confirmNewPasswordError != ''} errorText={confirmNewPasswordError} />
-          </div>
-          <div className={styles.form_item} style={{ flexDirection: "row", marginTop: 10 }}>
+          </label>
+          <label className={styles.form_item__checkbox} style={{ flexDirection: "row", marginTop: 10 }}>
             <Input type="checkbox" value={passwordVisible.toString()} onChange={_setPasswordVisibility} />
             <Label value="Показать пароль" />
-          </div>
-        </div>
-        <Button onClick={_change}>Отправить</Button>
+          </label>
+          <Button className={styles.btn}>Отправить</Button>
+        </form>
       </Block>
     </div>
   );

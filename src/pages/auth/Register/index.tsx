@@ -75,7 +75,8 @@ function RegisterPage() {
     setRepeatError('');
   }
 
-  const _register = () => {
+  const _register = (e: any) => {
+    e.preventDefault();
     let ok = true;
 
     const ename = errorValidators.empty(name);
@@ -141,7 +142,7 @@ function RegisterPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Регистрация</span>
-        <div className={styles.form}>
+        <form onSubmit={_register} className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Имя" />
             <Input value={name} onChange={_setName} error={nameError != ''} errorText={nameError} />
@@ -162,8 +163,8 @@ function RegisterPage() {
             <Label value="Подтверждение пароля" />
             <Input type="password" value={repeat} onChange={_setRepeat} error={repeatError != ''} errorText={repeatError} />
           </div>
-        </div>
-        <Button onClick={_register}>Зарегистрироваться</Button>
+          <Button className={styles.btn}>Зарегистрироваться</Button>
+        </form>
       </Block>
     </div>
   );

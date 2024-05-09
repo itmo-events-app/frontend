@@ -25,3 +25,7 @@
   gap: 10px;
   flex-direction: column;
 }
+
+.btn {
+  margin-top: 10px;
+}
