@@ -2,14 +2,14 @@ import Layout from "@widgets/main/Layout";
 import BrandLogo from "@widgets/main/BrandLogo";
 import PageName from "@widgets/main/PageName";
 import SideBar from "@widgets/main/SideBar";
-import {RoutePaths} from "@shared/config/routes";
+import { RoutePaths } from "@shared/config/routes";
 import Content from '@widgets/main/Content';
 import styles from "./index.module.css";
 import Button from "@widgets/auth/Button";
-import {appendClassName} from "@shared/util";
-import {useContext, useState} from "react";
+import { appendClassName } from "@shared/util";
+import { useContext, useState } from "react";
 import ApiContext from "@features/api-context";
-import {useQuery} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   NotificationSettingsRequest,
   ProfileResponse,
@@ -19,10 +19,9 @@ import {
 import profileService from "@features/profile-service";
 import Label from "@widgets/auth/InputLabel";
 import Input from "@widgets/main/Input";
-import {useNavigate} from "react-router-dom";
-import {uid} from "uid";
-import {Check, Pencil} from "@shared/ui/icons";
-import {getDataTimeLine} from "@shared/lib/dates";
+import { useNavigate } from "react-router-dom";
+import { uid } from "uid";
+import { Check, Pencil } from "@shared/ui/icons";
 import ModalBlock from "@widgets/main/Modal";
 
 
@@ -84,6 +83,9 @@ function ProfilePage() {
     setLogin('');
   };
 
+  function formatDate(dateString: string): string {
+    return new Date(dateString).toLocaleDateString('ru-RU');
+  }
 
   const handleLoginChange = async () => {
     if (login.trim().length == 0) {
@@ -149,39 +151,16 @@ function ProfilePage() {
     refetchUserInfo();
   };
 
-  const handlePushNotificationChange = async (enablePush: boolean) => {
-    const newSettings: NotificationSettingsRequest = {
-      enableEmail: userInfo?.enableEmailNotifications ? userInfo.enableEmailNotifications : false,
-      enablePush,
-    };
-    console.log(newSettings);
-    await profileService.updateNotifications(api, newSettings);
-    setIsEditingMode(false);
-    refetchUserInfo();
-  };
-
-
   const _resend = () => {
     api.auth
       .sendVerificationEmail(EMAIL_CONFIRM_RETURN_URL)
       .then(() => {
         console.log("Email confirmation message sent!");
-        // const state: NotifyState = {
-        //   msg: MAIL_RECONFIRM_MSG
-        // };
-        // navigate(RoutePaths.notify, {state: state});
         _openModalBlock(MAIL_RECONFIRM_MSG);
       })
       .catch((e) => {
         console.log(MAIL_RECONFIRM_FAIL_MSG);
         console.log(e.response.data);
-        // const state: NotifyState = {
-        //   msg: e.response.data
-        // };
-        // navigate(RoutePaths.notify, {state: state});
-
-        // setModalBlockText(e.response.data);
-
         _openModalBlock(e.response.data);
       });
   }
@@ -266,19 +245,13 @@ function ProfilePage() {
   }
 
   const _getInitials = () => {
-    const char1 = userInfo?.name ? userInfo?.name.charAt(0) : '';
-    const char2 = userInfo?.surname ? userInfo?.surname.charAt(0) : '';
+    const nameInitial = userInfo?.name?.[0] || '';
+    const surnameInitial = userInfo?.surname?.[0] || '';
 
-    return char1 + char2;
+    return nameInitial + surnameInitial;
   }
 
-  const _getEmptyStringIfUndef = (str: string | undefined) => {
-    if (!str) {
-      return '';
-    } else {
-      return str;
-    }
-  }
+  const _getEmptyStringIfUndef = (str: string | undefined): string => str ? str : '';
 
 
   const _openModalBlock = (text: string) => {
@@ -288,14 +261,13 @@ function ProfilePage() {
 
   const _closeModalBlock = () => {
     setModalBlockActive(false);
-    // setModalBlockText('');
   }
 
   return (
     <Layout
-      topLeft={<BrandLogo/>}
-      topRight={<PageName text="Профиль"/>}
-      bottomLeft={<SideBar currentPageURL={RoutePaths.profile}/>}
+      topLeft={<BrandLogo />}
+      topRight={<PageName text="Профиль" />}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.profile} />}
       bottomRight={
         <Content>
 
@@ -304,7 +276,7 @@ function ProfilePage() {
               <span className={styles.header}>{'Подтверждение почты'}</span>
               <div className={appendClassName(styles.row, styles.success_message)}>
                 <span>{modalBlockText}</span>
-                <Check className={styles.success_check}/>
+                <Check className={styles.success_check} />
               </div>
               <Button onClick={_closeModalBlock}>
                 Закрыть
@@ -320,26 +292,28 @@ function ProfilePage() {
                 <div className={styles.row}>
                   <div
                     className={styles.profile_name}>{_getEmptyStringIfUndef(userInfo?.name) + " " + _getEmptyStringIfUndef(userInfo?.surname)}</div>
-                  <Pencil className={styles.icon} onClick={customEditRenameModal}/>
+                  <Pencil className={styles.icon} onClick={customEditRenameModal} />
                 </div>
                 {_renderProfileEdit()}
 
 
                 <div className={styles.row}>
                   <div className={styles.profile_login}>{userInfo?.userInfo && userInfo?.userInfo[0].login}</div>
-                  <Pencil className={styles.icon} onClick={customEditChangeLoginModal}/>
+                  <Pencil className={styles.icon} onClick={customEditChangeLoginModal} />
                 </div>
                 {_renderLoginEdit()}
 
                 <div className={styles.profile_online}>Последний
-                  вход: {getDataTimeLine(_getEmptyStringIfUndef(userInfo?.lastLoginDate))}</div>
+                  вход: {userInfo?.lastLoginDate
+                    ? formatDate(userInfo.lastLoginDate)
+                    : 'Нет данных'}</div>
               </div>
               <div className={styles.controls}>
                 <Button className={styles.btn} onClick={_resend}>Подтверждение почты</Button>
                 <Button className={styles.btn} onClick={() => navigate(RoutePaths.changePassword)}>Сменить
                   пароль</Button>
                 <Button className={appendClassName(styles.red_btn, styles.btn)}
-                        onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
+                  onClick={() => navigate(RoutePaths.login)}>Выйти</Button>
               </div>
             </div>
             <div className={appendClassName(styles.grid_column, styles.grid_column_settings)}>
@@ -347,21 +321,8 @@ function ProfilePage() {
                 <div className={styles.settings_title}>Уведомления</div>
                 <div className={styles.settings_content}>
                   <_ToggleSwitch label={'Получать уведомления по почте'}
-                                 value={userInfo?.enableEmailNotifications}
-                                 onChange={() => handleEmailNotificationChange(!userInfo?.enableEmailNotifications)}/>
-                  <_ToggleSwitch label={'Получать пуш-уведомления'}
-                                 value={userInfo?.enablePushNotifications}
-                                 onChange={() => handlePushNotificationChange(!userInfo?.enablePushNotifications)}/>
-                </div>
-              </div>
-              <div className={styles.settings}>
-                <div className={styles.settings_title}>Устройства</div>
-                <div className={styles.settings_content}>
-                  {userInfo?.devices && userInfo?.devices.length > 0
-                    ?
-                    userInfo?.devices.map(device => <div className={styles.field}><span>{device}</span></div>)
-                    :
-                    <div className={styles.field}><span>Нет устройств</span></div>}
+                    value={userInfo?.enableEmailNotifications}
+                    onChange={() => handleEmailNotificationChange(!userInfo?.enableEmailNotifications)} />
                 </div>
               </div>
             </div>
@@ -386,13 +347,13 @@ function _ToggleSwitch(props: _ToggleSwitchProps) {
       <span>{props.label}</span>
       <div className={styles.toggle_container}>
         <input type={'checkbox'}
-               onChange={() => {
-                 props.onChange()
-               }}
-               checked={props.value ? props.value : false}
-               id={id}
-               className={styles.toggle}/>
-        <label htmlFor={id} className={styles.toggle_label}/>
+          onChange={() => {
+            props.onChange()
+          }}
+          checked={props.value ? props.value : false}
+          id={id}
+          className={styles.toggle} />
+        <label htmlFor={id} className={styles.toggle_label} />
       </div>
     </div>
   );
