@@ -57,7 +57,7 @@ function RestorePage() {
     return null;
   };
 
-  const _restore = (e) => {
+  const _restore = (e: any) => {
     e.preventDefault();
     let ok = true;
 

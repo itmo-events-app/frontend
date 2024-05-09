@@ -88,7 +88,7 @@ function ChangePasswordPage() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const _change = (e) => {
+  const _change = (e: any) => {
     e.preventDefault();
     let ok = true;
     setError('');

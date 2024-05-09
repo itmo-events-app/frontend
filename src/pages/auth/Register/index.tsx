@@ -75,7 +75,7 @@ function RegisterPage() {
     setRepeatError('');
   }
 
-  const _register = (e) => {
+  const _register = (e: any) => {
     e.preventDefault();
     let ok = true;
 

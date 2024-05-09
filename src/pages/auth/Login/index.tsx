@@ -66,7 +66,7 @@ function LoginPage() {
     }
   };
 
-  const _enterOnClick = (e) => {
+  const _enterOnClick = (e: any) => {
     e.preventDefault();
     let ok = true;
     const login = _validateLogin(loginValue);
