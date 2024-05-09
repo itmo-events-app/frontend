@@ -25,12 +25,12 @@ function PlaceDataPage() {
   });
 
   useEffect(() => {
-    if(!failureReason) return;
+    if (!failureReason) return;
     if ((failureReason as any)?.response.status === 404) {
       navigate(RoutePaths.notFound);
       return;
     }
-  }, [failureReason])
+  }, [failureReason]);
 
   useEffect(() => {
     if (!foundPlace) return;
@@ -43,12 +43,6 @@ function PlaceDataPage() {
     };
   }, [foundPlace]);
 
-  const formatTranslation: Record<string, string> = {
-    ONLINE: "Онлайн",
-    OFFLINE: "Офлайн",
-    HYBRID: "Гибрид",
-  };
-
   return (
     <Layout
       topLeft={<BrandLogo />}
@@ -60,29 +54,22 @@ function PlaceDataPage() {
       bottomLeft={<SideBar currentPageURL={RoutePaths.placeData} />}
       bottomRight={
         <Content>
-          <div className={styles.place_data}>
-            <div className={styles.place_data_list}>
-              <div className={styles.place_column}>
-                <div className={styles.label} hidden={foundPlace?.format === "ONLINE"} >Адрес:</div>
-                <div className={styles.label}>Формат:</div>
-                <div className={styles.label} hidden={foundPlace?.format === "ONLINE"} >Аудитория:</div>
-                <div className={styles.label} hidden={foundPlace?.format === "ONLINE"}>Координаты:</div>
-              </div>
-              <div className={styles.place_column}>
-                <div className={styles.data} hidden={foundPlace?.format === "ONLINE"}>{foundPlace?.address ?? ""}</div>
-                <div className={styles.data}>
-                  {foundPlace == undefined ? "Неопределен" : formatTranslation[foundPlace!.format!]}
-                </div>
-                <div className={styles.data} hidden={foundPlace?.format === "ONLINE"} >{foundPlace?.room}</div>
-                <div className={styles.data} hidden={foundPlace?.format === "ONLINE"} >{`${foundPlace?.latitude ?? 0}, ${foundPlace?.longitude ?? 0}`}</div>
-              </div>
-            </div>
-            <div className={styles.place_description}>
-              <div className={styles.label}>Описание:</div>
-              <div className={styles.data}>{foundPlace?.description}</div>
-            </div>
+          <div>
+            <span className={styles.label}>Адрес: </span>
+            <span className={styles.data}>{foundPlace?.address ?? ""}</span>
           </div>
-          <div className={styles.label} hidden={foundPlace?.format === "ONLINE"}>Карта:</div>
+          <div hidden={foundPlace?.room === ""}>
+            <span className={styles.label}>Аудитория: </span>
+            <span className={styles.data}>{foundPlace?.room}</span>
+          </div>
+          <div>
+            <span className={styles.label}>Координаты: </span>
+            <span className={styles.data}>{`${foundPlace?.latitude ?? 0}, ${foundPlace?.longitude ?? 0}`}</span>
+          </div>
+          <div>
+            <span className={styles.label}>Описание: </span>
+            <span className={styles.data}>{foundPlace?.description}</span></div>
+          <br />
           <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?fullscreen"} width="100%"
                   height="420px" allow="fullscreen" hidden={foundPlace?.format === "ONLINE"}></iframe>
         </Content>

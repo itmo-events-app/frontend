@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import ApiContext from "@features/api-context.ts";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { DropdownOption } from "@widgets/main/Dropdown";
 import { PlaceRequestFormatEnum } from "@shared/api/generated";
 import { placeService } from "@features/place-service.ts";
 import styles from "@pages/main/PlaceListPage/index.module.css";
@@ -125,20 +125,6 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
                           </div>
                         )}>
             </Controller>
-
-            <Controller
-              control={control}
-              name={"format"}
-              render={({ field: { value, onChange } }) => (
-                <div className={styles.place_form_item}>
-                  <Label value="Формат" />
-                  <Dropdown items={placeFormat}
-                            toText={(item) => item.value}
-                            value={value}
-                            onChange={onChange}
-                  />
-                </div>)}
-            />
 
             <Controller control={control} name={"description"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
