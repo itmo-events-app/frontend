@@ -47,7 +47,7 @@ function PagedList(props: Props) {
   function _decPageSize() {
     return () => {
       if (page_size > props.page_step) {
-        setPage(Math.floor(((page - 1) * page_size + 1) / (page_size - props.page_step) + 1));
+        setPage(1);
         setPageSize(page_size - props.page_step);
       }
     };
@@ -55,8 +55,8 @@ function PagedList(props: Props) {
 
   function _incPageSize() {
     return () => {
-      if (page_size < props.items.length - props.page_step) {
-        setPage(Math.floor(((page - 1) * page_size + 1) / (page_size + props.page_step) + 1));
+      if (page_size < props.items.length) {
+        setPage(1);
         setPageSize(page_size + props.page_step);
       }
     };
