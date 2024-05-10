@@ -23,6 +23,7 @@ import { anyPrivilege } from '@features/privileges';
 import { PrivilegeData } from '@entities/privilege-context';
 import { PrivilegeNames } from '@shared/config/privileges';
 import PlaceDataPage from '@pages/main/PlaceData';
+import ConfirmEmail from "@pages/auth/ConfirmEmail";
 
 // root urls with privileges
 const routes: Record<AppRoutes, AppRouteProps> = {
@@ -136,6 +137,10 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     path: RoutePaths.notFound,
     authenticated: true,
   },
+  [AppRoutes.CONFIRM_EMAIL]: {
+    path: RoutePaths.confirmEmail,
+    authenticated: false
+  }
 };
 
 // root elements
@@ -197,6 +202,9 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.NOT_FOUND]: {
     element: <>404 not found</>,
   },
+  [AppRoutes.CONFIRM_EMAIL]: {
+    element: <ConfirmEmail />
+  },
 };
 
 export default function AppRouter() {
@@ -218,6 +226,10 @@ export default function AppRouter() {
         }
         return <Route key={path} path={path} element={e} />;
       })}
+      <Route
+        path="/task/*"
+        element={<Navigate to="/tasks" replace />}
+      />
     </Routes>
   );
 }

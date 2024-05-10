@@ -12,8 +12,9 @@
 }
 
 .checkbox_inner_part {
-  background-color: var(--itmo-colors-blue-80);
   display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 10px;
   width: 100%;
   height: 100%;

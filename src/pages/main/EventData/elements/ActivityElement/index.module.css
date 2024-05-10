@@ -18,6 +18,15 @@
 
 .activity_initial_row {
   margin-bottom: .5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status {
+  border-radius: .375rem;
+  height: 2.5rem;
+  width: 2.5rem;
 }
 
 .activity_secondary_row {
@@ -28,8 +37,7 @@
   font-size: .9rem;
   font-weight: 700;
   color: var(--itmo-colors-black);
-  height: 2.5rem;
-  max-lines: 2;
+  min-height: 2.5rem;
 
   display: flex;
   align-items: center;
@@ -38,6 +46,12 @@
 .activity_description .activity_place .activity_time {
   font-size: 16px;
   color: var(--itmo-colors-dark-gray);
+}
+
+.activity_description {
+  max-height: 6rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .activity_line {
@@ -51,7 +65,46 @@
   margin-left: .5rem;
 }
 
-.icon {
+.activity_initial_row .icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  margin: 0.5rem;
+  line-height: 2rem;
+}
+
+.status_DRAFT {
+  background: #e7e7e7;
+}
+
+.status_DRAFT .icon {
+  stroke: #5c5c5c;
+}
+
+.status_PUBLISHED {
+  background: #fef8e5;
+}
+
+.status_PUBLISHED .icon {
+  stroke: #f7b500;
+}
+
+.status_COMPLETED {
+  background: #e9f7e8;
+}
+
+.status_COMPLETED .icon{
+  stroke: #22b217;
+}
+
+.status_CANCELED {
+  background: #fceaea;
+}
+
+.status_CANCELED .icon{
+  fill: #e02e2e;
+}
+
+.activity_secondary_row .icon {
   width: 1.2rem;
   height: 1.2rem;
   fill: var(--itmo-colors-dark-gray);

@@ -5,7 +5,7 @@
   color: var(--itmo-colors-white);
   font-size: 18px;
   font-weight: bold;
-  border-width: 0px;
+  border-width: 0;
 }
 
 .button:hover {

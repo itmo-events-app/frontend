@@ -88,7 +88,7 @@ const PageItemStub = (props: PageItemStubProps) => {
       )}
       <div className={styles.event_info_column}>
         <div className={styles.event_name}>
-          {"Event " + props.index + ": " + props.title}
+          {props.title}
         </div>
         <div className={styles.event_place}>
           {props.place}
@@ -168,9 +168,18 @@ function EventListPage() {
         });
       });
       const pages = await Promise.all(pagesPromises);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({type: "eventsLists", events: eventsWithPlaces}, "*");
+      try {
+        (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({
+          type: "eventsLists",
+          events: eventsWithPlaces
+        }, "*");
+        (document.getElementById("itmo-map-iframe") as HTMLIFrameElement).onload = () => {
+          (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({
+            type: "eventsLists",
+            events: eventsWithPlaces
+          }, "*");
+        }
+      } catch (_) { /* empty */ }
       setPageProps({ page: page, size: size, total: total });
       setItemList(pages);
     } catch (error) {
@@ -269,7 +278,10 @@ function EventListPage() {
                   placeholder="Режим отображения"
                   items={displayModes}
                   value={displayMode}
-                  onChange={(mode) => { setDisplayMode(mode) }}
+                  onChange={(mode) => {
+                    setDisplayMode(mode);
+                    (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({type: "resize"}, "*");
+                  }}
                   toText={(input: string) => { return input }} />
               </div>
               {hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])) &&
@@ -325,7 +337,7 @@ function EventListPage() {
               </div>
             </div>
             <div hidden={displayMode == DisplayModes.LIST}>
-              <iframe id="itmo-map-iframe" src="https://trickyfoxy.ru/practice/map.html?off_clickable"
+              <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?off_clickable"}
                 width="100%" height="420px"></iframe>
             </div>
           </div>

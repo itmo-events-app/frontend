@@ -6,18 +6,20 @@ import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
 import { RoleResponse, UserResponse } from '@shared/api/generated';
 
-const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelete: () => void }) => {
+const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete: () => void }) => {
   const [userList, setUserList] = useState([] as UserResponse[]);
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
   const [roleId, setRoleId] = useState<number | undefined>(undefined);
   const [roleName, setRoleName] = useState<string | undefined>('');
   const [loaded, setLoaded] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { api } = useContext(ApiContext);
 
   const initDialog = async () => {
     const getUsersResponse = await api.profile.getAllUsers();
-    const getAllRoles = await api.role.getAllRoles();
+    // const getAllRoles = await api.role.getAllRoles();
+    const getAllRoles = await api.role.getOrganizationalRoles();
     if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
       const items = getUsersResponse.data.items;
       setUserList(items ?? []);
@@ -34,21 +36,36 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
       console.log(getUsersResponse.status);
     }
   };
+  const getCurrentUserId = async () => {
+    const userInfoResponse = await api.profile.getUserInfo();
+    if (userInfoResponse.status == 200) {
+      const userInfo = userInfoResponse.data;
+      return userInfo.userId;
+    } else {
+      console.log(userInfoResponse.status);
+      return null;
+    }
+  };
   useEffect(() => {
     initDialog();
+    getCurrentUserId();
     setLoaded(true);
   }, []);
 
   const handleDeleteOrganizer = async () => {
     console.log(roleName);
     console.log(userId);
+    const currentUserId = await getCurrentUserId();
+    if (userId === currentUserId  && roleName === 'Организатор') {
+      setErrorMessage('Вы не можете отозвать свою собственную роль организатора!');
+      return;
+    }
     if (roleName == 'Организатор') {
       const result = await api.role.revokeOrganizerRole(userId!, eventId);
       if (result.status != 204) {
         console.log(result.status);
       } else {
         onDelete();
-        window.location.reload();
       }
     } else if (roleName == 'Помощник') {
       const result = await api.role.revokeAssistantRole(userId!, eventId);
@@ -56,7 +73,6 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
         console.log(result.status);
       } else {
         onDelete();
-        window.location.reload();
       }
     } else {
       const result = await api.role.revokeOrganizationalRole(userId!, eventId, roleId!);
@@ -64,7 +80,6 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
         console.log(result.status);
       } else {
         onDelete();
-        window.location.reload();
       }
     }
   };
@@ -103,6 +118,7 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
           )}
         </select>
       </div>
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <Button onClick={handleDeleteOrganizer}>Удалить</Button>
     </div>
   );

@@ -11,7 +11,7 @@
   height: 100%;
   border-style: solid;
   border-color: var(--itmo-colors-gray);
-  border-width: 0px 1px 0px 0px;
+  border-width: 0 1px 0 0;
   position: sticky;
 }
 

@@ -46,25 +46,29 @@
 
 .tasks__wrap {
   display: block;
+  margin-bottom: 10px;
+  overflow: hidden;
 }
 
-.table {
+.task_table {
   width: 100%;
+  table-layout: fixed;
+  overflow-wrap: break-word;
   margin: 0 0;
   border: 1px solid var(--itmo-colors-gray);
   border-collapse: collapse;
   border-radius: 10px;
 }
 
-.table th {
+.task_table th {
   font-weight: bold;
   padding: 10px 20px;
   background: var(--itmo-colors-gray);
-  text-align: left;
-  border: 1px solid var(--itmo-colors-gray);
+  border: 1px solid var(--itmo-colors-dark-gray);
+  font-size: 13px;
 }
 
-.table td {
+.task_table td {
   border: 1px solid var(--itmo-colors-gray);
   padding: 10px 20px;
 }
@@ -108,11 +112,21 @@
 }
 
 .color_blue {
+  cursor: pointer;
   color: var(--itmo-colors-blue);
+  font-weight: bold;
 }
+
 .color_lime {
+  cursor: pointer;
   color: var(--itmo-colors-lime);
+  font-weight: bold;
+  font-size: 15px;
 }
+
 .color_red {
+  cursor: pointer;
   color: var(--itmo-colors-red);
+  font-weight: bold;
+  font-size: 15px;
 }

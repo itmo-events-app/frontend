@@ -5,22 +5,22 @@ import PageName from "@widgets/main/PageName";
 import Content from "@widgets/main/Content";
 import SideBar from "@widgets/main/SideBar";
 import Button from "@widgets/main/Button";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
-import { RoutePaths } from "@shared/config/routes";
-import { FC, ReactNode, useContext, useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { taskService } from "@features/task-service.ts";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale/ru";
-import { TaskResponse, TaskResponseTaskStatusEnum } from "@shared/api/generated";
+import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
+import {RoutePaths} from "@shared/config/routes";
+import {FC, ReactNode, useContext, useEffect, useState} from "react";
+import {useMutation} from "@tanstack/react-query";
+import {taskService} from "@features/task-service.ts";
+import {format} from "date-fns";
+import {ru} from "date-fns/locale/ru";
+import {FileDataResponse, TaskResponse, TaskResponseTaskStatusEnum} from "@shared/api/generated";
 import ApiContext from "@features/api-context";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import Popup from "reactjs-popup";
-import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import Pagination, { PageProps, PageEntry } from "@widgets/main/PagedList/pagination";
-import { hasAnyPrivilege } from "@features/privileges.ts";
-import { PrivilegeData } from "@entities/privilege-context.ts";
-import { PrivilegeNames } from "@shared/config/privileges.ts";
+import PageTabs, {PageTab} from "@widgets/main/PageTabs";
+import Pagination, {PageEntry, PageProps} from "@widgets/main/PagedList/pagination";
+import {hasAnyPrivilege} from "@features/privileges.ts";
+import {PrivilegeData} from "@entities/privilege-context.ts";
+import {PrivilegeNames} from "@shared/config/privileges.ts";
 import PrivilegeContext from "@features/privilege-context.ts";
 
 const newTaskOptions: DropdownOption<string>[] = [
@@ -37,7 +37,7 @@ type FilterType = {
   [key: string]: string | boolean | undefined;
 }
 
-const initialFilters : FilterType = {
+const initialFilters: FilterType = {
   eventId: undefined,
   activityId: undefined,
   expired: false,
@@ -67,7 +67,17 @@ type TaskTableRowProps = {
   eventName?: string;
   taskStatus: TaskResponseTaskStatusEnum;
   activityTitle?: string;
+  activityId?: number;
+  files?: FileDataResponse[];
 }
+
+type OptionsPrivileges = {
+  changeTaskStatus: boolean,
+}
+
+const optionsPrivilegesInitial: OptionsPrivileges = {
+  changeTaskStatus: false,
+} as const;
 
 const TaskTableRow: FC<TaskTableRowProps> = ({
                                                taskId,
@@ -78,18 +88,39 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                                                eventId, eventName,
                                                taskStatus,
                                                activityTitle,
+                                               activityId, files
                                              }) => {
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
+  const [idInt] = useState<number>(eventId)
+
   const navigate = useNavigate();
-  const { privilegeContext } = useContext(PrivilegeContext);
-  const canChangeTaskStatus = hasAnyPrivilege(privilegeContext.systemPrivileges, new Set([
-    new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS),
-  ]));
 
-  const { api } = useContext(ApiContext);
+  const {privilegeContext, updateEventPrivileges} = useContext(PrivilegeContext);
+  const [optionsPrivileges, setOptionsPrivileges] = useState<OptionsPrivileges>(optionsPrivilegesInitial);
 
+  function _getPrivileges(id: number): Set<PrivilegeData> {
+    if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
+      return privilegeContext.getPrivilegesForEvent(id)!;
+    } else {
+      updateEventPrivileges(id);
+    }
+    return new Set();
+  }
 
-  const { mutate: updateTaskStatus } = useMutation({
+  useEffect(() => {
+    if (idInt != null) {
+      const privileges = _getPrivileges(idInt);
+      setOptionsPrivileges({
+        changeTaskStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS)])),
+      })
+    } else {
+      setOptionsPrivileges(optionsPrivilegesInitial)
+    }
+  }, [idInt, privilegeContext]);
+
+  const {api} = useContext(ApiContext);
+
+  const {mutate: updateTaskStatus} = useMutation({
     mutationFn: taskService.updateTaskStatus(api),
     mutationKey: ["updateTaskStatus"],
   });
@@ -100,88 +131,136 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
   };
   const status = selectedStatus?.value ? selectedStatus?.value : statusTranslation[taskStatus];
   return (
-  <Popup
-    trigger={
-      <tr className={styles.mouse_pointer}>
-        <td>{title}</td>
-        <td>
-          {description!.slice(0, 20)}
-          {description!.length! > 20 && <span>...</span>}
-        </td>
-        <td>
-          {format(deadline, "H:mm")} <br />
-          {format(deadline, "do MMMM, yyyy", { locale: ru })}
-        </td>
-        <td>{assigneeName}</td>
-        <td>
-          <Button onClick={() => redirectToEvent(eventId)}>{eventName}</Button>
-        </td>
-        <td>{activityTitle ?? "-"}</td>
-        <td className={statusColorClass[status]}>
-          <h3>{status}</h3>
-        </td>
-      </tr>
-    }
-    modal
-    nested
-  >
-    {
-      ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
-        <div className={styles.popup__wrapper}>
-          <div className={styles.popupContentBold}>
-            {title}
-            <br/>
-          </div>
-          <div className={`${styles.popupContent} ${styles.bold}`}>Описание: </div>
-          <div className={styles.popupContent}>{description}</div>
-          <div className={`${styles.popupContent} ${styles.bold}`}>Статус: </div>
-          {canChangeTaskStatus ? (
-          <Dropdown
-            placeholder={statusTranslation[taskStatus]}
-            items={newTaskOptions}
-            toText={(item) => item.value}
-            value={selectedStatus}
-            onChange={(sel) => {
-              updateTaskStatus({ newStatus: sel.value, id: taskId });
-              setStatus(sel);
-            }}
-          />
-          ) : (
-            <>{statusTranslation[taskStatus]}</>
-          )}
-          <div className={styles.popupButton}>
-            <Button onClick={close}>Скрыть</Button>
-          </div>
-        </div>
-      )) as unknown as ReactNode
-    }
-  </Popup>
+    <tr>
+      <td>{title}</td>
+      <td>
+        <Popup
+          trigger={
+            <div>
+              {description!.slice(0, 20)}
+              {description!.length! > 20 && <span>...</span>}
+            </div>
+          }
+          modal
+          nested
+        >
+          {
+            ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
+              <div className={styles.popup__wrapper}>
+                <div className={styles.popupContentBold}>
+                  {title}
+                  <br/>
+                </div>
+                <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
+                <div className={styles.popupContent}>{description}</div>
+                <div className={`${styles.popupContent} ${styles.bold}`}>Статус:</div>
+                {optionsPrivileges.changeTaskStatus ? (
+                  <Dropdown
+                    placeholder={statusTranslation[taskStatus]}
+                    items={newTaskOptions}
+                    toText={(item) => item.value}
+                    value={selectedStatus}
+                    onChange={(sel) => {
+                      updateTaskStatus({newStatus: sel.value, id: taskId});
+                      setStatus(sel);
+                    }}
+                  />
+                ) : (
+                  <>{statusTranslation[taskStatus]}</>
+                )}
+                <div className={styles.popupButton}>
+                  <Button onClick={close}>Скрыть</Button>
+                </div>
+              </div>
+            )) as unknown as ReactNode
+          }
+        </Popup>
+      </td>
+      <td>
+        {format(deadline, "H:mm")} <br/>
+        {format(deadline, "do MMMM, yyyy", {locale: ru})}
+      </td>
+      <td>{assigneeName}</td>
+      <td>
+        <div onClick={() => redirectToEvent(eventId)}>{eventName}</div>
+      </td>
+      <td>{activityId ?
+        <div style={{cursor: 'pointer'}} onClick={() => redirectToEvent(activityId)}>{activityTitle}</div> :
+        <div>-</div>}</td>
+      <td>
+        <Popup
+          trigger={
+            <div className={statusColorClass[status]}>{status}</div>
+          }
+          modal
+          nested
+        >
+          {
+            ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
+              <div className={styles.popup__wrapper}>
+                <div className={styles.popupContentBold}>
+                  {title}
+                  <br/>
+                </div>
+                <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
+                <div className={styles.popupContent}>{description}</div>
+                <div className={`${styles.popupContent} ${styles.bold}`}>Статус:</div>
+                {optionsPrivileges.changeTaskStatus ? (
+                  <Dropdown
+                    placeholder={statusTranslation[taskStatus]}
+                    items={newTaskOptions}
+                    toText={(item) => item.value}
+                    value={selectedStatus}
+                    onChange={(sel) => {
+                      updateTaskStatus({newStatus: sel.value, id: taskId});
+                      setStatus(sel);
+                    }}
+                  />
+                ) : (
+                  <>{statusTranslation[taskStatus]}</>
+                )}
+                <div className={styles.popupButton}>
+                  <Button onClick={close}>Скрыть</Button>
+                </div>
+              </div>
+            )) as unknown as ReactNode
+          }
+        </Popup>
+      </td>
+      <td>
+        {files?.length ? files?.map(file => <div key={file.filename}>
+          <a href={file.presignedUrl} download>{file.filename}</a>
+          <br/><br/>
+        </div>) : <></>}
+      </td>
+    </tr>
   );
 };
 
-const ListWrapper: FC<{child?:ReactNode[]}> = ({child}) => {
+const ListWrapper: FC<{ child?: ReactNode[] }> = ({child}) => {
   return <div className={styles.content}>
-  <table className={styles.table}>
-    <thead>
-    <tr>
-      <th>Название</th>
-      <th>Описание</th>
-      <th>Дедлайн</th>
-      <th>Ответственный</th>
-      <th>Мероприятие</th>
-      <th>Активность*</th>
-      <th>Статус</th>
-    </tr>
-    </thead>
-    <tbody>
+    <table className={styles.task_table}>
+      <thead>
+      <tr>
+        <th>Название</th>
+        <th>Описание</th>
+        <th>Дедлайн</th>
+        <th>Исполнитель</th>
+        <th>Мероприятие</th>
+        <th>Активность</th>
+        <th>Статус</th>
+        <th>Файлы</th>
+      </tr>
+      </thead>
+      <tbody>
       {child}
-    </tbody>
-      </table>
-    </div>
+      </tbody>
+    </table>
+  </div>
 }
 
 const taskResponsesToPageEntries = (tasks: TaskResponse[]) => {
-  return tasks.map((task)=>{
+  return tasks.map((task) => {
     return new PageEntry(() => {
       return (
         <TaskTableRow key={task.id}
@@ -189,9 +268,11 @@ const taskResponsesToPageEntries = (tasks: TaskResponse[]) => {
                       deadline={task.deadline || ""}
                       assigneeName={`${task.assignee?.name} ${task.assignee?.surname}`}
                       eventId={Number(task.event?.eventId)}
+                      activityId={Number(task.event?.activityId)}
                       eventName={task.event?.eventTitle}
                       taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
-                      activityTitle={task.event?.activityTitle} />);
+                      activityTitle={task.event?.activityTitle}
+                      files={task.fileData}/>);
     });
   })
 }
@@ -208,34 +289,35 @@ type EventActivities = {
 }
 
 function TaskListPage() {
-  const { api } = useContext(ApiContext);
+  const {api} = useContext(ApiContext);
+
   //tabs
-  const pageTabs : PageTab[] = [];
+  const pageTabs: PageTab[] = [];
   pageTabs.push(new PageTab("Текущие"));
-  pageTabs.push(new PageTab("Прошение"));
+  pageTabs.push(new PageTab("Прошедшие"));
   const [selectedTab, setSelectedTab] = useState(pageTabs[0].text);
-  const [pageProps, setPageProps] = useState<PageProps>({page:1,size:5,total:0});
+  const [pageProps, setPageProps] = useState<PageProps>({page: 1, size: 5, total: 0});
   const [itemList, setItemList] = useState<PageEntry[]>([]);
   const [dropdownOptions, setDropdownOptions] = useState<EventActivities[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<DropdownOption<string> | undefined>();
   const [selectedActivity, setSelectedActivity] = useState<DropdownOption<string> | undefined>();
   let allTasks: TaskResponse[] = [];
-  const fetchFirstData = async() => {
+  const fetchFirstData = async () => {
     try {
       const tempAllTasks = await taskService.getAllTasks(api)();
       const result: EventActivities[] = [];
       tempAllTasks.forEach(task => {
         let eventActivities: EventActivities | undefined = result.find(eventDropdown => eventDropdown.event.id === task.event?.eventId?.toString());
-        if (!eventActivities && task.event && task.event.eventId ) {
-          const event = new DropdownOption<string>(task.event.eventTitle?task.event.eventTitle:"",task.event.eventId.toString())
-          eventActivities = { event: event, activities: [], tasks: [] };
+        if (!eventActivities && task.event && task.event.eventId) {
+          const event = new DropdownOption<string>(task.event.eventTitle ? task.event.eventTitle : "", task.event.eventId.toString())
+          eventActivities = {event: event, activities: [], tasks: []};
           result.push(eventActivities);
-        } 
+        }
         if (task.event?.activityId) {
           let activityTasks: ActivityTasks | undefined = eventActivities?.activities.find(activityDropdown => activityDropdown.activity.id === task.event?.activityId?.toString());
           if (!activityTasks && task.event && task.event.activityId) {
-            const activity = new DropdownOption<string>(task.event.activityTitle?task.event.activityTitle:"",task.event.activityId.toString())
-            activityTasks = { activity: activity, tasks: [] };
+            const activity = new DropdownOption<string>(task.event.activityTitle ? task.event.activityTitle : "", task.event.activityId.toString())
+            activityTasks = {activity: activity, tasks: []};
             eventActivities?.activities.push(activityTasks);
           }
           activityTasks?.tasks.push(task);
@@ -251,12 +333,8 @@ function TaskListPage() {
   }
 
   const [filters, setFilters] = useState(initialFilters);
-  const getTaskList = async(page: number = 1, size: number = 15) => {
+  const getTaskList = async (page: number = 1, size: number = 15) => {
     try {
-      //fetch all tasks in the first mount
-      // if (allTasks.current.length===0) {
-      //   await fetchFirstData();
-      // }
       await fetchFirstData();
       let filteredTasks: TaskResponse[] = [];
       if (filters.eventId) {
@@ -267,8 +345,7 @@ function TaskListPage() {
               filteredTasks.push(...activityTasks.tasks);
               break;
             }
-          } 
-          else {
+          } else {
             if (eventActivities.event.id === filters.eventId) {
               eventActivities.activities.forEach(activityTasks => {
                 filteredTasks.push(...activityTasks.tasks);
@@ -278,87 +355,91 @@ function TaskListPage() {
           }
         }
       } else filteredTasks = allTasks;
-      filteredTasks = filteredTasks.filter((task) => ((task.taskStatus===TaskResponseTaskStatusEnum.Expired)===filters.expired));
+      filteredTasks = filteredTasks.filter((task) => ((task.taskStatus === TaskResponseTaskStatusEnum.Expired) === filters.expired));
       const total = filteredTasks.length;
-      filteredTasks = filteredTasks.slice((page - 1) * size,page*size);
-      setPageProps({page:page,size:size,total:total});
+      filteredTasks = filteredTasks.slice((page - 1) * size, page * size);
+      setPageProps({page: page, size: size, total: total});
       setItemList(taskResponsesToPageEntries(filteredTasks));
     } catch (error) {
       console.error("Error fetching event list:", error);
     }
   };
-  
+
   useEffect(() => {
     getTaskList();
   }, [filters]);
 
   const _pageTabHandler = (tab_name: string) => {
-    setFilters((prev)=>({
+    setFilters((prev) => ({
       ...prev,
-      expired: (tab_name==="Прошение"),
+      expired: (tab_name === "Прошедшие"),
     }));
     setSelectedTab(tab_name);
   }
-  const _dropdownHandler = (event: DropdownOption<string> | undefined,isEvent: boolean) => {
+  const _dropdownHandler = (event: DropdownOption<string> | undefined, isEvent: boolean) => {
     if (isEvent) {
       setSelectedEvent(event);
       setSelectedActivity(undefined);
-      setFilters((prev)=>({
+      setFilters((prev) => ({
         ...prev,
         eventId: event?.id,
         activityId: undefined,
       }))
-    }
-    else {
+    } else {
       setSelectedActivity(event);
-      setFilters((prev)=>({
+      setFilters((prev) => ({
         ...prev,
         activityId: event?.id,
       }))
-    } 
+    }
   }
 
   const activityOptions = dropdownOptions.find(obj => obj.event.id === selectedEvent?.id)?.activities;
   return (
     <Layout
-      topLeft={<BrandLogo />}
-      topRight={<PageName text="Мои задачи" />
+      topLeft={<BrandLogo/>}
+      topRight={<PageName text="Мои задачи"/>
       }
-      bottomLeft={<SideBar currentPageURL={RoutePaths.taskList} />}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.taskList}/>}
       bottomRight={
         <>
-        <div className={styles.tabs}>
-          <PageTabs value={selectedTab} handler={_pageTabHandler} items={pageTabs} />
-        </div>
-        <Content>
-          <div className={styles.events_page}>
-            <div className={styles.filters}>
-              <div className={styles.filter_group}>
-                <div className={styles.dropdownfilter}>
-                  <Dropdown
-                    placeholder="Мероприятие"
-                    items={dropdownOptions.map(obj => obj.event)}
-                    value={selectedEvent}
-                    onChange={(item)=>_dropdownHandler(item,true)}
-                    onClear={()=>_dropdownHandler(undefined,true)}
-                    toText={(item) => {return item.value}} />
-                </div>
-                <div className={styles.dropdownfilter}>
-                  <Dropdown
-                    placeholder="Активность"
-                    items={activityOptions?activityOptions?.map(obj => obj.activity):[]}
-                    value={selectedActivity}
-                    onChange={(item)=>_dropdownHandler(item,false)}
-                    onClear={()=>_dropdownHandler(undefined,false)}
-                    toText={(item) => {return item.value}} />
+          <div className={styles.tabs}>
+            <PageTabs value={selectedTab} handler={_pageTabHandler} items={pageTabs}/>
+          </div>
+          <Content>
+            <div className={styles.events_page}>
+              <div className={styles.filters}>
+                <div className={styles.filter_group}>
+                  <div className={styles.dropdownfilter}>
+                    <Dropdown
+                      placeholder="Мероприятие"
+                      items={dropdownOptions.map(obj => obj.event)}
+                      value={selectedEvent}
+                      onChange={(item) => _dropdownHandler(item, true)}
+                      onClear={() => _dropdownHandler(undefined, true)}
+                      toText={(item) => {
+                        return item.value
+                      }}/>
+                  </div>
+                  <div className={styles.dropdownfilter}>
+                    <Dropdown
+                      placeholder="Активность"
+                      items={activityOptions ? activityOptions?.map(obj => obj.activity) : []}
+                      value={selectedActivity}
+                      onChange={(item) => _dropdownHandler(item, false)}
+                      onClear={() => _dropdownHandler(undefined, false)}
+                      toText={(item) => {
+                        return item.value
+                      }}/>
+                  </div>
                 </div>
               </div>
+              <div className={styles.event_list_container}>
+                <Pagination pageProps={pageProps} onPageChange={(page, size) => getTaskList(page, size)}
+                            items={itemList} pageSpread={1} listWrapper={<ListWrapper/>}/>
+              </div>
             </div>
-            <div className={styles.event_list_container}>
-              <Pagination pageProps={pageProps} onPageChange={(page,size)=>getTaskList(page,size)} items={itemList} pageSpread={1} listWrapper={<ListWrapper/>}/>
-            </div>
-          </div>
-        </Content>
+          </Content>
         </>
       }
     />

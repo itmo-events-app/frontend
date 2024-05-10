@@ -33,7 +33,6 @@
 }
 
 
-
 .file_input_actual {
   opacity: 0;
   position: absolute;
@@ -84,7 +83,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-width: 38%;
+  min-width: 60%;
   max-width: 62%;
 }
 
@@ -97,6 +96,7 @@
 }
 
 @media screen and (max-width: 1080px) {
+
   .info_page {
     flex-direction: column;
     justify-content: normal;
@@ -149,7 +149,7 @@
 
 .data_list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 25rem);
+  grid-template-columns: repeat(auto-fill, 29rem);
 
   grid-row-gap: 1rem;
   grid-column-gap: 1.5rem;
@@ -226,6 +226,10 @@
   visibility: hidden;
 }
 
+._25P-K {
+  display: none;
+}
+
 .dialog {
   margin-left: auto;
   margin-right: auto;
@@ -245,7 +249,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 0px 10px;
+  padding: 0 10px;
 }
 
 .inputEmpty {
@@ -255,6 +259,7 @@
 .tasks {
   display: block;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 
 .tasks__people {
@@ -277,6 +282,10 @@
 }
 
 .input_error {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 16px;
   border-color: var(--itmo-colors-red);
 }
 
@@ -291,12 +300,211 @@
 
 .helper_error {
   color: var(--itmo-colors-red);
-  margin: 0px;
-  padding: 10px 0px;
+  margin: 0;
+  padding: 10px 0;
   font-size: 14px;
 }
 
 .visited_checkbox {
   display: flex;
   justify-content: center;
+}
+
+.dialog_task {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 500;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0 0 0;
+}
+
+.dialog_content_task {
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #ffffff;
+  border: 1px solid black;
+  border-radius: 16px;
+
+  width: 60%;
+  padding: 10px;
+}
+
+.emptyFieldsMessage {
+  color: var(--itmo-colors-red);
+}
+
+.place_form {
+  min-height: 100%;
+  background-color: var(--itmo-colors-white);
+  display: block;
+  justify-content: center;
+  align-items: normal;
+  flex-direction: column;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.place_form_item {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  margin: 0.5rem;
+}
+
+.place_form_button {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  width: 10rem;
+  margin: 0.5rem;
+}
+
+.copy {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.copy_tasks_entry {
+  border: 1px solid black;
+  border-radius: 10px;
+  font-size: 20px;
+  padding: 10px;
+  margin: 10px;
+  margin-left: 0;
+}
+
+.selected_task_for_copy {
+  background-color: rgba(0, 0, 255, 0.4);
+}
+
+.popup__wrapper {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 4px solid var(--itmo-colors-dark-gray);
+  padding: 30px;
+  min-width: 25%;
+  max-width: 80%;
+  border-radius: 40px;
+}
+
+.popupContent {
+  margin-bottom: 10px;
+  text-align: justify;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.popupContentBold {
+  margin-bottom: 20px;
+  text-align: justify;
+  font-weight: bold;
+  font-size: x-large;
+}
+
+.popupButton {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.color_blue {
+  cursor: pointer;
+  color: var(--itmo-colors-blue);
+  font-weight: bold;
+}
+
+.color_lime {
+  cursor: pointer;
+  color: var(--itmo-colors-lime);
+  font-weight: bold;
+}
+
+.color_red {
+  cursor: pointer;
+  color: var(--itmo-colors-red);
+  font-weight: bold;
+}
+
+.task_table {
+  width: 100%;
+  table-layout: fixed;
+  overflow-wrap: break-word;
+  margin: 0 0;
+  border: 1px solid var(--itmo-colors-gray);
+  border-collapse: collapse;
+  border-radius: 10px;
+}
+
+.task_table th {
+  font-weight: bold;
+  padding: 10px 20px;
+  background: var(--itmo-colors-gray);
+  text-align: left;
+  border: 1px solid var(--itmo-colors-dark-gray);
+}
+
+.task_table td {
+  border: 1px solid var(--itmo-colors-gray);
+  padding: 10px 20px;
+}
+
+.disabled-button {
+  opacity: 0.5;
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.upload_button {
+  position: relative;
+  width: 30px;
+  height: 20px;
+  border-radius: 25px;
+  border: 2px solid var(--itmo-colors-black);
+  background-color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  transition: .3s;
+}
+
+.upload_button svg {
+  color: var(--itmo-colors-black);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: .3s;
+}
+
+.delete_button {
+  position: relative;
+  width: 30px;
+  height: 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: .3s;
+}
+
+.delete_button svg {
+  color: var(--itmo-colors-black);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: .3s;
 }

@@ -1,17 +1,17 @@
 import styles from './index.module.css';
-import {ITMO} from '@widgets/auth/ITMO';
+import { ITMO } from '@widgets/auth/ITMO';
 import Block from '@widgets/Block';
 import Label from '@widgets/auth/InputLabel';
 import Input from '@widgets/auth/Input';
 import Button from '@widgets/auth/Button';
 import Error from '@widgets/auth/Error';
-import {useNavigate} from 'react-router-dom';
-import {useContext, useState} from 'react';
-import {RoutePaths} from '@shared/config/routes';
-import {NotifyState} from '../Notification';
+import { useNavigate } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import { RoutePaths } from '@shared/config/routes';
+import { NotifyState } from '../Notification';
 import ApiContext from "@features/api-context";
-import {getErrorResponse} from '@features/response';
-import {RecoveryPasswordRequest} from '@shared/api/generated/model';
+import { getErrorResponse } from '@features/response';
+import { RecoveryPasswordRequest } from '@shared/api/generated/model';
 
 
 const EMAIL_MAX_LENGTH = 128;
@@ -30,7 +30,7 @@ const FAIL_MESSAGE = 'Неудалось отправить заявку на в
 
 function RestorePage() {
   const navigate = useNavigate();
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
   const [isError, setIsError] = useState(false);
   const [errorText, setErrorText] = useState('');
   const [email, setEmail] = useState('');
@@ -57,7 +57,8 @@ function RestorePage() {
     return null;
   };
 
-  const _restore = () => {
+  const _restore = (e: any) => {
+    e.preventDefault();
     let ok = true;
 
     const eEmail = _validateEmail(email);
@@ -77,7 +78,7 @@ function RestorePage() {
           const state: NotifyState = {
             msg: SUCCESS_MESSAGE,
           };
-          navigate(RoutePaths.notify, {state: state});
+          navigate(RoutePaths.notify, { state: state });
         })
         .catch((e): any => {
           console.log(getErrorResponse(e.response));
@@ -93,15 +94,16 @@ function RestorePage() {
 
   return (
     <div className={styles.root}>
-      <ITMO/>
+      <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Восстановление пароля</span>
-        <Error value={errorText} isError={isError}/>
-        <div className={styles.form_item}>
-          <Label value={LABEL}/>
-          <Input value={email} onChange={_setEmail} error={emailError != ''} errorText={emailError}/>
-        </div>
-        <Button onClick={_restore}>Восстановить пароль</Button>
+        <Error value={errorText} isError={isError} />
+        <form onSubmit={_restore} className={styles.form_item}>
+          <Label value={LABEL} />
+          <Input value={email} onChange={_setEmail} error={emailError != ''} errorText={emailError} />
+
+          <Button className={styles.btn}>Восстановить пароль</Button>
+        </form>
       </Block>
     </div>
   );

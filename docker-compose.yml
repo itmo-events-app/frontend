@@ -20,14 +20,6 @@ services:
         condition: service_healthy
     environment:
       - "SPRING_PROFILES_ACTIVE=docker"
-      - "EMAIL_USERNAME=${EMAIL_USERNAME}"
-      - "EMAIL_PASSWORD=${EMAIL_PASSWORD}"
-      - "MINIO_URL=${MINIO_URL}"
-      - "MINIO_PORT=${MINIO_PORT}"
-      - "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}"
-      - "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}"
-      - "TASK_URL=${TASK_URL}"
-      - "IP=${IP}"
 
   minio:
     image: minio/minio
@@ -38,6 +30,16 @@ services:
     ports:
       - '9001:9001'
       - '9000:9000'
+
+  geo:
+    image: trickyfoxy/itmo_practice_geo
+    profiles:
+      - frontend
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - '9999:80'
 
   frontend:
     image: zubrailx/itmo-events-app-frontend:latest

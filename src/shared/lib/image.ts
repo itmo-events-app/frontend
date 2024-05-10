@@ -7,14 +7,20 @@ async function checkImageExists(url: string) {
   }
 }
 async function getImageUrl(prefix: string) {
-  const types = ['png', 'jpg', 'jpeg'];
+  // TODO remove after backend update
+  const types = ['', '.png', '.jpg', '.jpeg'];
   let foundImageUrl = '';
 
   for (const type of types) {
-    foundImageUrl = `http://localhost:9000/event-images/${prefix}.${type}`;
-    const found = await checkImageExists(foundImageUrl);
-    if (found) {
-      return foundImageUrl;
+    foundImageUrl = `${(window as any).ENV_MINIO_URL}/event-images/${prefix}${type}`;
+    try{
+      const found = await checkImageExists(foundImageUrl);
+      if (found) {
+        return foundImageUrl;
+      }
+    }catch (error){
+      console.log(error);
+      return ''
     }
   }
   return '';

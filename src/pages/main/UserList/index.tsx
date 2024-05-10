@@ -288,7 +288,7 @@ export default function UserListPage() {
 
   const _revokeRoleFromUser = (userId: number, roleId: number, eventId: number) => {
 
-    if (eventId == 0) {
+    if (eventId == -1) {
       _revokeSystemRole(userId, roleId)
     } else {
       if (eventId == 0) {

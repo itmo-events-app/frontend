@@ -13,7 +13,6 @@ import { RoutePaths } from '@shared/config/routes';
 import { LoginRequest } from '@shared/api/generated';
 import { TokenContextData } from '@shared/lib/token';
 import ApiContext from '@features/api-context';
-import { getErrorResponse } from '@features/response';
 
 const LOGIN_MAX_LENGTH = 128;
 const PASSWORD_MIN_LENGTH = 8;
@@ -67,7 +66,8 @@ function LoginPage() {
     }
   };
 
-  const _enterOnClick = () => {
+  const _enterOnClick = (e: any) => {
+    e.preventDefault();
     let ok = true;
     const login = _validateLogin(loginValue);
     const password = _validatePassword(passwordValue);
@@ -97,8 +97,8 @@ function LoginPage() {
           console.log('token updated');
           navigate(RoutePaths.home);
         })
-        .catch((e): any => {
-          setErrorText(getErrorResponse(e.response));
+        .catch((): any => {
+          setErrorText("Неправильно указан логин и/или пароль");
           setIsError(true);
         });
     }
@@ -120,8 +120,7 @@ function LoginPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Войти</span>
-        <Error value={errorText} isError={isError} />
-        <div className={styles.form}>
+        <form onSubmit={_enterOnClick} className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Логин" />
             <Input
@@ -142,10 +141,11 @@ function LoginPage() {
               error={passwordError}
               errorText={passwordErrorText}
             />
+            <Error value={errorText} isError={isError} />
             <Link onClick={_forgotPassword} value="Забыли пароль?" />
           </div>
-        </div>
-        <Button onClick={_enterOnClick}>Войти</Button>
+          <Button className={styles.btn}>Войти</Button>
+        </form>
         <Link className={styles.register} onClick={_register} value="Нет учетной записи? Зарегистрироваться" />
       </Block>
     </div>

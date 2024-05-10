@@ -19,6 +19,7 @@ export enum AppRoutes {
   PROFILE = 'profile',
   REQUEST_LIST = 'requestList',
   NOT_FOUND = 'notFound',
+  CONFIRM_EMAIL = 'confirmEmail',
 }
 
 // чтобы не хардкодить шаблонную строку
@@ -50,4 +51,5 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.PROFILE]: '/profile',
   [AppRoutes.REQUEST_LIST]: '/requests',
   [AppRoutes.NOT_FOUND]: '*',
+  [AppRoutes.CONFIRM_EMAIL]: '/confirmEmail'
 };

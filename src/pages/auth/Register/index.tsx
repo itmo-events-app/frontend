@@ -3,7 +3,6 @@ import { useContext, useState } from 'react';
 import styles from './index.module.css';
 import { ITMO } from '@widgets/auth/ITMO';
 import Block from '@widgets/Block';
-import Error from '@widgets/auth/Error';
 import Label from '@widgets/auth/InputLabel';
 import Input from '@widgets/auth/Input';
 import Button from '@widgets/auth/Button';
@@ -39,8 +38,6 @@ const errorValidators = {
 function RegisterPage() {
   const { api } = useContext(ApiContext);
   const navigate = useNavigate();
-
-  const [error, setError] = useState('');
 
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
@@ -78,7 +75,8 @@ function RegisterPage() {
     setRepeatError('');
   }
 
-  const _register = () => {
+  const _register = (e: any) => {
+    e.preventDefault();
     let ok = true;
 
     const ename = errorValidators.empty(name);
@@ -129,10 +127,11 @@ function RegisterPage() {
         })
         .catch((e: any) => {
           if (e.response.data.errors) {
-            setError(e.response.data.errors.join('. '));
+            setEmailError(e.response.data.errors.join('. '));
           }
           else {
-            setError(e.response.data);
+            if (e.response.data == "Заявка на регистрацию с указанным email уже существует") setEmailError(e.response.data);
+            else setPasswordError(e.response.data);
           }
         })
     }
@@ -144,8 +143,7 @@ function RegisterPage() {
       <ITMO />
       <Block className={styles.block}>
         <span className={styles.header}>Регистрация</span>
-        <Error value={error} isError={error != ''} />
-        <div className={styles.form}>
+        <form onSubmit={_register} className={styles.form}>
           <div className={styles.form_item}>
             <Label value="Имя" />
             <Input value={name} onChange={_setName} error={nameError != ''} errorText={nameError} />
@@ -166,8 +164,8 @@ function RegisterPage() {
             <Label value="Подтверждение пароля" />
             <Input type="password" value={repeat} onChange={_setRepeat} error={repeatError != ''} errorText={repeatError} />
           </div>
-        </div>
-        <Button onClick={_register}>Зарегистрироваться</Button>
+          <Button className={styles.btn}>Зарегистрироваться</Button>
+        </form>
       </Block>
     </div>
   );

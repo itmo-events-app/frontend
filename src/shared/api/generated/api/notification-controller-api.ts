@@ -50,7 +50,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -86,7 +86,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -130,7 +130,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -176,7 +176,7 @@ export const NotificationControllerApiAxiosParamCreator = function (configuratio
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 

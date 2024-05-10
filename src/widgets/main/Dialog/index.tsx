@@ -13,13 +13,15 @@ type Props = {
 const Dialog = forwardRef((props: Props, ref: any) => {
   return (
     <div className={appendClassName(styles.dialog, props.className)} style={props.style} ref={ref}>
-      <div className={styles.header}>
-        <div className={styles.name}>{props.text}</div>
-        <button className={styles.close} onClick={props.onClose}>
-          ×
-        </button>
+      <div className={styles.dop__wrap}>
+        <div className={styles.header}>
+          <div className={styles.name}>{props.text}</div>
+          <button className={styles.close} onClick={props.onClose}>
+            ×
+          </button>
+        </div>
+        <div className={styles.content}>{props.children}</div>
       </div>
-      <div className={styles.content}>{props.children}</div>
     </div>
   );
 });

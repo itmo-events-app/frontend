@@ -11,6 +11,10 @@
   font-weight: 700;
   line-height: 2rem;
   border-bottom: 1px solid var(--itmo-colors-gray);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .activity_card_info {
@@ -23,7 +27,11 @@
   justify-content: flex-end;
 }
 
-.activity_card_footer Button {
+.activity_card_footer button {
+  margin-left: 1rem;
+}
+
+.redBtn {
   background-color: var(--itmo-colors-red);
 }
 
@@ -65,6 +73,95 @@
 .activity_card_field .value {
   flex: 0 0 50%;
   max-width: 50%;
-  /*padding-left: 0.75rem;*/
   padding-right: 0.75rem;
+}
+
+.status {
+  border-radius: .375rem;
+  height: 2.5rem;
+  width: 2.5rem;
+}
+
+.activity_card_header .icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  margin: 0.5rem;
+  line-height: 2rem;
+}
+
+.status_DRAFT {
+  background: #e7e7e7;
+}
+
+.status_DRAFT .icon {
+  stroke: #5c5c5c;
+}
+
+.status_PUBLISHED {
+  background: #fef8e5;
+}
+
+.status_PUBLISHED .icon {
+  stroke: #f7b500;
+}
+
+.status_COMPLETED {
+  background: #e9f7e8;
+}
+
+.status_COMPLETED .icon{
+  stroke: #22b217;
+}
+
+.status_CANCELED {
+  background: #fceaea;
+}
+
+.status_CANCELED .icon{
+  fill: #e02e2e;
+}
+
+.field_separator {
+  border-top: 1px solid var(--itmo-colors-gray);
+  margin: .35rem 0;
+}
+
+.drop_down_toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 2rem;
+  margin-bottom: .35rem;
+
+  border-bottom: 1px solid var(--itmo-colors-gray);
+
+  cursor: pointer;
+}
+
+.drop_down_toggle .icon {
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.arrow_up {
+  transform: rotate(180deg);
+  transition: 0.25s ease-out;
+}
+
+.arrow_down {
+  transition: 0.25s ease-out;
+}
+
+.add_info_hidden {
+  display: flow-root;
+  transition: max-height .25s ease-out;
+  overflow: hidden;
+  max-height: 0;
+}
+
+.add_info_visible {
+  display: flow-root;
+  transition: max-height .25s ease-out;
+  max-height: 300px;
 }
