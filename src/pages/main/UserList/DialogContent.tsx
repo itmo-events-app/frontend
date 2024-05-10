@@ -127,7 +127,7 @@ const DialogContent = (props: AssignProps) => {
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
           {showEmptyEventMessage && (
-            <span className={styles.emptyFieldsMessage}>Выберите мероприятие для назначения роли</span>
+            <span className={styles.emptyFieldsMessage}>Необходимо выбрать мероприятие</span>
           )}
           {props.isEvent ? (
             <Dropdown
