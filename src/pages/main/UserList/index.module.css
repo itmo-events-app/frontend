@@ -183,3 +183,7 @@
   padding: 5px 10px;
   width: 50%;
 }
+
+.emptyFieldsMessage {
+  color: var(--itmo-colors-red);
+}
