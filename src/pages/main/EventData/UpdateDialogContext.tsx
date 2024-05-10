@@ -216,14 +216,9 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       result = false;
     }
 
-    const now = new Date().getTime();
     if(startDate == null){
       errorsInput ={...errorsInput, startDate : true};
       readErrorText = {...readErrorText, startDate: "Поле не может быть пустым"};
-      result = false;
-    }else if(now >= startDate.getTime()){
-      errorsInput ={...errorsInput, startDate : true};
-      readErrorText = {...readErrorText, startDate: "Мероприятие не может начинаться в прошлом"};
       result = false;
     }else if(endDate!=null && startDate.getTime() >= endDate.getTime()){
       errorsInput ={...errorsInput, startDate : true};
@@ -235,10 +230,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       errorsInput ={...errorsInput, endDate : true};
       readErrorText = {...readErrorText, endDate: "Поле не может быть пустым"};
       result = false;
-    }else if(now >= endDate.getTime()){
-      errorsInput ={...errorsInput, endDate : true};
-      readErrorText = {...readErrorText, endDate: "Мероприятие не может заканчиваться в прошлом"};
-      result = false;
     }else if(startDate!=null && startDate.getTime()>= endDate.getTime()){
       errorsInput ={...errorsInput, endDate : true};
       readErrorText = {...readErrorText, endDate: "Время окончания мероприятия не может быть перед временем начала мероприятия"};
@@ -248,10 +239,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     if(registrationStart == null){
       errorsInput ={...errorsInput, registrationStart : true};
       readErrorText = {...readErrorText, registrationStart: "Поле не может быть пустым"};
-      result = false;
-    }else if(now >= registrationStart.getTime()){
-      errorsInput ={...errorsInput, registrationStart : true};
-      readErrorText = {...readErrorText, registrationStart: "Регистрация на мероприятие не может начинаться в прошлом"};
       result = false;
     }else if(registrationEnd!=null && registrationStart.getTime()>= registrationEnd.getTime()){
       errorsInput ={...errorsInput, registrationStart : true};
@@ -263,10 +250,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       errorsInput ={...errorsInput, registrationEnd : true};
       readErrorText = {...readErrorText, registrationEnd: "Поле не может быть пустым"};
       result = false;
-    }else if(now >= registrationEnd.getTime()){
-      errorsInput ={...errorsInput, registrationEnd : true};
-      readErrorText = {...readErrorText, registrationEnd: "Регистрация на мероприятие не может заканчиваться в прошлом"};
-      result = false;
     }else if(registrationStart!=null && registrationStart.getTime()>= registrationEnd.getTime()){
       errorsInput ={...errorsInput, registrationEnd : true};
       readErrorText = {...readErrorText, registrationEnd: "Время окончания регистрации на мероприятие не может быть перед временем начала регистрации на мероприятие"};
@@ -277,10 +260,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       errorsInput ={...errorsInput, preparingStart : true};
       readErrorText = {...readErrorText, preparingStart: "Поле не может быть пустым"};
       result = false;
-    }else if(now >= preparingStart.getTime()){
-      errorsInput ={...errorsInput, preparingStart : true};
-      readErrorText = {...readErrorText, preparingStart: "Подготовка к мероприятию не может начинаться в прошлом"};
-      result = false;
     }else if(preparingEnd!=null && preparingStart.getTime()>= preparingEnd.getTime()){
       errorsInput ={...errorsInput, preparingStart : true};
       readErrorText = {...readErrorText, preparingStart: "Время начала подготовки мероприятия не может быть после времени окончания подготовки мероприятия"};
@@ -290,10 +269,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     if(preparingEnd == null){
       errorsInput ={...errorsInput, preparingEnd : true};
       readErrorText = {...readErrorText, preparingEnd: "Поле не может быть пустым"};
-      result = false;
-    }else if(now >= preparingEnd.getTime()){
-      errorsInput ={...errorsInput, preparingEnd : true};
-      readErrorText = {...readErrorText, preparingEnd: "Подготовка к мероприятию не может заканчиваться в прошлом"};
       result = false;
     }else if(preparingStart!=null && preparingStart.getTime()>= preparingEnd.getTime()){
       errorsInput ={...errorsInput, preparingEnd : true};
