@@ -135,7 +135,7 @@ export default function UserListPage() {
         const l = r.data.items?.map((user: UserResponse) => new UserElement(toUserModel(user))) || [];
         setUserElements(l);
         setTotalElements(r.data.total || 0)
-        setTotalPages(Math.ceil(totalElements / size))
+        setTotalPages(Math.ceil((r.data.total || 0) / size))
       });
   }
 
