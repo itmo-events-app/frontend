@@ -9,7 +9,7 @@ class DropdownOption<T> {
   value: T;
 
   constructor(text: T, id?: string) {
-    this.id = id !== undefined ? id : uid();
+    this.id = id !== undefined ? id : "-1";
     this.value = text;
   }
 }
@@ -114,7 +114,11 @@ function Dropdown<T>(props: Props<T>) {
       }
       return
     }
-    props.onChange?.(data.value);
+    if (data.value != -1) {
+      props.onChange?.(data.value);
+    } else {
+      props.onChange?.(data.label);
+    }
   }
   function handleSelect2(data: any) {
     setSelectedOptions(data)
