@@ -189,7 +189,12 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
       usersResponse = await api.event.getUsersHavingRoles(idInt);
       if (usersResponse.status == 200){
         const usersData = usersResponse.data;
-        const updatedUsersList = [...usersData];
+        const uniqueUsers = usersData.filter((user, index, self) =>
+            index === self.findIndex((t) => (
+              t.id === user.id
+            ))
+        );
+        const updatedUsersList = [...uniqueUsers];
         updatedUsersList.push({
           id: 0,
           name: "Назначить",
@@ -328,9 +333,9 @@ const UpdateTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number
   }
 
   return (
-    <div className={styles.dialog_task} onClick={onClose}>
+    <div className={styles.dialog_task} onMouseDown={onClose}>
       <Dialog className={styles.dialog_content_task} text={'Изменение задачи'}>
-        <div onClick={(e) => e.stopPropagation()}>
+        <div onMouseDown={(e) => e.stopPropagation()}>
           <div className={styles.place_form}>
             <div className={styles.place_form_item}>
               <InputLabel value="Задача" />

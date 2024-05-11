@@ -1,11 +1,12 @@
-import { Api } from '@entities/api';
+import {Api} from '@entities/api';
 import {
   PaginatedResponse,
-  TaskListShowWhereAssigneeTaskStatusEnum, TaskRequest,
+  TaskListShowWhereAssigneeTaskStatusEnum,
+  TaskRequest,
   TaskRequestTaskStatusEnum,
   TaskResponse
 } from '@shared/api/generated';
-import { DropdownOption } from '@widgets/main/Dropdown';
+import {DropdownOption} from '@widgets/main/Dropdown';
 
 export const taskService = {
   getAllTasks: (api: Api) => {
@@ -16,7 +17,7 @@ export const taskService = {
     };
   },
 
-  createTask: (api: Api, eventId: number, assigneeId: undefined | number, title: string, description: string, placeId: number, deadline: string, reminder: string) => {
+  createTask: async (api: Api, eventId: number, assigneeId: undefined | number, title: string, description: string, placeId: number, deadline: string, reminder: string) => {
     const taskStatus = TaskRequestTaskStatusEnum.New;
     const request: TaskRequest = {
       eventId: eventId,
@@ -28,11 +29,21 @@ export const taskService = {
       deadline: deadline,
       reminder: reminder,
     };
-    console.log(request)
-    return api.withReauth(() => api.task.taskAdd(request));
+    await api.withReauth(() => api.task.taskAdd(request)).then((response) => response.data);
   },
 
-  updateTask: (api: Api, taskId: number, eventId: number, assigneeId: undefined | number, title: string, description: string, taskStatus: TaskRequestTaskStatusEnum,  placeId: number, deadline: string, reminder: string) => {
+  uploadFiles: async (api: Api, taskId: number, file: File[]) => {
+    await api.withReauth(() => api.task.uploadFiles(taskId,
+      file,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'multipart/form-data; boundary=AaBbCc'
+        }
+      })).then((response) => response.data);
+  },
+
+  updateTask: (api: Api, taskId: number, eventId: number, assigneeId: undefined | number, title: string, description: string, taskStatus: TaskRequestTaskStatusEnum, placeId: number, deadline: string, reminder: string) => {
     const request: TaskRequest = {
       eventId: eventId,
       assigneeId: assigneeId,
@@ -75,12 +86,12 @@ export const taskService = {
         if (page !== undefined && pageSize !== undefined)
           totalElement =
             response.data.length < pageSize ? page * pageSize + response.data.length : (page + 1) * pageSize + 1;
-        return { total: totalElement, items: response.data };
+        return {total: totalElement, items: response.data};
       });
   },
 
   getEventTasks: (api: Api) => {
-    return async ({ id, userId }: { id: number; userId: number }): Promise<TaskResponse[]> => {
+    return async ({id, userId}: { id: number; userId: number }): Promise<TaskResponse[]> => {
       return Promise.resolve(
         api.withReauth(() => api.task.taskListShowInEvent(id, userId)).then((response) => response.data)
       );
@@ -101,7 +112,7 @@ export const taskService = {
   },
 
   updateTaskStatus: (api: Api) => {
-    return async ({ newStatus, id }: { newStatus: string; id: number }) => {
+    return async ({newStatus, id}: { newStatus: string; id: number }) => {
       const status: Record<string, string> = {
         Новое: 'NEW',
         'В работе': 'IN_PROGRESS',
@@ -115,7 +126,7 @@ export const taskService = {
   },
 
   updateTaskAssignee: (api: Api) => {
-    return async ({ assigneeId, taskId }: { assigneeId: number; taskId: number }) => {
+    return async ({assigneeId, taskId}: { assigneeId: number; taskId: number }) => {
       const response = await api.withReauth(() => api.task.taskSetAssignee(taskId, assigneeId));
       return await (response.data as Promise<unknown>);
     };

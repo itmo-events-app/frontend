@@ -13,6 +13,7 @@ import { ArrowDown } from "@shared/ui/icons";
 import { api } from "@shared/api";
 import { NotificationResponse } from "@shared/api/generated";
 import PagedListStupid from "@widgets/main/PagedList2";
+import { useNavigate } from "react-router-dom";
 
 
 class Notification {
@@ -55,8 +56,10 @@ class NotificationEntry {
 
 
 export default function NotificationListPage() {
+  const navigate = useNavigate();
+
   function _navigateToNotification(notificationLink: string) {
-    window.location.href = notificationLink;
+    navigate(new URL(notificationLink).pathname);
   }
 
   const [notifications, setNotifications] = useState<Notification[]>(new Array<Notification>())
@@ -185,34 +188,32 @@ export default function NotificationListPage() {
   }
 
   return (
-    <div>
-      <Layout
-        topLeft={<BrandLogo />}
-        topRight={<PageName text="Уведомления" />}
-        bottomLeft={<SideBar currentPageURL={RoutePaths.notifications} />}
-        bottomRight=
-          {
-            <Content>
-              <PagedListStupid
-                page={page}
-                setPage={setPage}
-                page_size={pageSize}
-                setPageSize={setPageSize}
-                page_step={5}
-                total_pages={totalPages}
-                total_elements={totalElements}
-                items={renderedNotificationEntries}
-              />
+    <Layout
+      topLeft={<BrandLogo />}
+      topRight={<PageName text="Уведомления" />}
+      bottomLeft={<SideBar currentPageURL={RoutePaths.notifications} />}
+      bottomRight=
+        {
+          <Content>
+            <PagedListStupid
+              page={page}
+              setPage={setPage}
+              page_size={pageSize}
+              setPageSize={setPageSize}
+              page_step={5}
+              total_pages={totalPages}
+              total_elements={totalElements}
+              items={renderedNotificationEntries}
+            />
 
-              <div className={styles.read_all_button_div}>
-                <Button className={styles.not_read_button + styles.read_all_button}
-                        onClick={() => _readAllNotReadNotifications()}>
-                  Прочитать все
-                </Button>
-              </div>
-            </Content>
-          }
-      />
-    </div>
+            <div className={styles.read_all_button_div}>
+              <Button className={styles.not_read_button + styles.read_all_button}
+                      onClick={() => _readAllNotReadNotifications()}>
+                Прочитать все
+              </Button>
+            </div>
+          </Content>
+        }
+    />
   );
 }

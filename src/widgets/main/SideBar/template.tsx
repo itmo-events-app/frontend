@@ -74,7 +74,7 @@ function SideBar(props: Props) {
     const intervalId = setInterval(() => {
       api.notification.getNotSeenCountNotification()
         .then(result => setNotSeenNotificationsCount(result.data));
-    }, 1000);
+    }, 5000);
 
     return () => clearInterval(intervalId);
   }, []);

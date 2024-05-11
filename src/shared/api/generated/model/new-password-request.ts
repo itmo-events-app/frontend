@@ -25,7 +25,7 @@ export interface NewPasswordRequest {
      * @type {string}
      * @memberof NewPasswordRequest
      */
-    'token'?: string;
+    'token': string;
     /**
      * 
      * @type {string}

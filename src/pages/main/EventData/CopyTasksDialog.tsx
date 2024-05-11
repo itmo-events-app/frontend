@@ -137,9 +137,9 @@ const CopyTasksDialog = ({onClose, idInt}: { onClose: () => void, idInt: number 
   }, [chosenEventId]);
 
   return (
-    <div className={styles.dialog_task} onClick={onClose}>
+    <div className={styles.dialog_task} onMouseDown={onClose}>
       <Dialog className={styles.dialog_content_task} text={dialogText}>
-        <div onClick={e => e.stopPropagation()}>
+        <div onMouseDown={e => e.stopPropagation()}>
 
           {possibleActivitiesToCopyTo !== undefined && chosenEventId === undefined &&
           <div>

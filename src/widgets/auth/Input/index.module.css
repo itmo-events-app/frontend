@@ -30,7 +30,7 @@
 
 .helper_error {
   color: var(--itmo-colors-red);
-  margin: 0px;
-  padding: 10px 0px;
+  margin: 0;
+  padding: 10px 0;
   font-size: 14px;
 }

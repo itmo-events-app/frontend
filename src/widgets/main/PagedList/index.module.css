@@ -35,6 +35,7 @@
   font-size: 18px;
   font-weight: bold;
   color: var(--itmo-colors-dark-gray);
+  user-select: none;
 }
 
 .current_page {

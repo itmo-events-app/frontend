@@ -11,12 +11,8 @@ type Props = {
 function Search(props: Props) {
   const _handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const _value = (e.target as HTMLInputElement).value;
-    switch (e.key) {
-      case 'Enter': {
-        props.onSearch(_value);
-        return;
-      }
-    }
+    props.onSearch(_value);
+    return;
   };
 
   return (
@@ -27,7 +23,7 @@ function Search(props: Props) {
         placeholder={props.placeholder}
         value={props.value}
         onChange={props.onChange}
-        onKeyDown={_handleKeyDown}
+        onKeyUp={_handleKeyDown}
       ></input>
       <div className={styles.icon_cnt} onClick={() => props.onSearch(props.value)}>
         <SearchLogo />

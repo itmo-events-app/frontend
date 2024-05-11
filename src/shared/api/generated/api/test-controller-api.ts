@@ -53,7 +53,7 @@ export const TestControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -89,7 +89,7 @@ export const TestControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
@@ -134,7 +134,7 @@ export const TestControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarQueryParameter = {} as any;
             const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
-            // authentication BearerAuthentication required
+            // authentication Bearer Authentication required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 

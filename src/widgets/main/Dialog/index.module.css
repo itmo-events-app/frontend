@@ -4,8 +4,16 @@
   border-radius: 10px;
   flex-direction: column;
   width: fit-content;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
+  padding: 0 !important;
+}
+
+.dop__wrap {
+  overflow-y: scroll;
+  max-height: calc(100vh - 80px);
+  padding: 10px;
+  padding-top: 0;
 }
 
 .header {
@@ -14,6 +22,7 @@
   align-items: center;
   border-bottom: 1px solid var(--itmo-colors-gray);
   padding: 10px 20px;
+  padding-top: 20px;
   gap: 20px;
   top: 0;
   left: 0;
@@ -34,7 +43,7 @@
   border: 0;
   font-size: 24px;
   opacity: 0.4;
-  padding: 0px;
+  padding: 0;
 }
 
 .close:hover {

@@ -226,6 +226,10 @@ export default function AppRouter() {
         }
         return <Route key={path} path={path} element={e} />;
       })}
+      <Route
+        path="/task/*"
+        element={<Navigate to="/tasks" replace />}
+      />
     </Routes>
   );
 }

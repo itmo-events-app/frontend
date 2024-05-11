@@ -33,7 +33,6 @@
 }
 
 
-
 .file_input_actual {
   opacity: 0;
   position: absolute;
@@ -84,7 +83,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-width: 38%;
+  min-width: 60%;
   max-width: 62%;
 }
 
@@ -97,6 +96,7 @@
 }
 
 @media screen and (max-width: 1080px) {
+
   .info_page {
     flex-direction: column;
     justify-content: normal;
@@ -225,9 +225,11 @@
 .hidden {
   visibility: hidden;
 }
+
 ._25P-K {
   display: none;
 }
+
 .dialog {
   margin-left: auto;
   margin-right: auto;
@@ -247,7 +249,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 0px 10px;
+  padding: 0 10px;
 }
 
 .inputEmpty {
@@ -257,6 +259,7 @@
 .tasks {
   display: block;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 
 .tasks__people {
@@ -279,6 +282,10 @@
 }
 
 .input_error {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 16px;
   border-color: var(--itmo-colors-red);
 }
 
@@ -293,8 +300,8 @@
 
 .helper_error {
   color: var(--itmo-colors-red);
-  margin: 0px;
-  padding: 10px 0px;
+  margin: 0;
+  padding: 10px 0;
   font-size: 14px;
 }
 
@@ -309,7 +316,7 @@
   right: 0;
   bottom: 0;
   width: 100%;
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   z-index: 500;
   position: fixed;
   display: flex;
@@ -323,7 +330,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-
   background: #ffffff;
   border: 1px solid black;
   border-radius: 16px;
@@ -375,7 +381,7 @@
   font-size: 20px;
   padding: 10px;
   margin: 10px;
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 .selected_task_for_copy {
@@ -417,18 +423,27 @@
 }
 
 .color_blue {
+  cursor: pointer;
   color: var(--itmo-colors-blue);
-}
-.color_lime {
-  color: var(--itmo-colors-lime);
-}
-.color_red {
-  color: var(--itmo-colors-red);
+  font-weight: bold;
 }
 
+.color_lime {
+  cursor: pointer;
+  color: var(--itmo-colors-lime);
+  font-weight: bold;
+}
+
+.color_red {
+  cursor: pointer;
+  color: var(--itmo-colors-red);
+  font-weight: bold;
+}
 
 .task_table {
   width: 100%;
+  table-layout: fixed;
+  overflow-wrap: break-word;
   margin: 0 0;
   border: 1px solid var(--itmo-colors-gray);
   border-collapse: collapse;
@@ -440,10 +455,56 @@
   padding: 10px 20px;
   background: var(--itmo-colors-gray);
   text-align: left;
-  border: 1px solid var(--itmo-colors-gray);
+  border: 1px solid var(--itmo-colors-dark-gray);
 }
 
 .task_table td {
   border: 1px solid var(--itmo-colors-gray);
   padding: 10px 20px;
+}
+
+.disabled-button {
+  opacity: 0.5;
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.upload_button {
+  position: relative;
+  width: 30px;
+  height: 20px;
+  border-radius: 25px;
+  border: 2px solid var(--itmo-colors-black);
+  background-color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  transition: .3s;
+}
+
+.upload_button svg {
+  color: var(--itmo-colors-black);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: .3s;
+}
+
+.delete_button {
+  position: relative;
+  width: 30px;
+  height: 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: .3s;
+}
+
+.delete_button svg {
+  color: var(--itmo-colors-black);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: .3s;
 }
