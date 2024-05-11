@@ -395,7 +395,7 @@ function TaskListPage() {
     }
   }
 
-  const activityOptions = dropdownOptions.find(obj => obj.event.id === selectedEvent?.id)?.activities;
+  const activityOptions = dropdownOptions.find(obj => obj.event.id === selectedEvent)?.activities;
   return (
     <Layout
       topLeft={<BrandLogo />}
@@ -415,23 +415,17 @@ function TaskListPage() {
                     <Dropdown
                       placeholder="Мероприятие"
                       items={dropdownOptions.map(obj => obj.event)}
-                      value={selectedEvent}
-                      onChange={(item) => _dropdownHandler(item, true)}
-                      onClear={() => _dropdownHandler(undefined, true)}
-                      toText={(item) => {
-                        return item.value
-                      }} />
+                      value={new DropdownOption(selectedEvent)}
+                      onChange={(item) => _dropdownHandler(item as any, true)}
+                      onClear={() => _dropdownHandler(undefined, true)} />
                   </div>
                   <div className={styles.dropdownfilter}>
                     <Dropdown
                       placeholder="Активность"
                       items={activityOptions ? activityOptions?.map(obj => obj.activity) : []}
-                      value={selectedActivity}
-                      onChange={(item) => _dropdownHandler(item, false)}
-                      onClear={() => _dropdownHandler(undefined, false)}
-                      toText={(item) => {
-                        return item.value
-                      }} />
+                      value={new DropdownOption(selectedActivity)}
+                      onChange={(item) => _dropdownHandler(item as any, false)}
+                      onClear={() => _dropdownHandler(undefined, false)} />
                   </div>
                 </div>
               </div>

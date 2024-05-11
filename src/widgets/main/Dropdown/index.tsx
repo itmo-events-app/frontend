@@ -1,7 +1,5 @@
-import { uid } from 'uid';
-import styles from './index.module.css';
-import React, { useState } from 'react';
-import { appendClassName } from '@shared/util';
+
+import { useState } from 'react';
 import Select from 'react-select';
 
 class DropdownOption<T> {
@@ -21,43 +19,43 @@ type Props<T> = {
   placeholder?: string;
   className?: string;
   items: T[];
-  toText: (e: T) => string;
+  toText?: (e: T) => string;
   readonly?: boolean;
 };
 
 function Dropdown<T>(props: Props<T>) {
-  const readonly = props.readonly ?? false;
+  //const readonly = props.readonly ?? false;
 
-  const [open, setOpen] = useState(false);
+  //const [open, setOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState();
-  const clearable = props.onClear != null;
-  const toText = props.toText ?? ((_) => 'toText is undefined');
+  //const clearable = props.onClear != null;
+  //const toText = props.toText ?? ((_) => 'toText is undefined');
 
   // NOTE: onClear and onChange can lead to component rerendering (because of value change)
   // usage of stopPropagation is forced
-  const onClear = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (props.onClear) {
-      props.onClear();
-    }
-    setOpen(false);
-    e.stopPropagation();
-  };
+  // const onClear = (e: React.MouseEvent<HTMLDivElement>) => {
+  //   if (props.onClear) {
+  //     props.onClear();
+  //   }
+  //   setOpen(false);
+  //   e.stopPropagation();
+  // };
 
-  function _onChange(v: T) {
-    return function (e: React.MouseEvent<HTMLDivElement>) {
-      props.onChange?.(v);
-      setOpen(false);
-      e.stopPropagation();
-    };
-  }
+  // function _onChange(v: T) {
+  //   return function (e: React.MouseEvent<HTMLDivElement>) {
+  //     props.onChange?.(v);
+  //     setOpen(false);
+  //     e.stopPropagation();
+  //   };
+  // }
 
-  function _clearOption() {
-    return (
-      <div className={styles.dropdown_item_container} onClick={onClear}>
-        Сброс выбора
-      </div>
-    );
-  }
+  // function _clearOption() {
+  //   return (
+  //     <div className={styles.dropdown_item_container} onClick={onClear}>
+  //       Сброс выбора
+  //     </div>
+  //   );
+  // }
 
   function _createUnselectedOption(option: DropdownOption<T>) {
     if (typeof (option.value) != 'string') {
@@ -89,21 +87,22 @@ function Dropdown<T>(props: Props<T>) {
     return items;
   }
 
-  function _renderPlaceholder(text?: string) {
-    return (
-      <a className={styles.dropdown_placeholder} onClick={() => setOpen(!open)}>
-        {text}
-      </a>
-    );
-  }
+  // function _renderPlaceholder(text?: string) {
+  //   return (
+  //     <a className={styles.dropdown_placeholder} onClick={() => setOpen(!open)}>
+  //       {text}
+  //     </a>
+  //   );
+  // }
 
-  function _renderSelectedOption(text: DropdownOption<T>) {
-    return (
-      <a className={styles.dropdown_selected_option} onClick={() => setOpen(!open)}>
-        {toText(text.value)}
-      </a>
-    );
-  }
+  // function _renderSelectedOption(text: DropdownOption<T>) {
+  //   return (
+  //     <a className={styles.dropdown_selected_option} onClick={() => setOpen(!open)}>
+  //       {toText(text.value)}
+  //     </a>
+  //   );
+  // }
+
   function handleSelect(data: any) {
     console.log(data)
     setSelectedOptions(data)
@@ -120,17 +119,6 @@ function Dropdown<T>(props: Props<T>) {
       props.onChange?.(data.label);
     }
   }
-  function handleSelect2(data: any) {
-    setSelectedOptions(data)
-    props.onChange?.(data.value);
-  }
-  const optionList = [
-    { value: "red", label: "Red" },
-    { value: "green", label: "Green" },
-    { value: "yellow", label: "Yellow" },
-    { value: "blue", label: "Blue" },
-    { value: "white", label: "White" }
-  ];
 
   return (
     <Select

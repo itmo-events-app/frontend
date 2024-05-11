@@ -147,7 +147,7 @@ const CopyTasksDialog = ({ onClose, idInt }: { onClose: () => void, idInt: numbe
               <Dropdown
                 placeholder="Копировать в мероприятие:"
                 items={possibleActivitiesToCopyTo.map((e) => new DropdownOption(e.title!, e.id?.toString()))}
-                toText={(act) => act.title!}
+                toText={(act) => act.value!}
                 value={new DropdownOption(selectedEventValue?.title, selectedEventValue?.id?.toString())}
                 onChange={(sel) => {
                   console.log(sel);

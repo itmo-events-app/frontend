@@ -421,16 +421,10 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
         </div>
         <div className={errors.place ? styles.input_error : ''}>
           <InputLabel value="Место" />
-          <Dropdown value={place} onChange={(e) => setPlace(e ? e : 0)}
-            items={placeList != null && placeList.length > 0 ? placeList.map(p => { return new DropdownOption(p.name, p.id?.toString()) }) : [0]}
-            toText={(o) => {
-              const place = placeList.find(p => p.id == o)
-              if (place) {
-                const room = place.room ? ", ауд. " + place.room : ""
-                return place.address + " " + room
-              }
-              return ""
-            }} />
+          <Dropdown value={new DropdownOption(place.toString())} onChange={(e) => setPlace(e ? e as any : 0)}
+            items={placeList.map(p => { 
+              return new DropdownOption(p.name, p.id?.toString()) 
+            })} />
           <div>
             {errors.place && <div className={styles.helper_error}>{errorsText.place}</div>}
           </div>

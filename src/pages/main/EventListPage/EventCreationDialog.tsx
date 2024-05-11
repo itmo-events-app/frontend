@@ -71,7 +71,7 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
                 items={dropdownValues}
                 value={dropdownValue}
                 toText={(input: DropdownOption<string>) => {return input.value}}
-                onChange={(value) =>_handleChangeDropdown(value)}
+                onChange={(value) =>_handleChangeDropdown(value as any)}
               />
             </div>
             <div className={styles.event_form_button}>
