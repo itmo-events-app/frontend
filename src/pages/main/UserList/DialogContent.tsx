@@ -128,7 +128,7 @@ const DialogContent = (props: AssignProps) => {
               toText={(item) => item.value}
               value={dropdownValue}
               onChange={(sel) => {
-                setEventId(Number(sel.id))
+                setEventId(Number(sel))
                 setDropdownValue(sel)
               }}
             />
