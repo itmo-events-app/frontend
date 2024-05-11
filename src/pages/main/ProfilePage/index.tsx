@@ -317,7 +317,7 @@ function ProfilePage() {
               </div>
             </div>
             <div className={appendClassName(styles.grid_column, styles.grid_column_settings)}>
-              <div className={appendClassName(styles.settings_initial, styles.settings)}>
+              <div className={appendClassName(styles.settings)}>
                 <div className={styles.settings_title}>Уведомления</div>
                 <div className={styles.settings_content}>
                   <_ToggleSwitch label={'Получать уведомления по почте'}

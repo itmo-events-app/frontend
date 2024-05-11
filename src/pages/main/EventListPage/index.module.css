@@ -84,6 +84,7 @@
 }
 
 /* dialog */
+
 .fade {
   position: fixed;
   top: 0;
@@ -103,11 +104,9 @@
 .dialog {
   margin-left: auto;
   margin-right: auto;
-  max-height: calc(100% - 60px);
   width: auto;
   max-width: 960px;
   height: auto;
-  max-height: none;
   overflow: visible;
   box-sizing: border-box;
 }

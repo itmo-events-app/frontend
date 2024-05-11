@@ -130,7 +130,8 @@ function RegisterPage() {
             setEmailError(e.response.data.errors.join('. '));
           }
           else {
-            setPasswordError(e.response.data);
+            if (e.response.data == "Заявка на регистрацию с указанным email уже существует") setEmailError(e.response.data);
+            else setPasswordError(e.response.data);
           }
         })
     }

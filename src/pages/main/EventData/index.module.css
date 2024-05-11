@@ -96,6 +96,7 @@
 }
 
 @media screen and (max-width: 1080px) {
+
   .info_page {
     flex-direction: column;
     justify-content: normal;
@@ -249,7 +250,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 0px 10px;
+  padding: 0 10px;
 }
 
 .inputEmpty {
@@ -300,8 +301,8 @@
 
 .helper_error {
   color: var(--itmo-colors-red);
-  margin: 0px;
-  padding: 10px 0px;
+  margin: 0;
+  padding: 10px 0;
   font-size: 14px;
 }
 
@@ -381,7 +382,7 @@
   font-size: 20px;
   padding: 10px;
   margin: 10px;
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 .selected_task_for_copy {

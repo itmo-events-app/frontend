@@ -35,11 +35,6 @@
 }
 
 
-.data_string {
-  display: flex;
-  align-items: center;
-}
-
 .place_column {
   display: flex;
   flex-direction: column;
