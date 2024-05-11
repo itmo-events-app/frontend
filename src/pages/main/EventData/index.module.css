@@ -509,3 +509,54 @@
   transform: translate(-50%, -50%);
   transition: .3s;
 }
+
+.dialog__row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 25px;
+}
+
+.dialog__rowthird {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 15px;
+}
+
+.dialog__date {
+  position: relative;
+}
+
+.dialog__date>div {
+  display: block;
+  width: 100%;
+}
+
+.dialog__date input {
+  width: 100%;
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 4px;
+  padding: 10px 10px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dialog__date>span {
+  position: absolute;
+  top: 7px;
+  right: 10px;
+  pointer-events: none;
+}
+
+.dialog__date>span path {
+  stroke: hsl(0, 0%, 50%);
+}
+
+@media(max-width:575px) {
+
+  .dialog__rowthird,
+  .dialog__row {
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 0px;
+  }
+}
