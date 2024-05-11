@@ -35,8 +35,8 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
       console.error(e);
     }
   }, []);
-  const _handleChangeDropdown = (value: DropdownOption<string>) => {
-    setDropdownValue(value);
+  const _handleChangeDropdown = (value: string) => {
+    setDropdownValue(new DropdownOption(value, value));
   }
   const _handleChangeText = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);

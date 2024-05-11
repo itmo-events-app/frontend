@@ -9,7 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { AddActivityFormatEnum, AddActivityStatusEnum, EventResponse, PlaceResponse } from "@shared/api/generated";
 import ApiContext from "@features/api-context.ts";
 import TextAreaWithError from "@widgets/TextAreaWithError/TextAreaWithError.tsx";
-import Dropdown from "@widgets/main/Dropdown";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 
 function getAddActivityFormatEnum(value: string): AddActivityFormatEnum | undefined {
   for (const [_, v] of Object.entries(AddActivityFormatEnum)) {
@@ -435,7 +435,8 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
         <div className={errors.place ? styles.input_error : ''}>
           <InputLabel value="Место" />
           <Dropdown placeholder="Место" value={place} onChange={(e) => setPlace(e ? e : 0)}
-            items={placeList != null && placeList.length > 0 ? placeList.map(p => { return p.id }) : [0]} toText={(o) => {
+            items={placeList != null && placeList.length > 0 ? placeList.map(p => { return new DropdownOption(p.name, p.id?.toString()) }) : [0]} 
+            toText={(o) => {
               const place = placeList.find(p => p.id == o)
               if (place) {
                 const room = place.room ? ", ауд. " + place.room : ""
