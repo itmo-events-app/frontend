@@ -12,8 +12,8 @@
 }
 
 .place_entry {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
   padding: 10px 20px;
   display: flex;
   flex-direction: row;
@@ -155,5 +155,3 @@
   gap: 12px;
   margin-left: auto;
 }
-
-
