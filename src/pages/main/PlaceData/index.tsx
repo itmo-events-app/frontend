@@ -38,7 +38,7 @@ function PlaceDataPage() {
     if (ref.current) {
       const result = ref.current && ref.current.clientHeight
       const result2 = document.getElementsByTagName("body")[0].clientHeight
-      setIframeHeight(result2 - Number(result) - 150)
+      setIframeHeight(result2 - Number(result) - 160)
     }
   });
 

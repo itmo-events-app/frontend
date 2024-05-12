@@ -194,7 +194,7 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
                 />
               </div>
             )} />
-            <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?noscroll&select_only_areas"}
+            <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?noscroll&select_only_areas&lat="+foundPlace?.latitude+"&lon="+foundPlace?.longitude}
               width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button type="submit">Обновить</Button>
