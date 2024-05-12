@@ -86,8 +86,8 @@
 }
 
 .user {
-  border: 1px solid var(--itmo-colors-border);
-  border-radius: 10px;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
 }
 
 .user_entry {
