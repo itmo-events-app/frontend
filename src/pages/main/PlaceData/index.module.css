@@ -50,3 +50,10 @@
 .empty_field_msg {
   color: var(--itmo-colors-red);
 }
+
+.bottom__right {
+  height: calc(100vh - 73px);
+}
+.placedata__descr {
+  margin-bottom: 20px;
+}

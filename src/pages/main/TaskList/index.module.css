@@ -16,8 +16,8 @@
 }
 
 .filter_group {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
   display: flex;
   flex-flow: row wrap;
   width: 100%;

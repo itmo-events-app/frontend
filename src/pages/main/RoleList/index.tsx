@@ -110,7 +110,8 @@ function RoleListPage() {
   useEffect(() => {
     const handler = (e: any) => {
       if (dialogRef.current) {
-        if (dialogData.visible && !(dialogRef.current as any).contains(e.target)) {
+        console.log(e.target)
+        if (dialogData.visible && !(dialogRef.current as any).contains(e.target) && e.target.role != "option") {
           _closeDialog();
         }
       }

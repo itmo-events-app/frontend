@@ -97,30 +97,32 @@ const CreatePlaceDialog = ({ onClose }: { onClose: () => void }) => {
                 onChange={(event) => setDescription(event.target.value)}
               />
             </div>
-            <div className={styles.place_form_item}>
-              <Label value="Адрес" />
-              <Input
-                type="text"
-                placeholder={"Адрес"}
-                value={address}
-                onChange={(event) => setAddress(event.target.value)}
-              />
-            </div>
-            <div className={styles.place_form_item}>
-              <Label value="Аудитория" />
-              <Input
-                type="text"
-                placeholder={"Можно выбрать на карте"}
-                value={roomName}
-                onChange={(event) => {
-                  setRoomName(event.target.value);
-                  (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({
-                    type: "roomHighlight",
-                    room: event.target.value,
-                  }, "*");
-                }
-                }
-              />
+            <div className={styles.form__row}>
+              <div className={styles.place_form_item}>
+                <Label value="Адрес" />
+                <Input
+                  type="text"
+                  placeholder={"Адрес"}
+                  value={address}
+                  onChange={(event) => setAddress(event.target.value)}
+                />
+              </div>
+              <div className={styles.place_form_item}>
+                <Label value="Аудитория" />
+                <Input
+                  type="text"
+                  placeholder={"Можно выбрать на карте"}
+                  value={roomName}
+                  onChange={(event) => {
+                    setRoomName(event.target.value);
+                    (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({
+                      type: "roomHighlight",
+                      room: event.target.value,
+                    }, "*");
+                  }
+                  }
+                />
+              </div>
             </div>
             <div className={styles.place_form_item}>
               {/*<Label value="Долгота" />*/}

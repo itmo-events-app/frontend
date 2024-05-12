@@ -17,7 +17,7 @@ export const placeService = {
   getPlaces: (api: Api) => {
     return async (): Promise<PlaceResponse[]> => {
       const response = await api
-        .withReauth(() => api.place.getAllOrFilteredPlaces());
+        .withReauth(() => api.place.getAllOrFilteredPlaces(undefined, 50));
       return response.data;
     };
   },
@@ -25,7 +25,7 @@ export const placeService = {
   getFilteredPlaces: (api: Api) => {
     return async ({ name }: { name: string }): Promise<PlaceResponse[]> => {
       return Promise.resolve(api
-        .withReauth(() => api.place.getAllOrFilteredPlaces(undefined, undefined, name))
+        .withReauth(() => api.place.getAllOrFilteredPlaces(undefined, 50, name))
         .then((response) => response.data)
       );
     };

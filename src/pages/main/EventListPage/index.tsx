@@ -154,7 +154,7 @@ function EventListPage() {
         let address: string = '';
         if (e.placeId) {
           const place = await placeService.getPlace(api, e.placeId);
-          eventsWithPlaces.push({event: e, place: place});
+          eventsWithPlaces.push({ event: e, place: place });
           if (place) address = place.address !== undefined ? place.address + (place.room ? ", ауд. " + place.room : "") : "null";
         }
         return new PageEntry(() => {
@@ -227,6 +227,7 @@ function EventListPage() {
         break;
     }
     return (
+
       <Dialog
         className={appendClassName(styles.dialog,
           (dialogData.visible ? styles.visible : styles.hidden))}
@@ -234,7 +235,7 @@ function EventListPage() {
         ref={dialogRef}
         onClose={_closeDialog}
       >
-        {component}
+          {component}
       </Dialog>
     )
   }
@@ -280,7 +281,7 @@ function EventListPage() {
                   value={displayMode}
                   onChange={(mode) => {
                     setDisplayMode(mode);
-                    (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({type: "resize"}, "*");
+                    (document.getElementById("itmo-map-iframe") as HTMLIFrameElement)?.contentWindow?.postMessage({ type: "resize" }, "*");
                   }}
                   toText={(input: string) => { return input }} />
               </div>
@@ -292,24 +293,40 @@ function EventListPage() {
             </div>
             <div className={styles.filters}>
               <div className={styles.filter_group}>
-                <DatePicker
-                  placeholderText="Начало проведения"
-                  className={styles.filter_element}
-                  onChange={(date) => _handleFilterChange(date ? date.toISOString() : "", "startDate")}
-                  selected={!isBlank(filters.startDate) ? new Date(filters.startDate) : null}
-                  dateFormat="yyyy-MM-dd"
-                  popperPlacement="top-start"
-                  enableTabLoop={false}
-                />
-                <DatePicker
-                  placeholderText="Конец проведения"
-                  className={styles.filter_element}
-                  onChange={(date) => _handleFilterChange(date ? date.toISOString() : "", "endDate")}
-                  selected={!isBlank(filters.endDate) ? new Date(filters.endDate) : null}
-                  dateFormat="yyyy-MM-dd"
-                  popperPlacement="top-start"
-                  enableTabLoop={false}
-                />
+                <div className={styles.dialog__date}>
+                  <DatePicker
+                    placeholderText="Начало проведения"
+                    className={styles.filter_element}
+                    onChange={(date) => _handleFilterChange(date ? date.toISOString() : "", "startDate")}
+                    selected={!isBlank(filters.startDate) ? new Date(filters.startDate) : null}
+                    dateFormat="yyyy-MM-dd"
+                    popperPlacement="top-start"
+                    enableTabLoop={false}
+                  />
+                  <span>
+                    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 9H21M12 18V12M15 15.001L9 15M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </div>
+
+                <div className={styles.dialog__date}>
+                  <DatePicker
+                    placeholderText="Конец проведения"
+                    className={styles.filter_element}
+                    onChange={(date) => _handleFilterChange(date ? date.toISOString() : "", "endDate")}
+                    selected={!isBlank(filters.endDate) ? new Date(filters.endDate) : null}
+                    dateFormat="yyyy-MM-dd"
+                    popperPlacement="top-start"
+                    enableTabLoop={false}
+                  />
+                  <span>
+                    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 9H21M12 18V12M15 15.001L9 15M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </div>
+
                 <div className={styles.dropdownfilter}>
                   <Dropdown
                     placeholder="Статус"
