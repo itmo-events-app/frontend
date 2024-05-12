@@ -109,6 +109,8 @@
   height: auto;
   overflow: visible;
   box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .dialog__date {

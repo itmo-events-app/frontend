@@ -375,178 +375,227 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
             }
             errorText={errorsText.participantLimit ?? ''} />
         </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Максимальный возраст для участия" />
-          <Input
-            value={String(participantHighestAge)}
-            onChange={(e) => {
-              if (parseInt(e.target.value)) {
-                if (parseInt(e.target.value) > 150) {
-                  setParticipantHighestAge(150)
+        <div className={styles.dialog__row}>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Минимальный возраст для участия" />
+            <Input
+              value={String(participantLowestAge)}
+              onChange={(e) => {
+                if (parseInt(e.target.value)) {
+                  if (parseInt(e.target.value) > 150) {
+                    setParticipantLowestAge(150)
+                  } else {
+                    setParticipantLowestAge(parseInt(e.target.value))
+                  }
                 } else {
-                  setParticipantHighestAge(parseInt(e.target.value))
+                  setParticipantLowestAge(1);
                 }
-              } else {
-                setParticipantHighestAge(1);
               }
-            }
-            }
-            errorText={errorsText.participantHighestAge ?? ''} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Минимальный возраст для участия" />
-          <Input
-            value={String(participantLowestAge)}
-            onChange={(e) => {
-              if (parseInt(e.target.value)) {
-                if (parseInt(e.target.value) > 150) {
-                  setParticipantLowestAge(150)
+              }
+              errorText={errorsText.participantLowestAge ?? ''} />
+          </div>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Максимальный возраст для участия" />
+            <Input
+              value={String(participantHighestAge)}
+              onChange={(e) => {
+                if (parseInt(e.target.value)) {
+                  if (parseInt(e.target.value) > 150) {
+                    setParticipantHighestAge(150)
+                  } else {
+                    setParticipantHighestAge(parseInt(e.target.value))
+                  }
                 } else {
-                  setParticipantLowestAge(parseInt(e.target.value))
+                  setParticipantHighestAge(1);
                 }
-              } else {
-                setParticipantLowestAge(1);
               }
-            }
-            }
-            errorText={errorsText.participantLowestAge ?? ''} />
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Формат" />
-          <Dropdown value={format} onChange={(e) => setFormat(e)}
-            items={Object.entries(AddActivityFormatEnum).map(([, v]) => { return v })} toText={(o) => o} />
-          <div>
-            {errors.format && <div className={styles.helper_error}>{errorsText.format}</div>}
+              }
+              errorText={errorsText.participantHighestAge ?? ''} />
           </div>
         </div>
-        <div className={errors.place ? styles.input_error : ''}>
-          <InputLabel value="Место" />
-          <Dropdown value={new DropdownOption(place.toString())} onChange={(e) => setPlace(e ? e as any : 0)}
-            items={placeList.map(p => { 
-              return new DropdownOption(p.name, p.id?.toString()) 
-            })} />
-          <div>
-            {errors.place && <div className={styles.helper_error}>{errorsText.place}</div>}
+        <div className={styles.dialog__rowthird}>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Формат" />
+            <Dropdown value={format} onChange={(e) => setFormat(e)}
+              items={Object.entries(AddActivityFormatEnum).map(([, v]) => { return v })} toText={(o) => o} />
+            <div>
+              {errors.format && <div className={styles.helper_error}>{errorsText.format}</div>}
+            </div>
           </div>
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Состояние" />
-          <Dropdown value={status} onChange={(e) => setStatus(e)}
-            items={Object.entries(AddActivityStatusEnum).map(([, v]) => { return v })} toText={(o) => o} />
-          <div>
-            {errors.status && <div className={styles.helper_error}>{errorsText.status}</div>}
+          <div className={errors.place ? styles.input_error : styles.dialog_item}>
+            <InputLabel value="Место" />
+            <Dropdown value={new DropdownOption(place.toString())} onChange={(e) => setPlace(e ? e as any : 0)}
+              items={placeList.map(p => {
+                return new DropdownOption(p.name, p.id?.toString())
+              })} />
+            <div>
+              {errors.place && <div className={styles.helper_error}>{errorsText.place}</div>}
+            </div>
+          </div>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Состояние" />
+            <Dropdown value={status} onChange={(e) => setStatus(e)}
+              items={Object.entries(AddActivityStatusEnum).map(([, v]) => { return v })} toText={(o) => o} />
+            <div>
+              {errors.status && <div className={styles.helper_error}>{errorsText.status}</div>}
+            </div>
           </div>
         </div>
 
-        <div className={styles.dialog_item}>
-          <InputLabel value="Время начала" />
-          <div>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="yyyy-MM-dd HH:mm"
-              popperPlacement="top-start"
-              className={errors.startDate ? styles.input_error : styles.dialog_item}
-            />
-            {errors.startDate && <div className={styles.helper_error}>{errorsText.startDate}</div>}
+        <div className={styles.dialog__row}>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Время начала" />
+            <div className={styles.dialog__date}>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="yyyy-MM-dd HH:mm"
+                popperPlacement="top-start"
+                className={errors.startDate ? styles.input_error : styles.dialog_item}
+              />
+              {errors.startDate && <div className={styles.helper_error}>{errorsText.startDate}</div>}
+              <span>
+                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 9H21M12 18V12M15 15.001L9 15M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+          </div>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Время окончания" />
+            <div className={styles.dialog__date}>
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="yyyy-MM-dd HH:mm"
+                popperPlacement="top-start"
+                className={errors.endDate ? styles.input_error : styles.dialog_item}
+              />
+              {errors.endDate && <div className={styles.helper_error}>{errorsText.endDate}</div>}
+              <span>
+                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 9H21M12 18V12M15 15.001L9 15M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Время окончания" />
-          <div>
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="yyyy-MM-dd HH:mm"
-              popperPlacement="top-start"
-              className={errors.endDate ? styles.input_error : styles.dialog_item}
-            />
-            {errors.endDate && <div className={styles.helper_error}>{errorsText.endDate}</div>}
+        <div className={styles.dialog__row}>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Время начала регистрации" />
+            <div className={styles.dialog__date}>
+              <DatePicker
+                selected={registrationStart}
+                onChange={(date) => setRegistrationStart(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="yyyy-MM-dd HH:mm"
+                popperPlacement="top-start"
+                className={errors.registrationStart ? styles.input_error : styles.dialog_item}
+              />
+              {errors.registrationStart && <div className={styles.helper_error}>{errorsText.registrationStart}</div>}
+              <span>
+                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 9H21M12 18V12M15 15.001L9 15M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+          </div>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Время окончания регистрации" />
+            <div className={styles.dialog__date}>
+              <DatePicker
+                selected={registrationEnd}
+                onChange={(date) => setRegistrationEnd(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="yyyy-MM-dd HH:mm"
+                popperPlacement="top-start"
+                className={errors.registrationEnd ? styles.input_error : styles.dialog_item}
+              />
+              {errors.registrationEnd && <div className={styles.helper_error}>{errorsText.registrationEnd}</div>}
+              <span>
+                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 9H21M12 18V12M15 15.001L9 15M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Время начала регистрации" />
-          <div>
-            <DatePicker
-              selected={registrationStart}
-              onChange={(date) => setRegistrationStart(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="yyyy-MM-dd HH:mm"
-              popperPlacement="top-start"
-              className={errors.registrationStart ? styles.input_error : styles.dialog_item}
-            />
-            {errors.registrationStart && <div className={styles.helper_error}>{errorsText.registrationStart}</div>}
+        <div className={styles.dialog__row}>
+          <div className={styles.dialog_item}>
+            <InputLabel value="Время начала подготовки" />
+            <div className={styles.dialog__date}>
+              <DatePicker
+                selected={preparingStart}
+                onChange={(date) => {
+                  setPreparingStart(date);
+                }}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="yyyy-MM-dd HH:mm"
+                popperPlacement="top-start"
+                className={errors.preparingStart ? styles.input_error : styles.dialog_item}
+              />
+              {errors.preparingStart && <div className={styles.helper_error}>{errorsText.preparingStart}</div>}
+
+              <span>
+                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 9H21M12 18V12M15 15.001L9 15M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
           </div>
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Время окончания регистрации" />
-          <div>
-            <DatePicker
-              selected={registrationEnd}
-              onChange={(date) => setRegistrationEnd(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="yyyy-MM-dd HH:mm"
-              popperPlacement="top-start"
-              className={errors.registrationEnd ? styles.input_error : styles.dialog_item}
-            />
-            {errors.registrationEnd && <div className={styles.helper_error}>{errorsText.registrationEnd}</div>}
-          </div>
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Время начала подготовки" />
-          <div>
-            <DatePicker
-              selected={preparingStart}
-              onChange={(date) => {
-                setPreparingStart(date);
-              }}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="yyyy-MM-dd HH:mm"
-              popperPlacement="top-start"
-              className={errors.preparingStart ? styles.input_error : styles.dialog_item}
-            />
-            {errors.preparingStart && <div className={styles.helper_error}>{errorsText.preparingStart}</div>}
-          </div>
-        </div>
-        <div className={styles.dialog_item}>
-          <InputLabel value="Время окончания подготовки" />
-          <div>
-            <DatePicker
-              selected={preparingEnd}
-              onChange={(date) => setPreparingEnd(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="yyyy-MM-dd HH:mm"
-              popperPlacement="top-start"
-              className={errors.preparingEnd ? styles.input_error : styles.dialog_item}
-            />
-            {errors.preparingEnd && <div className={styles.helper_error}>{errorsText.preparingEnd}</div>}
+          <div className={styles.dialog_item}>
+            <InputLabel value="Время окончания подготовки" />
+            <div className={styles.dialog__date}>
+              <DatePicker
+                selected={preparingEnd}
+                onChange={(date) => setPreparingEnd(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="yyyy-MM-dd HH:mm"
+                popperPlacement="top-start"
+                className={errors.preparingEnd ? styles.input_error : styles.dialog_item}
+              />
+              {errors.preparingEnd && <div className={styles.helper_error}>{errorsText.preparingEnd}</div>}
+
+              <span>
+                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 9H21M12 18V12M15 15.001L9 15M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Картинка" />
-          <input
-            type="file"
-            onChange={(e) => {
-              if (e.target.files) {
-                const file = e.target.files[0];
-                setImage(file);
-              }
-            }}
-          />
+          <label className={styles.file__wrap}>
+            <input
+              type="file"
+              onChange={(e) => {
+                if (e.target.files) {
+                  const file = e.target.files[0];
+                  setImage(file);
+                }
+              }}
+            />
+            <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.5535 2.49392C12.4114 2.33852 12.2106 2.25 12 2.25C11.7894 2.25 11.5886 2.33852 11.4465 2.49392L7.44648 6.86892C7.16698 7.17462 7.18822 7.64902 7.49392 7.92852C7.79963 8.20802 8.27402 8.18678 8.55352 7.88108L11.25 4.9318V16C11.25 16.4142 11.5858 16.75 12 16.75C12.4142 16.75 12.75 16.4142 12.75 16V4.9318L15.4465 7.88108C15.726 8.18678 16.2004 8.20802 16.5061 7.92852C16.8118 7.64902 16.833 7.17462 16.5535 6.86892L12.5535 2.49392Z" fill="#1C274C" />
+              <path d="M3.75 15C3.75 14.5858 3.41422 14.25 3 14.25C2.58579 14.25 2.25 14.5858 2.25 15V15.0549C2.24998 16.4225 2.24996 17.5248 2.36652 18.3918C2.48754 19.2919 2.74643 20.0497 3.34835 20.6516C3.95027 21.2536 4.70814 21.5125 5.60825 21.6335C6.47522 21.75 7.57754 21.75 8.94513 21.75H15.0549C16.4225 21.75 17.5248 21.75 18.3918 21.6335C19.2919 21.5125 20.0497 21.2536 20.6517 20.6516C21.2536 20.0497 21.5125 19.2919 21.6335 18.3918C21.75 17.5248 21.75 16.4225 21.75 15.0549V15C21.75 14.5858 21.4142 14.25 21 14.25C20.5858 14.25 20.25 14.5858 20.25 15C20.25 16.4354 20.2484 17.4365 20.1469 18.1919C20.0482 18.9257 19.8678 19.3142 19.591 19.591C19.3142 19.8678 18.9257 20.0482 18.1919 20.1469C17.4365 20.2484 16.4354 20.25 15 20.25H9C7.56459 20.25 6.56347 20.2484 5.80812 20.1469C5.07435 20.0482 4.68577 19.8678 4.40901 19.591C4.13225 19.3142 3.9518 18.9257 3.85315 18.1919C3.75159 17.4365 3.75 16.4354 3.75 15Z" fill="#1C274C" />
+            </svg>
+            <span>{image ? <p>Выбран файл: {image.name}</p> : <span>Выберите файл</span>}</span>
+          </label>
           {image && <p>Selected file: {image.name}</p>}
         </div>
       </div>

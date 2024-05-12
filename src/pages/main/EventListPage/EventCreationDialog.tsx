@@ -7,22 +7,22 @@ import styles from './dialog.module.css';
 import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
 import { UserResponse } from '@shared/api/generated/model';
 
-function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}) {
-  const {api} = useContext(ApiContext);
+function EventCreationDialog({ onSubmit = null }: { onSubmit: (() => void) | null }) {
+  const { api } = useContext(ApiContext);
   const [inputValue, setInputValue] = useState('');
   const [dropdownValues, setDropdownValues] = useState<DropdownOption<string>[]>([]);
   const [dropdownValue, setDropdownValue] = useState<DropdownOption<string> | undefined>();
   useEffect(() => {
     try {
-      const fetchUsers = async() => {
+      const fetchUsers = async () => {
         const response = await api.profile.getAllUsers();
         console.log(response);
         if (response.status == 200) {
           const users = response.data.items as unknown as UserResponse[];
-          users.sort((a, b) => (a.id?a.id:0) - (b.id?b.id:0));
+          users.sort((a, b) => (a.id ? a.id : 0) - (b.id ? b.id : 0));
           const values: DropdownOption<string>[] = [];
           users.forEach(user => {
-            values.push(new DropdownOption(user.id+'. '+user.name+' '+user.surname,(user.id?user.id:0).toString()));
+            values.push(new DropdownOption(user.id + '. ' + user.name + ' ' + user.surname, (user.id ? user.id : 0).toString()));
           });
           setDropdownValues(values);
           setDropdownValue(values[0]);
@@ -30,7 +30,8 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
           console.error(response.status);
         }
       }
-      fetchUsers();}
+      fetchUsers();
+    }
     catch (e) {
       console.error(e);
     }
@@ -41,14 +42,14 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
   const _handleChangeText = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
-  const  _createEvent = async() => {
+  const _createEvent = async () => {
     if (inputValue.trim().length === 0) return; //blank?
     try {
-      const userId = parseInt(dropdownValue?.id?dropdownValue.id:'0');
-      if (userId<1) return
+      const userId = parseInt(dropdownValue?.id ? dropdownValue.id : '0');
+      if (userId < 1) return
       const response = await api.event.addEventByOrganizer({
-        'userId':userId,
-        'title':inputValue
+        'userId': userId,
+        'title': inputValue
       });
       if (response.status === 201) {
         if (onSubmit) onSubmit();
@@ -60,25 +61,25 @@ function EventCreationDialog({onSubmit = null} : {onSubmit: (() => void) | null}
     }
   }
   return (
-    <Content>
-          <div className={styles.event_form}>
-            <div className={styles.event_form_item}>
-              <Input type="text" placeholder="Введите название мероприятия" value={inputValue} onChange={_handleChangeText}/>
-            </div>
-            <div className={styles.event_form_item}>
-              <Dropdown
-                placeholder="Выберите главного организатора"
-                items={dropdownValues}
-                value={dropdownValue}
-                toText={(input: DropdownOption<string>) => {return input.value}}
-                onChange={(value) =>_handleChangeDropdown(value as any)}
-              />
-            </div>
-            <div className={styles.event_form_button}>
-              <Button onClick={_createEvent}>Создать</Button>
-            </div>
-          </div>
-        </Content>
+    <Content className={styles.eventcreation__content}>
+      <div className={styles.event_form}>
+        <div className={styles.event_form_item}>
+          <Input type="text" placeholder="Введите название мероприятия" value={inputValue} onChange={_handleChangeText} />
+        </div>
+        <div className={styles.event_form_item}>
+          <Dropdown
+            placeholder="Выберите главного организатора"
+            items={dropdownValues}
+            value={dropdownValue}
+            toText={(input: DropdownOption<string>) => { return input.value }}
+            onChange={(value) => _handleChangeDropdown(value as any)}
+          />
+        </div>
+        <div className={styles.event_form_button}>
+          <Button onClick={_createEvent}>Создать</Button>
+        </div>
+      </div>
+    </Content>
   );
 }
 

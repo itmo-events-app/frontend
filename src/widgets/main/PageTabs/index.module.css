@@ -20,8 +20,13 @@
 }
 
 .page_tab_container:not(.page_tab_container_selected):hover {
-  background-color: var(--itmo-colors-gray);
+  border-bottom: 1px solid var(--itmo-colors-blue-selected);
+  color: var(--itmo-colors-blue-selected);
   cursor: pointer;
+}
+
+.page_tab_container:not(.page_tab_container_selected):hover .page_tab {
+  color: var(--itmo-colors-blue-selected);
 }
 
 .page_tab {

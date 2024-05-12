@@ -227,6 +227,7 @@ function EventListPage() {
         break;
     }
     return (
+
       <Dialog
         className={appendClassName(styles.dialog,
           (dialogData.visible ? styles.visible : styles.hidden))}
@@ -234,7 +235,7 @@ function EventListPage() {
         ref={dialogRef}
         onClose={_closeDialog}
       >
-        {component}
+          {component}
       </Dialog>
     )
   }

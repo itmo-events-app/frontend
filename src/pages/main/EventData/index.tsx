@@ -1537,16 +1537,14 @@ function EventActivitiesPage() {
     <Layout
       topLeft={<BrandLogo />}
       topRight={
-        <div className={styles.header}>
           <PageName text={event?.eventName ?? ''} />
-          <div className={styles.tabs}>
-            <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
-          </div>
-        </div>
       }
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
+        <div className={styles.tabs}>
+          <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
+        </div>
           <div className={styles.content} id={idInt == null ? ("") : idInt.toString()}>
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}

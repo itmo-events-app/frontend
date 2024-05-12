@@ -1,7 +1,7 @@
 .notification_entry {
   padding: 16px;
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -33,9 +33,12 @@
 
 .notification_text {
   color: #333333;
-  overflow-wrap: break-word; /* Ensures the break of long words if necessary */
-  word-wrap: break-word;     /* Deprecated version of the above property for older browsers */
-  white-space: normal;       /* Allows the text to wrap to the next line */
+  overflow-wrap: break-word;
+  /* Ensures the break of long words if necessary */
+  word-wrap: break-word;
+  /* Deprecated version of the above property for older browsers */
+  white-space: normal;
+  /* Allows the text to wrap to the next line */
 }
 
 .notification_read {
@@ -72,10 +75,12 @@
 
 .expand_button {
   /* Style for the expand button, adjust as needed */
-  margin-left: auto; /* Pushes the button to the right */
+  margin-left: auto;
+  /* Pushes the button to the right */
   padding: 8px;
   cursor: pointer;
-  background-color: var(--itmo-colors-blue); /* Example color */
+  background-color: var(--itmo-colors-blue);
+  /* Example color */
   color: white;
   border: none;
 }
