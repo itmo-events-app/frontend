@@ -101,7 +101,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   })
   const { api } = useContext(ApiContext);
   const getPlaces = async () => {
-    const placesResponse = await api.place.getAllOrFilteredPlaces();
+    const placesResponse = await api.place.getAllOrFilteredPlaces(undefined, 50);
     if (placesResponse.status == 200) {
       const placesData = placesResponse.data;
       setPlaceList(placesData);

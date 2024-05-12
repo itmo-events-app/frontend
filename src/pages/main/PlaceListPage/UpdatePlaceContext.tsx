@@ -117,83 +117,85 @@ const UpdatePlaceDialog = ({ onClose, id }: { onClose: () => void, id: number })
         <div onClick={e => e.stopPropagation()}>
           <form className={styles.place_form} onSubmit={handleSubmit(onSubmit)}>
             <Controller control={control} name={"name"}
-                        render={({ field: { value, onChange } }) => (
-                          <div className={styles.place_form_item}>
-                            <Label value="Название" />
-                            <Input type="text" placeholder={"Название"} value={value}
-                                   onChange={(event) => onChange(event.target.value)} />
-                          </div>
-                        )}>
+              render={({ field: { value, onChange } }) => (
+                <div className={styles.place_form_item}>
+                  <Label value="Название" />
+                  <Input type="text" placeholder={"Название"} value={value}
+                    onChange={(event) => onChange(event.target.value)} />
+                </div>
+              )}>
             </Controller>
 
             <Controller control={control} name={"description"} render={({ field: { value, onChange } }) => (
               <div className={styles.place_form_item}>
                 <Label value="Описание площадки" />
                 <Input type="text" placeholder={"Описание"} value={value}
-                       onChange={(event) => onChange(event.target.value)} />
+                  onChange={(event) => onChange(event.target.value)} />
               </div>
             )} />
 
-            <Controller control={control} render={({ field: { value, onChange } }) => (
-              <div className={styles.place_form_item}>
-                <Label value="Адрес" />
-                <Input type="text" placeholder={"Адрес"} value={value}
-                       onChange={(event) => onChange(event.target.value)} />
-              </div>
-            )} name={"address"} />
 
-            <Controller control={control} name={"roomName"} render={({ field: { value, onChange } }) => (
-              <div className={styles.place_form_item}>
-                <Label value="Аудитория" />
-                <Input type="text" placeholder={"Можно выбрать на карте"} value={value}
-                       onChange={
-                         (event) => {
-                           onChange(event.target.value);
-                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                           // @ts-expect-error
-                           document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
-                             type: "roomHighlight",
-                             room: event.target.value,
-                           }, "*");
-                         }
-                       } />
-              </div>
-            )}
-            />
+            <div className={styles.form__row}>
+              <Controller control={control} render={({ field: { value, onChange } }) => (
+                <div className={styles.place_form_item}>
+                  <Label value="Адрес" />
+                  <Input type="text" placeholder={"Адрес"} value={value}
+                    onChange={(event) => onChange(event.target.value)} />
+                </div>
+              )} name={"address"} />
 
+              <Controller control={control} name={"roomName"} render={({ field: { value, onChange } }) => (
+                <div className={styles.place_form_item}>
+                  <Label value="Аудитория" />
+                  <Input type="text" placeholder={"Можно выбрать на карте"} value={value}
+                    onChange={
+                      (event) => {
+                        onChange(event.target.value);
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        document.getElementById("itmo-map-iframe")?.contentWindow.postMessage({
+                          type: "roomHighlight",
+                          room: event.target.value,
+                        }, "*");
+                      }
+                    } />
+                </div>
+              )}
+              />
+            </div>
             <Controller control={control} name={"latitude"} render={({ field: { value, onChange } }) => (
-              <div className={styles.place_form_item}>
+              <div className={styles.place_form_item2}>
                 {/*<Label value="Долгота" />*/}
                 <Input hidden={true}
                   // type="number"
-                       placeholder={"Долгота"}
-                       value={String(value)}
-                       onChange={(event) => {
-                         onChange(Number(event.target.value));
-                       }}
-                       min={-180}
-                       max={180}
+                  placeholder={"Долгота"}
+                  value={String(value)}
+                  onChange={(event) => {
+                    onChange(Number(event.target.value));
+                  }}
+                  min={-180}
+                  max={180}
                 />
               </div>
             )} />
 
             <Controller control={control} name={"longitude"} render={({ field: { value, onChange } }) => (
-              <div className={styles.place_form_item}>
+              <div className={styles.place_form_item2}>
                 {/*<Label value="Широта" />*/}
                 <Input hidden={true}
                   // type="number"
-                       placeholder={"Широта"}
-                       value={String(value)}
-                       onChange={
-                         (event) => onChange(Number(event.target.value))
-                       }
-                       min={-90}
-                       max={90}
+                  placeholder={"Широта"}
+                  value={String(value)}
+                  onChange={
+                    (event) => onChange(Number(event.target.value))
+                  }
+                  min={-90}
+                  max={90}
                 />
               </div>
             )} />
             <iframe id="itmo-map-iframe" src={(window as any).ENV_GEO_URL + "/map.html?noscroll&select_only_areas"}
-                    width="100%" height="420px"></iframe>
+              width="100%" height="420px"></iframe>
             <div className={styles.place_form_button}>
               <Button type="submit">Обновить</Button>
             </div>
