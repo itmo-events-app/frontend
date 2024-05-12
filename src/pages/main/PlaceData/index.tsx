@@ -57,9 +57,7 @@ function PlaceDataPage() {
     <Layout
       topLeft={<BrandLogo />}
       topRight={
-        <div className={styles.header}>
           <PageName text={foundPlace?.name ?? ""} />
-        </div>
       }
       bottomLeft={<SideBar currentPageURL={RoutePaths.placeData} />}
       bottomRight={
