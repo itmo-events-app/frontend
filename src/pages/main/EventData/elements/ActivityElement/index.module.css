@@ -1,6 +1,6 @@
 .activity_container {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: .5rem;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
   padding: 1rem;
 
   word-wrap: break-word;
@@ -92,7 +92,7 @@
   background: #e9f7e8;
 }
 
-.status_COMPLETED .icon{
+.status_COMPLETED .icon {
   stroke: #22b217;
 }
 
@@ -100,7 +100,7 @@
   background: #fceaea;
 }
 
-.status_CANCELED .icon{
+.status_CANCELED .icon {
   fill: #e02e2e;
 }
 
