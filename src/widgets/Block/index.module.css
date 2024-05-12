@@ -1,5 +1,5 @@
 .block {
   background-color: var(--itmo-colors-white);
   box-shadow: var(--itmo-box-shadow);
-  border-radius: 40px;
+  border-radius: 20px;
 }
