@@ -160,9 +160,10 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                     items={newTaskOptions}
                     toText={(item) => item.value}
                     value={selectedStatus}
+
                     onChange={(sel) => {
-                      updateTaskStatus({ newStatus: sel.value, id: taskId });
-                      setStatus(sel);
+                      updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
+                      setStatus(new DropdownOption(sel as any));
                     }}
                   />
                 ) : (
@@ -211,9 +212,10 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                     items={newTaskOptions}
                     toText={(item) => item.value}
                     value={selectedStatus}
+
                     onChange={(sel) => {
-                      updateTaskStatus({ newStatus: sel.value, id: taskId });
-                      setStatus(sel);
+                      updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
+                      setStatus(new DropdownOption(sel as any));
                     }}
                   />
                 ) : (
