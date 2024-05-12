@@ -1,12 +1,13 @@
 .button {
   background-color: var(--itmo-colors-blue-80);
-  border-radius: 10px;
-  padding: 12px 30px;
+  border-radius: 4px;
+  padding: 10px 30px;
   color: var(--itmo-colors-white);
   font-size: 16px;
   font-weight: bold;
   border-width: 0;
   white-space: nowrap;
+  transition: all 0.3s;
 }
 
 .button:hover {
