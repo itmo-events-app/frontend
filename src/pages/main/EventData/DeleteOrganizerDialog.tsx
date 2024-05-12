@@ -13,7 +13,6 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
   const [roleId, setRoleId] = useState<number | undefined>(undefined);
   const [roleName, setRoleName] = useState<string | undefined>('');
-  const [loaded, setLoaded] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { api } = useContext(ApiContext);
 
@@ -50,7 +49,6 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
   useEffect(() => {
     initDialog();
     getCurrentUserId();
-    setLoaded(true);
   }, []);
 
   const handleDeleteOrganizer = async () => {

@@ -14,7 +14,6 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
   const [roleId, setRoleId] = useState<number | undefined>(undefined);
   const [roleName, setRoleName] = useState<string | undefined>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
   const { api } = useContext(ApiContext);
 
   const initDialog = async () => {
@@ -39,7 +38,6 @@ const AddOrganizerDialog = ({ eventId, onSubmit }: { eventId: number; onSubmit: 
   };
   useEffect(() => {
     initDialog();
-    setLoaded(true);
   }, []);
 
   const handleAddOrganizer = async () => {
