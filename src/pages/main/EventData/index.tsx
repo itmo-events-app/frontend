@@ -476,7 +476,7 @@ function EventActivitiesPage() {
         const ctd = new Date(et.creationTime);
         const ddd = new Date(et.deadline);
         console.log(ddd, ctd < ddd ? ctd : (ddd));
-        
+
         const newTask: Task = {
           start: ctd < ddd ? ctd : (ddd),
           end: ddd,
@@ -1320,8 +1320,8 @@ function EventActivitiesPage() {
         {title}
         <br/>
         <div className={styles.taskButtons}>
-          <EditOutlined className={styles.edit_button} onClick={() => _onUpdate(taskId!)} />
-          <CloseOutlined className={styles.edit_button} onClick={() => deleteTask(taskId!)}/>
+          {(optionsPrivileges.editTask) ? <EditOutlined className={styles.edit_button} onClick={() => _onUpdate(taskId!)} /> : ''}
+          {(optionsPrivileges.editTask) ? <CloseOutlined className={styles.edit_button} onClick={() => deleteTask(taskId!)}/> : ''}
         </div>
       </td>
       <td>
