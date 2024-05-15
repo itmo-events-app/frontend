@@ -450,6 +450,7 @@ function EventActivitiesPage() {
     colors = [...colorsList];
 
     for (const et of eventTasks) {
+      console.log(et)
       if (
         et.deadline != undefined &&
         et.creationTime != undefined &&
@@ -472,9 +473,13 @@ function EventActivitiesPage() {
           });
           persColor = stepColor;
         }
+        const ctd = new Date(et.creationTime);
+        const ddd = new Date(et.deadline);
+        console.log(ddd, ctd < ddd ? ctd : (ddd));
+        
         const newTask: Task = {
-          start: new Date(et.creationTime),
-          end: new Date(et.deadline),
+          start: ctd < ddd ? ctd : (ddd),
+          end: ddd,
           name: et.title,
           id: '' + et.id,
           type: 'task',
@@ -493,9 +498,11 @@ function EventActivitiesPage() {
         et.id != undefined
       ) {
         setNobodyTasks(1);
+        const ctd = new Date(et.creationTime);
+        const ddd = new Date(et.deadline);
         const newTask: Task = {
-          start: new Date(et.creationTime),
-          end: new Date(et.deadline),
+          start: ctd < ddd ? ctd : (ddd),
+          end: ddd,
           name: et.title,
           id: '' + et.id,
           type: 'task',
