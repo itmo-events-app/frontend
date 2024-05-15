@@ -1521,7 +1521,7 @@ function EventActivitiesPage() {
 
         </div>
         {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
-        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt!} taskId={taskId} onClose={closeModalUpdate} />}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} taskId={taskId} onClose={closeModalUpdate} />}
         {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
         {isAddFileModalOpen && <AddFileDialog idInt={taskId} onClose={closeModalFile} />}
       </>

@@ -10,7 +10,7 @@ import ApiContext from "@features/api-context";
 import InputLabel from "@widgets/main/InputLabel";
 import {taskService} from "@features/task-service";
 
-const UpdateTaskDialog = ({onClose, taskId, idInt}: { onClose: () => void, taskId: number, idInt: number }) => {
+const UpdateTaskDialog = ({onClose, taskId, idInt}: { onClose: () => void, taskId: number, idInt: number | null }) => {
   const {api} = useContext(ApiContext);
   const [title, setTitle] = useState('');
 
