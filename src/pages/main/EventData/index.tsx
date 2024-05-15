@@ -473,7 +473,6 @@ function EventActivitiesPage() {
           });
           persColor = stepColor;
         }
-        debugger
         const ctd = new Date(et.creationTime);
         const ddd = new Date(et.deadline);
         console.log(ddd, ctd < ddd ? ctd : (ddd));
