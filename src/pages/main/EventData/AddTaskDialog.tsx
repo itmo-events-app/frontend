@@ -94,8 +94,9 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
 
   function convertToLocaleDateTime(date: Date | null) {
     if (date) {
-      const isoDateTime = date.toISOString();
-      return isoDateTime.slice(0, -1);
+      const isoDate = date.toISOString();
+      const isoDateTime = date.toTimeString();
+      return `${isoDate.substring(0, 10)}T${isoDateTime.substring(0, 8)}.000Z`;
     }
     return null;
   }
