@@ -510,6 +510,19 @@
   transition: .3s;
 }
 
+.edit_button {
+  position: relative;
+  width: 30px;
+  height: 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: .3s;
+}
+
+
+
+
 .dialog__row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

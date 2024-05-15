@@ -53,7 +53,12 @@ import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { taskService } from "@features/task-service.ts";
 import { useMutation } from "@tanstack/react-query";
 import AddFileDialog from "@pages/main/EventData/AddFileDialog.tsx";
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UploadOutlined,
+  CloseOutlined
+} from "@ant-design/icons";
 
 class EventInfo {
   regDates: string;
@@ -1200,7 +1205,8 @@ function EventActivitiesPage() {
     openModalCreate();
   };
 
-  const _onUpdate = () => {
+  const _onUpdate = (id: number) => {
+    setTaskId(id);
     openModalUpdate();
   };
 
@@ -1241,6 +1247,13 @@ function EventActivitiesPage() {
     assigneeId: number;
     activityId?: number;
     files?: FileDataResponse[];
+  }
+
+  const deleteTask = async (id: number) => {
+   await api.task.taskDelete(id);
+    setTimeout(() => {
+      setStepTasks(stepTasks + 1);
+    }, 500);
   }
 
   const TaskTableRow: FC<TaskTableRowProps> = ({
@@ -1296,7 +1309,14 @@ function EventActivitiesPage() {
     const status = selectedStatus?.value ? selectedStatus?.value : statusTranslation[taskStatus];
 
     return (<tr>
-      <td>{title}</td>
+      <td>
+        {title}
+        <br/>
+        <div className={styles.taskButtons}>
+          <EditOutlined className={styles.edit_button} onClick={() => _onUpdate(taskId!)} />
+          <CloseOutlined className={styles.edit_button} onClick={() => deleteTask(taskId!)}/>
+        </div>
+      </td>
       <td>
         <Popup
           trigger={
@@ -1354,7 +1374,7 @@ function EventActivitiesPage() {
             value={selectedTaskUser}
             onChange={(sel) => {
               console.log(sel);
-              
+
               setTaskUser(sel);
               updateTaskAssignee({ assigneeId: Number(sel), taskId: taskId });
               setTimeout(() => {
@@ -1470,9 +1490,6 @@ function EventActivitiesPage() {
               <Button className={styles.button} onClick={_onCreate}>
                 Создать
               </Button>
-              <Button className={styles.button} onClick={_onUpdate}>
-                Изменить / Удалить
-              </Button>
               <Button className={styles.button} onClick={_onCopy}>
                 Копировать с другого мероприятия
               </Button>
@@ -1504,7 +1521,7 @@ function EventActivitiesPage() {
 
         </div>
         {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
-        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate} />}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt!} taskId={taskId} onClose={closeModalUpdate} />}
         {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
         {isAddFileModalOpen && <AddFileDialog idInt={taskId} onClose={closeModalFile} />}
       </>

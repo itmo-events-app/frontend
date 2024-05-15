@@ -9,6 +9,7 @@ import { EventResponse, PlaceResponse, UserResponse } from "@shared/api/generate
 import ApiContext from "@features/api-context";
 import InputLabel from "@widgets/main/InputLabel";
 import { taskService } from "@features/task-service";
+import Error from "@widgets/auth/Error";
 
 const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number | null }) => {
   const { api } = useContext(ApiContext);
@@ -37,6 +38,8 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
   const [showDeadlineMessage, setShowDeadlineMessage] = useState(false);
   const [showReminderMessage, setShowReminderMessage] = useState(false);
   const [showReminderAfterDeadlineMessage, setShowReminderAfterDeadlineMessage] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [errorText, setErrorText] = useState('');
 
   const getActivities = async () => {
     let activitiesResponse;
@@ -196,7 +199,18 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
         place,
         deadlineString!,
         reminderString!
-      ).then(() => onClose());
+      ).then(
+        () => onClose()
+      ).catch((e: any) => {
+        if (e.response.data.errors) {
+          setErrorText(e.response.data.errors.join('. '));
+          setIsError(true);
+        }
+        if (e.response.data) {
+          setErrorText(e.response.data);
+          setIsError(true);
+        }
+      });
     }
   }
 
@@ -298,6 +312,7 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
               {showReminderAfterDeadlineMessage && (
                 <span className={styles.emptyFieldsMessage}>Напоминание не может быть позже крайнего срока</span>
               )}
+              <Error value={errorText} isError={isError} />
             </div>
             <div className={styles.place_form_button}>
               <Button onClick={createTask}>Создать</Button>
