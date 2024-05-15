@@ -26,9 +26,14 @@ const DialogContent = (props: AssignProps) => {
   const [eventId, setEventId] = useState(0)
   const [dropdownValues, setDropdownValues] = useState<DropdownOption<string>[]>([]);
   const [dropdownValue, setDropdownValue] = useState<DropdownOption<string> | undefined>();
+  const [showEmptyEventMessage, setShowEmptyEventMessage] = useState(false);
 
   const _onDoneWrapper = () => {
-    props.onDone(props.userId, getSelectedRoleId(roles), eventId);
+    if (props.isEvent && eventId < 1) {
+      setShowEmptyEventMessage(true);
+    } else {
+      props.onDone(props.userId, getSelectedRoleId(roles), eventId);
+    }
   };
 
   // load roles on dialog open
@@ -121,6 +126,9 @@ const DialogContent = (props: AssignProps) => {
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
+          {showEmptyEventMessage && (
+            <span className={styles.emptyFieldsMessage}>Необходимо выбрать мероприятие</span>
+          )}
           {props.isEvent ? (
             <Dropdown
               placeholder={"Мероприятие"}
@@ -128,7 +136,7 @@ const DialogContent = (props: AssignProps) => {
               toText={(item) => item.value}
               value={dropdownValue}
               onChange={(sel) => {
-                setEventId(Number(sel.id))
+                setEventId(Number(sel))
                 setDropdownValue(sel)
               }}
             />
@@ -140,7 +148,6 @@ const DialogContent = (props: AssignProps) => {
           <RoleListRadio roles={roles} setRoles={setRoles} />
         </div>
       </div>
-      {/*//todo make button disabled if none selected*/}
       <Button onClick={_onDoneWrapper}>{props.buttonText}</Button>
     </div>
   );

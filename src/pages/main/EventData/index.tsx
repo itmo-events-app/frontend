@@ -47,13 +47,13 @@ import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
 import CopyTasksDialog from "@pages/main/EventData/CopyTasksDialog";
 import { Api } from "@entities/api.ts";
 import Popup from "reactjs-popup";
-import {format} from "date-fns";
-import {ru} from "date-fns/locale/ru";
-import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
-import {taskService} from "@features/task-service.ts";
-import {useMutation} from "@tanstack/react-query";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale/ru";
+import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import { taskService } from "@features/task-service.ts";
+import { useMutation } from "@tanstack/react-query";
 import AddFileDialog from "@pages/main/EventData/AddFileDialog.tsx";
-import {DeleteOutlined, UploadOutlined} from "@ant-design/icons";
+import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 
 class EventInfo {
   regDates: string;
@@ -968,7 +968,7 @@ function EventActivitiesPage() {
           ) : (
             <></>
           )}
-         
+
           {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
             <div className={styles.button_container}>
               <Button className={styles.button} onClick={_deleteOrganizer}>
@@ -1285,7 +1285,7 @@ function EventActivitiesPage() {
       new DropdownOption("Новое"),
       new DropdownOption("В работе"),
       new DropdownOption("Выполнено"),
-      new DropdownOption("Просрочено"),
+      new DropdownOption("Просрочено")
     ];
 
     const redirectToEvent = (id: number) => {
@@ -1325,8 +1325,8 @@ function EventActivitiesPage() {
                     toText={(item) => item.value}
                     value={selectedStatus}
                     onChange={(sel) => {
-                      updateTaskStatus({ newStatus: sel.value, id: taskId });
-                      setStatus(sel);
+                      updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
+                      setStatus(new DropdownOption(sel as any));
                     }}
                   />
                 ) : (
@@ -1353,8 +1353,10 @@ function EventActivitiesPage() {
             toText={(item) => item.value}
             value={selectedTaskUser}
             onChange={(sel) => {
+              console.log(sel);
+              
               setTaskUser(sel);
-              updateTaskAssignee({ assigneeId: Number(sel.id), taskId: taskId });
+              updateTaskAssignee({ assigneeId: Number(sel), taskId: taskId });
               setTimeout(() => {
                 setStepTasks(stepTasks + 1);
               }, 500);
@@ -1398,8 +1400,8 @@ function EventActivitiesPage() {
                     toText={(item) => item.value}
                     value={selectedStatus}
                     onChange={(sel) => {
-                      updateTaskStatus({ newStatus: sel.value, id: taskId });
-                      setStatus(sel);
+                      updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
+                      setStatus(new DropdownOption(sel as any));
                     }}
                   />
                 ) : (
@@ -1414,11 +1416,11 @@ function EventActivitiesPage() {
         </Popup>
       </td>
       <td>
-        {(optionsPrivileges.editTask) ? <UploadOutlined className={styles.upload_button} onClick={() => _onAddFile(taskId!)}/> : ''}
+        {(optionsPrivileges.editTask) ? <UploadOutlined className={styles.upload_button} onClick={() => _onAddFile(taskId!)} /> : ''}
         {files?.length ? files?.map(file => <div key={file.filename}>
           <a href={file.presignedUrl} download>{file.filename}</a>
-          {(optionsPrivileges.editTask) ? <DeleteOutlined className={styles.delete_button} onClick={() => _onDeleteFile(taskId!, file.filename!)}/> : ''}
-          <br/><br/>
+          {(optionsPrivileges.editTask) ? <DeleteOutlined className={styles.delete_button} onClick={() => _onDeleteFile(taskId!, file.filename!)} /> : ''}
+          <br /><br />
         </div>) : <></>}
       </td>
     </tr>);
@@ -1501,10 +1503,10 @@ function EventActivitiesPage() {
           <TaskTable tasks={eventTasks} api={api} />
 
         </div>
-        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate}/>}
-        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate}/>}
-        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy}/>}
-        {isAddFileModalOpen && <AddFileDialog idInt={taskId} onClose={closeModalFile}/>}
+        {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate} />}
+        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
+        {isAddFileModalOpen && <AddFileDialog idInt={taskId} onClose={closeModalFile} />}
       </>
 
     );
@@ -1535,16 +1537,14 @@ function EventActivitiesPage() {
     <Layout
       topLeft={<BrandLogo />}
       topRight={
-        <div className={styles.header}>
           <PageName text={event?.eventName ?? ''} />
-          <div className={styles.tabs}>
-            <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
-          </div>
-        </div>
       }
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
+        <div className={styles.tabs}>
+          <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
+        </div>
           <div className={styles.content} id={idInt == null ? ("") : idInt.toString()}>
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}

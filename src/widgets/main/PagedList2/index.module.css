@@ -5,17 +5,14 @@
 }
 
 .list {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
   display: flex;
   flex-flow: column;
-  gap: 5px;
-  padding: 10px 20px;
+  gap: 10px;
 }
 
 .navigator {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
   display: flex;
   flex-flow: row wrap;
   justify-content: left;

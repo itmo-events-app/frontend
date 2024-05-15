@@ -94,7 +94,8 @@ const UpdateDialogContent = (props: UpdateProps) => {
           const errorMessage = error.response.data;
           console.log(error.response.data);
           setErrorMessageUpdatingRole(errorMessage);
-        });}
+        });
+    }
   };
 
   const _nameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +122,9 @@ const UpdateDialogContent = (props: UpdateProps) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
-          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} value={type} readonly />
+          <div className={styles.dialog__select}>
+            <Dropdown items={dropdownOptions} placeholder={type} toText={dropdownOptionToText} value={type} readonly />
+          </div>
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />

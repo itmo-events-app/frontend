@@ -86,8 +86,8 @@
 }
 
 .user {
-  border: 1px solid var(--itmo-colors-border);
-  border-radius: 10px;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
 }
 
 .user_entry {
@@ -182,4 +182,8 @@
   border-top: 1px solid var(--itmo-colors-border);
   padding: 5px 10px;
   width: 50%;
+}
+
+.emptyFieldsMessage {
+  color: var(--itmo-colors-red);
 }

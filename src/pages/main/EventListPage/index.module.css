@@ -17,8 +17,8 @@
 }
 
 .filter_group {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
   display: flex;
   flex-flow: row wrap;
   width: 100%;
@@ -28,8 +28,9 @@
 
 .filter_element {
   min-width: 200px;
-  border: 1px solid var(--itmo-colors-black);
-  border-radius: 10px;
+  width: 200px;
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 4px;
   padding: 10px 10px;
   font-size: 16px;
 }
@@ -51,8 +52,8 @@
 }
 
 .event_entry {
-  border: 1px solid var(--itmo-colors-gray);
-  border-radius: 10px;
+  border: 1px solid var(--itmo-colors-gray2);
+  border-radius: 4px;
   padding: 10px 20px;
   display: flex;
   flex-direction: row;
@@ -108,4 +109,36 @@
   height: auto;
   overflow: visible;
   box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.dialog__date {
+  position: relative;
+}
+
+.dialog__date>div {
+  display: block;
+  width: 100%;
+}
+
+.dialog__date input {
+  width: 100%;
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 4px;
+  padding: 9px 10px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dialog__date>span {
+  position: absolute;
+  top: 7px;
+  right: 10px;
+  pointer-events: none;
+}
+
+.dialog__date>span path {
+  stroke: hsl(0, 0%, 50%);
 }
