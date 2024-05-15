@@ -10,8 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '@shared/config/routes';
 import { NotifyState } from '../Notification';
 import ApiContext from '@features/api-context';
-import { RegistrationUserRequest } from '@shared/api/generated';
-
+import {RegistrationUserRequest, RegistrationUserRequestTypeEnum} from '@shared/api/generated';
 const registerMsg = 'Заявка на регистрацию успешно создана. Ожидайте письма с подтверждением для входа.';
 
 const errorValidators = {
@@ -114,7 +113,7 @@ function RegisterPage() {
         name: name,
         surname: surname,
         login: email,
-        type: "EMAIL",
+        type: RegistrationUserRequestTypeEnum.Email,
         password: password,
         confirmPassword: repeat,
       }
