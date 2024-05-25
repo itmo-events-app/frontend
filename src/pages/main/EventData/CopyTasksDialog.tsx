@@ -143,7 +143,7 @@ const CopyTasksDialog = ({ onClose, idInt, preChoose }: { onClose: () => void, i
           {
             possibleActivitiesToCopyTo !== undefined
             && chosenEventId === undefined
-            //&& possibleActivitiesToCopyTo.length > 1
+            && possibleActivitiesToCopyTo.length > 1
             && <div>
               Выберите место, куда копировать:
               <Dropdown
