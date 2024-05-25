@@ -1165,6 +1165,7 @@ function EventActivitiesPage() {
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isCopyModalOpen, setCopyModalOpen] = useState(false);
+  const [insideCopy, setInsideCopy] = useState(false);
   const [isAddFileModalOpen, setAddFileModalOpen] = useState(false);
 
 
@@ -1186,8 +1187,9 @@ function EventActivitiesPage() {
     setStepTasks(stepTasks + 1);
   };
 
-  const openModalCopy = () => {
+  const openModalCopy = (isInsideCopy: boolean = false) => { // MARK: openModalCopy()
     setCopyModalOpen(true);
+    setInsideCopy(isInsideCopy);
   }
 
   const openModalAddFile = () => {
@@ -1217,8 +1219,12 @@ function EventActivitiesPage() {
     openModalUpdate();
   };
 
-  const _onCopy = () => {
+  const _onCopy = () => { // MARK: _onCopy()
     openModalCopy();
+  }
+
+  const _onCopyInside = () => { // MARK: _onCopyInside()
+    openModalCopy(true);
   }
 
   const _onAddFile = (id: number) => {
@@ -1497,8 +1503,11 @@ function EventActivitiesPage() {
               <Button className={styles.button} onClick={_onCreate}>
                 Создать
               </Button>
+              <Button className={styles.button} onClick={_onCopyInside}>
+                Скопировать
+              </Button>
               <Button className={styles.button} onClick={_onCopy}>
-                Копировать с другого мероприятия
+                Скопировать с другого мероприятия
               </Button>
             </div>
           ) : (
@@ -1529,14 +1538,14 @@ function EventActivitiesPage() {
         </div>
         {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
         {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} taskId={taskId} onClose={closeModalUpdate} />}
-        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
+        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} preChoose={insideCopy} />}
         {isAddFileModalOpen && <AddFileDialog idInt={taskId} onClose={closeModalFile} />}
       </>
 
     );
   }
 
-  function _createCopyButtons() { // MARK: Buttons
+  function _createCopyButtons() {
     return (
       <div className={styles.copy}>
         <Button onClick={() => {
