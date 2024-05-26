@@ -91,9 +91,9 @@ const TasksList = ({ items, onClose, idInt, whereToCopyId }: { items: TaskRespon
   )
 }
 
-const CopyTasksDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number | null }) => {
+const CopyTasksDialog = ({ onClose, idInt, preChoose }: { onClose: () => void, idInt: number | null, preChoose: boolean}) => {
   const { api } = useContext(ApiContext);
-  const [chosenEventId, setChosenEventId] = useState<number | undefined>(undefined)
+  const [chosenEventId, setChosenEventId] = useState<number | undefined>(preChoose && idInt ? idInt! : undefined)
   const [dialogText, setDialogText] = useState(DialogTextVariants.EVENT_CHOOSING)
   const [tasksToChooseFrom, setTasksToChooseFrom] = useState<TaskResponse[] | undefined>(undefined)
   const [possibleActivitiesToCopyTo, setPossibleActivitiesToCopyTo] = useState<TaskResponse[] | undefined>(undefined)
@@ -140,9 +140,11 @@ const CopyTasksDialog = ({ onClose, idInt }: { onClose: () => void, idInt: numbe
     <div className={styles.dialog_task} onMouseDown={onClose}>
       <Dialog className={styles.dialog_content_task} text={dialogText}>
         <div onMouseDown={e => e.stopPropagation()}>
-
-          {possibleActivitiesToCopyTo !== undefined && chosenEventId === undefined &&
-            <div>
+          {
+            possibleActivitiesToCopyTo !== undefined
+            && chosenEventId === undefined
+            && possibleActivitiesToCopyTo.length > 1
+            && <div>
               Выберите место, куда копировать:
               <Dropdown
                 placeholder="Копировать в мероприятие:"
@@ -165,9 +167,9 @@ const CopyTasksDialog = ({ onClose, idInt }: { onClose: () => void, idInt: numbe
           {chosenEventId === undefined &&
             <StolenEventListForTasksCopying onClick={(id: number) => {
               setChosenEventId(id)
-            }} />
+            }} exceptId={idInt!} />
           }
-
+          
           {chosenEventId !== undefined && tasksToChooseFrom !== undefined &&
             <TasksList items={tasksToChooseFrom} onClose={onClose} idInt={idInt!} whereToCopyId={
               selectedEventValue === undefined ? idInt! : selectedEventValue.id!

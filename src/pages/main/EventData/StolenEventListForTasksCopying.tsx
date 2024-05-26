@@ -1,6 +1,7 @@
 // Теперь это мой код
 
 import styles from './../EventListPage/index.module.css';
+import myStyles from './index.module.css';
 import Content from '@widgets/main/Content';
 import Search from "@widgets/main/Search";
 import Dropdown from "@widgets/main/Dropdown";
@@ -24,6 +25,7 @@ import { PrivilegeNames } from '@shared/config/privileges';
 import ImagePreview from "@widgets/main/ImagePreview";
 import { eventService } from '@features/event-service';
 import { placeService } from '@features/place-service';
+import { appendClassName } from '@shared/util';
 
 const eventStatusList = Object.values(GetAllOrFilteredEventsStatusEnum);
 const eventFormatList = Object.values(GetAllOrFilteredEventsFormatEnum);
@@ -49,6 +51,7 @@ type PageItemStubProps = {
   index: number,
   title: string,
   place: string,
+  excepted: boolean,
   onEntryClick: (id: number) => void
 }
 const PageItemStub = (props: PageItemStubProps) => {
@@ -62,10 +65,13 @@ const PageItemStub = (props: PageItemStubProps) => {
     props.onEntryClick(id);
   }
   const _handleClick = () => {
-    _event(props.index);
+    if (!props.excepted) _event(props.index);
   };
   return (
-    <a key={props.index} onClick={_handleClick} className={styles.event_entry}>
+    <a key={props.index} onClick={_handleClick} className={
+        appendClassName(styles.event_entry, props.excepted ? myStyles.excepted_event_on_copy : null)
+    }>
+      <p>{props.excepted ? "E" : "_"}</p>
       {imageUrl == '' ? (
         <ReactLogo className={styles.event_icon} />
       ) : (
@@ -97,7 +103,8 @@ const isBlank = (str: string): boolean => {
 }
 
 type StolenAndSimplifiedEventListProps = {
-  onClick: (id: number) => void
+  onClick: (id: number) => void,
+  exceptId: number
 }
 
 function StolenEventListForTasksCopying(props: StolenAndSimplifiedEventListProps) {
@@ -153,6 +160,7 @@ function StolenEventListForTasksCopying(props: StolenAndSimplifiedEventListProps
               title={(e.title !== undefined) ? e.title : 'null'}
               place={address}
               onEntryClick={props.onClick}
+              excepted={(!(e.id === undefined)) && (e.id! === props.exceptId)}
             />);
         });
       });
