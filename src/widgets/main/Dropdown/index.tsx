@@ -10,6 +10,7 @@ class DropdownOption<T> {
     this.id = id !== undefined ? id : "-1";
     this.value = text;
   }
+
 }
 
 type Props<T> = {

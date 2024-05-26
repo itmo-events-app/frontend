@@ -5,7 +5,6 @@ import DatePicker from "react-datepicker";
 import styles from "./index.module.css";
 import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-
 import { AddActivityFormatEnum, AddActivityStatusEnum, EventResponse, PlaceResponse } from "@shared/api/generated";
 import ApiContext from "@features/api-context.ts";
 import TextAreaWithError from "@widgets/TextAreaWithError/TextAreaWithError.tsx";
@@ -64,6 +63,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
   const [preparingEnd, setPreparingEnd] = useState<Date | null>(createDateOrNull(eventInfo.preparingEnd));
   const [place, setPlace] = useState(0);
   const [placeList, setPlaceList] = useState([] as PlaceResponse[]);
+  const [places,setPlaces] = useState([1,2]);
   const [image, setImage] = useState<File | undefined>(undefined);
   const [errors, setErrors] = useState({
     startDate: false,
@@ -332,6 +332,29 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       console.log(result.status);
     }
   }
+  function findPlaceAddress(id:number){
+    let result = "Select...";
+    const p = placeList.find(p=>p.id == id);
+    if(p!=undefined&&p.name){
+      result = p.name;
+    }
+    return result;
+  }
+  const handleChangePlace = (index:number, place:string) => {
+    if(!place||!parseInt(place)){
+      return;
+    }
+    const newPlaces = [...places];
+    newPlaces[index] = parseInt(place);
+    setPlaces(newPlaces);
+  };
+  const handleAddPlace = () => {
+    setPlaces([...places,0])
+  };
+  const handleDeletePlace = (index:number) =>{
+    const newPlaces = places.filter((_,i)=>i!=index);
+    setPlaces(newPlaces);
+  }
   function convertToLocaleDateTime(date: Date | null) {
     if (date) {
       return date.getFullYear() + '-' +
@@ -389,7 +412,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
             errorText={errorsText.participantLimit ?? ''} />
         </div>
         <div className={styles.dialog__row}>
-
           <div className={styles.dialog_item}>
             <InputLabel value="Минимальный возраст для участия" />
             <Input
@@ -430,7 +452,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
         <div className={styles.dialog__rowthird}>
           <div className={styles.dialog_item}>
             <InputLabel value="Формат" />
-            <Dropdown placeholder="Формат" value={format} onChange={(e) => setFormat(e)}
+            <Dropdown placeholder={format} value={format} onChange={(e) => setFormat(e)}
               items={Object.entries(AddActivityFormatEnum).map(([, v]) => { return v })} toText={(o) => o} />
             <div>
               {errors.format && <div className={styles.helper_error}>{errorsText.format}</div>}
@@ -441,21 +463,40 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
             <Dropdown value={new DropdownOption(place.toString())} onChange={(e) => setPlace(e ? e as any : 0)}
               items={placeList.map(p => {
                 return new DropdownOption(p.name, p.id?.toString())
-              })} />
+              })}
+            placeholder={findPlaceAddress(place)}/>
             <div>
               {errors.place && <div className={styles.helper_error}>{errorsText.place}</div>}
             </div>
           </div>
           <div className={styles.dialog_item}>
             <InputLabel value="Состояние" />
-            <Dropdown placeholder="Состояние" value={status} onChange={(e) => setStatus(e)}
+            <Dropdown placeholder={status} value={status} onChange={(e) => setStatus(e)}
               items={Object.entries(AddActivityStatusEnum).map(([, v]) => { return v })} toText={(o) => o} />
             <div>
               {errors.status && <div className={styles.helper_error}>{errorsText.status}</div>}
             </div>
           </div>
         </div>
-
+        <div className={styles.dialog_item}>
+          <InputLabel value="Места" />
+        </div>
+        <Button className={styles.dialog_item} onClick={handleAddPlace}>Добавить</Button>
+        {
+          places.map((p,index)=>(
+            <div className={styles.dialog__row}>
+              <div className={styles.dialog_item}>
+                <Dropdown value={new DropdownOption(p.toString())}
+                  placeholder={findPlaceAddress(p)}
+                  onChange={(e)=>{handleChangePlace(index,e ? e as any : 0)}}
+                  items={placeList.map(p => {
+                  return new DropdownOption(p.name, p.id?.toString())
+                })}/>
+              </div>
+              <Button className={styles.dialog_item} onClick={()=>{handleDeletePlace(index)}}>Удалить</Button>
+            </div>
+          ))
+        }
         <div className={styles.dialog__row}>
           <div className={styles.dialog_item}>
             <InputLabel value="Время начала" />
@@ -612,7 +653,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
             </svg>
             <span>{image ? <p>Выбран файл: {image.name}</p> : <span>Выберите файл</span>}</span>
           </label>
-          
+
         </div>
       </div>
       <Button onClick={handleSubmit}>Редактировать</Button>
