@@ -34,9 +34,9 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
 
   const [showEmptyTitleMessage, setShowEmptyTitleMessage] = useState(false);
   const [showEmptyDescriptionMessage, setShowEmptyDescriptionMessage] = useState(false);
-  const [showDeadlineMessage, setShowDeadlineMessage] = useState(false);
-  const [showReminderMessage, setShowReminderMessage] = useState(false);
   const [showReminderAfterDeadlineMessage, setShowReminderAfterDeadlineMessage] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [errorText, setErrorText] = useState('');
 
   const getActivities = async () => {
     let activitiesResponse;
@@ -94,8 +94,9 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
 
   function convertToLocaleDateTime(date: Date | null) {
     if (date) {
-      const isoDateTime = date.toISOString();
-      return isoDateTime.slice(0, -1);
+      const isoDate = date.toISOString();
+      const isoDateTime = date.toTimeString();
+      return `${isoDate.substring(0, 10)}T${isoDateTime.substring(0, 8)}.000Z`;
     }
     return null;
   }
@@ -129,23 +130,6 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
     } else return false;
   }
 
-  function checkEmptyDeadlineMessage() {
-    if (deadline !== null) {
-      if (deadline < currentDate) {
-        setShowDeadlineMessage(true);
-        return true;
-      } else return false;
-    }
-  }
-
-  function checkEmptyReminderMessage() {
-    if (reminder !== null) {
-      if (reminder < currentDate) {
-        setShowReminderMessage(true);
-        return true;
-      } else return false;
-    }
-  }
 
   function checkEmptyReminderAfterDeadlineMessage() {
     if (reminder !== null && deadline !== null) {
@@ -161,18 +145,13 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
   function createTask() {
     setShowEmptyTitleMessage(false);
     setShowEmptyDescriptionMessage(false);
-    setShowDeadlineMessage(false);
-    setShowReminderMessage(false);
     setShowReminderAfterDeadlineMessage(false);
 
     const emptyTitleMessage = checkEmptyTitleMessage();
     const emptyDescriptionMessage = checkEmptyDescriptionMessage();
-    const emptyDeadlineMessage = checkEmptyDeadlineMessage();
-    const emptyReminderMessage = checkEmptyReminderMessage();
     const emptyReminderAfterDeadlineMessage = checkEmptyReminderAfterDeadlineMessage();
 
-    if (emptyTitleMessage || emptyDescriptionMessage || emptyDeadlineMessage ||
-      emptyReminderMessage || emptyReminderAfterDeadlineMessage) {
+    if (emptyTitleMessage || emptyDescriptionMessage  || emptyReminderAfterDeadlineMessage) {
       return
     }
 
@@ -196,7 +175,14 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
         place,
         deadlineString!,
         reminderString!
-      ).then(() => onClose());
+      ).then(
+        () => onClose()
+      ).catch((e: any) => {
+        console.log(e)
+          if (e.response.data.errors) {setErrorText(e.response.data.errors.join(', '));}
+          else setErrorText(e.response.data);
+          setIsError(true);
+      });
     }
   }
 
@@ -276,9 +262,6 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
                 dateFormat="yyyy-MM-dd HH:mm"
                 popperPlacement="top-start"
               />
-              {showDeadlineMessage && (
-                <span className={styles.emptyFieldsMessage}>Крайний срок не может быть в прошлом</span>
-              )}
             </div>
             <div className={styles.place_form_item}>
               <Label value="Напоминание" />
@@ -291,14 +274,13 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
                 dateFormat="yyyy-MM-dd HH:mm"
                 popperPlacement="top-start"
               />
-              {showReminderMessage && (
-                <span className={styles.emptyFieldsMessage}>Напоминание не может быть в прошлом</span>
-              )}
-
               {showReminderAfterDeadlineMessage && (
                 <span className={styles.emptyFieldsMessage}>Напоминание не может быть позже крайнего срока</span>
               )}
             </div>
+            {isError && (
+              <span className={styles.emptyFieldsMessage}>{errorText}</span>
+            )}
             <div className={styles.place_form_button}>
               <Button onClick={createTask}>Создать</Button>
             </div>

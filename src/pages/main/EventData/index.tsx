@@ -53,7 +53,12 @@ import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
 import { taskService } from "@features/task-service.ts";
 import { useMutation } from "@tanstack/react-query";
 import AddFileDialog from "@pages/main/EventData/AddFileDialog.tsx";
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UploadOutlined,
+  CloseOutlined
+} from "@ant-design/icons";
 
 class EventInfo {
   regDates: string;
@@ -445,6 +450,7 @@ function EventActivitiesPage() {
     colors = [...colorsList];
 
     for (const et of eventTasks) {
+      console.log(et)
       if (
         et.deadline != undefined &&
         et.creationTime != undefined &&
@@ -467,9 +473,13 @@ function EventActivitiesPage() {
           });
           persColor = stepColor;
         }
+        const ctd = new Date(et.creationTime);
+        const ddd = new Date(et.deadline);
+        console.log(ddd, ctd < ddd ? ctd : (ddd));
+
         const newTask: Task = {
-          start: new Date(et.creationTime),
-          end: new Date(et.deadline),
+          start: ctd < ddd ? ctd : (ddd),
+          end: ddd,
           name: et.title,
           id: '' + et.id,
           type: 'task',
@@ -488,9 +498,11 @@ function EventActivitiesPage() {
         et.id != undefined
       ) {
         setNobodyTasks(1);
+        const ctd = new Date(et.creationTime);
+        const ddd = new Date(et.deadline);
         const newTask: Task = {
-          start: new Date(et.creationTime),
-          end: new Date(et.deadline),
+          start: ctd < ddd ? ctd : (ddd),
+          end: ddd,
           name: et.title,
           id: '' + et.id,
           type: 'task',
@@ -1200,7 +1212,8 @@ function EventActivitiesPage() {
     openModalCreate();
   };
 
-  const _onUpdate = () => {
+  const _onUpdate = (id: number) => {
+    setTaskId(id);
     openModalUpdate();
   };
 
@@ -1241,6 +1254,13 @@ function EventActivitiesPage() {
     assigneeId: number;
     activityId?: number;
     files?: FileDataResponse[];
+  }
+
+  const deleteTask = async (id: number) => {
+   await api.task.taskDelete(id);
+    setTimeout(() => {
+      setStepTasks(stepTasks + 1);
+    }, 500);
   }
 
   const TaskTableRow: FC<TaskTableRowProps> = ({
@@ -1296,7 +1316,14 @@ function EventActivitiesPage() {
     const status = selectedStatus?.value ? selectedStatus?.value : statusTranslation[taskStatus];
 
     return (<tr>
-      <td>{title}</td>
+      <td>
+        {title}
+        <br/>
+        <div className={styles.taskButtons}>
+          {(optionsPrivileges.editTask) ? <EditOutlined className={styles.edit_button} onClick={() => _onUpdate(taskId!)} /> : ''}
+          {(optionsPrivileges.editTask) ? <CloseOutlined className={styles.edit_button} onClick={() => deleteTask(taskId!)}/> : ''}
+        </div>
+      </td>
       <td>
         <Popup
           trigger={
@@ -1354,7 +1381,7 @@ function EventActivitiesPage() {
             value={selectedTaskUser}
             onChange={(sel) => {
               console.log(sel);
-              
+
               setTaskUser(sel);
               updateTaskAssignee({ assigneeId: Number(sel), taskId: taskId });
               setTimeout(() => {
@@ -1470,9 +1497,6 @@ function EventActivitiesPage() {
               <Button className={styles.button} onClick={_onCreate}>
                 Создать
               </Button>
-              <Button className={styles.button} onClick={_onUpdate}>
-                Изменить / Удалить
-              </Button>
               <Button className={styles.button} onClick={_onCopy}>
                 Копировать с другого мероприятия
               </Button>
@@ -1504,7 +1528,7 @@ function EventActivitiesPage() {
 
         </div>
         {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
-        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} onClose={closeModalUpdate} />}
+        {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} taskId={taskId} onClose={closeModalUpdate} />}
         {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
         {isAddFileModalOpen && <AddFileDialog idInt={taskId} onClose={closeModalFile} />}
       </>
