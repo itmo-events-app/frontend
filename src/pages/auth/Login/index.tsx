@@ -98,7 +98,7 @@ function LoginPage() {
           navigate(RoutePaths.home);
         })
         .catch((): any => {
-          setErrorText("Неправильно указан логин и/или пароль");
+          setErrorText('Неправильно указан логин и/или пароль');
           setIsError(true);
         });
     }

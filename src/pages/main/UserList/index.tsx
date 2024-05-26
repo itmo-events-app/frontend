@@ -14,16 +14,16 @@ import Dialog from '@widgets/main/Dialog';
 import DialogContent from '@pages/main/UserList/DialogContent';
 import Fade from '@widgets/main/Fade';
 import ApiContext from '@features/api-context';
-import {RoleGroup, toUserModel, UserModel} from '@entities/user';
+import { RoleGroup, toUserModel, UserModel } from '@entities/user';
 import { PrivilegeData } from '@entities/privilege-context';
 import { PrivilegeNames } from '@shared/config/privileges';
 import ContextMenu, { ContextMenuItem } from '@widgets/main/ContextMenu';
 import { hasAnyPrivilege } from '@features/privileges';
 import PrivilegeContext from '@features/privilege-context';
-import {ArrowDown, MenuVertical} from '@shared/ui/icons';
+import { ArrowDown, MenuVertical } from '@shared/ui/icons';
 import MessageDialogContent from '@pages/main/UserList/MessageDialogContent';
-import {UserResponse} from "@shared/api/generated/model";
-import PagedList2 from "@widgets/main/PagedList2";
+import { UserResponse } from '@shared/api/generated/model';
+import PagedList2 from '@widgets/main/PagedList2';
 
 class ContextMenuData {
   clientX: number;
@@ -79,15 +79,15 @@ export default function UserListPage() {
   const { api } = useContext(ApiContext);
   const { privilegeContext } = useContext(PrivilegeContext);
   const [userElements, setUserElements] = useState([] as UserElement[]);
-  const [userElementPage, setUserElementPage] = useState([] as PageEntry[])
+  const [userElementPage, setUserElementPage] = useState([] as PageEntry[]);
 
   const cmRef = useRef(null);
 
-  const [searchQuery, setSearchQuery] = useState("")
-  const [page, setPage] = useState(1)
-  const [size, setSize] = useState(10)
-  const [totalPages, setTotalPages] = useState(1)
-  const [totalElements, setTotalElements] = useState(1)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(1);
 
   const [cmData, setCmData] = useState(new ContextMenuData());
   const [dialogData, setDialogData] = useState(new DialogData());
@@ -130,12 +130,13 @@ export default function UserListPage() {
   }, [page, size]);
 
   function _fetchUsers() {
-    api.withReauth(() => api.profile.getAllUsers(searchQuery, page - 1, size))
-      .then(r => {
+    api
+      .withReauth(() => api.profile.getAllUsers(searchQuery, page - 1, size))
+      .then((r) => {
         const l = r.data.items?.map((user: UserResponse) => new UserElement(toUserModel(user))) || [];
         setUserElements(l);
-        setTotalElements(r.data.total || 0)
-        setTotalPages(Math.ceil((r.data.total || 0) / size))
+        setTotalElements(r.data.total || 0);
+        setTotalPages(Math.ceil((r.data.total || 0) / size));
       });
   }
 
@@ -168,16 +169,17 @@ export default function UserListPage() {
   }
 
   useEffect(() => {
-    setUserElementPage(userElements.map(ne => {
-      return new PageEntry(() => _renderUserEntry(ne))
-    }))
+    setUserElementPage(
+      userElements.map((ne) => {
+        return new PageEntry(() => _renderUserEntry(ne));
+      })
+    );
   }, [userElements]);
 
   function _renderUserEntry(ue: UserElement) {
-
     return (
       <div key={uid()} className={styles.user}>
-        <div className={styles.user_entry} >
+        <div className={styles.user_entry}>
           <div className={styles.user_left}>
             <div className={styles.user_heading}>
               <div className={styles.user_name}>
@@ -192,7 +194,10 @@ export default function UserListPage() {
           <div className={styles.user_right}>
             <div className={styles.read_button_container}>
               <MenuVertical onClick={(e) => _onMenuClick(ue.entry, e)} className={styles.icon_dots} />
-              <ArrowDown onClick={_expand(ue)} className={appendClassName(styles.icon_expand, ue.expanded ? styles.expanded : null)} />
+              <ArrowDown
+                onClick={_expand(ue)}
+                className={appendClassName(styles.icon_expand, ue.expanded ? styles.expanded : null)}
+              />
             </div>
           </div>
         </div>
@@ -207,12 +212,14 @@ export default function UserListPage() {
 
   const _assignRoleToUser = (userId: number, roleId: number, eventId: number) => {
     if (eventId == -1) {
-      _assignSystemRole(userId, roleId)
+      _assignSystemRole(userId, roleId);
     } else {
       if (eventId == 0) {
-        setDialogData(new DialogData('Некорректная операция!',
-          DialogSelected.MESSAGE,
-          { messageText: "Вы должны выбрать мероприятие!" }));
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, {
+            messageText: 'Вы должны выбрать мероприятие!',
+          })
+        );
         return;
       }
       switch (roleId) {
@@ -224,77 +231,94 @@ export default function UserListPage() {
           _assignAssistantRole(userId, eventId);
           break;
         default:
-          _assignOrganizationalRole(userId, roleId, eventId)
+          _assignOrganizationalRole(userId, roleId, eventId);
           break;
       }
     }
-  }
+  };
 
   function _assignSystemRole(userId: number, roleId: number) {
-    api.withReauth(() => api.role.assignSystemRole(userId, roleId))
-      .then(_ => {
-        _fetchUsers()
-        setDialogData(new DialogData('Операция прошла успешно!',
-          DialogSelected.MESSAGE,
-          { messageText: 'Роль назначена пользователю!' }));
-      }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+    api
+      .withReauth(() => api.role.assignSystemRole(userId, roleId))
+      .then((_) => {
+        _fetchUsers();
+        setDialogData(
+          new DialogData('Операция прошла успешно!', DialogSelected.MESSAGE, {
+            messageText: 'Роль назначена пользователю!',
+          })
+        );
+      })
+      .catch((error) => {
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, { messageText: error.response.data })
+        );
+      });
   }
 
   function _assignOrganizationalRole(userId: number, roleId: number, eventId: number) {
-    api.withReauth(() => api.role.assignOrganizationalRole(userId, eventId, roleId))
-      .then(_ => {
-        _fetchUsers()
-        setDialogData(new DialogData('Операция прошла успешно!',
-          DialogSelected.MESSAGE,
-          { messageText: 'Роль назначена пользователю!' }));
-      }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+    api
+      .withReauth(() => api.role.assignOrganizationalRole(userId, eventId, roleId))
+      .then((_) => {
+        _fetchUsers();
+        setDialogData(
+          new DialogData('Операция прошла успешно!', DialogSelected.MESSAGE, {
+            messageText: 'Роль назначена пользователю!',
+          })
+        );
+      })
+      .catch((error) => {
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, { messageText: error.response.data })
+        );
+      });
   }
 
   function _assignOrganizerRole(userId: number, eventId: number) {
-    api.withReauth(() => api.role.assignOrganizerRole(userId, eventId))
-      .then(_ => {
-        _fetchUsers()
-        setDialogData(new DialogData('Операция прошла успешно!',
-          DialogSelected.MESSAGE,
-          { messageText: 'Роль назначена пользователю!' }));
-      }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+    api
+      .withReauth(() => api.role.assignOrganizerRole(userId, eventId))
+      .then((_) => {
+        _fetchUsers();
+        setDialogData(
+          new DialogData('Операция прошла успешно!', DialogSelected.MESSAGE, {
+            messageText: 'Роль назначена пользователю!',
+          })
+        );
+      })
+      .catch((error) => {
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, { messageText: error.response.data })
+        );
+      });
   }
 
   function _assignAssistantRole(userId: number, eventId: number) {
-    api.withReauth(() => api.role.assignAssistantRole(userId, eventId))
-      .then(_ => {
-        _fetchUsers()
-        setDialogData(new DialogData('Операция прошла успешно!',
-          DialogSelected.MESSAGE,
-          { messageText: 'Роль назначена пользователю!' }));
-      }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+    api
+      .withReauth(() => api.role.assignAssistantRole(userId, eventId))
+      .then((_) => {
+        _fetchUsers();
+        setDialogData(
+          new DialogData('Операция прошла успешно!', DialogSelected.MESSAGE, {
+            messageText: 'Роль назначена пользователю!',
+          })
+        );
+      })
+      .catch((error) => {
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, { messageText: error.response.data })
+        );
+      });
   }
 
   const _revokeRoleFromUser = (userId: number, roleId: number, eventId: number) => {
-
     if (eventId == -1) {
-      _revokeSystemRole(userId, roleId)
+      _revokeSystemRole(userId, roleId);
     } else {
       if (eventId == 0) {
-        setDialogData(new DialogData('Некорректная операция!',
-          DialogSelected.MESSAGE,
-          { messageText: "Вы должны выбрать мероприятие!" }));
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, {
+            messageText: 'Вы должны выбрать мероприятие!',
+          })
+        );
         return;
       }
       switch (roleId) {
@@ -306,71 +330,87 @@ export default function UserListPage() {
           _revokeAssistantRole(userId, eventId);
           break;
         default:
-          _revokeOrganizationalRole(userId, roleId, eventId)
+          _revokeOrganizationalRole(userId, roleId, eventId);
           break;
       }
     }
-  }
+  };
 
   function _revokeSystemRole(userId: number, roleId: number) {
-    api.withReauth(() => api.role.revokeSystemRole(userId, roleId))
-      .then(_ => {
-        _fetchUsers()
-        setDialogData(new DialogData('Операция прошла успешно!',
-          DialogSelected.MESSAGE,
-          { messageText: 'Роль пользователя отозвана.' }));
-      }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+    api
+      .withReauth(() => api.role.revokeSystemRole(userId, roleId))
+      .then((_) => {
+        _fetchUsers();
+        setDialogData(
+          new DialogData('Операция прошла успешно!', DialogSelected.MESSAGE, {
+            messageText: 'Роль пользователя отозвана.',
+          })
+        );
+      })
+      .catch((error) => {
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, { messageText: error.response.data })
+        );
+      });
   }
 
   function _revokeOrganizationalRole(userId: number, roleId: number, eventId: number) {
-    api.withReauth(() => api.role.revokeOrganizationalRole(userId, eventId, roleId))
-      .then(_ => {
-        _fetchUsers()
-        setDialogData(new DialogData('Операция прошла успешно!',
-          DialogSelected.MESSAGE,
-          { messageText: 'Роль пользователя отозвана.' }));
-      }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+    api
+      .withReauth(() => api.role.revokeOrganizationalRole(userId, eventId, roleId))
+      .then((_) => {
+        _fetchUsers();
+        setDialogData(
+          new DialogData('Операция прошла успешно!', DialogSelected.MESSAGE, {
+            messageText: 'Роль пользователя отозвана.',
+          })
+        );
+      })
+      .catch((error) => {
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, { messageText: error.response.data })
+        );
+      });
   }
 
   function _revokeOrganizerRole(userId: number, eventId: number) {
-    api.withReauth(() => api.role.revokeOrganizerRole(userId, eventId))
-      .then(_ => {
-        _fetchUsers()
-        setDialogData(new DialogData('Операция прошла успешно!',
-          DialogSelected.MESSAGE,
-          { messageText: 'Роль пользователя отозвана.' }));
-      }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+    api
+      .withReauth(() => api.role.revokeOrganizerRole(userId, eventId))
+      .then((_) => {
+        _fetchUsers();
+        setDialogData(
+          new DialogData('Операция прошла успешно!', DialogSelected.MESSAGE, {
+            messageText: 'Роль пользователя отозвана.',
+          })
+        );
+      })
+      .catch((error) => {
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, { messageText: error.response.data })
+        );
+      });
   }
 
   function _revokeAssistantRole(userId: number, eventId: number) {
-    api.withReauth(() => api.role.revokeAssistantRole(userId, eventId))
-      .then(_ => {
-        _fetchUsers()
-        setDialogData(new DialogData('Операция прошла успешно!',
-          DialogSelected.MESSAGE,
-          { messageText: 'Роль пользователя отозвана.' }));
-      }).catch(error => {
-      setDialogData(new DialogData('Некорректная операция!',
-        DialogSelected.MESSAGE,
-        { messageText: error.response.data }));
-    })
+    api
+      .withReauth(() => api.role.revokeAssistantRole(userId, eventId))
+      .then((_) => {
+        _fetchUsers();
+        setDialogData(
+          new DialogData('Операция прошла успешно!', DialogSelected.MESSAGE, {
+            messageText: 'Роль пользователя отозвана.',
+          })
+        );
+      })
+      .catch((error) => {
+        setDialogData(
+          new DialogData('Некорректная операция!', DialogSelected.MESSAGE, { messageText: error.response.data })
+        );
+      });
   }
 
   const _onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-  }
+  };
 
   const _closeDialog = () => {
     setDialogData(new DialogData());
@@ -384,16 +424,48 @@ export default function UserListPage() {
     let component = <></>;
     switch (dialogData.visible) {
       case DialogSelected.ASSIGN_SYSTEM:
-        component = <DialogContent onDone={_assignRoleToUser} isEvent={false} isRevoke={false} buttonText={"Назначить роль"} {...dialogData.args} />;
+        component = (
+          <DialogContent
+            onDone={_assignRoleToUser}
+            isEvent={false}
+            isRevoke={false}
+            buttonText={'Назначить роль'}
+            {...dialogData.args}
+          />
+        );
         break;
       case DialogSelected.REVOKE_SYSTEM:
-        component = <DialogContent onDone={_revokeRoleFromUser} isEvent={false} isRevoke={true} buttonText={"Отозвать роль"} {...dialogData.args} />;
+        component = (
+          <DialogContent
+            onDone={_revokeRoleFromUser}
+            isEvent={false}
+            isRevoke={true}
+            buttonText={'Отозвать роль'}
+            {...dialogData.args}
+          />
+        );
         break;
       case DialogSelected.ASSIGN_EVENT:
-        component = <DialogContent onDone={_assignRoleToUser} isEvent={true} isRevoke={false} buttonText={"Назначить роль"} {...dialogData.args} />;
+        component = (
+          <DialogContent
+            onDone={_assignRoleToUser}
+            isEvent={true}
+            isRevoke={false}
+            buttonText={'Назначить роль'}
+            {...dialogData.args}
+          />
+        );
         break;
       case DialogSelected.REVOKE_EVENT:
-        component = <DialogContent onDone={_revokeRoleFromUser} isEvent={true} isRevoke={true} buttonText={"Отозвать роль"} {...dialogData.args} />;
+        component = (
+          <DialogContent
+            onDone={_revokeRoleFromUser}
+            isEvent={true}
+            isRevoke={true}
+            buttonText={'Отозвать роль'}
+            {...dialogData.args}
+          />
+        );
         break;
       case DialogSelected.MESSAGE:
         component = <MessageDialogContent onDone={_closeDialog} {...dialogData.args} />;
@@ -434,12 +506,16 @@ export default function UserListPage() {
       }),
       new ContextMenuItem('Назначить организационную роль', (e: React.MouseEvent) => {
         setCmData({ ...cmData, visible: false });
-        setDialogData(new DialogData('Назначить организационную роль', DialogSelected.ASSIGN_EVENT, { userId: user.id }));
+        setDialogData(
+          new DialogData('Назначить организационную роль', DialogSelected.ASSIGN_EVENT, { userId: user.id })
+        );
         e.stopPropagation();
       }),
       new ContextMenuItem('Отозвать организационную роль', () => {
         setCmData({ ...cmData, visible: false });
-        setDialogData(new DialogData('Отозвать организационную роль', DialogSelected.REVOKE_EVENT, { userId: user.id }));
+        setDialogData(
+          new DialogData('Отозвать организационную роль', DialogSelected.REVOKE_EVENT, { userId: user.id })
+        );
         e.stopPropagation();
       }),
     ];
@@ -470,7 +546,12 @@ export default function UserListPage() {
       bottomRight={
         <Content>
           <div className={styles.search}>
-            <Search value={searchQuery} onChange={_onSearchChange} onSearch={_fetchUsers} placeholder="Поиск пользователей" />
+            <Search
+              value={searchQuery}
+              onChange={_onSearchChange}
+              onSearch={_fetchUsers}
+              placeholder="Поиск пользователей"
+            />
           </div>
           <PagedList2
             page={page}
@@ -482,10 +563,8 @@ export default function UserListPage() {
             total_elements={totalElements}
             items={userElementPage}
           />
-          <_ContextMenu/>
-          <Fade
-            className={appendClassName(styles.fade,
-              (dialogData.visible) ? styles.visible : styles.hidden)}>
+          <_ContextMenu />
+          <Fade className={appendClassName(styles.fade, dialogData.visible ? styles.visible : styles.hidden)}>
             <_Dialog />
           </Fade>
         </Content>

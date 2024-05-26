@@ -4,7 +4,7 @@ import LoginPage from '@pages/auth/Login';
 import RegisterPage from '@pages/auth/Register';
 import RestorePage from '@pages/auth/Restore';
 import PasswordPage from '@pages/auth/RecoverPassword';
-import ChangePasswordPage from "@pages/auth/ChangePassword";
+import ChangePasswordPage from '@pages/auth/ChangePassword';
 import NotifyPage from '@pages/auth/Notification';
 import RoleListPage from '@pages/main/RoleList';
 import EventListPage from '@pages/main/EventListPage';
@@ -23,7 +23,7 @@ import { anyPrivilege } from '@features/privileges';
 import { PrivilegeData } from '@entities/privilege-context';
 import { PrivilegeNames } from '@shared/config/privileges';
 import PlaceDataPage from '@pages/main/PlaceData';
-import ConfirmEmail from "@pages/auth/ConfirmEmail";
+import ConfirmEmail from '@pages/auth/ConfirmEmail';
 
 // root urls with privileges
 const routes: Record<AppRoutes, AppRouteProps> = {
@@ -62,20 +62,12 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.EVENT_LIST]: {
     path: RoutePaths.eventList,
     authenticated: true,
-    authorized: anyPrivilege(
-      new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
-      ])
-    ),
+    authorized: anyPrivilege(new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)])),
   },
   [AppRoutes.EVENT_DATA]: {
     path: RoutePaths.eventData,
     authenticated: true,
-    authorized: anyPrivilege(
-      new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)
-      ])
-    ),
+    authorized: anyPrivilege(new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENTS)])),
   },
   [AppRoutes.TASK_LIST]: {
     path: RoutePaths.taskList,
@@ -84,11 +76,7 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.PLACE_LIST]: {
     path: RoutePaths.placeList,
     authenticated: true,
-    authorized: anyPrivilege(
-      new Set([
-        new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
-      ])
-    ),
+    authorized: anyPrivilege(new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE)])),
   },
   [AppRoutes.PLACE_DATA]: {
     path: RoutePaths.placeData,
@@ -96,7 +84,7 @@ const routes: Record<AppRoutes, AppRouteProps> = {
     authorized: anyPrivilege(
       new Set([
         new PrivilegeData(PrivilegeNames.VIEW_EVENT_PLACE),
-        new PrivilegeData(PrivilegeNames.VIEW_ROUTE_BETWEEN_ROOMS)
+        new PrivilegeData(PrivilegeNames.VIEW_ROUTE_BETWEEN_ROOMS),
       ])
     ),
   },
@@ -139,8 +127,8 @@ const routes: Record<AppRoutes, AppRouteProps> = {
   },
   [AppRoutes.CONFIRM_EMAIL]: {
     path: RoutePaths.confirmEmail,
-    authenticated: false
-  }
+    authenticated: false,
+  },
 };
 
 // root elements
@@ -161,10 +149,10 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <RestorePage />,
   },
   [AppRoutes.RECOVER_PASSWORD]: {
-    element: <PasswordPage/>,
+    element: <PasswordPage />,
   },
   [AppRoutes.CHANGE_PASSWORD]: {
-    element: <ChangePasswordPage/>,
+    element: <ChangePasswordPage />,
   },
   [AppRoutes.NOTIFY]: {
     element: <NotifyPage />,
@@ -203,7 +191,7 @@ const routeElements: Record<AppRoutes, AppRouteProps> = {
     element: <>404 not found</>,
   },
   [AppRoutes.CONFIRM_EMAIL]: {
-    element: <ConfirmEmail />
+    element: <ConfirmEmail />,
   },
 };
 
@@ -226,10 +214,7 @@ export default function AppRouter() {
         }
         return <Route key={path} path={path} element={e} />;
       })}
-      <Route
-        path="/task/*"
-        element={<Navigate to="/tasks" replace />}
-      />
+      <Route path="/task/*" element={<Navigate to="/tasks" replace />} />
     </Routes>
   );
 }

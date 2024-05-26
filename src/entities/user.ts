@@ -17,12 +17,7 @@ class UserModel {
   private _loginType: string;
   private _roleGroups: RoleGroup[];
 
-  constructor(id: number,
-              name: string,
-              surname: string,
-              login: string,
-              loginType: string,
-              roleGroups: RoleGroup[]) {
+  constructor(id: number, name: string, surname: string, login: string, loginType: string, roleGroups: RoleGroup[]) {
     this._id = id;
     this._name = name;
     this._surname = surname;
@@ -52,9 +47,10 @@ class UserModel {
 }
 
 function toUserModel(user: UserResponse): UserModel {
-  const systemRoles = new RoleGroup("Системные роли", user.systemRoles || []);
-  const eventRoles: RoleGroup[] = Object.entries(user.eventRoles!)
-    .map(([name, roles]) => new RoleGroup("Роли мероприятия " + name, roles));
+  const systemRoles = new RoleGroup('Системные роли', user.systemRoles || []);
+  const eventRoles: RoleGroup[] = Object.entries(user.eventRoles!).map(
+    ([name, roles]) => new RoleGroup('Роли мероприятия ' + name, roles)
+  );
   const roleGroups: RoleGroup[] = [systemRoles].concat(eventRoles);
   return new UserModel(user.id!, user.name!, user.surname!, user.login!, user.type!, roleGroups);
 }

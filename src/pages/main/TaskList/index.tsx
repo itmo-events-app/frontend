@@ -1,41 +1,41 @@
-import styles from "./index.module.css";
-import BrandLogo from "@widgets/main/BrandLogo";
-import Layout from "@widgets/main/Layout";
-import PageName from "@widgets/main/PageName";
-import Content from "@widgets/main/Content";
-import SideBar from "@widgets/main/SideBar";
-import Button from "@widgets/main/Button";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
-import { RoutePaths } from "@shared/config/routes";
-import { FC, ReactNode, useContext, useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { taskService } from "@features/task-service.ts";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale/ru";
-import { FileDataResponse, TaskResponse, TaskResponseTaskStatusEnum } from "@shared/api/generated";
-import ApiContext from "@features/api-context";
-import { useNavigate } from "react-router-dom";
-import Popup from "reactjs-popup";
-import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import Pagination, { PageEntry, PageProps } from "@widgets/main/PagedList/pagination";
-import { hasAnyPrivilege } from "@features/privileges.ts";
-import { PrivilegeData } from "@entities/privilege-context.ts";
-import { PrivilegeNames } from "@shared/config/privileges.ts";
-import PrivilegeContext from "@features/privilege-context.ts";
+import styles from './index.module.css';
+import BrandLogo from '@widgets/main/BrandLogo';
+import Layout from '@widgets/main/Layout';
+import PageName from '@widgets/main/PageName';
+import Content from '@widgets/main/Content';
+import SideBar from '@widgets/main/SideBar';
+import Button from '@widgets/main/Button';
+import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
+import { RoutePaths } from '@shared/config/routes';
+import { FC, ReactNode, useContext, useEffect, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { taskService } from '@features/task-service.ts';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale/ru';
+import { FileDataResponse, TaskResponse, TaskResponseTaskStatusEnum } from '@shared/api/generated';
+import ApiContext from '@features/api-context';
+import { useNavigate } from 'react-router-dom';
+import Popup from 'reactjs-popup';
+import PageTabs, { PageTab } from '@widgets/main/PageTabs';
+import Pagination, { PageEntry, PageProps } from '@widgets/main/PagedList/pagination';
+import { hasAnyPrivilege } from '@features/privileges.ts';
+import { PrivilegeData } from '@entities/privilege-context.ts';
+import { PrivilegeNames } from '@shared/config/privileges.ts';
+import PrivilegeContext from '@features/privilege-context.ts';
 
 const newTaskOptions: DropdownOption<string>[] = [
-  new DropdownOption("Новое"),
-  new DropdownOption("В работе"),
-  new DropdownOption("Выполнено"),
-  new DropdownOption("Просрочено"),
+  new DropdownOption('Новое'),
+  new DropdownOption('В работе'),
+  new DropdownOption('Выполнено'),
+  new DropdownOption('Просрочено'),
 ];
 
 type FilterType = {
-  eventId: string | undefined,
-  activityId: string | undefined,
-  expired: boolean,
+  eventId: string | undefined;
+  activityId: string | undefined;
+  expired: boolean;
   [key: string]: string | boolean | undefined;
-}
+};
 
 const initialFilters: FilterType = {
   eventId: undefined,
@@ -44,17 +44,17 @@ const initialFilters: FilterType = {
 };
 
 const statusTranslation: Record<string, string> = {
-  NEW: "Новое",
-  IN_PROGRESS: "В работе",
-  EXPIRED: "Просрочено",
-  DONE: "Выполнено",
+  NEW: 'Новое',
+  IN_PROGRESS: 'В работе',
+  EXPIRED: 'Просрочено',
+  DONE: 'Выполнено',
 };
 
 const statusColorClass: Record<string, string> = {
-  "Новое": styles.color_blue,
-  "В работе": styles.color_blue,
-  "Просрочено": styles.color_red,
-  "Выполнено": styles.color_lime,
+  Новое: styles.color_blue,
+  'В работе': styles.color_blue,
+  Просрочено: styles.color_red,
+  Выполнено: styles.color_lime,
 };
 
 type TaskTableRowProps = {
@@ -69,11 +69,11 @@ type TaskTableRowProps = {
   activityTitle?: string;
   activityId?: number;
   files?: FileDataResponse[];
-}
+};
 
 type OptionsPrivileges = {
-  changeTaskStatus: boolean,
-}
+  changeTaskStatus: boolean;
+};
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
   changeTaskStatus: false,
@@ -85,13 +85,15 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
   description,
   deadline,
   assigneeName,
-  eventId, eventName,
+  eventId,
+  eventName,
   taskStatus,
   activityTitle,
-  activityId, files
+  activityId,
+  files,
 }) => {
   const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
-  const [idInt] = useState<number>(eventId)
+  const [idInt] = useState<number>(eventId);
 
   const navigate = useNavigate();
 
@@ -111,10 +113,13 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
     if (idInt != null) {
       const privileges = _getPrivileges(idInt);
       setOptionsPrivileges({
-        changeTaskStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS)])),
-      })
+        changeTaskStatus: hasAnyPrivilege(
+          privileges,
+          new Set([new PrivilegeData(PrivilegeNames.CHANGE_ASSIGNED_TASK_STATUS)])
+        ),
+      });
     } else {
-      setOptionsPrivileges(optionsPrivilegesInitial)
+      setOptionsPrivileges(optionsPrivilegesInitial);
     }
   }, [idInt, privilegeContext]);
 
@@ -122,7 +127,7 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
 
   const { mutate: updateTaskStatus } = useMutation({
     mutationFn: taskService.updateTaskStatus(api),
-    mutationKey: ["updateTaskStatus"],
+    mutationKey: ['updateTaskStatus'],
   });
 
   const redirectToEvent = (id: number) => {
@@ -160,7 +165,6 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                     items={newTaskOptions}
                     toText={(item) => item.value}
                     value={selectedStatus}
-
                     onChange={(sel) => {
                       updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
                       setStatus(new DropdownOption(sel as any));
@@ -178,24 +182,24 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
         </Popup>
       </td>
       <td>
-        {format(deadline, "H:mm")} <br />
-        {format(deadline, "do MMMM, yyyy", { locale: ru })}
+        {format(deadline, 'H:mm')} <br />
+        {format(deadline, 'do MMMM, yyyy', { locale: ru })}
       </td>
       <td>{assigneeName}</td>
       <td>
         <div onClick={() => redirectToEvent(eventId)}>{eventName}</div>
       </td>
-      <td>{activityId ?
-        <div style={{ cursor: 'pointer' }} onClick={() => redirectToEvent(activityId)}>{activityTitle}</div> :
-        <div>-</div>}</td>
       <td>
-        <Popup
-          trigger={
-            <div className={statusColorClass[status]}>{status}</div>
-          }
-          modal
-          nested
-        >
+        {activityId ? (
+          <div style={{ cursor: 'pointer' }} onClick={() => redirectToEvent(activityId)}>
+            {activityTitle}
+          </div>
+        ) : (
+          <div>-</div>
+        )}
+      </td>
+      <td>
+        <Popup trigger={<div className={statusColorClass[status]}>{status}</div>} modal nested>
           {
             ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
               <div className={styles.popup__wrapper}>
@@ -212,7 +216,6 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
                     items={newTaskOptions}
                     toText={(item) => item.value}
                     value={selectedStatus}
-
                     onChange={(sel) => {
                       updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
                       setStatus(new DropdownOption(sel as any));
@@ -230,73 +233,86 @@ const TaskTableRow: FC<TaskTableRowProps> = ({
         </Popup>
       </td>
       <td>
-        {files?.length ? files?.map(file => <div key={file.filename}>
-          <a href={file.presignedUrl} download>{file.filename}</a>
-          <br /><br />
-        </div>) : <></>}
+        {files?.length ? (
+          files?.map((file) => (
+            <div key={file.filename}>
+              <a href={file.presignedUrl} download>
+                {file.filename}
+              </a>
+              <br />
+              <br />
+            </div>
+          ))
+        ) : (
+          <></>
+        )}
       </td>
     </tr>
   );
 };
 
 const ListWrapper: FC<{ child?: ReactNode[] }> = ({ child }) => {
-  return <div className={styles.content}>
-    <table className={styles.task_table}>
-      <thead>
-        <tr>
-          <th>Название</th>
-          <th>Описание</th>
-          <th>Дедлайн</th>
-          <th>Исполнитель</th>
-          <th>Мероприятие</th>
-          <th>Активность</th>
-          <th>Статус</th>
-          <th>Файлы</th>
-        </tr>
-      </thead>
-      <tbody>
-        {child}
-      </tbody>
-    </table>
-  </div>
-}
+  return (
+    <div className={styles.content}>
+      <table className={styles.task_table}>
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Дедлайн</th>
+            <th>Исполнитель</th>
+            <th>Мероприятие</th>
+            <th>Активность</th>
+            <th>Статус</th>
+            <th>Файлы</th>
+          </tr>
+        </thead>
+        <tbody>{child}</tbody>
+      </table>
+    </div>
+  );
+};
 
 const taskResponsesToPageEntries = (tasks: TaskResponse[]) => {
   return tasks.map((task) => {
     return new PageEntry(() => {
       return (
-        <TaskTableRow key={task.id}
-          taskId={Number(task.id)} title={String(task.title)} description={task.description || ""}
-          deadline={task.deadline || ""}
+        <TaskTableRow
+          key={task.id}
+          taskId={Number(task.id)}
+          title={String(task.title)}
+          description={task.description || ''}
+          deadline={task.deadline || ''}
           assigneeName={`${task.assignee?.name} ${task.assignee?.surname}`}
           eventId={Number(task.event?.eventId)}
           activityId={Number(task.event?.activityId)}
           eventName={task.event?.eventTitle}
           taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
           activityTitle={task.event?.activityTitle}
-          files={task.fileData} />);
+          files={task.fileData}
+        />
+      );
     });
-  })
-}
-
+  });
+};
 
 type ActivityTasks = {
-  activity: DropdownOption<string>,
-  tasks: TaskResponse[],
-}
+  activity: DropdownOption<string>;
+  tasks: TaskResponse[];
+};
 type EventActivities = {
-  event: DropdownOption<string>,
-  activities: ActivityTasks[],
-  tasks: TaskResponse[],
-}
+  event: DropdownOption<string>;
+  activities: ActivityTasks[];
+  tasks: TaskResponse[];
+};
 
 function TaskListPage() {
   const { api } = useContext(ApiContext);
 
   //tabs
   const pageTabs: PageTab[] = [];
-  pageTabs.push(new PageTab("Текущие"));
-  pageTabs.push(new PageTab("Прошедшие"));
+  pageTabs.push(new PageTab('Текущие'));
+  pageTabs.push(new PageTab('Прошедшие'));
   const [selectedTab, setSelectedTab] = useState(pageTabs[0].text);
   const [pageProps, setPageProps] = useState<PageProps>({ page: 1, size: 5, total: 0 });
   const [itemList, setItemList] = useState<PageEntry[]>([]);
@@ -308,17 +324,27 @@ function TaskListPage() {
     try {
       const tempAllTasks = await taskService.getAllTasks(api)();
       const result: EventActivities[] = [];
-      tempAllTasks.forEach(task => {
-        let eventActivities: EventActivities | undefined = result.find(eventDropdown => eventDropdown.event.id === task.event?.eventId?.toString());
+      tempAllTasks.forEach((task) => {
+        let eventActivities: EventActivities | undefined = result.find(
+          (eventDropdown) => eventDropdown.event.id === task.event?.eventId?.toString()
+        );
         if (!eventActivities && task.event && task.event.eventId) {
-          const event = new DropdownOption<string>(task.event.eventTitle ? task.event.eventTitle : "", task.event.eventId.toString())
+          const event = new DropdownOption<string>(
+            task.event.eventTitle ? task.event.eventTitle : '',
+            task.event.eventId.toString()
+          );
           eventActivities = { event: event, activities: [], tasks: [] };
           result.push(eventActivities);
         }
         if (task.event?.activityId) {
-          let activityTasks: ActivityTasks | undefined = eventActivities?.activities.find(activityDropdown => activityDropdown.activity.id === task.event?.activityId?.toString());
+          let activityTasks: ActivityTasks | undefined = eventActivities?.activities.find(
+            (activityDropdown) => activityDropdown.activity.id === task.event?.activityId?.toString()
+          );
           if (!activityTasks && task.event && task.event.activityId) {
-            const activity = new DropdownOption<string>(task.event.activityTitle ? task.event.activityTitle : "", task.event.activityId.toString())
+            const activity = new DropdownOption<string>(
+              task.event.activityTitle ? task.event.activityTitle : '',
+              task.event.activityId.toString()
+            );
             activityTasks = { activity: activity, tasks: [] };
             eventActivities?.activities.push(activityTasks);
           }
@@ -330,9 +356,9 @@ function TaskListPage() {
       allTasks = tempAllTasks;
       setDropdownOptions(result);
     } catch (error) {
-      console.error("Error fetching event list:", error);
+      console.error('Error fetching event list:', error);
     }
-  }
+  };
 
   const [filters, setFilters] = useState(initialFilters);
   const getTaskList = async (page: number = 1, size: number = 15) => {
@@ -342,14 +368,16 @@ function TaskListPage() {
       if (filters.eventId) {
         for (const eventActivities of dropdownOptions) {
           if (filters.activityId) {
-            const activityTasks = eventActivities.activities.find(activityTasks => activityTasks.activity.id === filters.activityId);
+            const activityTasks = eventActivities.activities.find(
+              (activityTasks) => activityTasks.activity.id === filters.activityId
+            );
             if (activityTasks) {
               filteredTasks.push(...activityTasks.tasks);
               break;
             }
           } else {
             if (eventActivities.event.id === filters.eventId) {
-              eventActivities.activities.forEach(activityTasks => {
+              eventActivities.activities.forEach((activityTasks) => {
                 filteredTasks.push(...activityTasks.tasks);
               });
               filteredTasks.push(...eventActivities.tasks);
@@ -357,13 +385,15 @@ function TaskListPage() {
           }
         }
       } else filteredTasks = allTasks;
-      filteredTasks = filteredTasks.filter((task) => ((task.taskStatus === TaskResponseTaskStatusEnum.Expired) === filters.expired));
+      filteredTasks = filteredTasks.filter(
+        (task) => (task.taskStatus === TaskResponseTaskStatusEnum.Expired) === filters.expired
+      );
       const total = filteredTasks.length;
       filteredTasks = filteredTasks.slice((page - 1) * size, page * size);
       setPageProps({ page: page, size: size, total: total });
       setItemList(taskResponsesToPageEntries(filteredTasks));
     } catch (error) {
-      console.error("Error fetching event list:", error);
+      console.error('Error fetching event list:', error);
     }
   };
 
@@ -374,12 +404,12 @@ function TaskListPage() {
   const _pageTabHandler = (tab_name: string) => {
     setFilters((prev) => ({
       ...prev,
-      expired: (tab_name === "Прошедшие"),
+      expired: tab_name === 'Прошедшие',
     }));
     setSelectedTab(tab_name);
-  }
+  };
   const _dropdownHandler = (event: string | undefined, isEvent: boolean) => {
-    console.log(event)
+    console.log(event);
     if (isEvent) {
       setSelectedEvent(event);
       setSelectedActivity(undefined);
@@ -387,22 +417,21 @@ function TaskListPage() {
         ...prev,
         eventId: event,
         activityId: undefined,
-      }))
+      }));
     } else {
       setSelectedActivity(event);
       setFilters((prev) => ({
         ...prev,
         activityId: event,
-      }))
+      }));
     }
-  }
+  };
 
-  const activityOptions = dropdownOptions.find(obj => obj.event.id === selectedEvent)?.activities;
+  const activityOptions = dropdownOptions.find((obj) => obj.event.id === selectedEvent)?.activities;
   return (
     <Layout
       topLeft={<BrandLogo />}
-      topRight={<PageName text="Мои задачи" />
-      }
+      topRight={<PageName text="Мои задачи" />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.taskList} />}
       bottomRight={
         <>
@@ -416,24 +445,31 @@ function TaskListPage() {
                   <div className={styles.dropdownfilter}>
                     <Dropdown
                       placeholder="Мероприятие"
-                      items={dropdownOptions.map(obj => obj.event)}
+                      items={dropdownOptions.map((obj) => obj.event)}
                       value={new DropdownOption(selectedEvent)}
                       onChange={(item) => _dropdownHandler(item as any, true)}
-                      onClear={() => _dropdownHandler(undefined, true)} />
+                      onClear={() => _dropdownHandler(undefined, true)}
+                    />
                   </div>
                   <div className={styles.dropdownfilter}>
                     <Dropdown
                       placeholder="Активность"
-                      items={activityOptions ? activityOptions?.map(obj => obj.activity) : []}
+                      items={activityOptions ? activityOptions?.map((obj) => obj.activity) : []}
                       value={new DropdownOption(selectedActivity)}
                       onChange={(item) => _dropdownHandler(item as any, false)}
-                      onClear={() => _dropdownHandler(undefined, false)} />
+                      onClear={() => _dropdownHandler(undefined, false)}
+                    />
                   </div>
                 </div>
               </div>
               <div className={styles.event_list_container}>
-                <Pagination pageProps={pageProps} onPageChange={(page, size) => getTaskList(page, size)}
-                  items={itemList} pageSpread={1} listWrapper={<ListWrapper />} />
+                <Pagination
+                  pageProps={pageProps}
+                  onPageChange={(page, size) => getTaskList(page, size)}
+                  items={itemList}
+                  pageSpread={1}
+                  listWrapper={<ListWrapper />}
+                />
               </div>
             </div>
           </Content>

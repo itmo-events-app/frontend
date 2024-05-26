@@ -8,7 +8,6 @@ type Props = {
 };
 
 function ImagePreview(props: Props) {
-
   // const [source, setSource] = useState("");
 
   // useEffect(() => {

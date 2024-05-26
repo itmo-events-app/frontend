@@ -13,14 +13,14 @@ async function getImageUrl(prefix: string) {
 
   for (const type of types) {
     foundImageUrl = `${(window as any).ENV_MINIO_URL}/event-images/${prefix}${type}`;
-    try{
+    try {
       const found = await checkImageExists(foundImageUrl);
       if (found) {
         return foundImageUrl;
       }
-    }catch (error){
+    } catch (error) {
       console.log(error);
-      return ''
+      return '';
     }
   }
   return '';

@@ -1,13 +1,13 @@
-import Button from "@widgets/main/Button";
-import InputLabel from "@widgets/main/InputLabel";
+import Button from '@widgets/main/Button';
+import InputLabel from '@widgets/main/InputLabel';
 import styles from './index.module.css';
 import { useContext, useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import ApiContext from '@features/api-context.ts';
 import { RoleResponse, UserResponse } from '@shared/api/generated';
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
+import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
 
-const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete: () => void }) => {
+const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelete: () => void }) => {
   const [userList, setUserList] = useState([] as UserResponse[]);
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [roleList, setRoleList] = useState([] as RoleResponse[]);
@@ -24,11 +24,11 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
       const items = getUsersResponse.data.items;
       setUserList(items ?? []);
       if (items != null && items.length > 0) {
-        setUserId(items[0].id)
+        setUserId(items[0].id);
       } else {
         setUserId(undefined);
       }
-      const eventRoles = getAllRoles.data.filter(r => r.type == "EVENT");
+      const eventRoles = getAllRoles.data.filter((r) => r.type == 'EVENT');
       setRoleList(eventRoles);
       setRoleId(eventRoles[0].id);
       setRoleName(eventRoles[0].name);
@@ -55,7 +55,7 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
     console.log(roleName);
     console.log(userId);
     const currentUserId = await getCurrentUserId();
-    if (userId === currentUserId  && roleName === 'Организатор') {
+    if (userId === currentUserId && roleName === 'Организатор') {
       setErrorMessage('Вы не можете отозвать свою собственную роль организатора!');
       return;
     }
@@ -86,21 +86,25 @@ const DeleteOrganizerDialog = ({ eventId, onDelete}: { eventId: number; onDelete
     <div className={styles.dialog_content}>
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
-        <Dropdown placeholder="Пользователь" value={new DropdownOption(userId?.toString())} onChange={(e) => setUserId(parseInt(e as any))}
-          items={userList.map((u) =>
-            new DropdownOption(u.name, u.id?.toString())
-          )} />
+        <Dropdown
+          placeholder="Пользователь"
+          value={new DropdownOption(userId?.toString())}
+          onChange={(e) => setUserId(parseInt(e as any))}
+          items={userList.map((u) => new DropdownOption(u.name, u.id?.toString()))}
+        />
         <InputLabel value="Роль" />
-        <Dropdown placeholder="Роль" value={new DropdownOption(roleId?.toString())} onChange={(e) => {
-          setRoleId(parseInt(e as any))
-          const foundRole = roleList.find((r) => r.id == parseInt(e as any));
-          if (foundRole != undefined) {
-            setRoleName(foundRole.name);
-          }
-        }}
-          items={roleList.map((r) =>
-            new DropdownOption(r.name, r.id?.toString())
-          )} />
+        <Dropdown
+          placeholder="Роль"
+          value={new DropdownOption(roleId?.toString())}
+          onChange={(e) => {
+            setRoleId(parseInt(e as any));
+            const foundRole = roleList.find((r) => r.id == parseInt(e as any));
+            if (foundRole != undefined) {
+              setRoleName(foundRole.name);
+            }
+          }}
+          items={roleList.map((r) => new DropdownOption(r.name, r.id?.toString()))}
+        />
       </div>
       {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <Button onClick={handleDeleteOrganizer}>Удалить</Button>

@@ -1,16 +1,14 @@
-import {useContext, useEffect, useState} from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-
-import styles from './index.module.css'
-import Button from "@widgets/main/Button";
-import ApiContext from "@features/api-context";
-import RoleListRadio, {RoleRadioElement} from "@widgets/main/RoleListRadio";
-import {createRoleRadioElementList, getSelectedRoleId} from "@widgets/main/RoleListRadio/common";
-import {PrivilegeNames} from "@shared/config/privileges";
-import {EventResponse} from "@shared/api/generated/model";
-import Dropdown, {DropdownOption} from "@widgets/main/Dropdown";
-import {toRoleModel} from "@entities/role";
-
+import styles from './index.module.css';
+import Button from '@widgets/main/Button';
+import ApiContext from '@features/api-context';
+import RoleListRadio, { RoleRadioElement } from '@widgets/main/RoleListRadio';
+import { createRoleRadioElementList, getSelectedRoleId } from '@widgets/main/RoleListRadio/common';
+import { PrivilegeNames } from '@shared/config/privileges';
+import { EventResponse } from '@shared/api/generated/model';
+import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
+import { toRoleModel } from '@entities/role';
 
 type AssignProps = {
   userId: number;
@@ -21,9 +19,9 @@ type AssignProps = {
 };
 
 const DialogContent = (props: AssignProps) => {
-  const {api} = useContext(ApiContext);
+  const { api } = useContext(ApiContext);
   const [roles, setRoles] = useState([] as RoleRadioElement[]);
-  const [eventId, setEventId] = useState(0)
+  const [eventId, setEventId] = useState(0);
   const [dropdownValues, setDropdownValues] = useState<DropdownOption<string>[]>([]);
   const [dropdownValue, setDropdownValue] = useState<DropdownOption<string> | undefined>();
   const [showEmptyEventMessage, setShowEmptyEventMessage] = useState(false);
@@ -38,15 +36,15 @@ const DialogContent = (props: AssignProps) => {
 
   // load roles on dialog open
   useEffect(() => {
-    if (props.isRevoke){
+    if (props.isRevoke) {
       if (!props.isEvent) {
-        _fetchUserSystemRoles()
+        _fetchUserSystemRoles();
       }
     } else {
       if (props.isEvent) {
-        _fetchOrganizationalRoles()
+        _fetchOrganizationalRoles();
       } else {
-        _fetchSystemRoles()
+        _fetchSystemRoles();
       }
     }
   }, []);
@@ -74,7 +72,7 @@ const DialogContent = (props: AssignProps) => {
         const l = createRoleRadioElementList(r.data.map((role) => toRoleModel(role)));
         setRoles(l);
       });
-    setEventId( -1);
+    setEventId(-1);
   }
 
   function _fetchSystemRoles() {
@@ -82,9 +80,9 @@ const DialogContent = (props: AssignProps) => {
       .withReauth(() => api.role.getSystemRoles())
       .then((r) => {
         const l = createRoleRadioElementList(r.data.map((role) => toRoleModel(role)));
-        setRoles(l)
+        setRoles(l);
       });
-    setEventId( -1);
+    setEventId(-1);
   }
 
   function _fetchOrganizationalRoles() {
@@ -99,7 +97,9 @@ const DialogContent = (props: AssignProps) => {
   //load events on dialog open
   useEffect(() => {
     if (props.isEvent) {
-      const privilege = props.isRevoke ? PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE : PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE;
+      const privilege = props.isRevoke
+        ? PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE
+        : PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE;
       api
         .withReauth(() => api.profile.getUserInfo())
         .then((userInfoResponse) => {
@@ -116,9 +116,9 @@ const DialogContent = (props: AssignProps) => {
             id: String(e.id),
             value: e.title,
           })) as DropdownOption<string>[];
-          setDropdownValues(eventList)
-          setEventId( 0);
-        })
+          setDropdownValues(eventList);
+          setEventId(0);
+        });
     }
   }, []);
 
@@ -126,18 +126,16 @@ const DialogContent = (props: AssignProps) => {
     <div className={styles.dialog_content}>
       <div className={styles.dialog_form}>
         <div className={styles.dialog_item}>
-          {showEmptyEventMessage && (
-            <span className={styles.emptyFieldsMessage}>Необходимо выбрать мероприятие</span>
-          )}
+          {showEmptyEventMessage && <span className={styles.emptyFieldsMessage}>Необходимо выбрать мероприятие</span>}
           {props.isEvent ? (
             <Dropdown
-              placeholder={"Мероприятие"}
+              placeholder={'Мероприятие'}
               items={dropdownValues}
               toText={(item) => item.value}
               value={dropdownValue}
               onChange={(sel) => {
-                setEventId(Number(sel))
-                setDropdownValue(sel)
+                setEventId(Number(sel));
+                setDropdownValue(sel);
               }}
             />
           ) : (

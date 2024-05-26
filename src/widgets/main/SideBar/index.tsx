@@ -69,14 +69,14 @@ const SideBar = (props: Props) => {
           ])
         )
       ),
-      new SideBarTabE(new SideBarTab('Пользователи', RoutePaths.userList, <Users />),),
+      new SideBarTabE(new SideBarTab('Пользователи', RoutePaths.userList, <Users />)),
       new SideBarTabE(new SideBarTab('Профиль', RoutePaths.profile, <Personal />)),
     ];
   }
 
   useEffect(() => {
     setTabs(_getAllTabs());
-  }, [privilegeContext])
+  }, [privilegeContext]);
 
   function _processSelected(tabs: SideBarTabE[], url: string) {
     return tabs.map((e) => {
