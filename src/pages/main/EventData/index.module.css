@@ -586,6 +586,11 @@
   opacity: 0;
 }
 
+.excepted_event_on_copy {
+    background-color: #eeeeee;
+    cursor: not-allowed;
+}
+
 @media(max-width:575px) {
 
   .dialog__rowthird,
