@@ -143,8 +143,8 @@ function StolenEventListForTasksCopying(props: StolenAndSimplifiedEventListProps
       const eventsWithPlaces: { event: EventResponse; place: PlaceResponse }[] = [];
       const pagesPromises = data.map(async (e) => {
         let address: string = '';
-        if (e.placeId) {
-          const place = await placeService.getPlace(api, e.placeId);
+        if (e.placesIds&&e.placesIds.length>0) {
+          const place = await placeService.getPlace(api, e.placesIds[0]);
           eventsWithPlaces.push({ event: e, place: place });
           if (place)
             address = place.address !== undefined ? place.address + (place.room ? ', ауд. ' + place.room : '') : 'null';
