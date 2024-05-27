@@ -86,6 +86,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     participantLowestAge: false,
     preparingEnd: false,
     preparingStart: false,
+    places:false
   });
   const [errorsText, setErrorsText] = useState({
     startDate: '',
@@ -102,6 +103,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
     participantLowestAge: '',
     preparingEnd: '',
     preparingStart: '',
+    places:''
   });
   const { api } = useContext(ApiContext);
   const getPlaces = async () => {
@@ -132,7 +134,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       participantLowestAge: false,
       preparingEnd: false,
       preparingStart: false,
-      place: false,
+      places: false,
     };
     let readErrorText = {
       startDate: '',
@@ -149,7 +151,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       participantLowestAge: '',
       preparingEnd: '',
       preparingStart: '',
-      place: '',
+      places: '',
     };
     let result = true;
     if (title == '' || title == null) {
@@ -157,7 +159,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       readErrorText = { ...readErrorText, title: 'Поле не может быть пустым' };
       result = false;
     }
-
     if (shortDescription == '' || shortDescription == null) {
       errorsInput = { ...errorsInput, shortDescription: true };
       readErrorText = { ...readErrorText, shortDescription: 'Поле не может быть пустым' };
@@ -191,7 +192,6 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       };
       result = false;
     }
-
     if (participantHighestAge == null) {
       errorsInput = { ...errorsInput, participantHighestAge: true };
       readErrorText = { ...readErrorText, participantHighestAge: 'Поле не может быть пустым' };
@@ -321,7 +321,14 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
       readErrorText = { ...readErrorText, status: 'Поле не может быть пустым' };
       result = false;
     }
-    setErrors({ ...errors, ...errorsInput });
+
+    if(places.indexOf(0)!=-1){
+      errorsInput = {...errorsInput, places: true}
+      readErrorText = {...readErrorText,places: "Надо выбирать место для каждого места"}
+      result = false;
+    }
+
+    setErrors({ ...errors, ...errorsInput});
     setErrorsText({ ...errorsText, ...readErrorText });
     return result;
   }
@@ -520,6 +527,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
         <Button className={styles.dialog_item} onClick={handleAddPlace}>
           Добавить
         </Button>
+        <div>{errors.places && <div className={styles.helper_error}>{errorsText.places}</div>}</div>
         {places.map((p, index) => (
           <div className={styles.dialog__row}>
             <div className={styles.dialog_item}>
