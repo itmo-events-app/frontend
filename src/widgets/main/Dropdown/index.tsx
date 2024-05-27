@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Select from 'react-select';
 
@@ -7,7 +6,7 @@ class DropdownOption<T> {
   value: T;
 
   constructor(text: T, id?: string) {
-    this.id = id !== undefined ? id : "-1";
+    this.id = id !== undefined ? id : '-1';
     this.value = text;
   }
 }
@@ -58,14 +57,14 @@ function Dropdown<T>(props: Props<T>) {
   // }
 
   function _createUnselectedOption(option: DropdownOption<T>) {
-    if (typeof (option.value) != 'string') {
+    if (typeof option.value != 'string') {
       return { value: (option.value as DropdownOption<T>).id, label: (option.value as DropdownOption<T>).value };
     }
     return { value: option.value, label: option.value };
   }
 
   function _createSelectedOption(option: DropdownOption<T>) {
-    if (typeof (option.value) != 'string') {
+    if (typeof option.value != 'string') {
       return { value: (option.value as DropdownOption<T>).id, label: (option.value as DropdownOption<T>).value };
     }
     return { value: option.value, label: option.value };
@@ -104,14 +103,13 @@ function Dropdown<T>(props: Props<T>) {
   // }
 
   function handleSelect(data: any) {
-    console.log(data)
-    setSelectedOptions(data)
+    console.log(data);
+    setSelectedOptions(data);
     if (!data) {
-
       if (props.onClear) {
         props.onClear();
       }
-      return
+      return;
     }
     if (data.value != -1) {
       props.onChange?.(data.value);

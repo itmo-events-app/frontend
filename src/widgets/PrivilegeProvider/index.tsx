@@ -15,11 +15,13 @@ const PrivilegeContextProvider = (props: Props) => {
   const [eventPrivileges, setEventPrivileges] = useState(new Map<number, Set<PrivilegeData>>());
   const [hasOrgRole, setHasOrgRole] = useState(false);
 
-  const [privilegeContext, setPrivilegeContext] = useState(new PrivilegeContextData(systemPrivileges, eventPrivileges, hasOrgRole));
+  const [privilegeContext, setPrivilegeContext] = useState(
+    new PrivilegeContextData(systemPrivileges, eventPrivileges, hasOrgRole)
+  );
 
   useEffect(() => {
     setPrivilegeContext(new PrivilegeContextData(systemPrivileges, eventPrivileges, hasOrgRole));
-  }, [systemPrivileges, eventPrivileges, hasOrgRole])
+  }, [systemPrivileges, eventPrivileges, hasOrgRole]);
 
   useEffect(() => {
     if (api.isLoggedIn()) {

@@ -1,16 +1,16 @@
-import styles from "./index.module.css";
-import Dialog from "@widgets/main/Dialog";
-import Label from "@widgets/auth/InputLabel";
-import Input from "@widgets/main/Input";
-import Button from "@widgets/main/Button";
-import { useContext, useEffect, useState } from "react";
-import DatePicker from "react-datepicker";
-import { EventResponse, PlaceResponse, UserResponse } from "@shared/api/generated";
-import ApiContext from "@features/api-context";
-import InputLabel from "@widgets/main/InputLabel";
-import { taskService } from "@features/task-service";
+import styles from './index.module.css';
+import Dialog from '@widgets/main/Dialog';
+import Label from '@widgets/auth/InputLabel';
+import Input from '@widgets/main/Input';
+import Button from '@widgets/main/Button';
+import { useContext, useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import { EventResponse, PlaceResponse, UserResponse } from '@shared/api/generated';
+import ApiContext from '@features/api-context';
+import InputLabel from '@widgets/main/InputLabel';
+import { taskService } from '@features/task-service';
 
-const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number | null }) => {
+const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void; idInt: number | null }) => {
   const { api } = useContext(ApiContext);
   const [title, setTitle] = useState('');
 
@@ -41,7 +41,7 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
   const getActivities = async () => {
     let activitiesResponse;
     if (idInt !== null) {
-      activitiesResponse = await api.event.getAllOrFilteredEvents(undefined, undefined, idInt)
+      activitiesResponse = await api.event.getAllOrFilteredEvents(undefined, undefined, idInt);
       if (activitiesResponse.status == 200) {
         const activitiesData = activitiesResponse.data.items;
         setActivityList(activitiesData as EventResponse[]);
@@ -50,7 +50,7 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
         console.log(activitiesResponse.status);
       }
     }
-  }
+  };
 
   useEffect(() => {
     getActivities();
@@ -77,16 +77,12 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
       usersResponse = await api.event.getUsersHavingRoles(idInt);
       if (usersResponse.status == 200) {
         const usersData = usersResponse.data;
-        const uniqueUsers = usersData.filter((user, index, self) =>
-          index === self.findIndex((t) => (
-            t.id === user.id
-          ))
-        );
+        const uniqueUsers = usersData.filter((user, index, self) => index === self.findIndex((t) => t.id === user.id));
         setUsersList(uniqueUsers);
         setUsersLoaded(true);
       }
     }
-  }
+  };
 
   useEffect(() => {
     getUsers();
@@ -110,7 +106,7 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
   function updateActivity(activity: number) {
     if (activity === 0) {
       if (idInt !== null) {
-        setActivity(idInt)
+        setActivity(idInt);
         return idInt;
       }
     } else return activity;
@@ -130,11 +126,10 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
     } else return false;
   }
 
-
   function checkEmptyReminderAfterDeadlineMessage() {
     if (reminder !== null && deadline !== null) {
       if (reminder < currentDate) {
-        return false
+        return false;
       } else if (reminder >= deadline) {
         setShowReminderAfterDeadlineMessage(true);
         return true;
@@ -151,8 +146,8 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
     const emptyDescriptionMessage = checkEmptyDescriptionMessage();
     const emptyReminderAfterDeadlineMessage = checkEmptyReminderAfterDeadlineMessage();
 
-    if (emptyTitleMessage || emptyDescriptionMessage  || emptyReminderAfterDeadlineMessage) {
-      return
+    if (emptyTitleMessage || emptyDescriptionMessage || emptyReminderAfterDeadlineMessage) {
+      return;
     }
 
     const deadlineString = convertToLocaleDateTime(deadline);
@@ -160,29 +155,22 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
 
     const newUserId = updateUserId(userId);
 
-    let newActivity
+    let newActivity;
     if (idInt !== null) {
       newActivity = updateActivity(activity);
     }
 
     if (newActivity !== undefined) {
-      taskService.createTask(
-        api,
-        newActivity,
-        newUserId,
-        title,
-        description,
-        place,
-        deadlineString!,
-        reminderString!
-      ).then(
-        () => onClose()
-      ).catch((e: any) => {
-        console.log(e)
-          if (e.response.data.errors) {setErrorText(e.response.data.errors.join(', '));}
-          else setErrorText(e.response.data);
+      taskService
+        .createTask(api, newActivity, newUserId, title, description, place, deadlineString!, reminderString!)
+        .then(() => onClose())
+        .catch((e: any) => {
+          console.log(e);
+          if (e.response.data.errors) {
+            setErrorText(e.response.data.errors.join(', '));
+          } else setErrorText(e.response.data);
           setIsError(true);
-      });
+        });
     }
   }
 
@@ -193,22 +181,12 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
           <div className={styles.place_form}>
             <div className={styles.place_form_item}>
               <Label value="Название" />
-              <Input
-                type="text"
-                value={String(title)}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              {showEmptyTitleMessage && (
-                <span className={styles.emptyFieldsMessage}>Поле не может быть пустым</span>
-              )}
+              <Input type="text" value={String(title)} onChange={(e) => setTitle(e.target.value)} />
+              {showEmptyTitleMessage && <span className={styles.emptyFieldsMessage}>Поле не может быть пустым</span>}
             </div>
             <div className={styles.place_form_item}>
               <Label value="Описание" />
-              <Input
-                type="text"
-                value={String(description)}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+              <Input type="text" value={String(description)} onChange={(e) => setDescription(e.target.value)} />
               {showEmptyDescriptionMessage && (
                 <span className={styles.emptyFieldsMessage}>Поле не может быть пустым</span>
               )}
@@ -218,7 +196,11 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
               <select value={place} onChange={(e) => setPlace(parseInt(e.target.value))}>
                 {placesLoaded ? (
                   placeList.map((p) => {
-                    return <option key={p.id} value={p.id}>{p.name}</option>;
+                    return (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    );
                   })
                 ) : (
                   <option value=""></option>
@@ -231,7 +213,11 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
                 <option value={''}>Это мероприятие</option>
                 {activityLoaded ? (
                   activityList.map((p) => {
-                    return <option key={p.id} value={p.id}>{p.title}</option>;
+                    return (
+                      <option key={p.id} value={p.id}>
+                        {p.title}
+                      </option>
+                    );
                   })
                 ) : (
                   <option value=""></option>
@@ -244,7 +230,11 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
                 <option value={''}>Назначить позже</option>
                 {usersLoaded ? (
                   usersList.map((p) => {
-                    return <option key={p.id} value={p.id}>{p.name} {p.surname}</option>;
+                    return (
+                      <option key={p.id} value={p.id}>
+                        {p.name} {p.surname}
+                      </option>
+                    );
                   })
                 ) : (
                   <option value=""></option>
@@ -278,9 +268,7 @@ const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void, idInt: number 
                 <span className={styles.emptyFieldsMessage}>Напоминание не может быть позже крайнего срока</span>
               )}
             </div>
-            {isError && (
-              <span className={styles.emptyFieldsMessage}>{errorText}</span>
-            )}
+            {isError && <span className={styles.emptyFieldsMessage}>{errorText}</span>}
             <div className={styles.place_form_button}>
               <Button onClick={createTask}>Создать</Button>
             </div>

@@ -1,4 +1,3 @@
-
 export function getErrorResponse(response: any) {
   const data = response.data;
   if (typeof data === 'string') {

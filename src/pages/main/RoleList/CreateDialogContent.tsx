@@ -41,7 +41,6 @@ const CreateDialogContent = (props: CreateProps) => {
       return;
     }
 
-
     const queryType = fromRoleModelType(type);
 
     if (type == RoleModelType.SYSTEM) {
@@ -99,7 +98,6 @@ const CreateDialogContent = (props: CreateProps) => {
           setErrorMessageCreatingRole(errorMessage);
         });
     }
-
   };
 
   const _nameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,9 +124,15 @@ const CreateDialogContent = (props: CreateProps) => {
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Тип роли" />
-          <Dropdown items={dropdownOptions} toText={dropdownOptionToText} placeholder={type} value={type} onChange={(e: RoleModelType) => {
-            setType(e)
-          }} />
+          <Dropdown
+            items={dropdownOptions}
+            toText={dropdownOptionToText}
+            placeholder={type}
+            value={type}
+            onChange={(e: RoleModelType) => {
+              setType(e);
+            }}
+          />
         </div>
         <div className={styles.dialog_item}>
           <InputLabel value="Список привилегий" />

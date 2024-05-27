@@ -9,8 +9,8 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '@shared/config/routes';
 import { NotifyState } from '../Notification';
-import ApiContext from "@features/api-context";
-import { UserChangePasswordRequest } from "@shared/api/generated/model";
+import ApiContext from '@features/api-context';
+import { UserChangePasswordRequest } from '@shared/api/generated/model';
 
 const PWD_MIN_LEN = 8;
 const PWD_MAX_LEN = Number.MAX_VALUE; // to adjust
@@ -27,7 +27,6 @@ const SUCCESS_MESSAGE = 'Смена пароля произошла успешн
 const FAIL_MESSAGE = 'Не удалось сменить пароль.';
 
 const SPEC_CHAR_REGEX = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
-
 
 function ChangePasswordPage() {
   const navigate = useNavigate();
@@ -46,7 +45,6 @@ function ChangePasswordPage() {
 
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-
   const _setOldPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const length = value.length;
@@ -58,7 +56,7 @@ function ChangePasswordPage() {
     setOldPassword(value);
     setOldPasswordError('');
     setError('');
-  }
+  };
 
   const _setNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -70,7 +68,7 @@ function ChangePasswordPage() {
 
     setNewPassword(value);
     setNewPasswordError('');
-  }
+  };
 
   const _setConfirmNewPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -82,7 +80,7 @@ function ChangePasswordPage() {
 
     setConfirmNewPassword(value);
     setConfirmNewPasswordError('');
-  }
+  };
 
   const _setPasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -113,10 +111,11 @@ function ChangePasswordPage() {
       const request: UserChangePasswordRequest = {
         oldPassword: oldPassword,
         newPassword: newPassword,
-        confirmNewPassword: confirmNewPassword
-      }
+        confirmNewPassword: confirmNewPassword,
+      };
 
-      api.withReauth(() => api.profile.changePassword(request))
+      api
+        .withReauth(() => api.profile.changePassword(request))
         .then(() => {
           const state: NotifyState = {
             msg: SUCCESS_MESSAGE,
@@ -140,29 +139,28 @@ function ChangePasswordPage() {
       return PWD_EMPTY_ERR_MSG;
     } else if (password.length < PWD_MIN_LEN) {
       return PWD_LEN_ERR_MSG;
-    } else if (password == password.toLowerCase() ||
-      password == password.toUpperCase()) {
+    } else if (password == password.toLowerCase() || password == password.toUpperCase()) {
       return PWD_CASE_ERR_MSG;
     } else if (!SPEC_CHAR_REGEX.test(password)) {
       return PWD_SPEC_CHR_ERR_MSG;
     } else {
       return null;
     }
-  }
+  };
 
   const _validateConfirmation = (newPwd: string, confirmPwd: string) => {
     if (newPwd != confirmPwd) {
-      return (PWD_NOT_EQ_ERR_MSG);
+      return PWD_NOT_EQ_ERR_MSG;
     }
     return null;
-  }
+  };
 
   const _validatePwdChange = (newPwd: string, oldPwd: string) => {
     if (newPwd == oldPwd) {
-      return (PWD_EQ_CUR_ERR_MSG);
+      return PWD_EQ_CUR_ERR_MSG;
     }
     return null;
-  }
+  };
 
   return (
     <div className={styles.root}>
@@ -173,23 +171,35 @@ function ChangePasswordPage() {
         <form onSubmit={_change} className={styles.form}>
           <label className={styles.form_item}>
             <Label value="Старый пароль" />
-            <Input type={passwordVisible ? "" : "password"}
-              value={oldPassword} onChange={_setOldPassword}
-              error={oldPasswordError != ''} errorText={oldPasswordError} />
+            <Input
+              type={passwordVisible ? '' : 'password'}
+              value={oldPassword}
+              onChange={_setOldPassword}
+              error={oldPasswordError != ''}
+              errorText={oldPasswordError}
+            />
           </label>
           <label className={styles.form_item}>
             <Label value="Новый пароль" />
-            <Input type={passwordVisible ? "" : "password"}
-              value={newPassword} onChange={_setNewPassword}
-              error={newPasswordError != ''} errorText={newPasswordError} />
+            <Input
+              type={passwordVisible ? '' : 'password'}
+              value={newPassword}
+              onChange={_setNewPassword}
+              error={newPasswordError != ''}
+              errorText={newPasswordError}
+            />
           </label>
           <label className={styles.form_item}>
             <Label value="Подтверждение пароля" />
-            <Input type={passwordVisible ? "" : "password"}
-              value={confirmNewPassword} onChange={_setConfirmNewPassword}
-              error={confirmNewPasswordError != ''} errorText={confirmNewPasswordError} />
+            <Input
+              type={passwordVisible ? '' : 'password'}
+              value={confirmNewPassword}
+              onChange={_setConfirmNewPassword}
+              error={confirmNewPasswordError != ''}
+              errorText={confirmNewPasswordError}
+            />
           </label>
-          <label className={styles.form_item__checkbox} style={{ flexDirection: "row", marginTop: 10 }}>
+          <label className={styles.form_item__checkbox} style={{ flexDirection: 'row', marginTop: 10 }}>
             <Input type="checkbox" value={passwordVisible.toString()} onChange={_setPasswordVisibility} />
             <Label value="Показать пароль" />
           </label>

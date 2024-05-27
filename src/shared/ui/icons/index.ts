@@ -47,5 +47,5 @@ export {
   Check,
   Edit,
   Book,
-  Pencil
+  Pencil,
 };

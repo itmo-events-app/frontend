@@ -1,5 +1,5 @@
-import Button from "@widgets/main/Button";
-import InputLabel from "@widgets/main/InputLabel";
+import Button from '@widgets/main/Button';
+import InputLabel from '@widgets/main/InputLabel';
 import styles from './index.module.css';
 import { useContext, useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -21,13 +21,13 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
     const getAllRoles = await api.role.getOrganizationalRoles();
     if (getUsersResponse.status == 200 && getAllRoles.status == 200) {
       const items = getUsersResponse.data.items;
-      setUserList(items?? []);
-      if (items!= null && items.length > 0) {
-        setUserId(items[0].id)
+      setUserList(items ?? []);
+      if (items != null && items.length > 0) {
+        setUserId(items[0].id);
       } else {
         setUserId(undefined);
       }
-      const eventRoles = getAllRoles.data.filter(r => r.type == "EVENT");
+      const eventRoles = getAllRoles.data.filter((r) => r.type == 'EVENT');
       setRoleList(eventRoles);
       setRoleId(eventRoles[0].id);
       setRoleName(eventRoles[0].name);
@@ -52,12 +52,12 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
     if (userId && eventId) {
       const userEventRoles = await api.role.getUserEventRoles(userId!, eventId);
       if (userEventRoles.status == 200) {
-        const hasRole = userEventRoles.data.some(r => r.name == roleName);
+        const hasRole = userEventRoles.data.some((r) => r.name == roleName);
         if (hasRole) {
-          setErrorMessage("У этого пользователя уже есть эта роль!");
+          setErrorMessage('У этого пользователя уже есть эта роль!');
           return;
-        }else{
-          setErrorMessage("У этого пользователя нет (такой) роли!");
+        } else {
+          setErrorMessage('У этого пользователя нет (такой) роли!');
           return;
         }
       }
@@ -67,39 +67,40 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
       //const revokeRole = async () => {
       // First, revoke the current role
       if (roleName == 'Организатор') {
-         await api.role.revokeAssistantRole(userId, eventId);
-      }else if (userId === currentUserId  && roleName === 'Помощник') {
+        await api.role.revokeAssistantRole(userId, eventId);
+      } else if (userId === currentUserId && roleName === 'Помощник') {
         setErrorMessage('Вы не можете отозвать свою собственную роль организатора!');
         return;
+      } else {
+        await api.role.revokeOrganizerRole(userId, eventId);
       }
-      else{await api.role.revokeOrganizerRole(userId, eventId);}
       //const revokeResponse = await api.role.revokeOrganizationalRole(userId, eventId, roleId!);
       //  if (revokeRole.status!= 204) {
       //    console.log(revokeRole.status);
       //  } else {
-        // Then, assign the new role
-        if (roleName == 'Организатор') {
-          const result = await api.role.assignOrganizerRole(userId, eventId);
-          if (result.status!= 204) {
-            console.log(result.status);
-          } else {
-            onEdit();
-          }
-        } else if (roleName == 'Помощник') {
-          const result = await api.role.assignAssistantRole(userId, eventId);
-          if (result.status!= 204) {
-            console.log(result.status);
-          } else {
-            onEdit();
-          }
+      // Then, assign the new role
+      if (roleName == 'Организатор') {
+        const result = await api.role.assignOrganizerRole(userId, eventId);
+        if (result.status != 204) {
+          console.log(result.status);
         } else {
-          const result = await api.role.assignOrganizationalRole(userId, eventId, roleId!);
-          if (result.status!= 204) {
-            console.log(result.status);
-          } else {
-            onEdit();
-          }
+          onEdit();
         }
+      } else if (roleName == 'Помощник') {
+        const result = await api.role.assignAssistantRole(userId, eventId);
+        if (result.status != 204) {
+          console.log(result.status);
+        } else {
+          onEdit();
+        }
+      } else {
+        const result = await api.role.assignOrganizationalRole(userId, eventId, roleId!);
+        if (result.status != 204) {
+          console.log(result.status);
+        } else {
+          onEdit();
+        }
+      }
       //}
     }
   };
@@ -115,7 +116,7 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
       <div className={styles.dialog_item}>
         <InputLabel value="Пользователь" />
         <select value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
-          {loaded? (
+          {loaded ? (
             userList.map((u) => {
               return <option value={u.id}>{u.name}</option>;
             })
@@ -131,14 +132,18 @@ const EditOrganizerDialog = ({ eventId, onEdit }: { eventId: number; onEdit: () 
             console.log(roleIdString);
             setRoleId(parseInt(roleIdString));
             const foundRole = roleList.find((r) => r.id == parseInt(roleIdString));
-            if (foundRole!= undefined) {
+            if (foundRole != undefined) {
               setRoleName(foundRole.name);
             }
           }}
         >
-          {loaded? (
+          {loaded ? (
             roleList.map((r) => {
-              return <option key={r.id} value={r.id}>{r.name}</option>;
+              return (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              );
             })
           ) : (
             <option value=""></option>

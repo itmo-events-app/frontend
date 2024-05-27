@@ -32,7 +32,6 @@
   padding-bottom: 10px;
 }
 
-
 .file_input_actual {
   opacity: 0;
   position: absolute;
@@ -96,7 +95,6 @@
 }
 
 @media screen and (max-width: 1080px) {
-
   .info_page {
     flex-direction: column;
     justify-content: normal;
@@ -155,7 +153,6 @@
   grid-column-gap: 1.5rem;
 
   padding-bottom: 50px;
-
 }
 
 .activity_container {
@@ -479,7 +476,7 @@
   background-color: #fff;
   cursor: pointer;
   overflow: hidden;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .upload_button svg {
@@ -488,7 +485,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .delete_button {
@@ -498,7 +495,7 @@
   border-radius: 25px;
   cursor: pointer;
   overflow: hidden;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .delete_button svg {
@@ -507,7 +504,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .edit_button {
@@ -517,11 +514,8 @@
   border-radius: 25px;
   cursor: pointer;
   overflow: hidden;
-  transition: .3s;
+  transition: 0.3s;
 }
-
-
-
 
 .dialog__row {
   display: grid;
@@ -539,7 +533,7 @@
   position: relative;
 }
 
-.dialog__date>div {
+.dialog__date > div {
   display: block;
   width: 100%;
 }
@@ -554,14 +548,14 @@
   box-sizing: border-box;
 }
 
-.dialog__date>span {
+.dialog__date > span {
   position: absolute;
   top: 7px;
   right: 10px;
   pointer-events: none;
 }
 
-.dialog__date>span path {
+.dialog__date > span path {
   stroke: hsl(0, 0%, 50%);
 }
 
@@ -587,15 +581,17 @@
 }
 
 .excepted_event_on_copy {
-    background-color: #eeeeee;
-    cursor: not-allowed;
+  background-color: #eeeeee;
+  cursor: not-allowed;
 }
 
-@media(max-width:575px) {
-
+@media (max-width: 575px) {
   .dialog__rowthird,
   .dialog__row {
     grid-template-columns: repeat(1, 1fr);
     grid-gap: 0px;
   }
+}
+.redBtn {
+  background-color: var(--itmo-colors-red);
 }

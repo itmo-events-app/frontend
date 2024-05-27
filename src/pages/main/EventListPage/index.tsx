@@ -18,8 +18,7 @@ import { appendClassName } from "@shared/util.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiContext from "@features/api-context";
-import Pagination, { PageEntry, PageProps } from "@widgets/main/PagedList/pagination";
-import {
+import Pagination, { PageEntry, PageProps } from "@widgets/main/PagedList/pagination";import {
   GetAllOrFilteredEventsFormatEnum,
   GetAllOrFilteredEventsStatusEnum,
   PlaceResponse,
@@ -36,8 +35,8 @@ import { eventService } from "@features/event-service";
 import { placeService } from "@features/place-service";
 
 enum DisplayModes {
-  LIST = "Показать списком",
-  MAP = "Показать на карте",
+  LIST = 'Показать списком',
+  MAP = 'Показать на карте',
 }
 
 const displayModes = Object.values(DisplayModes);
@@ -45,31 +44,31 @@ const eventStatusList = Object.values(GetAllOrFilteredEventsStatusEnum);
 const eventFormatList = Object.values(GetAllOrFilteredEventsFormatEnum);
 
 type FilterType = {
-  title: string,
-  startDate: string, //either isostring or blank
-  endDate: string,
-  status: GetAllOrFilteredEventsStatusEnum | undefined,
-  format: GetAllOrFilteredEventsFormatEnum | undefined,
+  title: string;
+  startDate: string; //either isostring or blank
+  endDate: string;
+  status: GetAllOrFilteredEventsStatusEnum | undefined;
+  format: GetAllOrFilteredEventsFormatEnum | undefined;
   [key: string]: number | string | GetAllOrFilteredEventsStatusEnum | GetAllOrFilteredEventsFormatEnum | undefined;
-}
+};
 
 const initialFilters: FilterType = {
-  title: "",
-  startDate: "",
-  endDate: "",
+  title: '',
+  startDate: '',
+  endDate: '',
   status: undefined,
   format: undefined,
 };
 
 type PageItemStubProps = {
-  index: number,
-  title: string,
-  place: string,
-}
+  index: number;
+  title: string;
+  place: string;
+};
 const PageItemStub = (props: PageItemStubProps) => {
   const [imageUrl, setImageUrl] = useState("");
   useEffect(() => {
-    getImageUrl(props.index.toString()).then(url => {
+    getImageUrl(props.index.toString()).then((url) => {
       setImageUrl(url);
     });
   }, []);
@@ -88,12 +87,8 @@ const PageItemStub = (props: PageItemStubProps) => {
         <ImagePreview className={styles.event_icon} src={imageUrl} alt="Event Icon" />
       )}
       <div className={styles.event_info_column}>
-        <div className={styles.event_name}>
-          {props.title}
-        </div>
-        <div className={styles.event_place}>
-          {props.place}
-        </div>
+        <div className={styles.event_name}>{props.title}</div>
+        <div className={styles.event_place}>{props.place}</div>
       </div>
     </a>
   );
@@ -117,7 +112,7 @@ function EventListPage() {
   const { privilegeContext } = useContext(PrivilegeContext);
   const [filters, setFilters] = useState(initialFilters);
   const [displayMode, setDisplayMode] = useState(DisplayModes.LIST);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
 
   const [pageProps, setPageProps] = useState<PageProps>({ page: 1, size: 5, total: 0 });
   const [itemList, setItemList] = useState<PageEntry[]>([]);
@@ -148,15 +143,16 @@ function EventListPage() {
         filters.status,
         filters.format,
       );
-      if (total === undefined || items === undefined) throw new Error("Incomplete data received from the server");
+      if (total === undefined || items === undefined) throw new Error('Incomplete data received from the server');
       const data = items as unknown as EventResponse[];
-      const eventsWithPlaces: { event: EventResponse; place: PlaceResponse; }[] = [];
+      const eventsWithPlaces: { event: EventResponse; place: PlaceResponse }[] = [];
       const pagesPromises = data.map(async (e) => {
         let address: string = "";
-        if (e.placeId) {
-          const place = await placeService.getPlace(api, e.placeId);
+        if (e.placesIds && e.placesIds.length > 0) {
+          const place = await placeService.getPlace(api, e.placesIds[0]);
           eventsWithPlaces.push({ event: e, place: place });
-          if (place) address = place.address !== undefined ? place.address + (place.room ? ", ауд. " + place.room : "") : "null";
+          if (place)
+            address = place.address !== undefined ? place.address + (place.room ? ', ауд. ' + place.room : '') : 'null';
         }
         return new PageEntry(() => {
           return (
@@ -165,7 +161,8 @@ function EventListPage() {
               index={e.id ? e.id : -1}
               title={(e.title !== undefined) ? e.title : "null"}
               place={address}
-            />);
+            />
+          );
         });
       });
       const pages = await Promise.all(pagesPromises);
@@ -185,7 +182,7 @@ function EventListPage() {
       setPageProps({ page: page, size: size, total: total });
       setItemList(pages);
     } catch (error) {
-      console.error("Error fetching event list:", error);
+      console.error('Error fetching event list:', error);
     }
   };
   useEffect(() => {
@@ -197,7 +194,6 @@ function EventListPage() {
     heading: string | undefined;
     visible: DialogSelected;
     args: any;
-
     constructor(
       heading?: string,
       visible: DialogSelected = DialogSelected.NONE,
@@ -236,10 +232,8 @@ function EventListPage() {
         break;
     }
     return (
-
       <Dialog
-        className={appendClassName(styles.dialog,
-          (dialogData.visible ? styles.visible : styles.hidden))}
+        className={appendClassName(styles.dialog, dialogData.visible ? styles.visible : styles.hidden)}
         text={dialogData.heading}
         ref={dialogRef}
         onClose={_closeDialog}
@@ -248,7 +242,6 @@ function EventListPage() {
       </Dialog>
     );
   };
-
   const _Dialog2 = () => {
     let component = <></>;
     switch (dialogData2.visible) {
@@ -297,15 +290,17 @@ function EventListPage() {
   };
 
   //filters
-  const _handleFilterChange = (value: string | GetAllOrFilteredEventsStatusEnum | GetAllOrFilteredEventsFormatEnum | undefined, name: string) => {
+  const _handleFilterChange = (
+    value: string | GetAllOrFilteredEventsStatusEnum | GetAllOrFilteredEventsFormatEnum | undefined,
+    name: string
+  ) => {
     if (value !== null && filters[name] !== value) {
-      setFilters(prevFilters => ({
+      setFilters((prevFilters) => ({
         ...prevFilters,
         [name]: value,
       }));
     }
   };
-
 
   return (
     <Layout
@@ -365,7 +360,6 @@ function EventListPage() {
                     </svg>
                   </span>
                   </div>
-
                   <div className={styles.dialog__date}>
                     <DatePicker
                       placeholderText="Конец проведения"
@@ -384,7 +378,6 @@ function EventListPage() {
                     </svg>
                   </span>
                   </div>
-
                   <div className={styles.dropdownfilter}>
                     <Dropdown
                       placeholder="Статус"

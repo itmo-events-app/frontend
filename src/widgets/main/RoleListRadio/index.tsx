@@ -1,14 +1,14 @@
-import { uid } from 'uid'
-import styles from './index.module.css'
-import { RoleModel } from '@entities/role'
-import { ArrowDown } from '@shared/ui/icons'
-import { appendClassName } from '@shared/util'
-import { PrivilegeModel } from '@entities/privilege'
+import { uid } from 'uid';
+import styles from './index.module.css';
+import { RoleModel } from '@entities/role';
+import { ArrowDown } from '@shared/ui/icons';
+import { appendClassName } from '@shared/util';
+import { PrivilegeModel } from '@entities/privilege';
 
 class RoleRadioElement {
   entry: RoleModel;
   expanded: boolean;
-  selected: boolean
+  selected: boolean;
 
   constructor(entry: RoleModel, expanded: boolean = false, selected: boolean = false) {
     this.entry = entry;
@@ -96,12 +96,8 @@ function RoleListRadio(props: Props) {
     return res;
   }
 
-  return (
-    <div className={styles.roles}>
-      {_createRoleList(props.roles)}
-    </div>
-  )
+  return <div className={styles.roles}>{_createRoleList(props.roles)}</div>;
 }
 
 export default RoleListRadio;
-export { RoleRadioElement }
+export { RoleRadioElement };

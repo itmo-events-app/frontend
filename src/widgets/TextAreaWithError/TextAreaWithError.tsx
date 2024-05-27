@@ -23,7 +23,7 @@ function TextAreaWithError(props: Props) {
       <TextArea
         type={props.type}
         placeholder={props.placeholder}
-        className={error? inputErrorStyle:''}
+        className={error ? inputErrorStyle : ''}
         onChange={props.onChange}
         value={props.value}
       />
