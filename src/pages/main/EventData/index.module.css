@@ -523,12 +523,6 @@
   grid-gap: 25px;
 }
 
-.dialog__rowthird {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 15px;
-}
-
 .dialog__date {
   position: relative;
 }
@@ -586,7 +580,7 @@
 }
 
 @media (max-width: 575px) {
-  .dialog__rowthird,
+  .dialog__row,
   .dialog__row {
     grid-template-columns: repeat(1, 1fr);
     grid-gap: 0px;
