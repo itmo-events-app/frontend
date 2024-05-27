@@ -4,3 +4,11 @@
   font-weight: bold;
   padding: 10px 60px 10px 50px;
 }
+
+@media screen and (max-width: 767px) {
+  .name {
+    padding: 10px 0px;
+    max-width: calc(100% - 60px);
+    line-height: 110%;
+  }
+}
