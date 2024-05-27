@@ -68,13 +68,14 @@ function EventCreationDialog2({ onSubmit = null }: { onSubmit: (() => void) | nu
   const _handleChangeText = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
+
   const _createEvent = async () => {
     if (inputValue.trim().length === 0) return; //blank?
     try {
       const userId = parseInt(dropdownUsersValue?.id ? dropdownUsersValue.id : '0');
       const eventId = parseInt(dropdownEventsValue?.id ? dropdownEventsValue.id : '0');
       if (userId < 1 || eventId < 1) return
-      const response = await api.event.addEventByEvent(eventId, inputValue, userId, false);
+      const response = await api.event.createEventBasedOnExistingWithNewTitleAndAdmin(eventId, inputValue, userId, true);
       if (response.status === 201) {
         if (onSubmit) onSubmit();
       } else {
