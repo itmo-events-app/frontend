@@ -16,6 +16,13 @@
   padding-top: 0;
 }
 
+.dop__wrap_unoverflow {
+  overflow-y: visible;
+  max-height: calc(100vh - 80px);
+  padding: 10px;
+  padding-top: 0;
+}
+
 .header {
   position: sticky;
   display: flex;

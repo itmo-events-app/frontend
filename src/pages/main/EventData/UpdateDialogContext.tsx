@@ -493,7 +493,7 @@ const UpdateDialogContent = ({ eventId, onSubmit, eventInfo }: Props) => {
             />
           </div>
         </div>
-        <div className={styles.dialog__rowthird}>
+        <div className={styles.dialog__row}>
           <div className={styles.dialog_item}>
             <InputLabel value="Формат" />
             <Dropdown
