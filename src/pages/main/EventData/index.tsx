@@ -55,6 +55,11 @@ import { useMutation } from '@tanstack/react-query';
 import AddFileDialog from '@pages/main/EventData/AddFileDialog.tsx';
 import { DeleteOutlined, EditOutlined, UploadOutlined, CloseOutlined } from '@ant-design/icons';
 
+interface placeAddress {
+  name: string;
+  id?: number;
+}
+
 class EventInfo {
   regDates: string;
   prepDates: string;
@@ -68,8 +73,8 @@ class EventInfo {
   description: string;
   parent: number | undefined;
   places: number[];
-  offlineAddresses: string[];
-  onlineAddresses: string[];
+  offlineAddresses: placeAddress[];
+  onlineAddresses: placeAddress[];
   constructor(
     regDates: string,
     prepDates: string,
@@ -83,8 +88,8 @@ class EventInfo {
     description: string,
     parent: number | undefined,
     places: number[],
-    offlineAddresses: string[],
-    onlineAddresses: string[]
+    offlineAddresses: placeAddress[],
+    onlineAddresses: placeAddress[]
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -371,16 +376,24 @@ function EventActivitiesPage() {
             console.log(placeResponse.status);
           }
         }
-        const offlineAddresses: string[] = [];
-        const onlineAddresses: string[] = [];
+        const offlineAddresses: placeAddress[] = [];
+        const onlineAddresses: placeAddress[] = [];
         if (data.placesIds) {
           const addressesPromise = data.placesIds.map(async (p) => {
             const placeResponse = await api.place.placeGet(p);
             if (placeResponse.data.format == 'ONLINE') {
-              onlineAddresses.push(placeResponse.data.address ?? '');
+              onlineAddresses.push(
+                {
+                  name: placeResponse.data.address ?? '',
+                  id: placeResponse.data.id
+                }
+              );
             } else if (placeResponse.data.format == 'OFFLINE') {
               offlineAddresses.push(
-                placeResponse.data.address + (placeResponse.data.room ? ', ауд. ' + placeResponse.data.room : '')
+                {
+                  name: placeResponse.data.address + (placeResponse.data.room ? ', ауд. ' + placeResponse.data.room : ''),
+                  id: placeResponse.data.id
+                }
               );
             }
           });
@@ -778,13 +791,15 @@ function EventActivitiesPage() {
             <div className={styles.description_box}>
               <div className={styles.field_title}>Места проведения</div>
               {eventInfo.offlineAddresses.map((p) => {
-                return <div>{p}</div>;
+                return <div className={styles.place_link} onClick={()=>{
+                  navigate(`/places/${p.id}`)
+                }}>{p.name}</div>;
               })}
             </div>
             <div className={styles.description_box}>
               <div className={styles.field_title}>Онлайн</div>
               {eventInfo.onlineAddresses.map((p) => {
-                return <div>{p}</div>;
+                return <div>{p.name}</div>;
               })}
             </div>
           </div>

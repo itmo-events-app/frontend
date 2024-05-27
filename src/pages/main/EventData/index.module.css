@@ -145,6 +145,10 @@
   margin-bottom: 10px;
 }
 
+.place_link {
+  cursor: pointer;
+}
+
 .data_list {
   display: grid;
   grid-template-columns: repeat(auto-fill, 29rem);
