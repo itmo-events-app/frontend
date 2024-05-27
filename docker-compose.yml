@@ -67,6 +67,4 @@ services:
       - '${PWD}/public/config.js:/usr/share/nginx/html/config.js'
 volumes:
   postgres-data:
-    external: true
   minio-data:
-    external: true
