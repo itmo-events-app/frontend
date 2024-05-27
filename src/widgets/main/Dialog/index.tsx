@@ -8,12 +8,13 @@ type Props = {
   onClose?: () => void;
   text?: string;
   style?: React.CSSProperties;
+  saveOverflow?: boolean;
 };
 
 const Dialog = forwardRef((props: Props, ref: any) => {
   return (
     <div className={appendClassName(styles.dialog, props.className)} style={props.style} ref={ref}>
-      <div className={styles.dop__wrap}>
+      <div className={props.saveOverflow ? styles.dop__wrap_unoverflow : styles.dop__wrap}>
         <div className={styles.header}>
           <div className={styles.name}>{props.text}</div>
           <button className={styles.close} onClick={props.onClose}>
