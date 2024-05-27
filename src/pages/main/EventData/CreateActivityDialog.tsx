@@ -301,7 +301,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
     }
     if(places.indexOf(0)!=-1){
       errorsInput = {...errorsInput, places: true}
-      readErrorText = {...readErrorText,places: "Надо выбирать место для каждого места"}
+      readErrorText = {...readErrorText,places: "Выбрите площадку для каждого места"}
       result = false;
     }
     setErrors({ ...errors, ...errorsInput });
