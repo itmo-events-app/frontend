@@ -264,11 +264,14 @@ function EventListPage() {
     return (
 
       <Dialog
-        className={appendClassName(styles.dialog,
-          (dialogData2.visible ? styles.visible : styles.hidden))}
+        className={appendClassName(dialogData2.visible === DialogSelected.CREATEEVENT
+            ? styles.dialog_unoverflow
+            : styles.dialog,
+          dialogData2.visible ? styles.visible : styles.hidden)}
         text={dialogData2.heading}
         ref={dialogRef2}
         onClose={_closeDialog2}
+        saveOverflow={dialogData2.visible === DialogSelected.CREATEEVENT}
       >
         {component}
       </Dialog>
