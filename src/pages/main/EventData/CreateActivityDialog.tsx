@@ -43,7 +43,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
     participantLowestAge: false,
     preparingEnd: false,
     preparingStart: false,
-    place: false,
+    places: false,
   });
   const [errorsText, setErrorsText] = useState({
     startDate: '',
@@ -60,7 +60,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
     participantLowestAge: '',
     preparingEnd: '',
     preparingStart: '',
-    place: '',
+    places: '',
   });
   const [image, setImage] = useState<File | undefined>(undefined);
   function checkInputs() {
@@ -79,7 +79,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
       participantLowestAge: false,
       preparingEnd: false,
       preparingStart: false,
-      place: false,
+      places: false,
     };
     let readErrorText = {
       startDate: '',
@@ -96,7 +96,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
       participantLowestAge: '',
       preparingEnd: '',
       preparingStart: '',
-      place: '',
+      places: '',
     };
     let result = true;
     if (title == '' || title == null) {
@@ -297,6 +297,11 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
     if (status == null) {
       errorsInput = { ...errorsInput, status: true };
       readErrorText = { ...readErrorText, status: 'Поле не может быть пустым' };
+      result = false;
+    }
+    if(places.indexOf(0)!=-1){
+      errorsInput = {...errorsInput, places: true}
+      readErrorText = {...readErrorText,places: "Надо выбирать место для каждого места"}
       result = false;
     }
     setErrors({ ...errors, ...errorsInput });
@@ -505,6 +510,7 @@ const CreateActivityDialog = ({ parentId, onSubmit }: { parentId: number; onSubm
         <Button className={styles.dialog_item} onClick={handleAddPlace}>
           Добавить
         </Button>
+        <div>{errors.places && <div className={styles.helper_error}>{errorsText.places}</div>}</div>
         {places.map((p, index) => (
           <div className={styles.dialog__row}>
             <div className={styles.dialog_item}>
