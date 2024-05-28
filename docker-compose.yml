@@ -22,6 +22,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: "wget localhost:8080 2>&1| grep 'HTTP/1.1 403'"
+      interval: 1s
+      timeout: 2s
+      start_period: 10s
+      retries: 60
     environment:
       - "SPRING_PROFILES_ACTIVE=docker"
       - "EMAIL_USERNAME=${EMAIL_USERNAME}"
@@ -33,7 +39,6 @@ services:
       - "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}"
       - "TASK_URL=${TASK_URL}"
       - "IP=${IP}"
-
   minio:
     image: minio/minio
     environment:
@@ -60,6 +65,9 @@ services:
       - frontend
     ports:
       - "5573:80"
+    depends_on:
+      event-app:
+        condition: service_healthy
     deploy:
       restart_policy:
         condition: on-failure
