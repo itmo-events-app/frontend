@@ -647,9 +647,9 @@ function EventActivitiesPage() {
       tabs.push(new PageTab('Задачи'));
     }
 
-    if (optionsPrivileges.createEvent) {
-      tabs.push(new PageTab('Копирование'));
-    }
+    // if (optionsPrivileges.createEvent) {
+    //   tabs.push(new PageTab('Копирование'));
+    // }
 
     setPageTabs(tabs);
   }, [optionsPrivileges]);
