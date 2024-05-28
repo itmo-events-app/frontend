@@ -73,14 +73,13 @@ const PageItemStub = (props: PageItemStubProps) => {
       onClick={_handleClick}
       className={appendClassName(styles.event_entry, props.excepted ? myStyles.excepted_event_on_copy : null)}
     >
-      <p>{props.excepted ? 'E' : '_'}</p>
       {imageUrl == '' ? (
         <ReactLogo className={styles.event_icon} />
       ) : (
         <ImagePreview className={styles.event_icon} src={imageUrl} alt="Event Icon" />
       )}
       <div className={styles.event_info_column}>
-        <div className={styles.event_name}>{'Event ' + props.index + ': ' + props.title}</div>
+        <div className={styles.event_name}>{props.title}</div>
         <div className={styles.event_place}>{props.place}</div>
       </div>
     </a>

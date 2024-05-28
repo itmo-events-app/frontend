@@ -354,6 +354,8 @@ function EventActivitiesPage() {
 
   const [reloadPage, setReloadPage] = useState(0);
 
+  const[loadError, setLoadError] = useState<string>("");
+
   const getEvent = async () => {
     if (idInt == null) {
       return;
@@ -647,9 +649,9 @@ function EventActivitiesPage() {
       tabs.push(new PageTab('Задачи'));
     }
 
-    if (optionsPrivileges.createEvent) {
-      tabs.push(new PageTab('Копирование'));
-    }
+    // if (optionsPrivileges.createEvent) {
+    //   tabs.push(new PageTab('Копирование'));
+    // }
 
     setPageTabs(tabs);
   }, [optionsPrivileges]);
@@ -1052,7 +1054,7 @@ function EventActivitiesPage() {
 
           {optionsPrivileges.addOrganizer && optionsPrivileges.addHelper ? (
             <div className={styles.button_container}>
-              <Button className={styles.button} onClick={_deleteOrganizer}>
+              <Button className={appendClassName(styles.button_container, styles.redBtn)} onClick={_deleteOrganizer}>
                 Удалить
               </Button>
             </div>
@@ -1100,6 +1102,7 @@ function EventActivitiesPage() {
   }
 
   function handleFileChange(event: any) {
+    setLoadError("");
     event.preventDefault();
 
     if (optionsPrivileges.importParticipants && idInt != null) {
@@ -1119,6 +1122,7 @@ function EventActivitiesPage() {
           setReloadPage(reloadPage + 1);
         })
         .catch((error) => {
+          setLoadError("Неверный формат файла");
           console.log(error.response.data);
         });
     }
@@ -1154,6 +1158,7 @@ function EventActivitiesPage() {
                   id="uploadParticipants"
                   onChange={handleFileChange}
                 />
+                <div className={styles.error_button}>{loadError}</div>
               </>
             ) : (
               <></>
@@ -1651,7 +1656,7 @@ function EventActivitiesPage() {
             });
           }}
         >
-          Скопировать мероприятие без задач
+          Скопировать мероприятие без активностей
         </Button>
         <Button
           onClick={() => {
@@ -1660,7 +1665,7 @@ function EventActivitiesPage() {
             });
           }}
         >
-          Скопировать мероприятие вместе с задачами
+          Скопировать мероприятие вместе с активностями
         </Button>
       </div>
     );

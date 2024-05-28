@@ -138,7 +138,7 @@ function RegisterPage() {
                 setPasswordError(passwordErrors.join('. '));
               }
             })
-            
+           
           } else {
             if (e.response.data == 'Заявка на регистрацию с указанным email уже существует')
               setEmailError(e.response.data);
