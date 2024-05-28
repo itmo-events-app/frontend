@@ -59,6 +59,16 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
       setErrorMessage('Вы не можете отозвать свою собственную роль организатора!');
       return;
     }
+    if (userId && eventId) {
+      const userEventRoles = await api.role.getUserEventRoles(userId!, eventId);
+      if (userEventRoles.status == 200) {
+        const hasRole = userEventRoles.data.some((r) => r.name == roleName);
+        if (!hasRole) {
+          setErrorMessage('У этого пользователя нет (такой) роли!');
+          return;
+        }
+      }
+    }
     if (roleName == 'Организатор') {
       const result = await api.role.revokeOrganizerRole(userId!, eventId);
       if (result.status != 204) {
