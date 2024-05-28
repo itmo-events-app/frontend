@@ -958,7 +958,7 @@ function EventActivitiesPage() {
     return (
       <tr key={person.id}>
         <td>{person.role}</td>
-        <td>{person.surname + ' ' + person.name}</td>
+        <td>{person.name + ' ' + person.surname}</td>
         <td>{person.email}</td>
       </tr>
     );

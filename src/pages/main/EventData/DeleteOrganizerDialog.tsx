@@ -100,7 +100,8 @@ const DeleteOrganizerDialog = ({ eventId, onDelete }: { eventId: number; onDelet
           placeholder="Пользователь"
           value={new DropdownOption(userId?.toString())}
           onChange={(e) => setUserId(parseInt(e as any))}
-          items={userList.map((u) => new DropdownOption(u.name, u.id?.toString()))}
+          // items={userList.map((u) => new DropdownOption(u.name, u.id?.toString()))}
+          items={userList.map((u, index) => new DropdownOption(`${index + 1}. ${u.name} ${u.surname}`, u.id?.toString()))}
         />
         <InputLabel value="Роль" />
         <Dropdown
