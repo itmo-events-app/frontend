@@ -740,12 +740,14 @@ function EventActivitiesPage() {
         );
         break;
     }
+    const saveOverflow = [DialogSelected.ADDORGANIZER, DialogSelected.EDITORGANIZER, DialogSelected.DELETEORGANIZER, ].includes(dialogData.visible);
     return (
       <Dialog
-        className={appendClassName(styles.dialog, dialogData.visible ? styles.visible : styles.hidden)}
+        className={appendClassName(saveOverflow ? styles.dialog_unoverflow : styles.dialog, dialogData.visible ? styles.visible : styles.hidden)}
         text={dialogData.heading}
         ref={dialogRef}
         onClose={_closeDialog}
+        saveOverflow={saveOverflow}
       >
         {component}
       </Dialog>
