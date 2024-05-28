@@ -12,6 +12,8 @@ services:
       interval: 5s
       timeout: 1s
       retries: 2
+    volumes:
+      - postgres-data:/var/lib/posgresql/data
 
   event-app:
     image: ip13/event-app:latest
@@ -22,6 +24,15 @@ services:
         condition: service_healthy
     environment:
       - "SPRING_PROFILES_ACTIVE=docker"
+      - "EMAIL_USERNAME=${EMAIL_USERNAME}"
+      - "EMAIL_HOST=${EMAIL_HOST}"
+      - "EMAIL_PORT=${EMAIL_PORT}"
+      - "MINIO_URL=${MINIO_URL}"
+      - "MINIO_PORT=${MINIO_PORT}"
+      - "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}"
+      - "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}"
+      - "TASK_URL=${TASK_URL}"
+      - "IP=${IP}"
 
   minio:
     image: minio/minio
@@ -54,4 +65,6 @@ services:
         condition: on-failure
     volumes: # mount config
       - '${PWD}/public/config.js:/usr/share/nginx/html/config.js'
-
+volumes:
+  postgres-data:
+  minio-data:

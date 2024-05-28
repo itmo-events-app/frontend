@@ -1,22 +1,22 @@
-import styles from "./index.module.css";
-import Dialog from "@widgets/main/Dialog";
-import Button from "@widgets/main/Button";
-import {useContext, useState} from "react";
-import ApiContext from "@features/api-context";
-import {taskService} from "@features/task-service";
+import styles from './index.module.css';
+import Dialog from '@widgets/main/Dialog';
+import Button from '@widgets/main/Button';
+import { useContext, useState } from 'react';
+import ApiContext from '@features/api-context';
+import { taskService } from '@features/task-service';
 
-const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number }) => {
-  const {api} = useContext(ApiContext);
+const AddTaskDialog = ({ onClose, idInt }: { onClose: () => void; idInt: number }) => {
+  const { api } = useContext(ApiContext);
   const [files, setFiles] = useState<File[] | undefined>(undefined);
   const [isShowFileError, setIsShowFileError] = useState(false);
 
   function loadFile() {
     if (files) {
-      taskService.uploadFiles(
-        api,
-        idInt,
-        files
-      ).then(() => {onClose()})
+      taskService
+        .uploadFiles(api, idInt, files)
+        .then(() => {
+          onClose();
+        })
         .catch((): any => {
           setIsShowFileError(true);
         });
@@ -39,8 +39,8 @@ const AddTaskDialog = ({onClose, idInt}: { onClose: () => void, idInt: number })
                 }}
               />
               <div>
-                {files && (<a>Выбраны: </a>)}
-                {files && (files.map(f => <a key={f.name}> {f.name} </a>))}
+                {files && <a>Выбраны: </a>}
+                {files && files.map((f) => <a key={f.name}> {f.name} </a>)}
               </div>
               {isShowFileError && (
                 <span className={styles.emptyFieldsMessage}>Суммарный размер файлов слишком большой</span>

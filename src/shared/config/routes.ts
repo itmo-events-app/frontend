@@ -51,5 +51,5 @@ export const RoutePaths: Record<AppRoutes, string> = {
   [AppRoutes.PROFILE]: '/profile',
   [AppRoutes.REQUEST_LIST]: '/requests',
   [AppRoutes.NOT_FOUND]: '*',
-  [AppRoutes.CONFIRM_EMAIL]: '/confirmEmail'
+  [AppRoutes.CONFIRM_EMAIL]: '/confirmEmail',
 };

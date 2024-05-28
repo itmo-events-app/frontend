@@ -1,28 +1,28 @@
-import { uid } from "uid";
-import { FC, ReactNode, useContext, useEffect, useRef, useState } from "react";
-import styles from "./index.module.css";
-import BrandLogo from "@widgets/main/BrandLogo";
-import DefaultImg from "@shared/assets/default.jpg";
-import Layout from "@widgets/main/Layout";
-import PageName from "@widgets/main/PageName";
-import SideBar from "@widgets/main/SideBar";
-import Content from "@widgets/main/Content";
-import PageTabs, { PageTab } from "@widgets/main/PageTabs";
-import { RoutePaths } from "@shared/config/routes";
-import Button from "@widgets/main/Button";
-import { hasAnyPrivilege } from "@features/privileges.ts";
-import { PrivilegeNames } from "@shared/config/privileges.ts";
-import { useNavigate, useParams } from "react-router-dom";
-import { appendClassName } from "@shared/util.ts";
-import Fade from "@widgets/main/Fade";
-import UpdateDialogContent from "./UpdateDialogContext.tsx";
-import Dialog from "@widgets/main/Dialog";
-import CreateActivityDialog from "./CreateActivityDialog.tsx";
-import { Gantt, Task } from "gantt-task-react";
-import { getImageUrl } from "@shared/lib/image.ts";
-import ApiContext from "@features/api-context.ts";
-import AddOrganizerDialog from "@pages/main/EventData/AddOrganizerDialog.tsx";
-import "gantt-task-react/dist/index.css";
+import { uid } from 'uid';
+import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import styles from './index.module.css';
+import BrandLogo from '@widgets/main/BrandLogo';
+import DefaultImg from '@shared/assets/default.jpg';
+import Layout from '@widgets/main/Layout';
+import PageName from '@widgets/main/PageName';
+import SideBar from '@widgets/main/SideBar';
+import Content from '@widgets/main/Content';
+import PageTabs, { PageTab } from '@widgets/main/PageTabs';
+import { RoutePaths } from '@shared/config/routes';
+import Button from '@widgets/main/Button';
+import { hasAnyPrivilege } from '@features/privileges.ts';
+import { PrivilegeNames } from '@shared/config/privileges.ts';
+import { useNavigate, useParams } from 'react-router-dom';
+import { appendClassName } from '@shared/util.ts';
+import Fade from '@widgets/main/Fade';
+import UpdateDialogContent from './UpdateDialogContext.tsx';
+import Dialog from '@widgets/main/Dialog';
+import CreateActivityDialog from './CreateActivityDialog.tsx';
+import { Gantt, Task } from 'gantt-task-react';
+import { getImageUrl } from '@shared/lib/image.ts';
+import ApiContext from '@features/api-context.ts';
+import AddOrganizerDialog from '@pages/main/EventData/AddOrganizerDialog.tsx';
+import 'gantt-task-react/dist/index.css';
 import EditOrganizerDialog from '@pages/main/EventData/EditOrganizerDialog.tsx';
 import DeleteOrganizerDialog from '@pages/main/EventData/DeleteOrganizerDialog.tsx';
 import 'gantt-task-react/dist/index.css';
@@ -32,33 +32,33 @@ import {
   ParticipantPresenceRequest,
   ParticipantResponse,
   TaskResponse,
-  TaskResponseTaskStatusEnum
+  TaskResponseTaskStatusEnum,
 } from '@shared/api/generated/index.ts';
 import PrivilegeContext from '@features/privilege-context.ts';
 import { PrivilegeData } from '@entities/privilege-context.ts';
-import Checkbox from "@widgets/main/Checkbox";
-import ImagePreview from "@widgets/main/ImagePreview/index.tsx";
-import { SetPartisipantsListRequest } from "@shared/api/generated/model/set-partisipants-list-request.ts";
-import ActivityElement from "@pages/main/EventData/elements/ActivityElement";
-import ActivityModal from "@pages/main/EventData/elements/ActivityModal";
-import ModalBlock from "@widgets/main/Modal";
-import AddTaskDialog from "@pages/main/EventData/AddTaskDialog";
-import UpdateTaskDialog from "@pages/main/EventData/UpdateTaskDialog";
-import CopyTasksDialog from "@pages/main/EventData/CopyTasksDialog";
-import { Api } from "@entities/api.ts";
-import Popup from "reactjs-popup";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale/ru";
-import Dropdown, { DropdownOption } from "@widgets/main/Dropdown";
-import { taskService } from "@features/task-service.ts";
-import { useMutation } from "@tanstack/react-query";
-import AddFileDialog from "@pages/main/EventData/AddFileDialog.tsx";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  UploadOutlined,
-  CloseOutlined
-} from "@ant-design/icons";
+import Checkbox from '@widgets/main/Checkbox';
+import ImagePreview from '@widgets/main/ImagePreview/index.tsx';
+import { SetPartisipantsListRequest } from '@shared/api/generated/model/set-partisipants-list-request.ts';
+import ActivityElement from '@pages/main/EventData/elements/ActivityElement';
+import ActivityModal from '@pages/main/EventData/elements/ActivityModal';
+import ModalBlock from '@widgets/main/Modal';
+import AddTaskDialog from '@pages/main/EventData/AddTaskDialog';
+import UpdateTaskDialog from '@pages/main/EventData/UpdateTaskDialog';
+import CopyTasksDialog from '@pages/main/EventData/CopyTasksDialog';
+import { Api } from '@entities/api.ts';
+import Popup from 'reactjs-popup';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale/ru';
+import Dropdown, { DropdownOption } from '@widgets/main/Dropdown';
+import { taskService } from '@features/task-service.ts';
+import { useMutation } from '@tanstack/react-query';
+import AddFileDialog from '@pages/main/EventData/AddFileDialog.tsx';
+import { DeleteOutlined, EditOutlined, UploadOutlined, CloseOutlined } from '@ant-design/icons';
+
+interface placeAddress {
+  name: string;
+  id?: number;
+}
 
 class EventInfo {
   regDates: string;
@@ -72,7 +72,9 @@ class EventInfo {
   eventName: string;
   description: string;
   parent: number | undefined;
-
+  places: number[];
+  offlineAddresses: placeAddress[];
+  onlineAddresses: placeAddress[];
   constructor(
     regDates: string,
     prepDates: string,
@@ -84,7 +86,10 @@ class EventInfo {
     ageRestriction: string,
     eventName: string,
     description: string,
-    parent: number | undefined
+    parent: number | undefined,
+    places: number[],
+    offlineAddresses: placeAddress[],
+    onlineAddresses: placeAddress[]
   ) {
     this.regDates = regDates;
     this.prepDates = prepDates;
@@ -97,21 +102,24 @@ class EventInfo {
     this.eventName = eventName;
     this.description = description;
     this.parent = parent;
+    this.places = places;
+    this.offlineAddresses = offlineAddresses;
+    this.onlineAddresses = onlineAddresses;
   }
 }
 
 export class Activity {
-  id: string
-  activityId: string
-  name: string
-  place: string
-  room: string
-  description: string
-  status: string
-  date: string
-  time: string
-  endDate: string
-  endTime: string
+  id: string;
+  activityId: string;
+  name: string;
+  place: string;
+  room: string;
+  description: string;
+  status: string;
+  date: string;
+  time: string;
+  endDate: string;
+  endTime: string;
 
   constructor(
     activityId: string,
@@ -138,7 +146,6 @@ export class Activity {
     this.endTime = endTime;
   }
 }
-
 
 class OrgPerson {
   id: string;
@@ -212,25 +219,25 @@ class ParticipantsListRequest implements SetPartisipantsListRequest {
 }
 
 type OptionsPrivileges = {
-  activitiesVisible: boolean,
-  orgsVisible: boolean,
-  modifyVisitStatus: boolean,
-  exportParticipants: boolean,
-  importParticipants: boolean,
-  tasksVisible: boolean,
-  edit: boolean,
-  addOrganizer: boolean,
-  editOrganizer: boolean,
-  deleteOrganizer: boolean,
-  addHelper: boolean,
-  addActivity: boolean,
-  deleteActivity: boolean,
-  createTask: boolean,
-  createEvent: boolean,
-  changeTaskStatus: boolean,
-  changeAsignee: boolean,
-  editTask: boolean
-}
+  activitiesVisible: boolean;
+  orgsVisible: boolean;
+  modifyVisitStatus: boolean;
+  exportParticipants: boolean;
+  importParticipants: boolean;
+  tasksVisible: boolean;
+  edit: boolean;
+  addOrganizer: boolean;
+  editOrganizer: boolean;
+  deleteOrganizer: boolean;
+  addHelper: boolean;
+  addActivity: boolean;
+  deleteActivity: boolean;
+  createTask: boolean;
+  createEvent: boolean;
+  changeTaskStatus: boolean;
+  changeAsignee: boolean;
+  editTask: boolean;
+};
 
 const optionsPrivilegesInitial: OptionsPrivileges = {
   activitiesVisible: false,
@@ -250,8 +257,7 @@ const optionsPrivilegesInitial: OptionsPrivileges = {
   createEvent: false,
   changeTaskStatus: false,
   changeAsignee: false,
-  editTask: false
-
+  editTask: false,
 } as const;
 
 interface PeopleTasks {
@@ -277,12 +283,12 @@ const colorsList: string[] = [
 let colors: string[] = [...colorsList];
 
 function readDate(dateTime: string | null | undefined) {
-  if (dateTime == undefined || dateTime == "" || dateTime == null) {
-    return "";
+  if (dateTime == undefined || dateTime == '' || dateTime == null) {
+    return '';
   }
   const date = new Date(dateTime);
   const formattedDate = date.toLocaleDateString().split('T')[0];
-  return formattedDate
+  return formattedDate;
 }
 
 function getIntervalString(start: string | null | undefined, end: string | null | undefined) {
@@ -293,7 +299,6 @@ function getIntervalString(start: string | null | undefined, end: string | null 
   }
 }
 
-
 function getTimeOnly(dateTimeString: string) {
   const dateTime = new Date(dateTimeString);
   const hours = dateTime.getHours();
@@ -303,7 +308,6 @@ function getTimeOnly(dateTimeString: string) {
   return timeOnly;
 }
 
-
 function EventActivitiesPage() {
   const { api } = useContext(ApiContext);
   const navigate = useNavigate();
@@ -311,8 +315,8 @@ function EventActivitiesPage() {
   const { privilegeContext, updateEventPrivileges, updateSystemPrivileges } = useContext(PrivilegeContext);
 
   const { id } = useParams();
-  const [idInt, setIdInt] = useState<number | null>(null)
-  const [taskId, setTaskId] = useState<number>(0)
+  const [idInt, setIdInt] = useState<number | null>(null);
+  const [taskId, setTaskId] = useState<number>(0);
 
   const [event, setEvent] = useState<EventInfo | undefined>(undefined);
   const [loadingEvent, setLoadingEvent] = useState(true);
@@ -358,19 +362,44 @@ function EventActivitiesPage() {
       const eventResponse = await api.withReauth(() => api.event.getEventById(idInt));
       if (eventResponse.status === 200) {
         const data = eventResponse.data;
-        let placeAddress = 'Отсутствует'
-        if (data.placeId) {
-          const placeResponse = await api.place.placeGet(data.placeId ?? 0);
+        let placeAddress = 'Отсутствует';
+        if (data.placesIds && data.placesIds.length != 0) {
+          const placeResponse = await api.place.placeGet(data.placesIds[0] ?? 0);
           if (placeResponse.status == 200) {
             if (placeResponse.data.address) {
-              placeAddress = placeResponse.data.address + (placeResponse.data.room ? ", ауд. " + placeResponse.data.room : "");
+              placeAddress =
+                placeResponse.data.address + (placeResponse.data.room ? ', ауд. ' + placeResponse.data.room : '');
             } else {
-              placeAddress = "";
+              placeAddress = '';
             }
           } else {
             console.log(placeResponse.status);
           }
         }
+        const offlineAddresses: placeAddress[] = [];
+        const onlineAddresses: placeAddress[] = [];
+        if (data.placesIds) {
+          const addressesPromise = data.placesIds.map(async (p) => {
+            const placeResponse = await api.place.placeGet(p);
+            if (placeResponse.data.format == 'ONLINE') {
+              onlineAddresses.push(
+                {
+                  name: placeResponse.data.address ?? '',
+                  id: placeResponse.data.id
+                }
+              );
+            } else if (placeResponse.data.format == 'OFFLINE') {
+              offlineAddresses.push(
+                {
+                  name: placeResponse.data.address + (placeResponse.data.room ? ', ауд. ' + placeResponse.data.room : ''),
+                  id: placeResponse.data.id
+                }
+              );
+            }
+          });
+          await Promise.all(addressesPromise);
+        }
+        console.log(offlineAddresses);
         let parent = undefined;
         if (data.parent) {
           parent = data.parent;
@@ -389,12 +418,16 @@ function EventActivitiesPage() {
           data.participantAgeLowest + ' - ' + data.participantAgeHighest,
           data.title ?? '',
           data.fullDescription ?? '',
-          parent
+          parent,
+          data.placesIds ?? [],
+          offlineAddresses,
+          onlineAddresses
         );
+        console.log(info);
         setEvent(info);
         setEventResponse(data);
         getImageUrl(String(idInt)).then((url) => {
-          if (!url || url == "") {
+          if (!url || url == '') {
             setEventImageUrl(DefaultImg);
           } else {
             setEventImageUrl(url);
@@ -402,7 +435,7 @@ function EventActivitiesPage() {
         });
         setLoadingEvent(false);
       } else {
-        console.error('Error fetching event list:', eventResponse.statusText)
+        console.error('Error fetching event list:', eventResponse.statusText);
       }
     } catch (error: any) {
       if (error.response.status == 404) {
@@ -417,7 +450,7 @@ function EventActivitiesPage() {
     if (id) {
       setIdInt(parseInt(id));
     }
-  }, [id])
+  }, [id]);
 
   useEffect(() => {
     if (idInt == null) {
@@ -431,7 +464,9 @@ function EventActivitiesPage() {
       return;
     }
     api
-      .withReauth(() => api.task.taskListShowInEvent(idInt, undefined, undefined, undefined, undefined, undefined, true))
+      .withReauth(() =>
+        api.task.taskListShowInEvent(idInt, undefined, undefined, undefined, undefined, undefined, true)
+      )
       .then((response) => {
         if (response.data != undefined) {
           setEventTasks(response.data);
@@ -442,7 +477,6 @@ function EventActivitiesPage() {
       });
   }, [idInt, stepTasks]);
 
-
   useEffect(() => {
     const peopleForTasks = new Map<number, PeopleTasks>();
     const curTasks = [];
@@ -450,7 +484,7 @@ function EventActivitiesPage() {
     colors = [...colorsList];
 
     for (const et of eventTasks) {
-      console.log(et)
+      console.log(et);
       if (
         et.deadline != undefined &&
         et.creationTime != undefined &&
@@ -475,10 +509,10 @@ function EventActivitiesPage() {
         }
         const ctd = new Date(et.creationTime);
         const ddd = new Date(et.deadline);
-        console.log(ddd, ctd < ddd ? ctd : (ddd));
+        console.log(ddd, ctd < ddd ? ctd : ddd);
 
         const newTask: Task = {
-          start: ctd < ddd ? ctd : (ddd),
+          start: ctd < ddd ? ctd : ddd,
           end: ddd,
           name: et.title,
           id: '' + et.id,
@@ -501,21 +535,21 @@ function EventActivitiesPage() {
         const ctd = new Date(et.creationTime);
         const ddd = new Date(et.deadline);
         const newTask: Task = {
-          start: ctd < ddd ? ctd : (ddd),
+          start: ctd < ddd ? ctd : ddd,
           end: ddd,
           name: et.title,
           id: '' + et.id,
           type: 'task',
           progress: 100,
           isDisabled: false,
-          styles: { progressColor: "#000", progressSelectedColor: "#000" },
+          styles: { progressColor: '#000', progressSelectedColor: '#000' },
           hideChildren: false,
         };
         curTasks.push(newTask);
         setTasks(curTasks);
       }
     }
-  }, [eventTasks,]);
+  }, [eventTasks]);
 
   function _getPrivileges(id: number): Set<PrivilegeData> {
     if (id != null && privilegeContext.isPrivilegesForEventLoaded(id)) {
@@ -540,30 +574,57 @@ function EventActivitiesPage() {
       const privileges = _getPrivileges(privilegeId);
       const systemPrivileges = _getSystemPrivileges();
       setOptionsPrivileges({
-        activitiesVisible: event?.parent ? false : hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
+        activitiesVisible: event?.parent
+          ? false
+          : hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_EVENT_ACTIVITIES)])),
         orgsVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ORGANIZER_USERS)])),
-        modifyVisitStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])),
-        exportParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])),
-        importParticipants: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])),
+        modifyVisitStatus: hasAnyPrivilege(
+          privileges,
+          new Set([new PrivilegeData(PrivilegeNames.WORK_WITH_PARTICIPANT_LIST)])
+        ),
+        exportParticipants: hasAnyPrivilege(
+          privileges,
+          new Set([new PrivilegeData(PrivilegeNames.EXPORT_PARTICIPANT_LIST_XLSX)])
+        ),
+        importParticipants: hasAnyPrivilege(
+          privileges,
+          new Set([new PrivilegeData(PrivilegeNames.IMPORT_PARTICIPANT_LIST_XLSX)])
+        ),
         tasksVisible: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.VIEW_ALL_EVENT_TASKS)])),
         edit: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_EVENT_INFO)])),
         addOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZER_ROLE)])),
         addHelper: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ASSISTANT_ROLE)])),
         addActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT_ACTIVITIES)])),
-        deleteActivity: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])),
-        editOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)])),
-        deleteOrganizer: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)])),
+        deleteActivity: hasAnyPrivilege(
+          privileges,
+          new Set([new PrivilegeData(PrivilegeNames.DELETE_EVENT_ACTIVITIES)])
+        ),
+        editOrganizer: hasAnyPrivilege(
+          privileges,
+          new Set([new PrivilegeData(PrivilegeNames.ASSIGN_ORGANIZATIONAL_ROLE)])
+        ),
+        deleteOrganizer: hasAnyPrivilege(
+          privileges,
+          new Set([new PrivilegeData(PrivilegeNames.REVOKE_ORGANIZATIONAL_ROLE)])
+        ),
         createTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_TASK)])),
         createEvent: hasAnyPrivilege(systemPrivileges, new Set([new PrivilegeData(PrivilegeNames.CREATE_EVENT)])),
         changeTaskStatus: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.CHANGE_TASK_STATUS)])),
-        changeAsignee: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR), new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR)])),
-        editTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_TASK)]))
+        changeAsignee: hasAnyPrivilege(
+          privileges,
+          new Set([
+            new PrivilegeData(PrivilegeNames.ASSIGN_TASK_EXECUTOR),
+            new PrivilegeData(PrivilegeNames.DELETE_TASK_EXECUTOR),
+            new PrivilegeData(PrivilegeNames.REPLACE_TASK_EXECUTOR),
+          ])
+        ),
+        editTask: hasAnyPrivilege(privileges, new Set([new PrivilegeData(PrivilegeNames.EDIT_TASK)])),
       });
       if (event?.parent) {
         setParticipantVisibility(false);
       }
     } else {
-      setOptionsPrivileges(optionsPrivilegesInitial)
+      setOptionsPrivileges(optionsPrivilegesInitial);
     }
   }, [privilegeId, privilegeContext]);
 
@@ -571,7 +632,6 @@ function EventActivitiesPage() {
     const tabs = [];
 
     tabs.push(new PageTab('Описание'));
-
 
     if (optionsPrivileges.activitiesVisible) {
       tabs.push(new PageTab('Активности'));
@@ -592,7 +652,7 @@ function EventActivitiesPage() {
     }
 
     setPageTabs(tabs);
-  }, [optionsPrivileges])
+  }, [optionsPrivileges]);
 
   function _closeOrganizerDialog() {
     if (optionsPrivileges.orgsVisible && idInt != null) {
@@ -617,7 +677,6 @@ function EventActivitiesPage() {
     }
     setDialogData(new DialogData());
   }
-
 
   const _Dialog = () => {
     let component = <></>;
@@ -697,7 +756,6 @@ function EventActivitiesPage() {
       getActivities(idInt);
     }
     setDialogData(new DialogData());
-
   };
   const _updateEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setDialogData(new DialogData('Редактирование мероприятия', DialogSelected.UPDATE));
@@ -712,8 +770,8 @@ function EventActivitiesPage() {
     return (
       <div className={styles.root}>
         <div className={styles.image_box}>
-          {<ImagePreview className={styles.image} src={eventImageUrl}
-            alt="Event image" />}</div>
+          {<ImagePreview className={styles.image} src={eventImageUrl} alt="Event image" />}
+        </div>
         {optionsPrivileges.edit ? (
           <div className={styles.button_container}>
             <Button className={styles.button} onClick={_updateEvent}>
@@ -731,8 +789,18 @@ function EventActivitiesPage() {
               {eventInfo.description}
             </div>
             <div className={styles.description_box}>
-              <div className={styles.field_title}>Место проведения</div>
-              {eventInfo.place}
+              <div className={styles.field_title}>Места проведения</div>
+              {eventInfo.offlineAddresses.map((p) => {
+                return <div className={styles.place_link} onClick={()=>{
+                  navigate(`/places/${p.id}`)
+                }}>{p.name}</div>;
+              })}
+            </div>
+            <div className={styles.description_box}>
+              <div className={styles.field_title}>Онлайн</div>
+              {eventInfo.onlineAddresses.map((p) => {
+                return <div>{p.name}</div>;
+              })}
             </div>
           </div>
           <table className={styles.table}>
@@ -783,7 +851,11 @@ function EventActivitiesPage() {
         let place = '';
         let room = '';
         try {
-          const placeResponse = await api.place.placeGet(a.placeId!);
+          let firstPlace = 0;
+          if (a.placesIds && a.placesIds.length != 0) {
+            firstPlace = a.placesIds[0];
+          }
+          const placeResponse = await api.place.placeGet(firstPlace);
           if (placeResponse.status == 200) {
             const data = placeResponse.data;
             place = data.address ?? '';
@@ -825,16 +897,15 @@ function EventActivitiesPage() {
     }
   }, [idInt]);
 
-
   const _showActivityModal = (id: string) => {
     setActivityId(id);
     setModalActive(true);
-  }
+  };
 
   const _hideActivityModal = () => {
     setActivityId('');
     setModalActive(false);
-  }
+  };
 
   function _createActivityList(activities: Activity[]) {
     return (
@@ -845,26 +916,23 @@ function EventActivitiesPage() {
             activities={activities}
             setActivities={setActivities}
             closeActivityModal={_hideActivityModal}
-            canDelete={optionsPrivileges.deleteActivity} />
+            canDelete={optionsPrivileges.deleteActivity}
+          />
         </ModalBlock>
 
-        {optionsPrivileges.addActivity &&
+        {optionsPrivileges.addActivity && (
           <div className={styles.button_container}>
             <Button onClick={_addActivity}>Создать активность</Button>
-          </div>}
+          </div>
+        )}
 
-
-        {activitiesLoaded &&
+        {activitiesLoaded && (
           <div className={styles.data_list}>
-            {
-              activities.map(
-                activity => <ActivityElement
-                  activity={activity}
-                  onClickFun={() => _showActivityModal(activity.activityId)}
-                />)
-            }
-          </div>}
-
+            {activities.map((activity) => (
+              <ActivityElement activity={activity} onClickFun={() => _showActivityModal(activity.activityId)} />
+            ))}
+          </div>
+        )}
       </>
     );
   }
@@ -897,10 +965,11 @@ function EventActivitiesPage() {
 
     if (id) {
       api
-        .withReauth(() => api.participants.changePresence(idInt!,
-          new PersonVisitResponse(+id, visitStatus.get(id) ?? false)))
+        .withReauth(() =>
+          api.participants.changePresence(idInt!, new PersonVisitResponse(+id, visitStatus.get(id) ?? false))
+        )
         .then((response) => {
-          console.log(response)
+          console.log(response);
         })
         .catch((error) => {
           console.log(error);
@@ -914,7 +983,7 @@ function EventActivitiesPage() {
         <td>{person.name}</td>
         <td>{person.email}</td>
         <td>{person.info}</td>
-        {optionsPrivileges.modifyVisitStatus ?
+        {optionsPrivileges.modifyVisitStatus ? (
           <td>
             <div className={styles.visited_checkbox}>
               <Checkbox
@@ -926,9 +995,9 @@ function EventActivitiesPage() {
               />
             </div>
           </td>
-          :
+        ) : (
           <td>{person.visited ? 'Да' : 'Нет'}</td>
-        }
+        )}
       </tr>
     );
   }
@@ -1009,17 +1078,16 @@ function EventActivitiesPage() {
   function export_xlsx() {
     if (idInt != null) {
       api
-        .withReauth(() => api.participants.getParticipantsXlsxFile(
-          idInt,
-          {
-            responseType: "arraybuffer"
+        .withReauth(() =>
+          api.participants.getParticipantsXlsxFile(idInt, {
+            responseType: 'arraybuffer',
           })
         )
         .then((response) => {
-          const link = document.createElement("a");
+          const link = document.createElement('a');
 
-          link.href = window.URL.createObjectURL(new Blob([response.data], { type: "application/zip" }));
-          link.setAttribute("download", "participants_list.xlsx");
+          link.href = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
+          link.setAttribute('download', 'participants_list.xlsx');
           document.body.appendChild(link);
           link.click();
 
@@ -1042,8 +1110,8 @@ function EventActivitiesPage() {
           {
             method: 'POST',
             headers: {
-              'Content-Type': 'multipart/form-data; boundary=AaBbCc'
-            }
+              'Content-Type': 'multipart/form-data; boundary=AaBbCc',
+            },
           }
         )
         .then((response) => {
@@ -1065,39 +1133,35 @@ function EventActivitiesPage() {
     }
     return (
       <>
-        {(optionsPrivileges.exportParticipants || optionsPrivileges.importParticipants) ?
-          (
-            <div className={styles.button_container}>
-              {optionsPrivileges.exportParticipants && items.length > 0 ?
-                (
-                  <Button className={styles.buttonXlsx} onClick={export_xlsx}>
-                    Скачать xlsx
-                  </Button>
-                ) : (
-                  <></>
-                )
-              }
-              {optionsPrivileges.importParticipants ?
-                (
-                  <>
-                    <label className={styles.file_input} htmlFor="uploadParticipants">Загрузить xlsx</label>
-                    <input
-                      className={styles.file_input_actual}
-                      type="file"
-                      name="participantsFile"
-                      id="uploadParticipants"
-                      onChange={handleFileChange}
-                    />
-                  </>
-                ) : (
-                  <></>
-                )
-              }
-            </div>
-          ) : (
-            <></>
-          )
-        }
+        {optionsPrivileges.exportParticipants || optionsPrivileges.importParticipants ? (
+          <div className={styles.button_container}>
+            {optionsPrivileges.exportParticipants && items.length > 0 ? (
+              <Button className={styles.buttonXlsx} onClick={export_xlsx}>
+                Скачать xlsx
+              </Button>
+            ) : (
+              <></>
+            )}
+            {optionsPrivileges.importParticipants ? (
+              <>
+                <label className={styles.file_input} htmlFor="uploadParticipants">
+                  Загрузить xlsx
+                </label>
+                <input
+                  className={styles.file_input_actual}
+                  type="file"
+                  name="participantsFile"
+                  id="uploadParticipants"
+                  onChange={handleFileChange}
+                />
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+        ) : (
+          <></>
+        )}
         <table className={styles.table}>
           <thead>
             <tr>
@@ -1165,8 +1229,8 @@ function EventActivitiesPage() {
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isCopyModalOpen, setCopyModalOpen] = useState(false);
+  const [insideCopy, setInsideCopy] = useState(false);
   const [isAddFileModalOpen, setAddFileModalOpen] = useState(false);
-
 
   const openModalCreate = () => {
     setCreateModalOpen(true);
@@ -1186,27 +1250,29 @@ function EventActivitiesPage() {
     setStepTasks(stepTasks + 1);
   };
 
-  const openModalCopy = () => {
+  const openModalCopy = (isInsideCopy: boolean = false) => {
+    // MARK: openModalCopy()
     setCopyModalOpen(true);
-  }
+    setInsideCopy(isInsideCopy);
+  };
 
   const openModalAddFile = () => {
     setAddFileModalOpen(true);
-  }
+  };
 
   const closeModalCopy = () => {
     setCopyModalOpen(false);
     setTimeout(() => {
       setStepTasks(stepTasks + 1);
     }, 500);
-  }
+  };
 
   const closeModalFile = () => {
     setAddFileModalOpen(false);
     setTimeout(() => {
       setStepTasks(stepTasks + 1);
     }, 500);
-  }
+  };
 
   const _onCreate = () => {
     openModalCreate();
@@ -1218,8 +1284,14 @@ function EventActivitiesPage() {
   };
 
   const _onCopy = () => {
+    // MARK: _onCopy()
     openModalCopy();
-  }
+  };
+
+  const _onCopyInside = () => {
+    // MARK: _onCopyInside()
+    openModalCopy(true);
+  };
 
   const _onAddFile = (id: number) => {
     setTaskId(id);
@@ -1227,10 +1299,7 @@ function EventActivitiesPage() {
   };
 
   const _onDeleteFile = (id: number, fileName: string) => {
-    api.withReauth(() => api.task.deleteFiles(
-      id,
-      new Array(fileName)
-    ));
+    api.withReauth(() => api.task.deleteFiles(id, new Array(fileName)));
     setTimeout(() => {
       setStepTasks(stepTasks + 1);
     }, 500);
@@ -1254,14 +1323,14 @@ function EventActivitiesPage() {
     assigneeId: number;
     activityId?: number;
     files?: FileDataResponse[];
-  }
+  };
 
   const deleteTask = async (id: number) => {
-   await api.task.taskDelete(id);
+    await api.task.taskDelete(id);
     setTimeout(() => {
       setStepTasks(stepTasks + 1);
     }, 500);
-  }
+  };
 
   const TaskTableRow: FC<TaskTableRowProps> = ({
     taskId,
@@ -1270,7 +1339,9 @@ function EventActivitiesPage() {
     deadline,
     assigneeName,
     taskStatus,
-    activityTitle, activityId, files
+    activityTitle,
+    activityId,
+    files,
   }) => {
     const [selectedStatus, setStatus] = useState<DropdownOption<string> | undefined>();
     const [selectedTaskUser, setTaskUser] = useState<DropdownOption<string> | undefined>();
@@ -1279,33 +1350,33 @@ function EventActivitiesPage() {
 
     const { mutate: updateTaskStatus } = useMutation({
       mutationFn: taskService.updateTaskStatus(api),
-      mutationKey: ["updateTaskStatus"],
+      mutationKey: ['updateTaskStatus'],
     });
 
     const { mutate: updateTaskAssignee } = useMutation({
       mutationFn: taskService.updateTaskAssignee(api),
-      mutationKey: ["updateTaskAssignee"],
+      mutationKey: ['updateTaskAssignee'],
     });
 
     const statusTranslation: Record<string, string> = {
-      NEW: "Новое",
-      IN_PROGRESS: "В работе",
-      EXPIRED: "Просрочено",
-      DONE: "Выполнено",
+      NEW: 'Новое',
+      IN_PROGRESS: 'В работе',
+      EXPIRED: 'Просрочено',
+      DONE: 'Выполнено',
     };
 
     const statusColorClass: Record<string, string> = {
-      "Новое": styles.color_blue,
-      "В работе": styles.color_blue,
-      "Просрочено": styles.color_red,
-      "Выполнено": styles.color_lime,
+      Новое: styles.color_blue,
+      'В работе': styles.color_blue,
+      Просрочено: styles.color_red,
+      Выполнено: styles.color_lime,
     };
 
     const newTaskOptions: DropdownOption<string>[] = [
-      new DropdownOption("Новое"),
-      new DropdownOption("В работе"),
-      new DropdownOption("Выполнено"),
-      new DropdownOption("Просрочено")
+      new DropdownOption('Новое'),
+      new DropdownOption('В работе'),
+      new DropdownOption('Выполнено'),
+      new DropdownOption('Просрочено'),
     ];
 
     const redirectToEvent = (id: number) => {
@@ -1315,147 +1386,174 @@ function EventActivitiesPage() {
 
     const status = selectedStatus?.value ? selectedStatus?.value : statusTranslation[taskStatus];
 
-    return (<tr>
-      <td>
-        {title}
-        <br/>
-        <div className={styles.taskButtons}>
-          {(optionsPrivileges.editTask) ? <EditOutlined className={styles.edit_button} onClick={() => _onUpdate(taskId!)} /> : ''}
-          {(optionsPrivileges.editTask) ? <CloseOutlined className={styles.edit_button} onClick={() => deleteTask(taskId!)}/> : ''}
-        </div>
-      </td>
-      <td>
-        <Popup
-          trigger={
-            <div>
-              {description!.slice(0, 20)}
-              {description!.length! > 20 && <span>...</span>}
-            </div>
-          }
-          modal
-          nested
-        >
-          {
-            ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
-              <div className={styles.popup__wrapper}>
-                <div className={styles.popupContentBold}>
-                  {title}
-                  <br />
-                </div>
-                <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
-                <div className={styles.popupContent}>{description}</div>
-                <div className={`${styles.popupContent} ${styles.bold}`}>Статус:</div>
-                {optionsPrivileges.changeTaskStatus ? (
-                  <Dropdown
-                    placeholder={statusTranslation[taskStatus]}
-                    items={newTaskOptions}
-                    toText={(item) => item.value}
-                    value={selectedStatus}
-                    onChange={(sel) => {
-                      updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
-                      setStatus(new DropdownOption(sel as any));
-                    }}
-                  />
-                ) : (
-                  <>{statusTranslation[taskStatus]}</>
-                )}
-                <div className={styles.popupButton}>
-                  <Button onClick={close}>Скрыть</Button>
-                </div>
+    return (
+      <tr>
+        <td>
+          {title}
+          <br />
+          <div className={styles.taskButtons}>
+            {optionsPrivileges.editTask ? (
+              <EditOutlined className={styles.edit_button} onClick={() => _onUpdate(taskId!)} />
+            ) : (
+              ''
+            )}
+            {optionsPrivileges.editTask ? (
+              <CloseOutlined className={styles.edit_button} onClick={() => deleteTask(taskId!)} />
+            ) : (
+              ''
+            )}
+          </div>
+        </td>
+        <td>
+          <Popup
+            trigger={
+              <div>
+                {description!.slice(0, 20)}
+                {description!.length! > 20 && <span>...</span>}
               </div>
-            )) as unknown as ReactNode
-          }
-        </Popup>
-      </td>
-      <td>
-        {format(deadline, "H:mm")} <br />
-        {format(deadline, "do MMMM, yyyy", { locale: ru })}
-      </td>
-      <td>
-        {(optionsPrivileges.changeAsignee) ? (
-          <Dropdown
-            placeholder={assigneeName}
-            items={orgs.filter((value, index, self) => self.findIndex((el) => el.id === value.id) === index)
-              .map((el) => new DropdownOption<string>(el.name! + " " + el.surname!, String(el.id!)))}
-            toText={(item) => item.value}
-            value={selectedTaskUser}
-            onChange={(sel) => {
-              console.log(sel);
+            }
+            modal
+            nested
+          >
+            {
+              ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
+                <div className={styles.popup__wrapper}>
+                  <div className={styles.popupContentBold}>
+                    {title}
+                    <br />
+                  </div>
+                  <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
+                  <div className={styles.popupContent}>{description}</div>
+                  <div className={`${styles.popupContent} ${styles.bold}`}>Статус:</div>
+                  {optionsPrivileges.changeTaskStatus ? (
+                    <Dropdown
+                      placeholder={statusTranslation[taskStatus]}
+                      items={newTaskOptions}
+                      toText={(item) => item.value}
+                      value={selectedStatus}
+                      onChange={(sel) => {
+                        updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
+                        setStatus(new DropdownOption(sel as any));
+                      }}
+                    />
+                  ) : (
+                    <>{statusTranslation[taskStatus]}</>
+                  )}
+                  <div className={styles.popupButton}>
+                    <Button onClick={close}>Скрыть</Button>
+                  </div>
+                </div>
+              )) as unknown as ReactNode
+            }
+          </Popup>
+        </td>
+        <td>
+          {format(deadline, 'H:mm')} <br />
+          {format(deadline, 'do MMMM, yyyy', { locale: ru })}
+        </td>
+        <td>
+          {optionsPrivileges.changeAsignee ? (
+            <Dropdown
+              placeholder={assigneeName}
+              items={orgs
+                .filter((value, index, self) => self.findIndex((el) => el.id === value.id) === index)
+                .map((el) => new DropdownOption<string>(el.name! + ' ' + el.surname!, String(el.id!)))}
+              toText={(item) => item.value}
+              value={selectedTaskUser}
+              onChange={(sel) => {
+                console.log(sel);
 
-              setTaskUser(sel);
-              updateTaskAssignee({ assigneeId: Number(sel), taskId: taskId });
-              setTimeout(() => {
-                setStepTasks(stepTasks + 1);
-              }, 500);
-            }}
-            onClear={() => {
-              setTaskUser(new DropdownOption("Не назначено"))
-              taskService.deleteTaskAssignee(api, Number(taskId))
-            }}
-          />
-        ) :
-          (
+                setTaskUser(sel);
+                updateTaskAssignee({ assigneeId: Number(sel), taskId: taskId });
+                setTimeout(() => {
+                  setStepTasks(stepTasks + 1);
+                }, 500);
+              }}
+              onClear={() => {
+                setTaskUser(new DropdownOption('Не назначено'));
+                taskService.deleteTaskAssignee(api, Number(taskId));
+              }}
+            />
+          ) : (
             <div>{assigneeName}</div>
           )}
-      </td>
-      <td hidden={event?.parent !== undefined}>
-        {activityId ?
-          <div style={{ cursor: 'pointer' }} onClick={() => redirectToEvent(activityId)}>{activityTitle}</div> :
-          '-'}</td>
-      <td>
-        <Popup
-          trigger={
-            <div className={statusColorClass[status]}>{status}</div>
-          }
-          modal
-          nested
-        >
-          {
-            ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
-              <div className={styles.popup__wrapper}>
-                <div className={styles.popupContentBold}>
-                  {title}
-                  <br />
+        </td>
+        <td hidden={event?.parent !== undefined}>
+          {activityId ? (
+            <div style={{ cursor: 'pointer' }} onClick={() => redirectToEvent(activityId)}>
+              {activityTitle}
+            </div>
+          ) : (
+            '-'
+          )}
+        </td>
+        <td>
+          <Popup trigger={<div className={statusColorClass[status]}>{status}</div>} modal nested>
+            {
+              ((close: ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined) => (
+                <div className={styles.popup__wrapper}>
+                  <div className={styles.popupContentBold}>
+                    {title}
+                    <br />
+                  </div>
+                  <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
+                  <div className={styles.popupContent}>{description}</div>
+                  <div className={`${styles.popupContent} ${styles.bold}`}>Статус:</div>
+                  {optionsPrivileges.changeTaskStatus ? (
+                    <Dropdown
+                      placeholder={statusTranslation[taskStatus]}
+                      items={newTaskOptions}
+                      toText={(item) => item.value}
+                      value={selectedStatus}
+                      onChange={(sel) => {
+                        updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
+                        setStatus(new DropdownOption(sel as any));
+                      }}
+                    />
+                  ) : (
+                    <>{statusTranslation[taskStatus]}</>
+                  )}
+                  <div className={styles.popupButton}>
+                    <Button onClick={close}>Скрыть</Button>
+                  </div>
                 </div>
-                <div className={`${styles.popupContent} ${styles.bold}`}>Описание:</div>
-                <div className={styles.popupContent}>{description}</div>
-                <div className={`${styles.popupContent} ${styles.bold}`}>Статус:</div>
-                {optionsPrivileges.changeTaskStatus ? (
-                  <Dropdown
-                    placeholder={statusTranslation[taskStatus]}
-                    items={newTaskOptions}
-                    toText={(item) => item.value}
-                    value={selectedStatus}
-                    onChange={(sel) => {
-                      updateTaskStatus({ newStatus: new DropdownOption(sel as any).value, id: taskId });
-                      setStatus(new DropdownOption(sel as any));
-                    }}
+              )) as unknown as ReactNode
+            }
+          </Popup>
+        </td>
+        <td>
+          {optionsPrivileges.editTask ? (
+            <UploadOutlined className={styles.upload_button} onClick={() => _onAddFile(taskId!)} />
+          ) : (
+            ''
+          )}
+          {files?.length ? (
+            files?.map((file) => (
+              <div key={file.filename}>
+                <a href={file.presignedUrl} download>
+                  {file.filename}
+                </a>
+                {optionsPrivileges.editTask ? (
+                  <DeleteOutlined
+                    className={styles.delete_button}
+                    onClick={() => _onDeleteFile(taskId!, file.filename!)}
                   />
                 ) : (
-                  <>{statusTranslation[taskStatus]}</>
+                  ''
                 )}
-                <div className={styles.popupButton}>
-                  <Button onClick={close}>Скрыть</Button>
-                </div>
+                <br />
+                <br />
               </div>
-            )) as unknown as ReactNode
-          }
-        </Popup>
-      </td>
-      <td>
-        {(optionsPrivileges.editTask) ? <UploadOutlined className={styles.upload_button} onClick={() => _onAddFile(taskId!)} /> : ''}
-        {files?.length ? files?.map(file => <div key={file.filename}>
-          <a href={file.presignedUrl} download>{file.filename}</a>
-          {(optionsPrivileges.editTask) ? <DeleteOutlined className={styles.delete_button} onClick={() => _onDeleteFile(taskId!, file.filename!)} /> : ''}
-          <br /><br />
-        </div>) : <></>}
-      </td>
-    </tr>);
+            ))
+          ) : (
+            <></>
+          )}
+        </td>
+      </tr>
+    );
   };
 
-
-  const TaskTable: FC<TaskTableProps> = ({ tasks }) =>
-  (
+  const TaskTable: FC<TaskTableProps> = ({ tasks }) => (
     <div className={styles.content}>
       <table className={styles.task_table}>
         <thead>
@@ -1471,17 +1569,23 @@ function EventActivitiesPage() {
         </thead>
         <tbody>
           {tasks.map((task) => (
-            <TaskTableRow key={task.id}
-              taskId={Number(task.id)} title={String(task.title)} description={task.description || ""}
-              deadline={task.deadline || ""}
-              assigneeName={task.assignee != undefined ? `${task.assignee?.name} ${task.assignee?.surname}` : "Не назначено"}
+            <TaskTableRow
+              key={task.id}
+              taskId={Number(task.id)}
+              title={String(task.title)}
+              description={task.description || ''}
+              deadline={task.deadline || ''}
+              assigneeName={
+                task.assignee != undefined ? `${task.assignee?.name} ${task.assignee?.surname}` : 'Не назначено'
+              }
               assigneeId={Number(task.assignee?.id)}
               eventId={Number(task.event?.eventId)}
               activityId={Number(task.event?.activityId)}
               eventName={task.event?.eventTitle}
               taskStatus={task.taskStatus as TaskResponseTaskStatusEnum}
               activityTitle={task.event?.activityTitle}
-              files={task.fileData} />
+              files={task.fileData}
+            />
           ))}
         </tbody>
       </table>
@@ -1497,19 +1601,22 @@ function EventActivitiesPage() {
               <Button className={styles.button} onClick={_onCreate}>
                 Создать
               </Button>
+              <Button className={styles.button} onClick={_onCopyInside}>
+                Скопировать
+              </Button>
               <Button className={styles.button} onClick={_onCopy}>
-                Копировать с другого мероприятия
+                Скопировать с другого мероприятия
               </Button>
             </div>
           ) : (
             <></>
           )}
           <style>{` ._25P-K { display: none; } `}</style>
-          {
-            tasks.length > 0 ?
-              <Gantt tasks={tasks} TooltipContent={undefined} listCellWidth={''} locale={locc} />
-              : <></>
-          }
+          {tasks.length > 0 ? (
+            <Gantt tasks={tasks} TooltipContent={undefined} listCellWidth={''} locale={locc} />
+          ) : (
+            <></>
+          )}
           <div className={styles.tasks__people}>
             {eventTasksPeople.map((human) => (
               <div key={human.color} className={styles.tasks__human}>
@@ -1519,36 +1626,42 @@ function EventActivitiesPage() {
             ))}
 
             <div key="0" style={{ opacity: nobodyTasks }} className={styles.tasks__human}>
-              <span style={{ background: "black" }}></span>
+              <span style={{ background: 'black' }}></span>
               Не назначено
             </div>
           </div>
 
           <TaskTable tasks={eventTasks} api={api} />
-
         </div>
         {isCreateModalOpen && <AddTaskDialog idInt={idInt} onClose={closeModalCreate} />}
         {isUpdateModalOpen && <UpdateTaskDialog idInt={idInt} taskId={taskId} onClose={closeModalUpdate} />}
-        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} />}
+        {isCopyModalOpen && <CopyTasksDialog idInt={idInt} onClose={closeModalCopy} preChoose={insideCopy} />}
         {isAddFileModalOpen && <AddFileDialog idInt={taskId} onClose={closeModalFile} />}
       </>
-
     );
   }
 
-  function _createCopyButtons() { // MARK: Buttons
+  function _createCopyButtons() {
     return (
       <div className={styles.copy}>
-        <Button onClick={() => {
-          api.event.copyEvent(idInt!, false).then(() => {
-            navigate("/events")
-          })
-        }}>Скопировать мероприятие без задач</Button>
-        <Button onClick={() => {
-          api.event.copyEvent(idInt!, true).then(() => {
-            navigate("/events")
-          })
-        }}>Скопировать мероприятие вместе с задачами</Button>
+        <Button
+          onClick={() => {
+            api.event.copyEvent(idInt!, false).then(() => {
+              navigate('/events');
+            });
+          }}
+        >
+          Скопировать мероприятие без задач
+        </Button>
+        <Button
+          onClick={() => {
+            api.event.copyEvent(idInt!, true).then(() => {
+              navigate('/events');
+            });
+          }}
+        >
+          Скопировать мероприятие вместе с задачами
+        </Button>
       </div>
     );
   }
@@ -1560,24 +1673,23 @@ function EventActivitiesPage() {
   return (
     <Layout
       topLeft={<BrandLogo />}
-      topRight={
-          <PageName text={event?.eventName ?? ''} />
-      }
+      topRight={<PageName text={event?.eventName ?? ''} />}
       bottomLeft={<SideBar currentPageURL={RoutePaths.eventData} />}
       bottomRight={
         <Content>
-        <div className={styles.tabs}>
-          <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
-        </div>
-          <div className={styles.content} id={idInt == null ? ("") : idInt.toString()}>
+          <div className={styles.tabs}>
+            <PageTabs value="Описание" handler={pageTabHandler} items={pageTabs} />
+          </div>
+          <div className={styles.content} id={idInt == null ? '' : idInt.toString()}>
             {event == null || loadingEvent ? <p></p> : selectedTab == 'Описание' && _createInfoPage(event)}
             {selectedTab == 'Активности' && _createActivityList(activities)}
             {selectedTab == 'Организаторы' && createOrgsTable(orgs)}
-            {selectedTab == 'Участники' && createParticipantsTable(participants.sort(
-              (a: Person, b: Person) => {
-                return (a.name > b.name) ? 1 : -1
-              }
-            ))}
+            {selectedTab == 'Участники' &&
+              createParticipantsTable(
+                participants.sort((a: Person, b: Person) => {
+                  return a.name > b.name ? 1 : -1;
+                })
+              )}
             {selectedTab == 'Задачи' && _createTasksTable()}
             {selectedTab == 'Копирование' && _createCopyButtons()}
           </div>

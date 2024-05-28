@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '@shared/config/routes';
 import { NotifyState } from '../Notification';
 import ApiContext from '@features/api-context';
-import {RegistrationUserRequest, RegistrationUserRequestTypeEnum} from '@shared/api/generated';
+import { RegistrationUserRequest, RegistrationUserRequestTypeEnum } from '@shared/api/generated';
 const registerMsg = 'Заявка на регистрацию успешно создана. Ожидайте письма с подтверждением для входа.';
 
 const errorValidators = {
@@ -31,7 +31,7 @@ const errorValidators = {
       return 'Пароль не совпадает';
     }
     return null;
-  }
+  },
 } as const;
 
 function RegisterPage() {
@@ -41,7 +41,7 @@ function RegisterPage() {
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
   const [surname, setSurname] = useState('');
-  const [surnameError, setSurnameError] = useState('')
+  const [surnameError, setSurnameError] = useState('');
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [password, setPassword] = useState('');
@@ -52,27 +52,27 @@ function RegisterPage() {
   const _setName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
     setNameError('');
-  }
+  };
 
   const _setSurname = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSurname(e.target.value);
     setSurnameError('');
-  }
+  };
 
   const _setEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setEmailError('');
-  }
+  };
 
   const _setPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     setPasswordError('');
-  }
+  };
 
   const _setRepeat = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRepeat(e.target.value);
     setRepeatError('');
-  }
+  };
 
   const _register = (e: any) => {
     e.preventDefault();
@@ -96,7 +96,7 @@ function RegisterPage() {
       ok = false;
     }
 
-    const epassword = errorValidators.len(password)
+    const epassword = errorValidators.len(password);
     if (epassword) {
       setPasswordError(epassword);
       ok = false;
@@ -116,8 +116,9 @@ function RegisterPage() {
         type: RegistrationUserRequestTypeEnum.Email,
         password: password,
         confirmPassword: repeat,
-      }
-      api.withReauth(() => api.auth.register(request))
+      };
+      api
+        .withReauth(() => api.auth.register(request))
         .then((_) => {
           const state: NotifyState = {
             msg: registerMsg,
@@ -127,15 +128,14 @@ function RegisterPage() {
         .catch((e: any) => {
           if (e.response.data.errors) {
             setEmailError(e.response.data.errors.join('. '));
-          }
-          else {
-            if (e.response.data == "Заявка на регистрацию с указанным email уже существует") setEmailError(e.response.data);
+          } else {
+            if (e.response.data == 'Заявка на регистрацию с указанным email уже существует')
+              setEmailError(e.response.data);
             else setPasswordError(e.response.data);
           }
-        })
+        });
     }
   };
-
 
   return (
     <div className={styles.root}>
@@ -157,11 +157,23 @@ function RegisterPage() {
           </div>
           <div className={styles.form_item}>
             <Label value="Пароль" />
-            <Input type="password" value={password} onChange={_setPassword} error={passwordError != ''} errorText={passwordError} />
+            <Input
+              type="password"
+              value={password}
+              onChange={_setPassword}
+              error={passwordError != ''}
+              errorText={passwordError}
+            />
           </div>
           <div className={styles.form_item}>
             <Label value="Подтверждение пароля" />
-            <Input type="password" value={repeat} onChange={_setRepeat} error={repeatError != ''} errorText={repeatError} />
+            <Input
+              type="password"
+              value={repeat}
+              onChange={_setRepeat}
+              error={repeatError != ''}
+              errorText={repeatError}
+            />
           </div>
           <Button className={styles.btn}>Зарегистрироваться</Button>
         </form>

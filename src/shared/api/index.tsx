@@ -1,22 +1,32 @@
-import { TokenContextData, getTokenContextData, setTokenContextData } from "@shared/lib/token";
+import { TokenContextData, getTokenContextData, setTokenContextData } from '@shared/lib/token';
 import type { AxiosResponse } from 'axios';
-import { AuthControllerApi, Configuration, ConfigurationParameters, EventControllerApi, NotificationControllerApi, ProfileControllerApi, RoleControllerApi, TaskControllerApi, TestControllerApi } from "./generated";
+import {
+  AuthControllerApi,
+  Configuration,
+  ConfigurationParameters,
+  EventControllerApi,
+  NotificationControllerApi,
+  ProfileControllerApi,
+  RoleControllerApi,
+  TaskControllerApi,
+  TestControllerApi,
+} from './generated';
 
 const configurationParameters: ConfigurationParameters = {
   basePath: (window as any).ENV_BACKEND_API_URL,
-  accessToken: () => getTokenContextData().accessToken ?? "",
-}
+  accessToken: () => getTokenContextData().accessToken ?? '',
+};
 
 export const configuration = new Configuration(configurationParameters);
 
 class Api {
-  auth: AuthControllerApi
-  event: EventControllerApi
-  notification: NotificationControllerApi
-  profile: ProfileControllerApi
-  role: RoleControllerApi
-  task: TaskControllerApi
-  test: TestControllerApi
+  auth: AuthControllerApi;
+  event: EventControllerApi;
+  notification: NotificationControllerApi;
+  profile: ProfileControllerApi;
+  role: RoleControllerApi;
+  task: TaskControllerApi;
+  test: TestControllerApi;
 
   constructor(configuration: Configuration) {
     this.auth = new AuthControllerApi(configuration);
@@ -30,13 +40,12 @@ class Api {
 
   // NOTE: token invalid => reset token context
   async withReauth<T, U>(func: () => Promise<AxiosResponse<T, U>>): Promise<AxiosResponse<T, U>> {
-    return func()
-      .catch(async (e) => {
-        if (e.response.status == 401) {
-          setTokenContextData(new TokenContextData());
-        }
-        throw e;
-      });
+    return func().catch(async (e) => {
+      if (e.response.status == 401) {
+        setTokenContextData(new TokenContextData());
+      }
+      throw e;
+    });
   }
 
   /* token invalid => use refreshToken to refresh context. Then if error during refresh => reset token context

@@ -127,7 +127,7 @@
   background-color: #fff;
   cursor: pointer;
   overflow: hidden;
-  transition: .3s;
+  transition: 0.3s;
   padding: 0;
   display: flex;
   align-items: center;
@@ -143,7 +143,7 @@
 
 .delete_button:hover:not([disabled]) {
   background-color: rgb(231, 50, 50);
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .delete_button:hover:not([disabled]) path {
@@ -160,7 +160,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .place_buttons {
@@ -177,7 +177,7 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
-@media(max-width: 575px) {
+@media (max-width: 575px) {
   .form__row {
     grid-template-columns: repeat(1, 1fr);
     grid-gap: 0;

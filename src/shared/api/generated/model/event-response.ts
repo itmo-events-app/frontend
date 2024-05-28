@@ -28,10 +28,10 @@ export interface EventResponse {
     'id'?: number;
     /**
      * 
-     * @type {number}
+     * @type {Array<number>}
      * @memberof EventResponse
      */
-    'placeId'?: number;
+    'placesIds'?: Array<number>;
     /**
      * 
      * @type {string}

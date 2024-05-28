@@ -1,10 +1,11 @@
-import { Api } from "@entities/api.ts";
+import { Api } from '@entities/api.ts';
 import {
   ProfileResponse,
   NotificationSettingsRequest,
   UserChangeNameRequest,
-  UserChangePasswordRequest, UserChangeLoginRequest,
-} from "@shared/api/generated";
+  UserChangePasswordRequest,
+  UserChangeLoginRequest,
+} from '@shared/api/generated';
 
 const profileService = {
   getUserInfo: async (api: Api): Promise<ProfileResponse> => {
@@ -24,7 +25,7 @@ const profileService = {
   },
   changeLogin: async (api: Api, userChangeLoginRequest: UserChangeLoginRequest): Promise<void> => {
     await api.withReauth(() => api.profile.changeLogin(userChangeLoginRequest));
-  }
+  },
 };
 
 export default profileService;

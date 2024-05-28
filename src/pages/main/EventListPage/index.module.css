@@ -107,17 +107,27 @@
   width: auto;
   max-width: 960px;
   height: auto;
-  overflow: visible;
   box-sizing: border-box;
-  overflow: hidden;
   border-radius: 10px;
+  overflow: hidden;
+}
+
+.dialog_unoverflow {
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+  max-width: 960px;
+  height: auto;
+  box-sizing: border-box;
+  border-radius: 10px;
+  overflow: visible;
 }
 
 .dialog__date {
   position: relative;
 }
 
-.dialog__date>div {
+.dialog__date > div {
   display: block;
   width: 100%;
 }
@@ -132,13 +142,17 @@
   box-sizing: border-box;
 }
 
-.dialog__date>span {
+.dialog__date > span {
   position: absolute;
   top: 7px;
   right: 10px;
   pointer-events: none;
 }
 
-.dialog__date>span path {
+.dialog__date > span path {
   stroke: hsl(0, 0%, 50%);
+}
+
+.unoverflow {
+  overflow-y: visible !important;
 }
