@@ -471,11 +471,13 @@ export default function UserListPage() {
         component = <MessageDialogContent onDone={_closeDialog} {...dialogData.args} />;
         break;
     }
+    const saveOverflow = dialogData.visible === DialogSelected.REVOKE_EVENT;
     return (
       <Dialog
-        className={appendClassName(styles.dialog, dialogData.visible ? styles.visible : styles.hidden)}
+        className={appendClassName(saveOverflow ? styles.dialog_unoverflow : styles.dialog, dialogData.visible ? styles.visible : styles.hidden)}
         text={dialogData.heading}
         onClose={_closeDialog}
+        saveOverflow={saveOverflow}
       >
         {component}
       </Dialog>
