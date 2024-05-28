@@ -127,7 +127,7 @@ function RegisterPage() {
         })
         .catch((e: any) => {
           if (e.response.data.errors) {
-            if (e.response.data.errors == 'Пароль должен содержать минимум один символ верхнего и нижнего регистра') setPasswordError(e.response.data.errors[0]);
+            if (e.response.data.errors.includes('Пароль должен содержать минимум один символ верхнего и нижнего регистра')) setPasswordError(e.response.data.errors[0]);
             else setEmailError(e.response.data.errors.join('. '));
           } else {
             if (e.response.data == 'Заявка на регистрацию с указанным email уже существует')
