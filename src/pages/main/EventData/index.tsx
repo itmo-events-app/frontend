@@ -354,6 +354,8 @@ function EventActivitiesPage() {
 
   const [reloadPage, setReloadPage] = useState(0);
 
+  const[loadError, setLoadError] = useState<string>("");
+
   const getEvent = async () => {
     if (idInt == null) {
       return;
@@ -1100,6 +1102,7 @@ function EventActivitiesPage() {
   }
 
   function handleFileChange(event: any) {
+    setLoadError("");
     event.preventDefault();
 
     if (optionsPrivileges.importParticipants && idInt != null) {
@@ -1119,6 +1122,7 @@ function EventActivitiesPage() {
           setReloadPage(reloadPage + 1);
         })
         .catch((error) => {
+          setLoadError("Неверный формат файла");
           console.log(error.response.data);
         });
     }
@@ -1154,6 +1158,7 @@ function EventActivitiesPage() {
                   id="uploadParticipants"
                   onChange={handleFileChange}
                 />
+                <div className={styles.error_button}>{loadError}</div>
               </>
             ) : (
               <></>

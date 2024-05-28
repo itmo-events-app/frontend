@@ -593,3 +593,7 @@
 .redBtn {
   background-color: var(--itmo-colors-red);
 }
+
+.error_button {
+  color: var(--itmo-colors-red);
+}
