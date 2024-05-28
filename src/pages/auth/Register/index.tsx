@@ -127,7 +127,18 @@ function RegisterPage() {
         })
         .catch((e: any) => {
           if (e.response.data.errors) {
-            setEmailError(e.response.data.errors.join('. '));
+            const passwordErrors: string[] = [];
+            e.response.data.errors.forEach((error : string) => {
+              if (error.toLowerCase().includes('email')) {
+                setEmailError(error);
+              } else {
+                passwordErrors.push(error);
+              }
+              if (passwordErrors.length > 0) {
+                setPasswordError(passwordErrors.join('. '));
+              }
+            })
+            
           } else {
             if (e.response.data == 'Заявка на регистрацию с указанным email уже существует')
               setEmailError(e.response.data);
