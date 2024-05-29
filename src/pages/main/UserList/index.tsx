@@ -24,6 +24,7 @@ import { ArrowDown, MenuVertical } from '@shared/ui/icons';
 import MessageDialogContent from '@pages/main/UserList/MessageDialogContent';
 import { UserResponse } from '@shared/api/generated/model';
 import PagedList2 from '@widgets/main/PagedList2';
+import { calculatePosition } from '@features/context-menu';
 
 class ContextMenuData {
   clientX: number;
@@ -98,14 +99,12 @@ export default function UserListPage() {
   //     ...privilegeOthers.assign_event, ...privilegeOthers.revoke_event])
   // );
 
-  // set context menu position. not using transform(-100%, 0%) to handle content bounds
-  // NOTE: COPIED FROM ROLE LIST PAGE
-  // TODO: handle when context menu out of content bounds
   useEffect(() => {
     if (cmRef.current) {
       const current = cmRef.current as any;
-      current.style.left = `${cmData.clientX - (cmRef.current as any).offsetWidth}px`;
-      current.style.top = `${cmData.clientY}px`;
+      const {left, top} = calculatePosition(cmData.clientX, cmData.clientY, cmRef.current);
+      current.style.left = `${left}px`;
+      current.style.top = `${top}px`;
     }
   });
 

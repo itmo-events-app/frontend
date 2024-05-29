@@ -40,7 +40,7 @@ function _createItemList(items: ContextMenuItem[]) {
   return res;
 }
 
-const ContextMenu = forwardRef((props: Props, ref) => {
+const ContextMenu = forwardRef((props: Props, ref: React.ForwardedRef<HTMLDivElement>) => {
   const items = _createItemList(props.items);
   return items.length > 0 ? (
     <div className={appendClassName(styles.menu, props.className)} style={props.style} ref={ref as any}>
