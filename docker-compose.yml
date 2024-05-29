@@ -12,6 +12,9 @@ services:
       interval: 5s
       timeout: 1s
       retries: 2
+    deploy:
+      restart_policy:
+        condition: on-failure
     volumes:
       - postgres-data:/var/lib/posgresql/data
 
@@ -28,6 +31,9 @@ services:
       timeout: 2s
       start_period: 10s
       retries: 60
+    deploy:
+      restart_policy:
+        condition: on-failure
     environment:
       - "SPRING_PROFILES_ACTIVE=docker"
       - "EMAIL_USERNAME=${EMAIL_USERNAME}"
@@ -45,6 +51,9 @@ services:
       - MINIO_ROOT_USER=minio-admin # AKA accessKey in minioClient, min len 3 characters
       - MINIO_ROOT_PASSWORD=minio-admin # AKA secretKey in minioClient, min len 8 characters
     command: server ~/minio --console-address :9001
+    deploy:
+      restart_policy:
+        condition: on-failure
     ports:
       - '9001:9001'
       - '9000:9000'
