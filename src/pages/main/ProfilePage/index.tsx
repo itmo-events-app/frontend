@@ -112,13 +112,15 @@ function ProfilePage() {
   };
 
   const handleNameChange = async () => {
+    const nameRegex = /^[а-яё\s-]*$/i; 
+
     if (name.trim().length == 0 || surname.trim().length == 0) {
       setErrorMessageEditingName(EMPTY_ERR_MSG);
       return;
-    } else if (!/^[а-яё]*$/i.test(name)) {
+    } else if (!nameRegex.test(name)) {
       setErrorMessageEditingName(NON_CYRILLIC_SYM_NAME_ERR_MSG);
       return;
-    } else if (!/^[а-яё]*$/i.test(surname)) {
+    } else if (!nameRegex.test(surname)) {
       setErrorMessageEditingName(NON_CYRILLIC_SYM_SURNAME_ERR_MSG);
       return;
     }
