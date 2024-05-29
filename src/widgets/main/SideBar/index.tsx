@@ -69,7 +69,16 @@ const SideBar = (props: Props) => {
           ])
         )
       ),
-      new SideBarTabE(new SideBarTab('Пользователи', RoutePaths.userList, <Users />)),
+      new SideBarTabE(
+        new SideBarTab('Пользователи', RoutePaths.userList, <Users />),
+        anyPrivilege(
+          new Set([
+            new PrivilegeData(PrivilegeNames.VIEW_OTHER_USERS_PROFILE),
+            new PrivilegeData(PrivilegeNames.ASSIGN_SYSTEM_ROLE),
+            new PrivilegeData(PrivilegeNames.REVOKE_SYSTEM_ROLE)
+          ])
+        )
+      ),
       new SideBarTabE(new SideBarTab('Профиль', RoutePaths.profile, <Personal />)),
     ];
   }
