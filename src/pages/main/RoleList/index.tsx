@@ -24,6 +24,7 @@ import PrivilegeContext from '@features/privilege-context';
 import { PrivilegeData } from '@entities/privilege-context';
 import ApiContext from '@features/api-context';
 import { createRoleElementList, roleElementListGetElements } from '@widgets/main/RoleList/common';
+import { calculatePosition } from '@features/context-menu';
 
 class ContextMenuData {
   clientX: number;
@@ -70,7 +71,7 @@ function RoleListPage() {
 
   const [search, setSearch] = useState('');
 
-  const cmRef = useRef(null);
+  const cmRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef(null);
 
   const menuVisible = hasAnyPrivilege(
@@ -80,14 +81,12 @@ function RoleListPage() {
 
   const [roles, setRoles] = useState([] as RoleElement[]);
 
-  // set context menu position. not using transform(-100%, 0%) to handle content bounds
-  // NOTE: can move to controller object
-  // TODO: handle when context menu out of content bounds
   useEffect(() => {
     if (cmRef.current) {
       const current = cmRef.current as any;
-      current.style.left = `${cmData.clientX - (cmRef.current as any).offsetWidth}px`;
-      current.style.top = `${cmData.clientY}px`;
+      const {left, top} = calculatePosition(cmData.clientX, cmData.clientY, cmRef.current);
+      current.style.left = `${left}px`;
+      current.style.top = `${top}px`;
     }
   });
 
