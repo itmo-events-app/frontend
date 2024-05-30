@@ -15,7 +15,7 @@ const registerMsg = 'Заявка на регистрацию успешно с�
 
 const errorValidators = {
   empty: (v: string) => {
-    if (v == '') {
+    if (v.trim() == '') {
       return 'Поле не должно быть пустым';
     }
     return null;
@@ -25,6 +25,11 @@ const errorValidators = {
       return 'Поле не должно быть короче 8 символов';
     }
     return null;
+  },
+  cyrillic: (v: string) => {
+    if (!/^[а-яё\s-]*$/i.test(v)) {
+      return 'содержать только буквы кириллицы без цифр и специальных символов'
+    }
   },
   passwordEqual: (a: string, b: string) => {
     if (a != b) {
@@ -84,9 +89,21 @@ function RegisterPage() {
       ok = false;
     }
 
+    const enameCyrillic = errorValidators.cyrillic(name);
+    if (enameCyrillic) {
+      setNameError('Имя должно ' + enameCyrillic);
+      ok = false;
+    }
+
     const esurname = errorValidators.empty(surname);
     if (esurname) {
       setSurnameError(esurname);
+      ok = false;
+    }
+
+    const esurnameCyrillic = errorValidators.cyrillic(surname);
+    if (esurnameCyrillic) {
+      setSurnameError('Фамилия должна ' + esurnameCyrillic);
       ok = false;
     }
 
